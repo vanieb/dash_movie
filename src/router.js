@@ -38,12 +38,13 @@ export default new Router({
     },
     {
       path: '/',
-      name: 'Home',
+      name: 'Overview',
       component: function(resolve) {
-        require(['./components/HelloWorld.vue'], resolve)
+        require(['./views/Main/Apps.vue'], resolve)
       },
       meta: {
-        title: 'Login'
+        icon: 'apps',
+        title: i18n.t('nav.apps')
       }
     },
     {
@@ -59,6 +60,75 @@ export default new Router({
       }
     },
     {
+      path: '/apps',
+      name: 'Apps',
+      component: function(resolve) {
+        require(['./views/Main/Apps.vue'], resolve)
+      },
+      meta: {
+        icon: 'apps',
+        auth: true,
+        title: i18n.t('nav.apps')
+      }
+    },
+    {
+        path: '/apps/add',
+        name: 'Add Apps',
+        component: function (resolve) {
+            require(['./views/Main/AppsForm.vue'], resolve)
+        },
+        meta: {
+          auth: true,
+          title: i18n.t('nav.add_apps'),
+        }
+    },
+    {
+        path: '/apps/:appsId/',
+        name: 'Apps Details',
+        component: function (resolve) {
+            require(['./views/Main/AppsDetails.vue'], resolve)
+        },
+        meta: {
+          auth: true,
+          title: i18n.t('nav.apps_detail'),
+        }
+    },
+    {
+        path: '/apps/:appsId/edit',
+        name: 'Edit Apps',
+        component: function (resolve) {
+            require(['./views/Main/AppsForm.vue'], resolve)
+        },
+        meta: {
+          auth: true,
+          title: i18n.t('nav.edit_apps'),
+        }
+    },
+    {
+      path: '/websites',
+      name: 'Websites',
+      component: function(resolve) {
+        require(['./views/Main/Website.vue'], resolve)
+      },
+      meta: {
+        icon: 'web',
+        auth: true,
+        title: i18n.t('nav.websites')
+      }
+    },
+    {
+      path: '/label',
+      name: 'Label',
+      component: function(resolve) {
+        require(['./views/Main/Label.vue'], resolve)
+      },
+      meta: {
+        icon: 'label',
+        auth: true,
+        title: i18n.t('nav.labels')
+      }
+    },
+    {
       path: '/staff',
       name: 'Staff',
       component: function(resolve) {
@@ -70,16 +140,5 @@ export default new Router({
         title: i18n.t('nav.staff')
       }
     }
-    // {
-    //   path: '/ban',
-    //   name: 'ban',
-    //   component: function(resolve) {
-    //     require(['./views/ban.vue'], resolve)
-    //   },
-    //   meta: {
-    //     auth: true,
-    //     disable_tabs: true
-    //   }
-    // }
   ]
 })

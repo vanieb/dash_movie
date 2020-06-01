@@ -92,21 +92,17 @@
           </v-list-item>
         </template>
       </v-list>
-      <v-divider></v-divider>
-      <v-layout align-end justify-center>
-      <v-list-item
-            @click="logout()"
-          >
-            <v-list-item-action>
-              <v-icon>power_settings_new</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title class="grey--text">
-                {{ $t('actions.logout') }}
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          </v-layout>
+      <template v-slot:append>
+        <div class="pb-10 pl-2 pr-2" >
+          <v-btn
+            dark
+            block
+            @click="logout()">
+            <v-icon>power_settings_new</v-icon>
+            <span class="ml-1">{{ $t('actions.logout') }}</span>
+          </v-btn>
+        </div>
+      </template>
     </v-navigation-drawer>
   </div>
 </template>
@@ -125,13 +121,13 @@
       return {
         drawer: null,
         items: [
-          { icon: 'apps', text: 'Apps' },
-          { icon: 'web', text: 'Websites' },
-          { heading: 'Users' },
+          { icon: 'apps', text: this.$t('nav.apps'), path: '/apps' },
+          { icon: 'web', text: this.$t('nav.websites'), path: '/websites'},
+          { icon: 'label', text: this.$t('nav.labels'), path: '/label'},
+          { heading: this.$t('nav.users') },
           { icon: 'people', text: this.$t('nav.staff'), path: '/staff' },
-          { heading: 'Settings' },
-          { icon: 'label', text: 'Labels' },
-          { icon: 'settings', text: 'Settings' }
+          { heading: this.$t('nav.settings') },
+          { icon: 'settings', text: this.$t('nav.settings') }
         ]
     }},
     computed: {
