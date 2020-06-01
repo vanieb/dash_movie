@@ -17,7 +17,8 @@ export default {
     update: '更新',
     reset: '重置',
     clear: '清除',
-    logout: '登出'
+    logout: '登出',
+    delete: '删除'
   },
   status: {
     success: '成功',
@@ -36,7 +37,14 @@ export default {
   nav: {
     login: '登录',
     change_password: '更改密码',
+    apps: '应用',
+    apps_detail: 'Apps Detail',
+    edit_apps: 'Edit Apps',
+    websites: '网站',
+    labels: '标签',
+    users: '使用者',
     staff: '员工',
+    settings: '设定值'
   },
   login: {
     login: '登录表单',
@@ -47,6 +55,23 @@ export default {
     old_password: '旧密码',
     new_password: '新密码',
     confirm_password: '确认密码'
+  },
+  apps: {
+    name: 'Name',
+    link: 'Link',
+    installer_size: 'Installer Size',
+    release_date: 'Release Date',
+    version: 'Version',
+    type: 'Type',
+    games: 'Games',
+    rating: 'Rating',
+    software: 'Software',
+    hot: 'Hot',
+    category: 'Category',
+    basic_introduction: 'Basic Introduction',
+    introduction: 'Introduction',
+    features: 'Features',
+    download_link: 'Download Link'
   },
   staff: {
     login_status: '登录状态'

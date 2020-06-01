@@ -92,15 +92,13 @@
       <v-data-table
         :headers="headers"
         :hide-default-footer="true"
-        :loading="searching"
-        :server-items-length="null"
         :items="querySet"
       >
       <template v-slot:body="{ items }">
         <span v-if="!items">{{items}}</span>
         <tbody>
           <tr v-for="item in querySet" :key="item.id">
-            <td class="align-center justify-center layout px-0">
+            <td class="align-center text-center px-0">
               <v-icon class="mr-2" small color="green" v-if="item.is_logged_in">fiber_manual_record</v-icon>
               <v-icon class="mr-2" small v-else>fiber_manual_record</v-icon>
             </td>
@@ -113,7 +111,7 @@
             <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td>{{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td>{{ item.memo || '-'}}</td>
-            <td class="align-center justify-center layout px-0">
+            <td class="align-center justify-center px-0">
               <v-icon class="mr-2" small @click="updateStaff(item)">edit</v-icon>
               <v-menu offset-y>
                 <template v-slot:activator="{ on }">
@@ -174,39 +172,40 @@ export default {
       querySet: [],
       query: {},
       showForm: false,
-      searching: 'false',
       snackbar: {
         color: '',
-        mode: '',
         text: '',
-        timeout: 6000,
         show: false,
-        x: null,
-        y: 'top'
       },
       headers: [
         {
+          sortable: false,
           text: this.$t('staff.login_status'),
           value: 'is_logged_in'
         },
         {
+          sortable: false,
           text: this.$t('login.username'),
           value: 'user.username'
         },
         {
+          sortable: false,
           text: this.$t('common.status'),
           value: 'status',
           width: '10%'
         },
         {
+          sortable: false,
           text: this.$t('common.created_at'),
           value: 'created_at'
         },
         {
+          sortable: false,
           text: this.$t('common.updated_at'),
           value: 'updated_at'
         },
         {
+          sortable: false,
           text: this.$t('common.remarks'),
           value: 'memo'
         },
@@ -287,6 +286,11 @@ export default {
     },
     deleteStaff(id) {
       this.$http.delete(api.staff + id + '/').then(() => {
+        this.snackbar = {
+          color: 'success',
+          show: true,
+          text: `${this.$t('actions.delete')}: ${this.$t('status.success')}`
+        }
         this.$refs.pulling.rebase()
       })
     },

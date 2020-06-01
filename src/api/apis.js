@@ -15,5 +15,9 @@ export default {
   changePassword: `${link}password/`,
   logout: `${host}logout/`,
   refresh_token: `${prefix}login/refresh/`,
+  apps: `${link}websites/`,
+  websites: `${link}categories/`,
+  categories: `${link}categories/`,
+  labels: `${link}categories/`,
   staff: `${link}staff/`
 }
