@@ -89,9 +89,10 @@ export default class $ {
         return gettype.call(o) === '[object Object]'
       }
     }
-
+    
     if (Array.isArray(errors)) {
       for (let item in errors) {
+        // eslint-disable-next-line no-prototype-builtins
         if (errors[item].hasOwnProperty(field)) {
           responseError += fields[field] + errors[item][field]
           return responseError
