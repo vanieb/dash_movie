@@ -33,14 +33,6 @@ jobs:
         type: string
       vue_app_api_url:
         type: string
-      vue_app_device_type:
-        type: string
-      vue_app_id:
-        type: string
-      vue_app_client_id:
-        type: string
-      vue_app_current_version:
-        type: string
     steps:
       - checkout
       - setup_remote_docker:
@@ -56,10 +48,6 @@ jobs:
           docker run -d
           --name=$CIRCLE_PROJECT_REPONAME
           --env VUE_APP_API_URL=<< parameters.vue_app_api_url >>
-          --env VUE_APP_DEVICE_TYPE=<< parameters.vue_app_device_type >>
-          --env VUE_APP_ID=<< parameters.vue_app_id >>
-          --env VUE_APP_CLIENT_ID=<< parameters.vue_app_client_id >>
-          --env VUE_APP_CURRENT_VERSION=<< parameters.vue_app_current_version >>
           << parameters.organization >>/<< parameters.project_id >>/$CIRCLE_PROJECT_REPONAME:latest
           ping google.com
       - run: docker exec -it $CIRCLE_PROJECT_REPONAME npm run build
@@ -124,10 +112,6 @@ workflows:
           on_fail_message: <b>$CIRCLE_PROJECT_REPONAME:$CIRCLE_BRANCH</b> push docker image failed.
           docker_password: $GCR_KEY
           vue_app_api_url: $VUE_APP_API_URL
-          vue_app_device_type: $VUE_APP_DEVICE_TYPE
-          vue_app_id: $VUE_APP_ID
-          vue_app_client_id: $VUE_APP_CLIENT_ID
-          vue_app_current_version: $VUE_APP_CURRENT_VERSION
           filters:
             branches:
               only:
@@ -156,10 +140,6 @@ workflows:
           on_fail_message: <b>$CIRCLE_PROJECT_REPONAME:$CIRCLE_BRANCH</b> push docker image failed.
           docker_password: $PROD_GCR_KEY
           vue_app_api_url: $PROD_VUE_APP_API_URL
-          vue_app_device_type: $PROD_VUE_APP_DEVICE_TYPE
-          vue_app_id: $PROD_VUE_APP_ID
-          vue_app_client_id: $PROD_VUE_APP_CLIENT_ID
-          vue_app_current_version: $PROD_VUE_APP_CURRENT_VERSION
           filters:
             branches:
               only:
