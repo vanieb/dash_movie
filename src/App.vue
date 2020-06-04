@@ -15,6 +15,9 @@ import axios from 'axios'
 
 export default {
   name: 'App',
+  components: {
+    SideBar
+  },
   computed: {
     showNav() {
       return this.$route.name !== 'login'
@@ -26,7 +29,6 @@ export default {
   methods: {
     setUpRouterHooks() {
       this.$router.beforeEach((to, from, next) => {
-        this.dropdown = false
         this.routerLoading = true
         this.authErrors = []
         next()
@@ -48,14 +50,15 @@ export default {
     },
     getMy() {
       if (!this.$cookie.get('access_token')) {
-        return
+        this.$http.get(api.my).then(response => {
+          if (response) {
+            this.username = response.username
+            window.document.cookie = `username=${this.username}`
+            this.setUpAuth()
+            this.setUpRouterHooks()
+          }
+        })
       }
-      this.$http.get(api.my).then(response => {
-        this.username = response.username
-        window.document.cookie = `username=${this.username}`
-        this.setUpAuth()
-        this.setUpRouterHooks()
-      })
     },
     refresh() {
       let refreshToken = this.$cookie.get('refresh_token')
@@ -73,9 +76,6 @@ export default {
         axios.defaults.headers.common['Authorization'] = 'Bearer ' + data.access_token
       })
     }
-  },
-  components: {
-    SideBar
   }
 };
 </script>
