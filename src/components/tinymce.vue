@@ -11,6 +11,7 @@
 
  <script>
  import Editor from '@tinymce/tinymce-vue'
+ import $ from '../utils/util'
 
  export default {
    name: 'tinymce',
@@ -29,13 +30,7 @@
       }
     },
     mounted() {
-      this.navLang = navigator.language || navigator.userLanguage
-      if (this.navLang === 'en' || this.navLang==='en-US') {
-        this.navLang = 'en_US'
-      } else {
-        this.navLang = 'zh_CN'
-      }
-      console.log(this.navLang)
+      this.navLang = $.getLanguage()
       this.init = {
        height: 300,
        menubar: true,

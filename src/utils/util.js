@@ -176,6 +176,15 @@ export default class $ {
     })
   }
 
+  static getLanguage() {
+    let navLang = navigator.language || navigator.userLanguage
+    if (navLang === 'en' || navLang ==='en-US') {
+      return navLang = 'en_US'
+    } else {
+      return navLang = 'zh_CN'
+    }
+  }
+
   static scrollToTop() {
     window.scrollTo(0, 0)
   }

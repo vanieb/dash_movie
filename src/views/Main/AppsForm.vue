@@ -23,11 +23,11 @@
           <v-row class="ml-1 mr-8">
             <v-col cols="12" md="8">
               <v-row>
-                <validation-provider style="width:310px;" rules="required" :name="$t('apps.name')">
+                <validation-provider style="width:338px;" rules="required" :name="$t('common.name')">
                   <v-text-field
                     :error-messages="errors"
                     required
-                    :label="`${$t('apps.name')}*`"
+                    :label="`${$t('common.name')}*`"
                     placeholder=" "
                     prepend-icon="apps"
                     v-model="apps.name"
@@ -59,7 +59,7 @@
               </validation-provider>
               </v-row>
               <v-row>
-                <validation-provider style="width:310px;" rules="required" :name="$t('apps.release_date')">
+                <validation-provider style="width:338px;" rules="required" :name="$t('apps.release_date')">
                   <v-menu
                     ref="menu1"
                     v-model="date_menu"
@@ -86,6 +86,7 @@
                     <v-date-picker
                       v-model="apps.release_date"
                       no-title
+                      :locale="lang"
                       @input="date_menu = false">
                     </v-date-picker>
                   </v-menu>
@@ -178,7 +179,8 @@
               </validation-provider>
             </v-flex>
           </v-row>
-          <v-banner style="color:blue;">Other Details</v-banner>
+          <small>*{{$t('errors.required')}}</small>
+          <v-banner style="color:blue;">{{$t('apps.other_details')}}</v-banner>
           <v-flex>
             <v-card-title>{{$t('apps.basic_introduction')}}</v-card-title>
             <v-card-text>
@@ -238,10 +240,11 @@ import tinymce from '../../components/tinymce'
 import Categories from '../../components/SelectCategory.vue'
 import Labels from '../../components/SelectLabel.vue'
 import Websites from '../../components/SelectWebsite.vue'
+import $ from '../../utils/util'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 
 export default {
-  name: 'Apps Form',
+  name: 'AppsForm',
   components: {
     Categories,
     Labels,
@@ -253,6 +256,7 @@ export default {
   },
   data() {
     return {
+      lang: '',
       date_menu: false,
       dateFormatted: '',
       mode: 1,
@@ -274,7 +278,7 @@ export default {
           to: '/'
         },
         {
-          text: this.$t('nav.edit_apps'),
+          text: this.$route.meta.title,
           disabled: true
         }],
       app_types: [
@@ -308,9 +312,9 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
-      let id = to.params.appsId
-      if (id) {
-        vm.getAppDetails(id)
+      let appId = to.params.appsId
+      if (appId) {
+        vm.getAppDetails(appId)
       }
     })
   },
@@ -319,6 +323,9 @@ export default {
       return text.substring(0, length) + suffix
     }
   },
+  created() {
+    this.lang = $.getLanguage() == 'zh_CN' ? 'zh-cn' : ''
+  },
   computed: {
 
   },
@@ -326,6 +333,8 @@ export default {
     getAppDetails(id) {
       this.$http.get(`${this.appsApi}${id }/`).then((response) => {
         console.log(response)
+        this.appId = response.id
+        console.log(this.appId)
         // needed to display date properly
         this.apps.release_date = new Date(this.apps.release_date).toISOString().substr(0, 10)
       }, response => {

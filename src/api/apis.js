@@ -6,18 +6,18 @@
 //     : config.build.env
 const host =  process.env.VUE_APP_API_URL
 
-const prefix = `${host}manage/`
-const link = `${host}v1/manage/`
+const apps = `${host}apps/v1/`
+const auth = `${host}authentication/v1/`
 
 export default {
-  login: `${prefix}login/`,
-  my: `${link}my/`,
-  changePassword: `${link}password/`,
-  logout: `${host}logout/`,
-  refresh_token: `${prefix}login/refresh/`,
-  apps: `${link}websites/`,
-  websites: `${link}categories/`,
-  categories: `${link}categories/`,
-  labels: `${link}categories/`,
-  staff: `${link}staff/`
+  login: `${auth}login`,
+  my: `${auth}my`,
+  changePassword: `${auth}password/`,
+  logout: `${auth}logout`,
+  refresh_token: `${auth}login/refresh/`,
+  apps: `${apps}`,
+  websites: `${apps}websites/`,
+  categories: `${apps}categories/`,
+  labels: `${apps}label`,
+  staff: `${host}accounts/v1/staff/`
 }

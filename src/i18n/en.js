@@ -4,12 +4,13 @@ export default {
     subtitle: 'Website'
   },
   common: {
+    name: 'Name',
     status: 'Status',
     created_at: 'Created On',
     updated_at: 'Updated On',
-    file: 'File',
     action: 'Action',
-    remarks: 'Remarks'
+    remarks: 'Remarks',
+    file: 'File'
   },
   actions: {
     add: 'Add',
@@ -33,7 +34,8 @@ export default {
   errors: {
     required: 'Required',
     less_than: 'should be <',
-    greater_than: 'should be >'
+    greater_than: 'should be >',
+    server_error: 'Server Error'
   },
   system_notes: {
     upload_installer_memo: 'This option will allow you to upload installers. For batch upload, zip first your file then upload. ',
@@ -48,14 +50,14 @@ export default {
     login: 'Login',
     change_password: 'Change Password',
     apps: 'Apps',
+    apps_detail: 'App Details',
+    edit_apps: 'Edit Apps',
+    add_apps: 'Add Apps',
     websites: 'Websites',
     labels: 'Labels',
     users: 'Users',
     staff: 'Staff',
-    settings: 'Settings',
-    apps_detail: 'App Details',
-    edit_apps: 'Edit Apps',
-    add_apps: 'Add Apps'
+    settings: 'Settings'
   },
   login: {
     login: 'Login Form',
@@ -68,7 +70,6 @@ export default {
     confirm_password: 'Confirm Password'
   },
   apps: {
-    name: 'Name',
     link: 'Link',
     rating: 'Rating',
     installer_size: 'Installer Size',
@@ -82,7 +83,11 @@ export default {
     basic_introduction: 'Basic Introduction',
     introduction: 'Introduction',
     features: 'Features',
-    download_link: 'Download Link'
+    download_link: 'Download Link',
+    other_details: 'Other Details'
+  },
+  website: {
+    code: 'Code'
   },
   staff: {
     login_status: 'Login Status'

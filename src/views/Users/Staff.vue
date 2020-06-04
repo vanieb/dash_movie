@@ -156,8 +156,15 @@ import api from '@/api/apis'
 import Pagination from '@/components/Pagination'
 import SnackBar from '@/components/SnackBar'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
+
 export default {
-  name: 'StaffResults',
+  components: {
+    ValidationObserver,
+    ValidationProvider,
+    Pagination,
+    SnackBar
+  },
+  name: 'Staff',
   data() {
     return {
       submitting: false,
@@ -250,6 +257,11 @@ export default {
         if (this.staff.id) {
         this.$http.put(`${api.staff}${this.staff.id}/`, staffResult).then(() => {
           this.$refs.pulling.rebase()
+          this.snackbar = {
+            color: 'success',
+            show: true,
+            text: `${this.$t('actions.update')} - ${this.$t('nav.staff')}: ${this.$t('status.success')}`
+          }
           this.close()
         }, error => {
           this.snackbar = {
@@ -260,6 +272,11 @@ export default {
         })
       } else {
         this.$http.post(api.staff, staffResult).then(() => {
+          this.snackbar = {
+            color: 'success',
+            show: true,
+            text: `${this.$t('actions.add')} - ${this.$t('nav.staff')}: ${this.$t('status.success')}`
+          }
           this.$refs.pulling.rebase()
           this.close()
         }, error => {
@@ -330,12 +347,6 @@ export default {
     queryParam(query) {
       this.query = query
     }
-  },
-  components: {
-    ValidationObserver,
-    ValidationProvider,
-    Pagination,
-    SnackBar
   }
 }
 </script>
