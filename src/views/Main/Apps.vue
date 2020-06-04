@@ -15,13 +15,21 @@
           <!-- Installer Upload -->
           <v-dialog v-model="uploadInstallerDialog" persistent max-width="350">
             <template v-slot:activator="{ on }">
-              <v-btn
+               <v-btn
                   color="primary"
                   dark
+                  
                   class="mr-3" v-on="on">
-                  <v-icon class="mr-3">cloud_upload</v-icon> &nbsp;{{ $t('actions.upload') }}
+                  <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                  <v-icon v-on="on">cloud_upload</v-icon>
+
+                  </template>
+                  <span>{{$t('system_notes.upload_installer_memo')}}</span>
+                </v-tooltip>
                 </v-btn>
-            </template>
+                </template>
+
             <v-card>
               <validation-observer ref="form">
                 <v-card-title>
@@ -63,11 +71,80 @@
           <!-- Create Multiple Apps -->
           <v-dialog v-model="createAppDialog" persistent max-width="350">
             <template v-slot:activator="{ on }">
+
               <v-btn
                 color="primary"
                 dark 
+                
+                class="mr-3"
                 v-on="on">
-                <v-icon class="mr-3">dynamic_feed</v-icon>&nbsp;{{ $t('actions.create_multiple') }}
+                <!-- <v-icon class="mr-3">dynamic_feed</v-icon>&nbsp;{{ $t('actions.create_multiple') }} -->
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                  <v-icon v-on="on">dynamic_feed</v-icon><!-- {{ $t('actions.upload') }} -->
+
+                  </template>
+                  <span>{{$t('system_notes.add_multiple_apps_memo')}}</span>
+                </v-tooltip>
+              </v-btn>
+            </template>
+            <v-card>
+              <validation-observer ref="form">
+                <v-card-title>
+                  <v-icon class="mr-3">dynamic_feed</v-icon>
+                    &nbsp;{{ $t('actions.create_multiple') }}
+                </v-card-title>
+                <v-card-text>
+                  <v-icon small>info</v-icon>
+                  <small>{{ $t('system_notes.add_multiple_apps_memo') }}</small>
+                </v-card-text>
+                <v-card-text>
+                  <v-spacer></v-spacer>
+                  <validation-provider style="width:310px;" rules="required" :name="$t('common.file')">
+                    <v-file-input
+                      outlined
+                      dense
+                      clearable
+                      :error-messages="errors"
+                      required
+                      slot-scope="{ errors }"
+                      accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                      v-model="file">    
+                    </v-file-input>
+                  </validation-provider>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="grey lighten-1"
+                    @click="createAppDialog = false">{{ $t('actions.close') }}
+                  </v-btn>
+                  <v-btn
+                    color="blue darken-1"
+                    @click="uploadFile('add')">{{ $t('actions.submit') }}
+                  </v-btn>
+                </v-card-actions>
+              </validation-observer>
+            </v-card>
+          </v-dialog>
+          <!-- Export Apps -->
+
+          <v-dialog v-model="createAppDialog" persistent max-width="350">
+            <template v-slot:activator="{ on }">
+
+              <v-btn
+                color="primary"
+                dark 
+                
+                v-on="on">
+                <!-- <v-icon class="mr-3">dynamic_feed</v-icon>&nbsp;{{ $t('actions.create_multiple') }} -->
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                  <v-icon v-on="on">cloud_download</v-icon><!-- {{ $t('actions.upload') }} -->
+
+                  </template>
+                  <span>{{$t('system_notes.add_multiple_apps_memo')}}</span>
+                </v-tooltip>
               </v-btn>
             </template>
             <v-card>
@@ -135,7 +212,7 @@
             <div style="width:200px;" class="mr-2">
               <v-text-field
                 @input="search"
-                :label="`${$t('apps.name')}`"
+                :label="`${$t('common.name')}`"
                 v-model="query.name"
                 placeholder=" "
                 outlined
@@ -150,7 +227,7 @@
                 transition="scale-transition"
                 offset-y
                 max-width="290px"
-                min-width="290px"
+                min-width="450px"
                 >
                 <template v-slot:activator="{ on }">
                   <v-text-field
@@ -162,17 +239,18 @@
                     v-on="on"
                     readonly
                     clearable
+                    @click:clear="clearDateRange()"
                   ></v-text-field>
                 </template>
                 <v-date-picker
                   v-model="created_at"
-                  locale="zh-cn"
+                  :locale="lang"
                   :selected-items-text="dateRangeText"
                   range
-                  small
+                  landscape
+                  smaller
                   >
                 </v-date-picker>
-                <!-- <template v-slot:selection="dateRangeText"> <p>{{dateRangeText}} </p></template> -->
               </v-menu>
             </div>
             <v-layout class="justify-end mr-5">
@@ -257,6 +335,7 @@ export default {
   },
   data() {
     return {
+      // dateRangeText: [],
       file: null,
       query: {},
       querySet: [],
@@ -294,7 +373,7 @@ export default {
         },
         {
           sortable: false,
-          text: this.$t('apps.name'),
+          text: this.$t('common.name'),
           value: 'name'
         },
         {
@@ -348,6 +427,7 @@ export default {
     this.$nextTick(() => {
       this.$refs.pulling.rebase()
     })
+    this.lang = $.getLanguage() == 'zh_CN' ? 'zh-cn' : ''
   },
   filters: {
     truncate: function(text, length, suffix) {
@@ -359,6 +439,7 @@ export default {
       return $.compareQuery(this.query, {})
     },
     dateRangeText () {
+      console.log()
       if (this.query.created_at_after || this.query.created_at_before ) {
         return this.created_at.join(' ~ ')
       } else {
@@ -414,13 +495,17 @@ export default {
       this.$nextTick(() => {
         this.submit()
       })
+    },
+    clearDateRange() {
+      this.created_at  = ['', '']
+      this.dateRangeText = ''
     }
   }
 }
 </script>
-<style scoped lang="scss">
-  .v-picker__title__btn v-date-picker-title__date v-picker__title__btn--active {
-  font-size: 20px !important; 
-}
+<style scope lang="scss">
+  .v-date-picker-title__date {
+    font-size: 20px !important; 
+  }
 </style>
 

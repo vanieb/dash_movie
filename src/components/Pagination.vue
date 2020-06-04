@@ -50,15 +50,25 @@
     </div>
   </v-layout>
   </v-layout>
+  <!-- SNACKBAR -->
+    <snack-bar
+      :show="snackbar.show"
+      :color="snackbar.color"
+      :text="snackbar.text" 
+    >
+    </snack-bar>
   </v-container>
 </template>
 
 <script>
 import Vue from 'vue'
-import $ from '../utils/util'
+import SnackBar from './SnackBar'
 // to perform a pulling, parent componet need to boardcast 'rebase' event
 // once the comopnent is ready, and might trigger 'rebase' everytime needed
 export default {
+  components: {
+    SnackBar
+  },
   props: {
     queryset: {
       required: true,
@@ -90,6 +100,11 @@ export default {
     return {
       pageSize: {
         value: 20,
+      },
+      snackbar: {
+        color: '',
+        text: '',
+        show: false,
       },
       items: [
         {value: 20}, 
@@ -204,10 +219,11 @@ export default {
         this.next = response.next
         this.loading = false
       }, () => {
-        $.notify({
-          message: this.$t('common.server_error'),
-          type: 'danger'
-        })
+        this.snackbar = {
+          color: 'red',
+          show: true,
+          text: this.$t('errors.server_error')
+        }
       })
       this.$emit('query-param', this.myQuery)
     },
