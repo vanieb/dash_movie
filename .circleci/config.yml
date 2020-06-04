@@ -135,11 +135,12 @@ workflows:
                 - production
       - push_docker_image:
           project_name: $PROD_PROJECT_NAME
+          project_id: $PROD_PROJECT_ID
           storage_buckets_key: $PROD_STORAGE_BUCKETS_KEY
           organization: asia.gcr.io
           on_fail_message: <b>$CIRCLE_PROJECT_REPONAME:$CIRCLE_BRANCH</b> push docker image failed.
           docker_password: $PROD_GCR_KEY
-          vue_app_api_url: $PROD_VUE_APP_API_URL
+          vue_app_api_url: $PROD_VUE_APP_API_URLz
           filters:
             branches:
               only:
