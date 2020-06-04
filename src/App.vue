@@ -50,15 +50,16 @@ export default {
     },
     getMy() {
       if (!this.$cookie.get('access_token')) {
-        this.$http.get(api.my).then(response => {
-          if (response) {
-            this.username = response.username
-            window.document.cookie = `username=${this.username}`
-            this.setUpAuth()
-            this.setUpRouterHooks()
-          }
-        })
+        return
       }
+      this.$http.get(api.my).then(response => {
+        if (response) {
+          this.username = response.username
+          window.document.cookie = `username=${this.username}`
+          this.setUpAuth()
+          this.setUpRouterHooks()
+        }
+      })
     },
     refresh() {
       let refreshToken = this.$cookie.get('refresh_token')
