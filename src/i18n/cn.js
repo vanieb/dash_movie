@@ -38,8 +38,8 @@ export default {
     server_error: '服务器错误'
   },
   system_notes: {
-    upload_installer_memo: '此选项将允许您上传安装程序。 对于批量上传，请先压缩文件，然后再上传。 ',
-    upload_one_installer_memo: '此选项将允许您上传安装程序。 对于批量上传，请先压缩文件，然后再上传。 ',
+    upload_installer_memo: '此选项将允许您上传安装程序。 对于批量上传，请先压缩文件，然后再上传。',
+    upload_one_installer_memo: '该选项将允许您更改安装程序文件。',
     add_multiple_apps_memo: '此选项将允许您通过导入csv，xls或xlsx文件来创建多个应用程序。'
   },
   system_msg: {
