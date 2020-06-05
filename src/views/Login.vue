@@ -12,18 +12,15 @@
           <v-col
             cols="12"
             sm="8"
-            md="4"
+            md="3"
           >
             <v-card class="elevation-12">
-              <v-toolbar
-                color="blue lighten-2"
-                dark
-                flat
+              <v-card-title
+                class="form-title"
               >
-                <v-toolbar-title>{{ $t('login.login') }}</v-toolbar-title>
-                <v-spacer></v-spacer>
-              </v-toolbar>
-              <v-card-text>
+                {{ $t('login.login') }}
+              </v-card-title>
+              <v-card-text style="padding-bottom:0px !important;">
                 <v-form>
                   <v-text-field
                     :label="`${this.$t('nav.login')}`"
@@ -33,7 +30,6 @@
                     :rules="[rules.required]"
                     v-model="user.username"
                   ></v-text-field>
-
                   <v-text-field
                     v-model="user.password"
                     id="password"
@@ -47,7 +43,7 @@
                   ></v-text-field>
                 </v-form>
               </v-card-text>
-              <v-card-actions>
+              <v-card-actions style="padding-right:16px !important; padding-bottom: 12px !important;">
                 <v-spacer></v-spacer>
                 <v-btn color="blue lighten-2" @click="login">{{ $t('nav.login') }}</v-btn>
               </v-card-actions>
@@ -71,6 +67,10 @@ import qs from 'qs'
 import axios from 'axios'
 import SnackBar from '@/components/SnackBar'
 export default {
+  name: 'Login',
+  components: {
+    SnackBar
+  },
   data() {
     return {
       user: {
@@ -114,9 +114,14 @@ export default {
         }
       })
     }
-  },
-  components: {
-    SnackBar
   }
 }
 </script>
+<style scoped lang="scss">
+.form-title {
+  background-color:#64B5F6; 
+  color:white;
+  height:50px;
+  padding: 10px 12px 10px
+}
+</style>
