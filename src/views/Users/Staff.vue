@@ -16,13 +16,12 @@
             <v-card-text>
               <v-layout wrap>
                 <v-flex xs12 >
-                  <validation-provider rules="required|min:6|max:15" :name="$t('login.username')">
+                  <validation-provider rules="required|max:15" :name="$t('login.username')">
                     <v-text-field
                       :counter="15"
                       :error-messages="errors"
                       :label="`${$t('login.username')}*`"
                       placeholder=" "
-                      required
                       slot-scope="{ errors }"
                       v-model="staff.username"
                     ></v-text-field>
@@ -61,7 +60,7 @@
                       :error-messages="errors"
                       :label="$t('common.remarks')"
                       placeholder=" "
-                      rows="2"
+                      rows="1"
                       slot-scope="{ errors }"
                       v-model="staff.memo"
                     ></v-textarea>
