@@ -15,6 +15,9 @@
 
  export default {
    name: 'tinymce',
+   components: {
+     'editor': Editor
+   },
    props: ['content', 'name'],
     data () {
       return {
@@ -52,10 +55,7 @@
       setTimeout(function() {
         _this.myContent = _this.content
       }, 100)
-    },
-   components: {
-     'editor': Editor
-   }
+    }
  }
  </script>
  <style scope>

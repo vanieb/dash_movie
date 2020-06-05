@@ -33,7 +33,7 @@ const host =  process.env.VUE_APP_API_URL
 axios.options.root = host
 
 if (VueCookie.get('access_token')) {
-  axios.defaults.headers.common['Authorization'] = 'Bearer ' + VueCookie.get('access_token')
+  axios.defaults.headers.common['Authorization'] = `Bearer ${VueCookie.get('access_token')}`
 }
 
 axios.interceptors.response.use(response => {

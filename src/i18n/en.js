@@ -24,7 +24,8 @@ export default {
     upload: 'Upload',
     create_multiple: 'Add Multiple',
     search: 'Search',
-    submit: 'Submit'
+    submit: 'Submit',
+    change_file: 'Change File'
   },
   status: {
     success: 'Success',
@@ -39,12 +40,14 @@ export default {
   },
   system_notes: {
     upload_installer_memo: 'This option will allow you to upload installers. For batch upload, zip first your file then upload. ',
+    upload_one_installer_memo: 'This option will allow you to change installer file. ',
     add_multiple_apps_memo: 'This option will allow you to multiple create apps by importing csv, xls, or xlsx file.'
   },
   system_msg: {
     confirm_delete: 'Click to confirm deletion of ',
     error: 'Error',
-    exceed_file_size: 'Icon size should less than 1MB.'
+    exceed_file_size: 'Icon size should less than 1MB.',
+    no_data: 'No data'
   },
   nav: {
     login: 'Login',
@@ -55,6 +58,7 @@ export default {
     add_apps: 'Add Apps',
     websites: 'Websites',
     labels: 'Labels',
+    category: 'Categories',
     users: 'Users',
     staff: 'Staff',
     settings: 'Settings'
@@ -79,7 +83,6 @@ export default {
     games: 'Games',
     software: 'Software',
     hot: 'Hot',
-    category: 'Category',
     basic_introduction: 'Basic Introduction',
     introduction: 'Introduction',
     features: 'Features',

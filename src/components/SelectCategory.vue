@@ -72,7 +72,7 @@ export default {
     return {
       categories: [],
       mycategory: this.category,
-      elLabel: this.$t('apps.category')
+      elLabel: this.$t('nav.category')
     }
   },
   watch: {
@@ -88,7 +88,7 @@ export default {
   },
   created() {
     if (this.req) {
-      this.elLabel = `${this.$t('apps.category')}*`
+      this.elLabel = `${this.$t('nav.category')}*`
     }
     this.$http.get(api.categories + '?limit=400&offset=0').then(response => {
       this.categories = response.results

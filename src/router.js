@@ -129,6 +129,18 @@ export default new Router({
       }
     },
     {
+      path: '/category',
+      name: 'Category',
+      component: function(resolve) {
+        require(['./views/Main/Category.vue'], resolve)
+      },
+      meta: {
+        icon: 'category',
+        auth: true,
+        title: i18n.t('nav.category')
+      }
+    },
+    {
       path: '/staff',
       name: 'Staff',
       component: function(resolve) {

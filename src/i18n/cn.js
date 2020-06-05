@@ -38,13 +38,15 @@ export default {
     server_error: '服务器错误'
   },
   system_notes: {
-    upload_installer_memo: '此选项将允许您上传安装程序。 对于批量上传，请先压缩文件，然后再上传。 ',
+    upload_installer_memo: '此选项将允许您上传安装程序。 对于批量上传，请先压缩文件，然后再上传。',
+    upload_one_installer_memo: '该选项将允许您更改安装程序文件。',
     add_multiple_apps_memo: '此选项将允许您通过导入csv，xls或xlsx文件来创建多个应用程序。'
   },
   system_msg: {
     confirm_delete: '单击以确认删除 ',
     error: '错误',
-    exceed_file_size: '图标大小应小于1MB。'
+    exceed_file_size: '图标大小应小于1MB。',
+    no_data: '没有数据'
   },
   nav: {
     login: '登录',
@@ -55,6 +57,7 @@ export default {
     add_apps: '添加应用',
     websites: '网站',
     labels: '标签',
+    category: '类别',
     users: '使用者',
     staff: '员工',
     settings: '设定值'
@@ -79,7 +82,6 @@ export default {
     games: '游戏',
     software: '软体',
     hot: '新闻（热门）',
-    category: '类别',
     basic_introduction: '基本介绍',
     introduction: '简介',
     features: '功能',

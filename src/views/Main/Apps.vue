@@ -18,18 +18,16 @@
                <v-btn
                   color="primary"
                   dark
-                  
-                  class="mr-3" v-on="on">
+                  class="mr-3"
+                  v-on="on">
                   <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                  <v-icon v-on="on">cloud_upload</v-icon>
-
-                  </template>
-                  <span>{{$t('system_notes.upload_installer_memo')}}</span>
-                </v-tooltip>
+                    <template v-slot:activator="{ on }">
+                      <v-icon v-on="on">cloud_upload</v-icon>
+                    </template>
+                    <span>{{$t('system_notes.upload_installer_memo')}}</span>
+                  </v-tooltip>
                 </v-btn>
-                </template>
-
+              </template>
             <v-card>
               <validation-observer ref="form">
                 <v-card-title>
@@ -62,6 +60,7 @@
                   </v-btn>
                   <v-btn
                     color="blue darken-1"
+                    :loading="uploadLoading"
                     @click="uploadFile('upload')">{{ $t('actions.submit') }}
                   </v-btn>
                 </v-card-actions>
@@ -199,6 +198,7 @@
                 :label="`${$t('common.status')}`"
                 v-model="status"
                 placeholder=" "
+                clearable
                 outlined
                 dense>
                 <template slot="selection" slot-scope="data">
@@ -210,12 +210,21 @@
               </v-select>
             </div>
             <div style="width:200px;" class="mr-2">
+              <websites
+                type="filter"
+                :mode="'one'"
+                :website="query.website"
+                @website-select-multiple="websiteSelectMultiple">
+              </websites>
+            </div>
+            <div style="width:200px;" class="mr-2">
               <v-text-field
                 @input="search"
                 :label="`${$t('common.name')}`"
                 v-model="query.name"
                 placeholder=" "
                 outlined
+                clearable
                 dense>
               </v-text-field>
             </div>
@@ -280,8 +289,8 @@
                 <v-icon>touch_app</v-icon>
               </v-btn>
             </td>
-            <td>{{ item.name }}</td>
-            <td>{{ item.link }}</td>
+            <td class="align-center">{{ item.name }}</td>
+            <td class="align-center">{{ item.website || '-' }}</td>
             <td class="align-center justify-start layout">
               <v-switch value v-model="item.status"
                 @change="toggleStatus(item.id, item.status)">
@@ -322,12 +331,14 @@ import api from '@/api/apis'
 import $ from '../../utils/util'
 import Pagination from '@/components/Pagination'
 import SnackBar from '@/components/SnackBar'
+import Websites from '../../components/SelectWebsite.vue'
 import { debounce } from 'lodash'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 
 export default {
   name: 'Apps',
   components: {
+    Websites,
     Pagination,
     SnackBar,
     ValidationObserver,
@@ -337,6 +348,7 @@ export default {
     return {
       // dateRangeText: [],
       file: null,
+      uploadLoading: false,
       query: {},
       querySet: [],
       status: '',
@@ -378,8 +390,8 @@ export default {
         },
         {
           sortable: false,
-          text: this.$t('apps.link'),
-          value: 'link'
+          text: this.$t('nav.websites'),
+          value: 'website'
         },
         {
           sortable: false,
@@ -412,6 +424,10 @@ export default {
         this.$refs.pulling.rebase()
       },
       deep: true
+    },
+    websites(newObj) {
+      this.query.websites = newObj
+      this.submit()
     },
     status(newObj) {
       this.query.status = newObj
@@ -455,6 +471,7 @@ export default {
         this.created_at = [undefined, undefined]
       }
       this.status = this.$route.query.status || ''
+      this.websites = this.$route.query.websites || ''
       this.query = Object.assign({}, this.$route.query)
 
     },
@@ -469,13 +486,27 @@ export default {
       const isValid = await this.$refs.form.validate()
       if (isValid) {
         if (mode == 'upload') {
-        this.uploadFile = this.file
+          this.uploadLoading = true
+          const formData = new window.FormData()
+          formData.set('app_file', this.file)
+          this.$http.post(api.upload, formData).then(() => {
+            this.snackbar = {
+              color: 'success',
+              show: true,
+              text: `${this.$t('actions.upload')}: ${this.$t('status.success')}`
+            }
+            this.uploadLoading = false
+            this.uploadInstallerDialog = false
+          })
         // insert api
         } else {
         // insert api
-          this.uploadFile = this.file
+          // this.uploadFile = this.file
         }
       }
+    },
+    websiteSelectMultiple(val) {
+      this.query.websites = val
     },
     toggleStatus(){
       // insert api

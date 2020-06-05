@@ -20,6 +20,7 @@
       <validation-observer ref="form">
       <v-card>
       <v-container mt5>
+        <small>*{{$t('errors.required')}}</small>
           <v-row class="ml-1 mr-8">
             <v-col cols="12" md="8">
               <v-row>
@@ -38,25 +39,13 @@
                 </validation-provider>
                 <v-spacer></v-spacer>
                 <validation-provider style="width:338px;" rules="required" :name="$t('apps.type')">
-                  <v-select
-                    :error-messages="errors"
-                    slot-scope="{ errors }"
-                    :items="app_types"
-                    :label="`${$t('apps.type')}*`"
-                    prepend-icon="new_releases"
-                    v-model="apps.type"
-                    outlined dense
-                    placeholder=" ">
-                    <template slot="selection" slot-scope="data">
-                      <v-icon :color="data.item.color">{{ data.item.icon }}</v-icon>
-                      <span class="ml-3">{{ data.item.text }}</span>
-                    </template>
-                    <template slot="item" slot-scope="data">
-                      <v-icon :color="data.item.color">{{ data.item.icon }}</v-icon>
-                      <span class="ml-3">{{ data.item.text }}</span>
-                    </template>
-                  </v-select>
-              </validation-provider>
+                  <app-types
+                    req="true"
+                    :mode="'one'"
+                    :types="apps.types"
+                    @type-select-one="typeSelectOne">
+                  </app-types>
+                </validation-provider>
               </v-row>
               <v-row>
                 <validation-provider style="width:338px;" rules="required" :name="$t('apps.release_date')">
@@ -107,7 +96,7 @@
                 </validation-provider>
               </v-row>
               <v-row>
-                <validation-provider style="width:338px;" rules="required" :name="$t('apps.category')">
+                <validation-provider style="width:338px;" rules="required" :name="$t('nav.category')">
                   <categories
                     req="true"
                     :category="apps.category"
@@ -134,6 +123,7 @@
                     @label-select-multiple="labelSelectMultiple">
                   </labels>
                 </validation-provider>
+                
               </v-row>
             </v-col>
             <v-spacer></v-spacer>
@@ -162,24 +152,69 @@
                 </v-card-actions>
               </v-card>
             </v-col>
-            <v-flex>
-              <validation-provider style="width:748px;" rules="required" :name="$t('apps.download_link')">
-                <v-text-field
-                  @keyup="validateLink(apps.download_link)"
-                  :error-messages="errors"
-                  slot-scope="{ errors }"
-                  :label="`${$t('apps.download_link')}*`"
-                  dense
-                  outlined
-                  clear-icon="close"
-                  clearable
-                  v-model="apps.download_link">
-                </v-text-field>
-                <!-- <span>{{ invalid_link }}</span> -->
-              </validation-provider>
-            </v-flex>
           </v-row>
-          <small>*{{$t('errors.required')}}</small>
+          <v-card class="mb-5">
+            <v-card-text>
+            <v-dialog v-model="uploadInstallerDialog" persistent max-width="350">
+            <template v-slot:activator="{ on }">
+               <v-btn
+                  color="primary"
+                  dark
+                  class="mr-3"
+                  v-on="on">
+                 
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                      <span v-on="on"> {{$t('actions.change_file')}}</span>
+                    </template>
+                    <span>{{$t('system_notes.upload_one_installer_memo')}}</span>
+                  </v-tooltip>
+                </v-btn>
+              </template>
+            <v-card>
+              <validation-observer ref="uploadFileform">
+                <v-card-title>
+                  <!-- <v-icon class="mr-3">cloud_upload</v-icon> -->
+                    &nbsp;{{$t('actions.change_file')}}
+                </v-card-title>
+                <v-card-text>
+                  <v-icon small>info</v-icon>&nbsp;&nbsp;
+                  <small>{{ $t('system_notes.upload_one_installer_memo') }}</small>
+                </v-card-text>
+                <v-card-text>
+                  <v-spacer></v-spacer>
+                  <validation-provider style="width:310px;" rules="required" :name="$t('common.file')">
+                    <v-file-input
+                      outlined
+                      dense
+                      clearable
+                      :error-messages="errors"
+                      required
+                      slot-scope="{ errors }"
+                      v-model="file">    
+                    </v-file-input>
+                  </validation-provider>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="grey lighten-1"
+                    @click="uploadInstallerDialog = false">{{ $t('actions.close') }}
+                  </v-btn>
+                  <v-btn
+                    color="blue darken-1"
+                    :loading="uploadLoading"
+                    @click="uploadFile()">{{ $t('actions.submit') }}
+                  </v-btn>
+                </v-card-actions>
+              </validation-observer>
+            </v-card>
+          </v-dialog>
+            <!-- <v-icon>cloud_upload</v-icon>&nbsp;&nbsp; -->
+            <span>{{ $t('apps.download_link')}}: {{ apps.download_link || $t('system_msg.no_data') }}</span>
+             </v-card-text>
+          </v-card>
+          <v-spacer></v-spacer>
           <v-banner style="color:blue;">{{$t('apps.other_details')}}</v-banner>
           <v-flex>
             <v-card-title>{{$t('apps.basic_introduction')}}</v-card-title>
@@ -238,6 +273,7 @@ import api from '@/api/apis'
 import SnackBar from '@/components/SnackBar'
 import tinymce from '../../components/tinymce'
 import Categories from '../../components/SelectCategory.vue'
+import AppTypes from '../../components/SelectType.vue'
 import Labels from '../../components/SelectLabel.vue'
 import Websites from '../../components/SelectWebsite.vue'
 import $ from '../../utils/util'
@@ -248,6 +284,7 @@ export default {
   components: {
     Categories,
     Labels,
+    AppTypes,
     Websites,
     ValidationObserver,
     ValidationProvider,
@@ -281,33 +318,10 @@ export default {
           text: this.$route.meta.title,
           disabled: true
         }],
-      app_types: [
-        { icon: 'sports_esports',
-          text: this.$t('apps.games'),
-          color: 'orange',
-          value: 1}, 
-        { icon: 'android',
-          text: this.$t('apps.software'),
-          color: 'green',
-          value: 2},
-        { icon: 'whatshot',
-          text: this.$t('apps.hot'),
-          color: 'red',
-          value: 3}],
-      apps: {
-        name: 'GCash',
-        ratings: 5,
-        size: '12MB',
-        type: 2,
-        release_date:'2020-03-27T18:42:02.046828+08:00',
-        version: '0.10',
-        icon: '${require(../assets/logo.svg)}',
-        imageURI: '',
-        download_link: 'test',
-        basic_introduction: '守卫主公是一款以三国为背景的策略手游，拥有多种策略塔防玩法，数百位英雄武将供玩家选择。守卫主公还有四大职业给玩家选择，并且四大职业相互克制，是一款非常烧脑的策略手游。',
-        introduction: '守卫主公是一款以三国为背景的策略手游，拥有多种策略塔防玩法，数百位英雄武将供玩家选择。守卫主公还有四大职业给玩家选择，并且四大职业相互克制，是一款非常烧脑的策略手游。',
-        features: '<p>守卫主公是一款以三国为背景的策略手游，拥有多种策略塔防玩法，数百位英雄武将供玩家选择。守卫主公还有四大职业给玩家选择，并且四大职业相互克制，是一款非常烧脑的策略手游。</p>'
-      }
+      apps: {},
+      uploadInstallerDialog: false,
+      uploadLoading: false,
+      file: ''
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -332,16 +346,32 @@ export default {
   methods: {
     getAppDetails(id) {
       this.$http.get(`${this.appsApi}${id }/`).then((response) => {
-        console.log(response)
-        this.appId = response.id
-        console.log(this.appId)
+        this.apps = response
         // needed to display date properly
-        this.apps.release_date = new Date(this.apps.release_date).toISOString().substr(0, 10)
+        this.apps.release_date = this.apps.release_date ? new Date(this.apps.release_date).toISOString().substr(0, 10)  : ''
       }, response => {
           if (('' + response.status).indexOf('4') === 0) {
               this.$router.push('/login?next=' + this.$route.path)
           }
       })
+    },
+    async uploadFile() {
+      const isValid = await this.$refs.uploadFileform.validate()
+      if (isValid) {
+        this.uploadLoading = true
+        const formData = new window.FormData()
+        formData.set('app_file', this.file)
+        this.$http.put(`${api.apps}${this.apps.id}/`, formData).then(() => {
+          this.snackbar = {
+            color: 'success',
+            show: true,
+            text: `${this.$t('actions.upload')}: ${this.$t('status.success')}`
+          }
+          this.uploadLoading = false
+          this.uploadInstallerDialog = false
+        })
+        // insert api
+      }
     },
     uploadIcon (e) {
       // file size must less than 1mb
@@ -371,6 +401,9 @@ export default {
     changeFeaturesContent(val) {
       this.apps.features = val
     },
+    typeSelectOne(val) {
+      this.apps.type = val
+    },
     websiteSelectMultiple(val) {
       this.apps.websites = val
     },
@@ -380,23 +413,27 @@ export default {
     labelSelectMultiple(val) {
       this.apps.label = val
     },
-    validateLink(link) {
-      var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-        '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-        '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-        '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-      // }
-      // this.invalid_link = !!pattern.test(link)
-      // console.log(!!pattern.test(link))
-      return !!pattern.test(link);
-    },
     async saveApp() {
-      const isValid = await this.$refs.form.validate()
-      console.log(isValid)
+      // const isValid = await this.$refs.form.validate()
+      // console.log(isValid)
       console.log(this.apps)
       let formData = new window.FormData()
+      formData.set('apps', this.apps)
+      this.$http.put(`${api.upload}${this.apps.id}/`, formData).then(() => {
+          this.$refs.pulling.rebase()
+          this.snackbar = {
+            color: 'success',
+            show: true,
+            text: `${this.$t('actions.update')} - ${this.$t('nav.staff')}: ${this.$t('status.success')}`
+          }
+          this.close()
+        }, error => {
+          this.snackbar = {
+            color: 'red',
+            show: true,
+            text: error
+          }
+        })
       formData.set('apps', this.apps)
       console.log(formData)
       // validate link

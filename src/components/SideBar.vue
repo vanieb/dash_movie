@@ -123,11 +123,12 @@
         items: [
           { icon: 'apps', text: this.$t('nav.apps'), path: '/apps' },
           { icon: 'web', text: this.$t('nav.websites'), path: '/websites'},
+          { icon: 'category', text: this.$t('nav.category'), path: '/category'},
           { icon: 'label', text: this.$t('nav.labels'), path: '/label'},
           { heading: this.$t('nav.users') },
-          { icon: 'people', text: this.$t('nav.staff'), path: '/staff' },
-          { heading: this.$t('nav.settings') },
-          { icon: 'settings', text: this.$t('nav.settings') }
+          { icon: 'people', text: this.$t('nav.staff'), path: '/staff' }
+          // { heading: this.$t('nav.settings') },
+          // { icon: 'settings', text: this.$t('nav.settings') }
         ]
     }},
     computed: {

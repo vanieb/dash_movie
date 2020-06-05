@@ -1,19 +1,19 @@
 <template>
   <v-layout>
-    <ValidationProvider :name="$t('nav.websites')" style="width:338px;" :rules="`${req ? 'required' : ''}`" >
+    <ValidationProvider :name="$t('apps.type')" style="width:338px;" :rules="`${req ? 'required' : ''}`" >
       <v-select
         v-if="mode==='one'"
         :error-messages="errors"
         slot-scope="{ errors }"
         item-value="id"
         item-text="name"
-        :items="websites"
-        v-model="mywebsite"
+        :items="app_types"
+        v-model="mytypes"
         :disabled="!disabled"
         :label="elLabel"
         outlined
         dense
-        :prepend-icon="type === 'set' ? 'web' : '' "
+        :prepend-icon="type === 'set' ? 'new_releases' : '' "
         placeholder=" ">
       </v-select>
       <v-select v-else
@@ -21,8 +21,8 @@
         slot-scope= {errors}
         item-value="id"
         item-text="name"
-        :items="websites"
-        v-model="mywebsite"
+        :items="app_types"
+        v-model="mytypes"
         :disabled="!disabled"
         :label="elLabel"
         outlined
@@ -31,7 +31,7 @@
         chips
         clearable
         multiple
-        :prepend-icon="type === 'set' ? 'web' : '' "
+        :prepend-icon="type === 'set' ? 'new_releases' : '' "
         placeholder=" ">
         <template v-slot:selection="{ attrs, item, select, selected }">
           <v-chip
@@ -62,7 +62,7 @@ export default {
     req: {
       default: false
     },
-    website: {
+    types: {
       default: ''
     },
     mode: {
@@ -74,42 +74,43 @@ export default {
   },
   data() {
     return {
-      websites: [],
-      mywebsite: this.website,
-      elLabel: this.$t('nav.websites'),
+      app_types: [],
+      mytypes: this.types,
+      elLabel: this.$t('apps.type'),
       rules: ''
     }
   },
   watch: {
-    website() {
-      this.mywebsite = this.website
+    types() {
+      this.mytypes = this.types
     },
-    mywebsite(newObj) {
+    mytypes(newObj) {
       if (newObj !== undefined) {
-        this.$emit('website-select-one', newObj)
-        this.$emit('website-select-multiple', this.mywebsite, this.index)
+        this.$emit('type-select-one', newObj)
+        this.$emit('type-select-multiple', this.mytypes, this.index)
       }
     }
   },
   created() {
+    console.log(this.type)
     if (this.req) {
-      this.elLabel = `${this.$t('nav.websites')}*`
+      this.elLabel = `${this.$t('apps.type')}*`
     }
-    this.$http.get(api.websites + '?limit=400&offset=0').then(response => {
-      this.websites = response.results
+    this.$http.get(api.types + '?limit=400&offset=0').then(response => {
+      this.app_types = response.results
       if (this.default) {
-        this.website = this.default
+        this.type = this.default
       }
       let _this = this
       setTimeout(function() {
-        _this.mywebsite = _this.website
+        _this.mytypes = _this.types
       }, 100)
     })
   },
   methods: {
     remove (item) {
-      this.mywebsite.splice(this.mywebsite.indexOf(item), 1)
-      this.mywebsite = [...this.mywebsite]
+      this.mytypes.splice(this.mytypes.indexOf(item), 1)
+      this.mytypes = [...this.mytypes]
     }
   }
 }
