@@ -100,8 +100,14 @@ import SnackBar from '@/components/SnackBar'
 import VueCookie from 'vue-cookie'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 export default {
+  components: {
+    ValidationObserver,
+    ValidationProvider,
+    SnackBar
+  },
   data() {
     return {
+      changePasswordApi: api.changePassword,
       loading: false,
       user: {
         prev_password: '',
@@ -127,7 +133,7 @@ export default {
   },
   methods: {
     changePassword() {
-      this.$http.post(api.changePassword, this.user).then(() => {
+      this.$http.post(this.changePasswordApi, this.user).then(() => {
         setTimeout(() => {
           this.$router.push('/login')
             this.$cookie.delete('access_token')
@@ -154,11 +160,6 @@ export default {
       this.user.repeat_password = ''
       this.$refs.form.reset()
     }
-  },
-  components: {
-    ValidationObserver,
-    ValidationProvider,
-    SnackBar
   }
 }
 </script>

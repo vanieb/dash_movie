@@ -30,6 +30,11 @@
       </v-layout>
       <v-card>
       <v-container>
+        <v-row class="ml-3">
+          <span class="title"
+          >{{apps.name}}
+          </span>
+        </v-row>
         <v-row>
           <v-col cols="12" md="2">
             <v-img
@@ -40,29 +45,24 @@
             />
             <v-layout justify-center mb5>
               <v-rating
-                x-small dense color="orange" v-model="apps.ratings">
+                x-small dense color="orange" v-model="apps.star">
               </v-rating>
             </v-layout>
           </v-col>
           <v-col cols="12" md="2">
             <v-row>
-              <span class="title"
-              >{{apps.name}}
+              <span
+              >{{$t('apps.installer_size')}}: {{apps.size_mb}} MB
               </span>
             </v-row>
             <v-row>
               <span
-              >{{$t('apps.installer_size')}}: {{apps.size}}
+              >{{$t('apps.version')}}: {{apps.version || $t('system_msg.no_data')}}
               </span>
             </v-row>
             <v-row>
               <span
-              >{{$t('apps.version')}}: {{apps.version}}
-              </span>
-            </v-row>
-            <v-row>
-              <span
-              >{{$t('apps.release_date')}}: {{apps.release_date}}
+              >{{$t('apps.release_date')}}: {{apps.release_at  || $t('system_msg.no_data')}}
               </span>
             </v-row>
             <v-row>
@@ -81,18 +81,19 @@
                 <v-icon color="green">android</v-icon> {{$t('apps.software')}}</span>
                 <span  v-if="apps.type==3">
                 <v-icon color="red">whatshot</v-icon> {{$t('apps.hot')}}</span>
+                <span v-else> {{ $t('system_msg.no_data') }}</span>
               </v-card-text>
               <v-card-text >
-                <v-icon>category</v-icon> {{$t('apps.category')}}:
-                {{apps.category}}
-              </v-card-text>
+                <v-icon>web</v-icon> {{$t('nav.websites')}}:
+             </v-card-text>
             </v-card>
           </v-col>
           <v-col cols="12" md="4">
             <v-card>
-            <v-card-text >
-              <v-icon>web</v-icon> {{$t('nav.websites')}}:
-            </v-card-text>
+              <v-card-text >
+                <v-icon>category</v-icon> {{$t('nav.category')}}:
+                {{apps.category}}
+              </v-card-text>
              <v-card-text >
               <v-icon>label</v-icon> {{$t('nav.labels')}}:
             </v-card-text>
@@ -103,19 +104,19 @@
           <v-card-title> {{$t('apps.download_link')}}
             <v-icon color="blue" justify-end>file_copy</v-icon>
           </v-card-title>
-          <v-card-text>{{$t('apps.download_link')}}</v-card-text>
+          <v-card-text>{{ apps.download_link || $t('system_msg.no_data') }}</v-card-text>
         </v-flex>
         <v-flex>
           <v-card-title>{{$t('apps.basic_introduction')}}</v-card-title>
-          <v-card-text v-html="apps.basic_introduction"></v-card-text>
+          <v-card-text v-html="apps.basic_introduction  || $t('system_msg.no_data')"></v-card-text>
         </v-flex>
         <v-flex>
           <v-card-title>{{$t('apps.introduction')}}</v-card-title>
-          <v-card-text v-html="apps.introduction"></v-card-text>
+          <v-card-text v-html="apps.introduction  || $t('system_msg.no_data')"></v-card-text>
         </v-flex>
         <v-flex>
           <v-card-title>{{$t('apps.features')}}</v-card-title>
-          <v-card-text v-html="apps.features"></v-card-text>
+          <v-card-text v-html="apps.features  || $t('system_msg.no_data')"></v-card-text>
         </v-flex>
         </v-container>
       </v-card>
@@ -135,7 +136,7 @@ import SnackBar from '@/components/SnackBar'
 // import { ValidationObserver, ValidationProvider } from 'vee-validate'
 
 export default {
-  name: 'App Details',
+  name: 'AppDetails',
   components: {
     SnackBar
   },
@@ -144,14 +145,15 @@ export default {
       mode: 1,
       links: [],
       status: '',
+      apps: {},
       appsApi: api.apps,
+      downloadLinkApi: api.download_link,
       snackbar: {
         color: '',
         text: '',
         show: false,
       },
-      bread_crumbs: [
-        {
+      bread_crumbs: [{
           text: this.$t('nav.apps'),
           disabled: false,
           to: '/apps'
@@ -159,23 +161,8 @@ export default {
         {
           text: this.$t('nav.apps_detail'),
           disabled: true
-        }],
-      apps: {
-        name: 'GCash',
-        ratings: 5,
-        size: '12MB',
-        type: 2,
-        release_date:'2020-03-27T18:42:02.046828+08:00',
-        version: '0.10',
-        icon: '${require(../assets/logo.svg)}',
-        imageURI: '',
-        download_link: 'test',
-        category: '守卫主公是',
-        status: 1,
-        basic_introduction: '<ul><li>守卫主公是一款以三国为背景的策略手游，拥有多种策略塔防玩法，数百位英雄武将供玩家选择。守卫主公还有四大职业给玩家选择，并且四大职业相互克制，是一款非常烧脑的策略手游。</li><li>守卫主公是一款以三国为背景的策略手游，拥有多种策略塔防玩法，数百位英雄武将供玩家选择。守卫主公还有四大职业给玩家选择，并且四大职业相互克制，是一款非常烧脑的策略手游。</li></ul>',
-        introduction: '<ul><li>守卫主公是一款以三国为背景的策略手游，拥有多种策略塔防玩法，数百位英雄武将供玩家选择。守卫主公还有四大职业给玩家选择，并且四大职业相互克制，是一款非常烧脑的策略手游。</li><li>守卫主公是一款以三国为背景的策略手游，拥有多种策略塔防玩法，数百位英雄武将供玩家选择。守卫主公还有四大职业给玩家选择，并且四大职业相互克制，是一款非常烧脑的策略手游。</li></ul>',
-        features: '<ul><li>守卫主公是一款以三国为背景的策略手游，拥有多种策略塔防玩法，数百位英雄武将供玩家选择。守卫主公还有四大职业给玩家选择，并且四大职业相互克制，是一款非常烧脑的策略手游。</li><li>守卫主公是一款以三国为背景的策略手游，拥有多种策略塔防玩法，数百位英雄武将供玩家选择。守卫主公还有四大职业给玩家选择，并且四大职业相互克制，是一款非常烧脑的策略手游。</li></ul>'
-      }
+        }
+      ]
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -187,14 +174,14 @@ export default {
   methods: {
     getAppDetails(id) {
       this.$http.get(`${this.appsApi}${id }/`).then((response) => {
-        console.log(response)
-        this.apps.release_date = new Date(this.apps.release_date).toISOString().substr(0, 10)
+        this.apps = response
+        this.apps.release_date = new Date(this.apps.created_at).toISOString().substr(0, 10)
       }, response => {
           if (('' + response.status).indexOf('4') === 0) {
               this.$router.push('/login?next=' + this.$route.path)
           }
       })
-    },
+    }
     // validateLink(link) {
     //   var pattern = new RegExp(/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi)
     //   return pattern.test(link)

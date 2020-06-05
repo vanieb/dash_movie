@@ -12,11 +12,14 @@ const auth = `${host}authentication/v1/`
 export default {
   login: `${auth}login`,
   my: `${auth}my`,
-  changePassword: `${auth}password/`,
+  changePassword: `${auth}password`,
   logout: `${auth}logout`,
   refresh_token: `${auth}login/refresh/`,
   apps: `${apps}`,
+  upload: `${apps}upload/`,
+  download_link: `${apps}download/`,
   websites: `${apps}websites/`,
+  types: `${apps}types/`,
   categories: `${apps}categories/`,
   labels: `${apps}label`,
   staff: `${host}accounts/v1/staff/`
