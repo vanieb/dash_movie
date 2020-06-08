@@ -116,16 +116,16 @@
                 <template v-slot:activator="{ on }">
                   <v-icon color="red" small v-on="on">delete</v-icon>
                 </template>
-              <v-list dark>
-                <v-list-item @click="deleteStaff(item.id, true, $event)">
-                  <v-list-item-title>
-                    <v-icon class="mr-2" color="orange">warning</v-icon>
-                    {{ $t('system_msg.confirm_delete') }}
-                    <strong>{{ item.user.username }}</strong>
-                  </v-list-item-title>
-                </v-list-item>
-              </v-list>
-          </v-menu>
+                <v-list dark>
+                  <v-list-item @click="deleteStaff(item.id, true, $event)">
+                    <v-list-item-title>
+                      <v-icon class="mr-2" color="orange">warning</v-icon>
+                      {{ $t('system_msg.confirm_delete') }}
+                      <strong>{{ item.user.username }}</strong>
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
             </td>
           </tr>
         </tbody>
