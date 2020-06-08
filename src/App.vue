@@ -53,12 +53,10 @@ export default {
         return
       }
       this.$http.get(api.my).then(response => {
-        if (response) {
-          this.username = response.username
-          window.document.cookie = `username=${this.username}`
-          this.setUpAuth()
-          this.setUpRouterHooks()
-        }
+        this.username = response.username
+        window.document.cookie = `username=${this.username}`
+        this.setUpAuth()
+        this.setUpRouterHooks()
       })
     },
     refresh() {
