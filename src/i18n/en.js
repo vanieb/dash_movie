@@ -81,6 +81,7 @@ export default {
     installer_size: 'Installer Size',
     release_date: 'Release Date',
     version: 'Version',
+    icon: 'Icon',
     type: 'Type',
     games: 'Games',
     software: 'Software',

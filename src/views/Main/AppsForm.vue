@@ -212,6 +212,8 @@ export default {
   },
   data() {
     return {
+      level_changed: '',
+      website_changed: '',
       showImage: false,
       lang: '',
       mode: 1,
@@ -237,8 +239,10 @@ export default {
           disabled: true
         }],
       apps: {
-        types: '',
-        labels: '',
+        types: [],
+        websites: [],
+        categories: [],
+        labels: [],
         icon: ''
       },
       uploadInstallerDialog: false,
@@ -246,11 +250,12 @@ export default {
       file: '',
       selectOne: ['types', 'categories'],
       selectMultiple: ['labels', 'websites'],
+      selectFields: ['types', 'categories', 'labels', 'websites'],
       data: {
-        websites: false,
+        websites: '',
         types: false,
         categories: false,
-        labels: false
+        labels: ''
       }
     }
   },
@@ -283,7 +288,7 @@ export default {
           this.apps.imageURI = this.apps.icon
           this.change_icon = false
         }
-        this.selectOne.forEach(item => {
+        this.selectFields.forEach(item => {
           this.pushIDs(item)
         })
       }, response => {
@@ -313,11 +318,29 @@ export default {
 
       const fileRead = new FileReader()
       fileRead.onload = (e) => {
-        this.showImage = true
+        this.showImage = false
         this.apps.imageURI = e.target.result
+        this.showImage = true
       }
       fileRead.readAsDataURL(e.target.files[0])
+      
       this.apps.icon = e.target.files[0]
+      this.change_icon = true
+      // let formData = new window.FormData()
+      // formData.set('icon', this.apps.icon)
+      // this.$http.put(`${this.appsApi}${this.apps.id}/`, formData).then(() => {
+      //   this.snackbar = {
+      //     color: 'success',
+      //     show: true,
+      //     text: `${this.$t('actions.update')} - ${this.$t('apps.icon')}: ${this.$t('status.success')}`
+      //   }
+      // }, error => {
+      //   this.snackbar = {
+      //     color: 'red',
+      //     show: true,
+      //     text: error
+      //   }
+      // })
     },
     changeBasicContent(val) {
       this.apps.basic_introduction = val
@@ -332,8 +355,10 @@ export default {
       this.apps.types = val
     },
     websiteSelectMultiple(val) {
-      if (this.apps.websites != val) {
-        this.data.websites = true
+      if (val && val[0].name==undefined) {
+        this.website_changed = true
+      } else {
+        this.website_changed = false
       }
       this.apps.websites = val
     },
@@ -341,8 +366,10 @@ export default {
       this.apps.categories = val
     },
     labelSelectMultiple(val) {
-      if (this.apps.labels != val) {
-        this.data.labels = true
+      if (val && val[0].name==undefined) {
+        this.level_changed = true
+      } else {
+        this.level_changed = false
       }
       this.apps.labels = val
     },
@@ -351,11 +378,12 @@ export default {
       if (isValid) {
         let formData = new window.FormData()
         // Select Fields (Multiple) are added if value changed
-        this.selectMultiple.forEach(item => {
-          if (this.data[item]) {
-            formData.set(item, this.apps[item])
-          }
-        })
+        if (this.level_changed) {
+          formData.set('labels', this.apps.labels)
+        }
+        if (this.website_changed) {
+          formData.set('websites', this.apps.websites)
+        }
         // Select Fields (One) old values are sent if value did not change
         this.selectOne.forEach(item => {
           if (this.data[item]) {
@@ -374,20 +402,38 @@ export default {
         formData.set('introduction', this.apps.introduction)
         formData.set('basic_introduction', this.apps.basic_introduction)
         formData.set('features', this.apps.features)
-        this.$http.put(`${api.apps}${this.apps.id}/`, formData).then(response => {
-          this.snackbar = {
-            color: 'success',
-            show: true,
-            text: `${this.$t('actions.update')} - ${this.$t('nav.staff')}: ${this.$t('status.success')}`
-          }
-          this.$router.push(`/apps/${response.id}`)
-        }, error => {
-          this.snackbar = {
-            color: 'red',
-            show: true,
-            text: error
-          }
-        })
+        if (this.apps.id) {
+          this.$http.put(`${this.appsApi}${this.apps.id}/`, formData).then(response => {
+            this.snackbar = {
+              color: 'success',
+              show: true,
+              text: `${this.$t('actions.update')} - ${this.$t('nav.staff')}: ${this.$t('status.success')}`
+            }
+            this.$router.push(`/apps/${response.id}`)
+          }, error => {
+            this.snackbar = {
+              color: 'red',
+              show: true,
+              text: error
+            }
+          })
+        } else {
+          this.$http.post(this.appsApi, formData).then(response => {
+            this.snackbar = {
+              color: 'success',
+              show: true,
+              text: `${this.$t('actions.update')} - ${this.$t('nav.staff')}: ${this.$t('status.success')}`
+            }
+            this.$router.push(`/apps/${response.id}`)
+          }, error => {
+            this.snackbar = {
+              color: 'red',
+              show: true,
+              text: error
+            }
+          })
+        }
+        
       }
     }
   }
