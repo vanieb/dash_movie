@@ -9,14 +9,14 @@
             </template>
             <v-card>
               <v-card-title class="headline">
-                <v-icon class="mr-3">add_box</v-icon> &nbsp;
-                {{ $t('actions.add') }} - {{ $t('nav.labels') }}
+                <v-icon class="mr-3">{{ cardIcon }}</v-icon> &nbsp;
+                {{ cardTitle }}
               </v-card-title>
               <!-- FORM INPUTS -->
             <v-card-text>
               <v-layout wrap>
                 <v-flex xs12 >
-                  <validation-provider rules="required|min:6|max:15" :name="$t('common.name')">
+                  <validation-provider rules="required|max:15" :name="$t('common.name')">
                     <v-text-field
                       :counter="15"
                       :error-messages="errors"
@@ -35,7 +35,7 @@
                       :error-messages="errors"
                       :label="$t('common.remarks')"
                       placeholder=" "
-                      rows="2"
+                      rows="1"
                       slot-scope="{ errors }"
                       v-model="label.memo"
                     ></v-textarea>
@@ -161,7 +161,7 @@
             <td>{{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td>{{ item.memo || '-'}}</td>
             <td class="align-center justify-center">
-              <v-btn class="mr-2" icon :to="`/apps/${item.id}/edit`">
+              <v-btn class="mr-2" icon @click="updateLabel(item)">
                 <v-icon>edit</v-icon>
               </v-btn>
             </td>
@@ -206,6 +206,7 @@ export default {
   },
   data() {
     return {
+      name: '',
       showForm: false,
       query: {},
       querySet: [],
@@ -217,7 +218,7 @@ export default {
       date_menu: false,
       label: {
         name: '',
-        remarks: ''
+        memo: ''
       },
       statusOptions: [
         { text: this.$t('status.enabled'),
@@ -298,11 +299,6 @@ export default {
     })
     this.lang = $.getLanguage() == 'zh_CN' ? 'zh-cn' : ''
   },
-  filters: {
-    truncate: function(text, length, suffix) {
-      return text.substring(0, length) + suffix
-    }
-  },
   computed: {
     isQueryEmpty() {
       return $.compareQuery(this.query, {})
@@ -313,6 +309,15 @@ export default {
       } else {
         return ''
       }
+    },
+    cardIcon() {
+      return this.isUpdate ? 'edit' : 'add_box'
+    },
+    cardTitle() {
+      return this.isUpdate ? `${this.$t('actions.update')} - ${this.name}` : `${this.$t('actions.add')} - ${this.$t('nav.labels')}`
+    },
+    isUpdate() {
+      return this.name.length > 0
     }
   },
   methods: {
@@ -368,19 +373,28 @@ export default {
       this.created_at  = ['', '']
       this.dateRangeText = ''
     },
+    updateLabel(item) {
+      Object.assign(this.label, {
+        id: item.id,
+        name: item.name,
+        memo: item.memo
+      })
+      this.name = item.name
+      this.showForm = true
+    },
     async saveLabel() {
       const isValid = await this.$refs.form.validate()
       let labelResult = Object({
         name: this.label.name,
-        memo: this.staff.memo,
+        memo: this.label.memo,
       })
       if (isValid) {
-        if (this.staff.id) {
-        this.$http.put(`${this.labelsApi}${this.staff.id}/`, labelResult).then(() => {
+        if (this.label.id) {
+        this.$http.put(`${this.labelsApi}${this.label.id}/`, labelResult).then(() => {
           this.snackbar = {
             color: 'success',
             show: true,
-            text: `${this.$t('actions.update')}-${this.$t('nav.staff')}: ${this.$t('status.success')}`
+            text: `${this.$t('actions.update')}-${this.$t('nav.labels')}: ${this.$t('status.success')}`
           }
           this.$refs.pulling.rebase()
           this.close()
@@ -396,7 +410,7 @@ export default {
           this.snackbar = {
             color: 'success',
             show: true,
-            text: `${this.$t('actions.add')}-${this.$t('nav.staff')}: ${this.$t('status.success')}`
+            text: `${this.$t('actions.add')}-${this.$t('nav.labels')}: ${this.$t('status.success')}`
           }
           this.$refs.pulling.rebase()
           this.close()
@@ -416,6 +430,7 @@ export default {
       this.label.id = ''
       this.label.name = ''
       this.label.memo=''
+      this.name = ''
       this.submitting = false
       this.$refs.form.reset()
       this.showForm = false
