@@ -138,7 +138,7 @@
           <v-flex>
             <v-card-title>{{$t('apps.basic_introduction')}}</v-card-title>
             <v-card-text>
-              <tinymce
+              <tinymce v-if="this.showTinyMce"
                 name="basic"
                 :content="apps.basic_introduction"
                 @change-content="changeBasicContent"
@@ -149,7 +149,7 @@
           <v-flex>
             <v-card-title>{{$t('apps.introduction')}}</v-card-title>
             <v-card-text>
-              <tinymce
+              <tinymce v-if="showTinyMce"
                 name="introduction"
                 :content="apps.introduction"
                 @change-content="changeIntroContent"
@@ -159,7 +159,7 @@
           </v-flex>
           <v-flex>
             <v-card-title>{{$t('apps.features')}}</v-card-title><v-card-text>
-              <tinymce
+              <tinymce v-if="showTinyMce"
                 name="features"
                 :content="apps.features"
                 @change-content="changeFeaturesContent"
@@ -212,6 +212,7 @@ export default {
   },
   data() {
     return {
+      showTinyMce: '',
       level_changed: '',
       website_changed: '',
       showImage: false,
@@ -266,6 +267,7 @@ export default {
         vm.getAppDetails(appId)
       }
     })
+    next()
   },
   filters: {
     truncate: function(text, length, suffix) {
@@ -275,13 +277,11 @@ export default {
   created() {
     this.lang = $.getLanguage() == 'zh_CN' ? 'zh-cn' : ''
   },
-  computed: {
-
-  },
   methods: {
     getAppDetails(id) {
       this.$http.get(`${this.appsApi}${id }/`).then((response) => {
         this.apps = response
+        this.showTinyMce = true
         console.log(this.apps.basic_introduction)
         if (this.apps.icon) {
           this.showImage = true

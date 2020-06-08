@@ -4,6 +4,7 @@
        :init="init"
        language="navLang"
        v-model="myContent"
+       :initial-value="myContent"
        :name="name"
      />
    </div>
@@ -18,7 +19,7 @@
    components: {
      'editor': Editor
    },
-   props: ['content', 'name'],
+   props: ['content', 'name', 'id'],
     data () {
       return {
         myContent: this.content,
@@ -43,6 +44,7 @@
          'searchreplace visualblocks code fullscreen',
          'insertdatetime media table paste code help wordcount'
        ],
+
        toolbar:
          'undo redo | formatselect | bold italic backcolor | \
          alignleft aligncenter alignright alignjustify | \
@@ -50,6 +52,7 @@
           }
     },
     created() {
+      console.log(this.id)
       let _this = this
       setTimeout(function() {
         _this.myContent = _this.content
