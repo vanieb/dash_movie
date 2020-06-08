@@ -13,11 +13,6 @@
         <span v-if="!items">{{items}}</span>
         <tbody>
           <tr v-for="item in querySet" :key="item.id">
-            <td>
-              <v-btn class="mr-2" icon color="info" :to="`/apps/${item.id}`">
-                <v-icon>touch_app</v-icon>
-              </v-btn>
-            </td>
             <td>{{ item.name }}</td>
             <td>{{ item.code }}</td>
             <!-- <td class="align-center justify-start layout">
@@ -28,11 +23,11 @@
             <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td>{{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td>{{ item.memo || '-'}}</td>
-            <td class="align-center justify-center">
+            <!-- <td class="align-center justify-center">
               <v-btn class="mr-2" icon :to="`/apps/${item.id}/edit`">
                 <v-icon>edit</v-icon>
               </v-btn>
-            </td>
+            </td> -->
           </tr>
         </tbody>
         </template>
@@ -70,11 +65,6 @@ export default {
       headers: [
         {
           sortable: false,
-          text: '',
-          value: ''
-        },
-        {
-          sortable: false,
           text: this.$t('common.name'),
           value: 'name'
         },
@@ -103,11 +93,11 @@ export default {
           sortable: false,
           text: this.$t('common.remarks'),
           value: 'memo'
-        },
-        {
-          sortable: false,
-          text: this.$t('common.action')
         }
+        // {
+        //   sortable: false,
+        //   text: this.$t('common.action')
+        // }
       ]
     }
   },
