@@ -72,7 +72,7 @@
                 item-value="value"
                 :items="statusOptions"
                 :label="`${$t('common.status')}`"
-                v-model="status"
+                v-model="is_active"
                 placeholder=" "
                 outlined
                 dense>
@@ -151,11 +151,11 @@
         <tbody>
           <tr v-for="item in querySet" :key="item.id">
             <td>{{ item.name }}</td>
-            <!-- <td class="align-center justify-start layout">
-              <v-switch value v-model="item.status"
-                @change="toggleStatus(item.id, item.status)">
+            <td class="align-center justify-start layout">
+              <v-switch value v-model="item.is_active"
+                @change="toggleStatus(item.id, item.is_active)">
               </v-switch>
-            </td> -->
+            </td>
             <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td>{{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td>{{ item.memo || '-'}}</td>
@@ -163,6 +163,20 @@
               <v-btn class="mr-2" icon @click="updateCategory(item)">
                 <v-icon>edit</v-icon>
               </v-btn>
+              <v-menu offset-y>
+                <template v-slot:activator="{ on }">
+                  <v-icon color="red" small v-on="on">delete</v-icon>
+                </template>
+                <v-list dark>
+                  <v-list-item @click="deleteCategory(item.id, true, $event)">
+                    <v-list-item-title>
+                      <v-icon class="mr-2" color="orange">warning</v-icon>
+                      {{ $t('system_msg.confirm_delete') }}
+                      <strong>{{ item.name }}</strong>
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
             </td>
           </tr>
         </tbody>
@@ -209,7 +223,7 @@ export default {
       showForm: false,
       query: {},
       querySet: [],
-      status: '',
+      is_active: '',
       created_at: ['', ''],
       categoriesApi: api.categories,
       loading: true,
@@ -221,9 +235,9 @@ export default {
       },
       statusOptions: [
         { text: this.$t('status.enabled'),
-          value: 1}, 
+          value: true}, 
         { text: this.$t('status.disabled'),
-          value: 2}],
+          value: false}],
       snackbar: {
         color: '',
         text: '',
@@ -235,17 +249,12 @@ export default {
           text: this.$t('common.name'),
           value: 'name'
         },
-        // {
-        //   sortable: false,
-        //   text: this.$t('apps.link'),
-        //   value: 'code'
-        // },
-        // {
-        //   sortable: false,
-        //   text: this.$t('common.status'),
-        //   value: 'status',
-        //   width: '10%'
-        // },
+        {
+          sortable: false,
+          text: this.$t('common.status'),
+          value: 'status',
+          width: '10%'
+        },
         {
           sortable: false,
           text: this.$t('common.created_at'),
@@ -277,13 +286,13 @@ export default {
       },
       deep: true
     },
-    status(newObj) {
-      this.query.status = newObj
-      this.submit()
+    is_active(newObj) {
+      this.query.is_active = newObj
+      this.search()
     },
     created_at(newObj) {
       [this.query.created_at_after, this.query.created_at_before] = [...newObj]
-      this.submit()
+      this.search()
     }
   },
   created() {
@@ -321,7 +330,7 @@ export default {
       } else {
         this.created_at = [undefined, undefined]
       }
-      this.status = this.$route.query.status || ''
+      this.is_active = this.$route.query.is_active || ''
       this.query = Object.assign({}, this.$route.query)
 
     },
@@ -332,10 +341,28 @@ export default {
     queryParam(query) {
       this.query = Object.assign(this.query, query)
     },
-    // toggleStatus(){
-    //   // insert api
-    // },
+    toggleStatus(id, is_active){
+      this.$http.put(this.categoriesApi + id + '/', {
+        is_active: is_active
+      }).then((response) => {
+        let status_text = response.is_active ? this.$t('status.enabled') : this.$t('status.disabled')
+        this.snackbar = {
+          color: 'success',
+          show: true,
+          text: `[${this.$t('common.status')}]: ${status_text}`
+        }
+      }, error => {
+        this.snackbar = {
+          color: 'error',
+          show: true,
+          text: `${this.$t('system_msg.error')}: ${error}`
+        }
+      })
+      this.snackbar.show = false
+    },
     submit() {
+      console.log(this.$route.query.is_active)
+      // console.log($.compareQuery(this.query, this.$route.query))
       if (!$.compareQuery(this.query, this.$route.query)) {
         this.$refs.pulling.submit()
       }
@@ -363,6 +390,17 @@ export default {
       })
       this.name = item.name
       this.showForm = true
+    },
+    deleteCategory(id) {
+      this.snackbar.show=false
+      this.$http.delete(this.categoriesApi + id + '/').then(() => {
+        this.snackbar = {
+          color: 'success',
+          show: true,
+          text: `${this.$t('actions.delete')}: ${this.$t('status.success')}`
+        }
+        this.$refs.pulling.rebase()
+      })
     },
     async saveCategory() {
       const isValid = await this.$refs.form.validate()
