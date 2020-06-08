@@ -38,7 +38,7 @@
         <v-row>
           <v-col cols="12" md="2">
             <v-img
-              :src="require('../../assets/logo.svg')"
+              :src="`${apps.icon}`"
               class="my-1"
               contain
               height="100"
@@ -75,16 +75,21 @@
             <v-card>
               <v-card-text px-0>
                 <v-icon>new_releases</v-icon> {{$t('apps.type')}}:
-                <span  v-if="apps.type==1">
-                <v-icon color="orange">sports_esports</v-icon> {{$t('apps.games')}}</span>
-                <span  v-if="apps.type==2">
-                <v-icon color="green">android</v-icon> {{$t('apps.software')}}</span>
-                <span  v-if="apps.type==3">
-                <v-icon color="red">whatshot</v-icon> {{$t('apps.hot')}}</span>
+                <span v-if="apps.types">
+                  <span v-for="type in apps.types" :key="type.name">
+                    <v-chip class="ma-1" color="red" outlined>{{type.name}}</v-chip>
+                  </span>
+                </span>
                 <span v-else> {{ $t('system_msg.no_data') }}</span>
               </v-card-text>
               <v-card-text >
                 <v-icon>web</v-icon> {{$t('nav.websites')}}:
+                <span v-if="apps.websites">
+                  <span v-for="website in apps.websites" :key="website.website__name">
+                    <v-chip class="ma-1" color="orange" outlined>{{website.website__name}}</v-chip>
+                  </span>
+                </span>
+                <span v-else> {{ $t('system_msg.no_data') }}</span>
              </v-card-text>
             </v-card>
           </v-col>
@@ -92,19 +97,31 @@
             <v-card>
               <v-card-text >
                 <v-icon>category</v-icon> {{$t('nav.category')}}:
-                {{apps.category}}
+                <span v-if="apps.categories">
+                  <span v-for="category in apps.categories" :key="category.name">
+                    <v-chip class="ma-1" color="green" outlined>{{category.name}}</v-chip>
+                  </span>
+                </span>
+                <span v-else> {{ $t('system_msg.no_data') }}</span>
               </v-card-text>
              <v-card-text >
               <v-icon>label</v-icon> {{$t('nav.labels')}}:
+              <span v-if="apps.labels">
+                  <span v-for="label in apps.labels" :key="label.name">
+                    <v-chip class="ma-1" color="blue" outlined>{{label.name}}</v-chip>
+                  </span>
+                </span>
+                <span v-else> {{ $t('system_msg.no_data') }}</span>
             </v-card-text>
             </v-card>
           </v-col>          
         </v-row>
         <v-flex>
-          <v-card-title> {{$t('apps.download_link')}}
-            <v-icon color="blue" justify-end>file_copy</v-icon>
+          <v-card-title>{{$t('apps.download_link')}}
           </v-card-title>
-          <v-card-text>{{ apps.download_link || $t('system_msg.no_data') }}</v-card-text>
+          <v-card-text>
+            {{ apps.download_link || $t('system_msg.no_data') }}11
+          </v-card-text>
         </v-flex>
         <v-flex>
           <v-card-title>{{$t('apps.basic_introduction')}}</v-card-title>

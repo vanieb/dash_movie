@@ -96,10 +96,7 @@ export default {
       this.elLabel = `${this.$t('nav.websites')}*`
     }
     this.$http.get(api.websites + '?limit=400&offset=0').then(response => {
-      this.websites = response.results
-      if (this.default) {
-        this.website = this.default
-      }
+      this.websites = response.results 
       let _this = this
       setTimeout(function() {
         _this.mywebsite = _this.website

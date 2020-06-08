@@ -38,14 +38,20 @@
                   </v-text-field>
                 </validation-provider>
                 <v-spacer></v-spacer>
-                <validation-provider style="width:338px;" rules="required" :name="$t('apps.type')">
-                  <app-types
-                    req="true"
-                    :mode="'one'"
-                    :types="apps.types"
-                    @type-select-one="typeSelectOne">
-                  </app-types>
+                <validation-provider style="width:338px;" rules="required" :name="$t('apps.version')">
+                  <v-text-field
+                    :error-messages="errors"
+                    :label="`${$t('apps.version')}*`"
+                    placeholder=" "
+                    slot-scope="{ errors }"
+                    dense
+                    number
+                    prepend-icon="view_week"
+                    v-model.number="apps.version"
+                    outlined>
+                  </v-text-field>
                 </validation-provider>
+                
               </v-row>
               <v-row>
                 <validation-provider style="width:338px;" rules="required" :name="$t('apps.release_date')">
@@ -62,7 +68,7 @@
                   >
                     <template v-slot:activator="{ on }">
                       <v-text-field
-                        v-model="apps.release_date"
+                        v-model="apps.release_at"
                         :label="`${$t('apps.release_date')}*`"
                         persistent-hint
                         placeholder=" "
@@ -90,26 +96,36 @@
                     dense
                     number
                     prepend-icon="star"
-                    v-model.number="apps.rating"
+                    v-model.number="apps.star"
                     outlined>
                   </v-text-field>
                 </validation-provider>
               </v-row>
               <v-row>
+                <validation-provider style="width:338px;" rules="required" :name="$t('apps.type')">
+                  <app-types
+                    req="true"
+                    :mode="'one'"
+                    :types="apps.types"
+                    @type-select-one="typeSelectOne">
+                  </app-types>
+                </validation-provider>
+                <v-spacer></v-spacer>
                 <validation-provider style="width:338px;" rules="required" :name="$t('nav.category')">
                   <categories
                     req="true"
-                    :category="apps.category"
+                    :mode="'one'"
+                    :category="apps.categories"
                     @category-select-one="categorySelectOne">
                   </categories>
                 </validation-provider>
-                
-                <v-spacer></v-spacer>
-                <validation-provider style="width:338px;" rules="required" :name="$t('nav.websites')">
+              </v-row>
+              <v-row>
+                <validation-provider style="width:748px;" rules="required" :name="$t('nav.websites')">
                   <websites
                     req="true"
                     :mode="'multiple'"
-                    :website="apps.website"
+                    :website="apps.websites"
                     @website-select-multiple="websiteSelectMultiple">
                   </websites>
                 </validation-provider>
@@ -119,11 +135,10 @@
                   <labels
                     req="true"
                     :mode="'multiple'"
-                    :label="apps.label"
+                    :label="apps.labels"
                     @label-select-multiple="labelSelectMultiple">
                   </labels>
                 </validation-provider>
-                
               </v-row>
             </v-col>
             <v-spacer></v-spacer>
@@ -131,11 +146,11 @@
               <v-card>
                 <v-card-text>
                  <v-img
-                  v-if="apps.icon"
-                  :src="apps.imageURI"
+                  v-if="showImage"
+                  :src="`${apps.imageURI}`"
                   class="my-1"
                   contain
-                  height="100"/>
+                  height="100"></v-img>
                 </v-card-text>
                 <v-card-actions>
                   <v-layout justify-center>
@@ -293,6 +308,7 @@ export default {
   },
   data() {
     return {
+      showImage: false,
       lang: '',
       date_menu: false,
       dateFormatted: '',
@@ -318,10 +334,19 @@ export default {
           text: this.$route.meta.title,
           disabled: true
         }],
-      apps: {},
+      apps: {
+        types: '',
+        labels: '',
+        icon: '',
+        imageURI: ''
+      },
       uploadInstallerDialog: false,
       uploadLoading: false,
-      file: ''
+      file: '',
+      data: {
+        types: '',
+        categories: ''
+      }
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -347,8 +372,18 @@ export default {
     getAppDetails(id) {
       this.$http.get(`${this.appsApi}${id }/`).then((response) => {
         this.apps = response
+        if (this.apps.icon) {
+          this.showImage = true
+          this.apps.imageURI = this.apps.icon
+        }
+        if (this.apps.types.length > 0) {
+          this.data.types = this.apps.types[0].id
+        }
+        if (this.apps.categories.length > 0) {
+          this.data.categories = this.apps.categories[0].id
+        }
         // needed to display date properly
-        this.apps.release_date = this.apps.release_date ? new Date(this.apps.release_date).toISOString().substr(0, 10)  : ''
+        this.apps.release_at = this.apps.release_at ? new Date(this.apps.release_at.toISOString().substr(0, 10)) : ''
       }, response => {
           if (('' + response.status).indexOf('4') === 0) {
               this.$router.push('/login?next=' + this.$route.path)
@@ -384,13 +419,16 @@ export default {
         }
         return
       }
+
       const fileRead = new FileReader()
       fileRead.onload = (e) => {
+        this.showImage = true
         this.apps.imageURI = e.target.result
+        console.log(this.apps.imageURI)
       }
-
       fileRead.readAsDataURL(e.target.files[0])
       this.apps.icon = e.target.files[0]
+      console.log(this.apps.icon)
     },
     changeBasicContent(val) {
       this.apps.basic_introduction = val
@@ -402,24 +440,48 @@ export default {
       this.apps.features = val
     },
     typeSelectOne(val) {
-      this.apps.type = val
+      this.apps.types = val
     },
     websiteSelectMultiple(val) {
       this.apps.websites = val
     },
     categorySelectOne(val) {
-      this.apps.category = val
+      this.apps.categories = val
     },
     labelSelectMultiple(val) {
-      this.apps.label = val
+      console.log(val)
+      this.apps.labels = val
+      console.log(this.apps.labels)
     },
     async saveApp() {
       // const isValid = await this.$refs.form.validate()
       // console.log(isValid)
+      console.log('data to send')
       console.log(this.apps)
       let formData = new window.FormData()
-      formData.set('apps', this.apps)
-      this.$http.put(`${api.upload}${this.apps.id}/`, formData).then(() => {
+      formData.set('name', this.apps.name)
+      formData.set('websites', this.apps.websites)
+      console.log('data types')
+      console.log(this.data.types)
+      if (this.data.types){
+        formData.set('types', this.data.types)
+      } else {
+        formData.set('types', this.apps.types)
+      }
+      if (this.data.categories){
+        formData.set('categories', this.data.categories)
+      } else {
+        formData.set('categories', this.apps.categories)
+      }
+      formData.set('icon', this.apps.icon)
+      formData.set('star', this.apps.star)
+      formData.set('labels', this.apps.labels)
+      formData.set('version', this.apps.version)
+      formData.set('introduction', this.apps.introduction)
+      formData.set('basic_introduction', this.apps.basic_introduction)
+      formData.set('feature', this.apps.features)
+      // formData.set('release_at', this.apps.release_date)
+      this.$http.put(`${api.apps}${this.apps.id}/`, formData).then(() => {
           this.$refs.pulling.rebase()
           this.snackbar = {
             color: 'success',
@@ -434,7 +496,7 @@ export default {
             text: error
           }
         })
-      formData.set('apps', this.apps)
+      // formData.set('apps', this.apps)
       console.log(formData)
       // validate link
       // insert api

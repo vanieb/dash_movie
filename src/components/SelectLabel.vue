@@ -80,9 +80,10 @@ export default {
       this.mylabel = this.label
     },
     mylabel(newObj) {
+      console.log(this.mylabel.toString())
       if (newObj !== undefined) {
         this.$emit('label-select-one', newObj)
-        this.$emit('label-choose-multiple', this.mylabel, this.index)
+        this.$emit('label-select-multiple', this.mylabel, this.index)
       }
     }
   },
