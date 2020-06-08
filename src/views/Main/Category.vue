@@ -9,14 +9,14 @@
             </template>
             <v-card>
               <v-card-title class="headline">
-                <v-icon class="mr-3">add_box</v-icon> &nbsp;
-                {{ $t('actions.add') }} - {{ $t('nav.labels') }}
+                <v-icon class="mr-3">{{ cardIcon }}</v-icon> &nbsp;
+                {{ cardTitle }}
               </v-card-title>
               <!-- FORM INPUTS -->
             <v-card-text>
               <v-layout wrap>
                 <v-flex xs12 >
-                  <validation-provider rules="required|min:6|max:15" :name="$t('common.name')">
+                  <validation-provider rules="required|max:15" :name="$t('common.name')">
                     <v-text-field
                       :counter="15"
                       :error-messages="errors"
@@ -35,7 +35,7 @@
                       :error-messages="errors"
                       :label="$t('common.remarks')"
                       placeholder=" "
-                      rows="2"
+                      rows="1"
                       slot-scope="{ errors }"
                       v-model="category.memo"
                     ></v-textarea>
@@ -151,7 +151,6 @@
         <tbody>
           <tr v-for="item in querySet" :key="item.id">
             <td>{{ item.name }}</td>
-            <td>{{ item.code }}</td>
             <!-- <td class="align-center justify-start layout">
               <v-switch value v-model="item.status"
                 @change="toggleStatus(item.id, item.status)">
@@ -161,7 +160,7 @@
             <td>{{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td>{{ item.memo || '-'}}</td>
             <td class="align-center justify-center">
-              <v-btn class="mr-2" icon :to="`/apps/${item.id}/edit`">
+              <v-btn class="mr-2" icon @click="updateCategory(item)">
                 <v-icon>edit</v-icon>
               </v-btn>
             </td>
@@ -206,6 +205,7 @@ export default {
   },
   data() {
     return {
+      name: '',
       showForm: false,
       query: {},
       querySet: [],
@@ -217,7 +217,7 @@ export default {
       date_menu: false,
       category: {
         name: '',
-        remarks: ''
+        memo: ''
       },
       statusOptions: [
         { text: this.$t('status.enabled'),
@@ -230,11 +230,6 @@ export default {
         show: false,
       },
       headers: [
-        {
-          sortable: false,
-          text: '',
-          value: ''
-        },
         {
           sortable: false,
           text: this.$t('common.name'),
@@ -313,6 +308,15 @@ export default {
       } else {
         return ''
       }
+    },
+    cardIcon() {
+      return this.isUpdate ? 'edit' : 'add_box'
+    },
+    cardTitle() {
+      return this.isUpdate ? `${this.$t('actions.update')} - ${this.name}` : `${this.$t('actions.add')} - ${this.$t('nav.category')}`
+    },
+    isUpdate() {
+      return this.name.length > 0
     }
   },
   methods: {
@@ -332,18 +336,6 @@ export default {
     },
     queryParam(query) {
       this.query = Object.assign(this.query, query)
-    },
-    async uploadFile(mode) {
-      const isValid = await this.$refs.form.validate()
-      if (isValid) {
-        if (mode == 'upload') {
-        this.uploadFile = this.file
-        // insert api
-        } else {
-        // insert api
-          this.uploadFile = this.file
-        }
-      }
     },
     // toggleStatus(){
     //   // insert api
@@ -367,6 +359,15 @@ export default {
     clearDateRange() {
       this.created_at  = ['', '']
       this.dateRangeText = ''
+    },
+    updateCategory(item) {
+      Object.assign(this.category, {
+        id: item.id,
+        name: item.name,
+        memo: item.memo
+      })
+      this.name = item.name
+      this.showForm = true
     },
     async saveLabel() {
       const isValid = await this.$refs.form.validate()
