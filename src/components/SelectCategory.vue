@@ -1,6 +1,6 @@
 <template>
   <v-layout>
-    <ValidationProvider :name="$t('apps.category')" style="width:338px;" :rules="`${req ? 'required' : ''}`" >
+    <ValidationProvider :name="$t('nav.category')" style="width:338px;" :rules="`${req ? 'required' : ''}`" >
       <v-select
         v-if="mode==='one'"
         :error-messages="errors"
@@ -9,6 +9,7 @@
         item-text="name"
         :items="categories"
         v-model="mycategory"
+        :value="mycategory.name"
         :disabled="!disabled"
         :label="elLabel"
         outlined
@@ -92,13 +93,10 @@ export default {
     }
     this.$http.get(api.categories + '?limit=400&offset=0').then(response => {
       this.categories = response.results
-      if (this.default) {
-        this.category = this.default
-      }
       let _this = this
-      setTimeout(function() {
-        _this.mycategory = _this.category
-      }, 100)
+        setTimeout(function() {
+          _this.mycategory = _this.category[0]
+        }, 500)
     })
   },
   methods: {

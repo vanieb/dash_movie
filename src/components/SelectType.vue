@@ -23,6 +23,7 @@
         item-text="name"
         :items="app_types"
         v-model="mytypes"
+        :value="mytypes.id"
         :disabled="!disabled"
         :label="elLabel"
         outlined
@@ -92,18 +93,14 @@ export default {
     }
   },
   created() {
-    console.log(this.type)
     if (this.req) {
       this.elLabel = `${this.$t('apps.type')}*`
     }
     this.$http.get(api.types + '?limit=400&offset=0').then(response => {
       this.app_types = response.results
-      if (this.default) {
-        this.type = this.default
-      }
       let _this = this
       setTimeout(function() {
-        _this.mytypes = _this.types
+        _this.mytypes = _this.types[0]
       }, 100)
     })
   },

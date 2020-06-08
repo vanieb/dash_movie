@@ -289,15 +289,16 @@
                 <v-icon>touch_app</v-icon>
               </v-btn>
             </td>
-            <td class="align-center">{{ item.name }}</td>
-            <td class="align-center">{{ item.website || '-' }}</td>
-            <td class="align-center justify-start layout">
+            <td class="align-center" width="2s0%">{{ item.name }}</td>
+            <td class="align-center justify-center" width="50%">
+              <span v-for="website in item.websites" :key="website.website__name">{{website.website__name}}<br/></span>
+            </td>
+            <td class="align-center justify-start">
               <v-switch value v-model="item.status"
                 @change="toggleStatus(item.id, item.status)">
               </v-switch>
             </td>
-            <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
-            <td>{{ item.memo || '-'}}</td>
+            <td width="50%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td class="align-center justify-center">
               <v-btn class="mr-2" icon :to="`/apps/${item.id}/edit`">
                 <v-icon>edit</v-icon>
@@ -403,11 +404,6 @@ export default {
           sortable: false,
           text: this.$t('common.created_at'),
           value: 'created_at'
-        },
-        {
-          sortable: false,
-          text: this.$t('common.remarks'),
-          value: 'memo'
         },
         {
           sortable: false,

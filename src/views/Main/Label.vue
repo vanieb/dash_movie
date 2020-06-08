@@ -151,7 +151,6 @@
         <tbody>
           <tr v-for="item in querySet" :key="item.id">
             <td>{{ item.name }}</td>
-            <td>{{ item.code }}</td>
             <!-- <td class="align-center justify-start layout">
               <v-switch value v-model="item.status"
                 @change="toggleStatus(item.id, item.status)">
@@ -231,11 +230,6 @@ export default {
         show: false,
       },
       headers: [
-        {
-          sortable: false,
-          text: '',
-          value: ''
-        },
         {
           sortable: false,
           text: this.$t('common.name'),
