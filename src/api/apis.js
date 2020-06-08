@@ -8,19 +8,20 @@ const host =  process.env.VUE_APP_API_URL
 
 const apps = `${host}apps/v1/`
 const auth = `${host}authentication/v1/`
+const websites = `${host}websites/v1/`
 
 export default {
   login: `${auth}login`,
   my: `${auth}my`,
   changePassword: `${auth}password`,
   logout: `${auth}logout`,
-  refresh_token: `${auth}login/refresh/`,
+  refresh_token: `${auth}login/refresh`,
   apps: `${apps}`,
   upload: `${apps}upload/`,
   download_link: `${apps}download/`,
-  websites: `${apps}websites/`,
-  types: `${apps}types/`,
-  categories: `${apps}categories/`,
-  labels: `${apps}label`,
+  websites: `${websites}`,
+  types: `${websites}types/`,
+  categories: `${websites}categories/`,
+  labels: `${websites}labels/`,
   staff: `${host}accounts/v1/staff/`
 }

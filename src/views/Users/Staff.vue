@@ -336,6 +336,7 @@ export default {
       this.staff.username = ''
       this.staff.password=''
       this.staff.memo = ''
+      this.username = ''
       this.submitting = false
       this.$refs.form.reset()
       this.showForm = false
