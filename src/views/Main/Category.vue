@@ -56,7 +56,7 @@
               <v-btn
                 color="blue darken-1"
                 :loading="submitting"
-                @click="saveLabel"
+                @click="saveCategory"
               >{{ $t('actions.save') }}</v-btn>
             </v-card-actions>
             </v-card>
@@ -293,11 +293,6 @@ export default {
     })
     this.lang = $.getLanguage() == 'zh_CN' ? 'zh-cn' : ''
   },
-  filters: {
-    truncate: function(text, length, suffix) {
-      return text.substring(0, length) + suffix
-    }
-  },
   computed: {
     isQueryEmpty() {
       return $.compareQuery(this.query, {})
@@ -369,7 +364,7 @@ export default {
       this.name = item.name
       this.showForm = true
     },
-    async saveLabel() {
+    async saveCategory() {
       const isValid = await this.$refs.form.validate()
       let categoryResult = Object({
         name: this.category.name,
