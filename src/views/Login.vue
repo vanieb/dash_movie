@@ -113,6 +113,11 @@ export default {
           text: error
         }
       })
+      this.snackbar = {
+        color: '',
+        text: '',
+        show: false
+      }
     }
   }
 }
