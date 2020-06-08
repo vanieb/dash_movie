@@ -417,6 +417,7 @@ export default {
       this.category.id = ''
       this.category.name = ''
       this.category.memo=''
+      this.name = ''
       this.submitting = false
       this.$refs.form.reset()
       this.showForm = false
