@@ -291,7 +291,7 @@
             </td>
             <td class="align-center" width="2s0%">{{ item.name }}</td>
             <td class="align-center justify-center" width="50%">
-              <span v-for="website in item.websites" :key="website.website__name">{{website.website__name}}<br/></span>
+              <span v-for="website in item.websites" :key="website.id">{{website.name}}<br/></span>
             </td>
             <td class="align-center justify-start">
               <v-switch value v-model="item.status"

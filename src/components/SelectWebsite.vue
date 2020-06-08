@@ -1,52 +1,50 @@
 <template>
-  <v-layout>
-    <ValidationProvider :name="$t('nav.websites')" style="width:338px;" :rules="`${req ? 'required' : ''}`" >
-      <v-select
-        v-if="mode==='one'"
-        :error-messages="errors"
-        slot-scope="{ errors }"
-        item-value="id"
-        item-text="name"
-        :items="websites"
-        v-model="mywebsite"
-        :disabled="!disabled"
-        :label="elLabel"
-        outlined
-        dense
-        :prepend-icon="type === 'set' ? 'web' : '' "
-        placeholder=" ">
-      </v-select>
-      <v-select v-else
-        :error-messages="errors"
-        slot-scope= {errors}
-        item-value="id"
-        item-text="name"
-        :items="websites"
-        v-model="mywebsite"
-        :disabled="!disabled"
-        :label="elLabel"
-        outlined
-        dense
-        attach
-        chips
-        clearable
-        multiple
-        :prepend-icon="type === 'set' ? 'web' : '' "
-        placeholder=" ">
-        <template v-slot:selection="{ attrs, item, select, selected }">
-          <v-chip
-            small chip
-            v-bind="attrs"
-            :input-value="selected"
-            close
-            @click="select"
-            @click:close="remove(item)"
-            >{{ item.name }}
-          </v-chip>
-        </template>
-      </v-select>
-    </ValidationProvider>
-  </v-layout>
+  <ValidationProvider :name="$t('nav.websites')" :rules="`${req ? 'required' : ''}`" >
+    <v-select
+      v-if="mode==='one'"
+      :error-messages="errors"
+      slot-scope="{ errors }"
+      item-value="id"
+      item-text="name"
+      :items="websites"
+      v-model="mywebsite"
+      :disabled="!disabled"
+      :label="elLabel"
+      outlined
+      dense
+      :prepend-icon="type === 'set' ? 'web' : '' "
+      placeholder=" ">
+    </v-select>
+    <v-select v-else
+      :error-messages="errors"
+      slot-scope= {errors}
+      item-value="id"
+      item-text="name"
+      :items="websites"
+      v-model="mywebsite"
+      :disabled="!disabled"
+      :label="elLabel"
+      outlined
+      dense
+      attach
+      chips
+      clearable
+      multiple
+      :prepend-icon="type === 'set' ? 'web' : '' "
+      placeholder=" ">
+      <template v-slot:selection="{ attrs, item, select, selected }">
+        <v-chip
+          small chip
+          v-bind="attrs"
+          :input-value="selected"
+          close
+          @click="select"
+          @click:close="remove(item)"
+          >{{ item.name }}
+        </v-chip>
+      </template>
+    </v-select>
+  </ValidationProvider>
 </template>
 <script>
 import { ValidationProvider } from "vee-validate"

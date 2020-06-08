@@ -48,6 +48,8 @@
                 x-small dense color="orange" v-model="apps.star">
               </v-rating>
             </v-layout>
+            <small><v-icon>event</v-icon> {{apps.created_at | moment("YYYY-MM-DD HH:mm:ss") }}
+            </small>
           </v-col>
           <v-col cols="12" md="2">
             <v-row>
@@ -62,7 +64,7 @@
             </v-row>
             <v-row>
               <span
-              >{{$t('apps.release_date')}}: {{apps.release_at  || $t('system_msg.no_data')}}
+              >{{$t('apps.release_date')}}: {{apps.created_at | moment("YYYY-MM-DD HH:mm:ss") }}
               </span>
             </v-row>
             <v-row>
@@ -85,8 +87,8 @@
               <v-card-text >
                 <v-icon>web</v-icon> {{$t('nav.websites')}}:
                 <span v-if="apps.websites">
-                  <span v-for="website in apps.websites" :key="website.website__name">
-                    <v-chip class="ma-1" color="orange" outlined>{{website.website__name}}</v-chip>
+                  <span v-for="website in apps.websites" :key="website.id">
+                    <v-chip class="ma-1" color="orange" outlined>{{website.name}}</v-chip>
                   </span>
                 </span>
                 <span v-else> {{ $t('system_msg.no_data') }}</span>
@@ -117,11 +119,67 @@
           </v-col>          
         </v-row>
         <v-flex>
-          <v-card-title>{{$t('apps.download_link')}}
-          </v-card-title>
-          <v-card-text>
-            {{ apps.download_link || $t('system_msg.no_data') }}11
-          </v-card-text>
+          <v-card class="mb-5">
+            <v-card-text>
+            <v-dialog v-model="uploadInstallerDialog" persistent max-width="350">
+            <template v-slot:activator="{ on }">
+               <v-btn
+                  color="primary"
+                  dark
+                  class="mr-3"
+                  v-on="on">
+                 
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                      <span v-on="on"> {{$t('actions.change_file')}}</span>
+                    </template>
+                    <span>{{$t('system_notes.upload_one_installer_memo')}}</span>
+                  </v-tooltip>
+                </v-btn>
+              </template>
+            <v-card>
+              <validation-observer ref="uploadFileform">
+                <v-card-title>
+                  <!-- <v-icon class="mr-3">cloud_upload</v-icon> -->
+                    &nbsp;{{$t('actions.change_file')}}
+                </v-card-title>
+                <v-card-text>
+                  <v-icon small>info</v-icon>&nbsp;&nbsp;
+                  <small>{{ $t('system_notes.upload_one_installer_memo') }}</small>
+                </v-card-text>
+                <v-card-text>
+                  <v-spacer></v-spacer>
+                  <validation-provider style="width:310px;" rules="required" :name="$t('common.file')">
+                    <v-file-input
+                      outlined
+                      dense
+                      clearable
+                      :error-messages="errors"
+                      required
+                      slot-scope="{ errors }"
+                      v-model="file">    
+                    </v-file-input>
+                  </validation-provider>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="grey lighten-1"
+                    @click="uploadInstallerDialog = false">{{ $t('actions.close') }}
+                  </v-btn>
+                  <v-btn
+                    color="blue darken-1"
+                    :loading="uploadLoading"
+                    @click="uploadFile()">{{ $t('actions.submit') }}
+                  </v-btn>
+                </v-card-actions>
+              </validation-observer>
+            </v-card>
+          </v-dialog>
+            <!-- <v-icon>cloud_upload</v-icon>&nbsp;&nbsp; -->
+            <span>{{ $t('apps.download_link')}}: {{ apps.download_link || $t('system_msg.no_data') }}</span>
+             </v-card-text>
+          </v-card>
         </v-flex>
         <v-flex>
           <v-card-title>{{$t('apps.basic_introduction')}}</v-card-title>
@@ -150,21 +208,23 @@
 <script>
 import api from '@/api/apis'
 import SnackBar from '@/components/SnackBar'
-// import { ValidationObserver, ValidationProvider } from 'vee-validate'
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
 
 export default {
   name: 'AppDetails',
   components: {
-    SnackBar
+    SnackBar,
+    ValidationObserver,
+    ValidationProvider
   },
   data() {
     return {
       mode: 1,
-      links: [],
-      status: '',
+      file: '',
       apps: {},
       appsApi: api.apps,
-      downloadLinkApi: api.download_link,
+      uploadInstallerDialog: false,
+      uploadLoading: false,
       snackbar: {
         color: '',
         text: '',
@@ -198,11 +258,25 @@ export default {
               this.$router.push('/login?next=' + this.$route.path)
           }
       })
+    },
+    async uploadFile() {
+      const isValid = await this.$refs.uploadFileform.validate()
+      if (isValid) {
+        this.uploadLoading = true
+        const formData = new window.FormData()
+        formData.set('app_file', this.file)
+        this.$http.put(`${api.apps}${this.apps.id}/`, formData).then(() => {
+          this.snackbar = {
+            color: 'success',
+            show: true,
+            text: `${this.$t('actions.change_file')}: ${this.$t('status.success')}`
+          }
+          this.uploadLoading = false
+          this.uploadInstallerDialog = false
+        })
+        // insert api
+      }
     }
-    // validateLink(link) {
-    //   var pattern = new RegExp(/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi)
-    //   return pattern.test(link)
-    // },
   }
 }
 </script>

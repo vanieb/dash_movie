@@ -141,6 +141,30 @@ export default new Router({
       }
     },
     {
+      path: '/rank',
+      name: 'Rank',
+      component: function(resolve) {
+        require(['./views/Main/Rank.vue'], resolve)
+      },
+      meta: {
+        icon: 'format_list_numbered',
+        auth: true,
+        title: i18n.t('nav.rank')
+      }
+    },
+    {
+      path: '/recommended',
+      name: 'Recommended',
+      component: function(resolve) {
+        require(['./views/Main/Recommended.vue'], resolve)
+      },
+      meta: {
+        icon: 'star_outline',
+        auth: true,
+        title: i18n.t('nav.recommended')
+      }
+    },
+    {
       path: '/staff',
       name: 'Staff',
       component: function(resolve) {

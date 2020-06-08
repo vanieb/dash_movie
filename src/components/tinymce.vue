@@ -50,7 +50,6 @@
           }
     },
     created() {
-
       let _this = this
       setTimeout(function() {
         _this.myContent = _this.content

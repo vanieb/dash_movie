@@ -59,6 +59,8 @@ export default {
     websites: 'Websites',
     labels: 'Labels',
     category: 'Categories',
+    rank: 'Rank',
+    recommended: 'Recommended',
     users: 'Users',
     staff: 'Staff',
     settings: 'Settings'

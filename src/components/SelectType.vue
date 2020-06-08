@@ -1,5 +1,4 @@
 <template>
-  <v-layout>
     <ValidationProvider :name="$t('apps.type')" style="width:338px;" :rules="`${req ? 'required' : ''}`" >
       <v-select
         v-if="mode==='one'"
@@ -47,7 +46,6 @@
         </template>
       </v-select>
     </ValidationProvider>
-  </v-layout>
 </template>
 <script>
 import { ValidationProvider } from "vee-validate"
