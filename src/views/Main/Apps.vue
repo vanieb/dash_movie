@@ -290,7 +290,6 @@
               </v-btn>
             </td>
             <td class="align-center" width="20%">{{ item.name }}</td>
-            <td class="align-center" width="20%">{{ item.types[0].name }}</td>
             <!-- <td class="align-center justify-center" width="50%">
               <span v-for="website in item.websites" :key="website.id">{{website.name}}<br/></span>
             </td> -->
