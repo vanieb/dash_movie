@@ -95,8 +95,8 @@ export default {
       this.categories = response.results
       let _this = this
         setTimeout(function() {
-          _this.mycategory = _this.category[0] || ''
-        }, 500)
+          _this.mycategory = _this.category[0]
+        }, 100)
     })
   },
   methods: {

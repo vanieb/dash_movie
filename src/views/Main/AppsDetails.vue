@@ -62,14 +62,24 @@
               >{{$t('apps.version')}}: {{apps.version || $t('system_msg.no_data')}}
               </span>
             </v-row>
-            <v-row>
+            <!-- <v-row>
               <span
               >{{$t('apps.release_date')}}: {{apps.created_at | moment("YYYY-MM-DD HH:mm:ss") }}
+              </span>
+            </v-row> -->
+            <v-row>
+              <span
+              >{{$t('common.status')}}: {{apps.status}}
               </span>
             </v-row>
             <v-row>
               <span
-              >{{$t('common.status')}}: {{apps.status}}
+              >{{$t('apps.is_rank')}}: {{apps.status}}
+              </span>
+            </v-row>
+            <v-row>
+              <span
+              >{{$t('apps.is_recommended')}}: {{apps.status}}
               </span>
             </v-row>
           </v-col>

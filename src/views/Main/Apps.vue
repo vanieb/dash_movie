@@ -3,13 +3,13 @@
     <v-container>
       <v-layout>
         <div d-inline-block>
-          <v-layout justify-start>
+          <!-- <v-layout justify-start>
             <v-btn
               color="primary"
               dark to="/apps/add">
               <v-icon class="mr-3">library_add</v-icon> &nbsp;{{ $t('actions.add') }}
             </v-btn>
-          </v-layout> 
+          </v-layout>  -->
         </div>
         <v-layout justify-end>
           <!-- Installer Upload -->
