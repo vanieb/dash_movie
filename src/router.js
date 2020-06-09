@@ -141,10 +141,10 @@ export default new Router({
       }
     },
     {
-      path: '/rank',
-      name: 'Rank',
+      path: '/leaderboard',
+      name: 'Leaderboard',
       component: function(resolve) {
-        require(['./views/Main/Rank.vue'], resolve)
+        require(['./views/Main/Leaderboard.vue'], resolve)
       },
       meta: {
         icon: 'format_list_numbered',

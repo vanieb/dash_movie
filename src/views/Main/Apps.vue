@@ -209,14 +209,14 @@
                 </template>
               </v-select>
             </div>
-            <div style="width:200px;" class="mr-2">
+            <!-- <div style="width:200px;" class="mr-2">
               <websites
                 type="filter"
                 :mode="'one'"
                 :website="query.website"
                 @website-select-multiple="websiteSelectMultiple">
               </websites>
-            </div>
+            </div> -->
             <div style="width:200px;" class="mr-2">
               <v-text-field
                 @input="search"
@@ -290,9 +290,9 @@
               </v-btn>
             </td>
             <td class="align-center" width="20%">{{ item.name }}</td>
-            <td class="align-center justify-center" width="50%">
+            <!-- <td class="align-center justify-center" width="50%">
               <span v-for="website in item.websites" :key="website.id">{{website.name}}<br/></span>
-            </td>
+            </td> -->
             <td class="align-center justify-start">
               <v-switch value v-model="item.is_active"
                 @change="toggle(item.id, item.status, 'is_active')">
@@ -342,14 +342,14 @@ import api from '@/api/apis'
 import $ from '../../utils/util'
 import Pagination from '@/components/Pagination'
 import SnackBar from '@/components/SnackBar'
-import Websites from '../../components/SelectWebsite.vue'
+// import Websites from '../../components/SelectWebsite.vue'
 import { debounce } from 'lodash'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 
 export default {
   name: 'Apps',
   components: {
-    Websites,
+    // Websites,
     Pagination,
     SnackBar,
     ValidationObserver,

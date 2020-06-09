@@ -24,7 +24,10 @@ export default {
     upload: '上传',
     create_multiple: '添加多个',
     search: '搜索',
-    submit: '提交'
+    submit: '提交',
+    change_file: '变更档案',
+    sort: '分类',
+    cancel: '取消'
   },
   status: {
     success: '成功',

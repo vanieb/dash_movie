@@ -73,7 +73,7 @@ import draggable from 'vuedraggable'
 import SnackBar from '@/components/SnackBar'
 
 export default {
-  name: 'Recommended',
+  name: 'Leaderboard',
   components: {
     draggable,
     SnackBar
@@ -87,7 +87,7 @@ export default {
       filteredQuerySet: [],
       typesApi: api.types,
       appsApi: api.apps,
-      leaderboardsApi: `${api.websites}update_recommended`,
+      leaderboardsApi: `${api.websites}update_rank`,
       snackbar: {
         color: '',
         text: '',
@@ -133,7 +133,7 @@ export default {
     },
     getApps(type) {
       this.type = type
-      this.$http.get(`${this.appsApi}?ordering=rank&is_recommended=true&types=${type}`).then(response => {
+      this.$http.get(`${this.appsApi}?ordering=rank&is_rank=true&types=${type}`).then(response => {
         this.filteredQuerySet = response.results
         .sort((a, b) => {
           return a['rank'] - b['rank']
