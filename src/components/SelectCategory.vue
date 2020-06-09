@@ -96,7 +96,7 @@ export default {
       let _this = this
         setTimeout(function() {
           _this.mycategory = _this.category[0]
-        }, 500)
+        }, 100)
     })
   },
   methods: {

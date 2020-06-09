@@ -1,6 +1,11 @@
 <template>
   <v-layout wrap>
-    <v-container>
+    <v-container v-if="loading">
+    <v-layout justify-center align-center >
+      <v-progress-circular indeterminate color="blue"></v-progress-circular>
+    </v-layout>
+    </v-container>
+    <v-container v-else>
       <v-layout justify-start>
         <v-breadcrumbs :items="bread_crumbs" style="padding:12px;">
           <template v-slot:divider>
@@ -222,7 +227,7 @@ export default {
       links: [],
       filteredLinks: [],
       appsApi: api.apps,
-      loading: true,
+      loading: false,
       submitting: false,
       snackbar: {
         color: '',
@@ -267,7 +272,6 @@ export default {
         vm.getAppDetails(appId)
       }
     })
-    next()
   },
   filters: {
     truncate: function(text, length, suffix) {
@@ -296,6 +300,7 @@ export default {
               this.$router.push('/login?next=' + this.$route.path)
           }
       })
+      this.loading = false
     },
     pushIDs(item){
       let val = []
