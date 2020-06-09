@@ -58,6 +58,8 @@ export default {
     websites: '网站',
     labels: '标签',
     category: '类别',
+    leaderboard: '排行榜',
+    recommended: '推荐',
     users: '使用者',
     staff: '员工',
     settings: '设定值'

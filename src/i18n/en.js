@@ -59,7 +59,7 @@ export default {
     websites: 'Websites',
     labels: 'Labels',
     category: 'Categories',
-    rank: 'Rank',
+    leaderboard: 'Leaderboard',
     recommended: 'Recommended',
     users: 'Users',
     staff: 'Staff',

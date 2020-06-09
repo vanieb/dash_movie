@@ -284,18 +284,28 @@
         <span v-if="!items">{{items}}</span>
         <tbody>
           <tr v-for="item in querySet" :key="item.id">
-            <td>
+            <td width="5%">
               <v-btn class="mr-2" icon color="info" :to="`/apps/${item.id}`">
                 <v-icon>touch_app</v-icon>
               </v-btn>
             </td>
-            <td class="align-center" width="2s0%">{{ item.name }}</td>
+            <td class="align-center" width="20%">{{ item.name }}</td>
             <td class="align-center justify-center" width="50%">
               <span v-for="website in item.websites" :key="website.id">{{website.name}}<br/></span>
             </td>
             <td class="align-center justify-start">
-              <v-switch value v-model="item.status"
-                @change="toggleStatus(item.id, item.status)">
+              <v-switch value v-model="item.is_active"
+                @change="toggle(item.id, item.status, 'is_active')">
+              </v-switch>
+            </td>
+            <td class="align-center justify-start">
+              <v-switch value v-model="item.is_rank"
+                @change="toggle(item.id, item.is_rank, 'is_rank')">
+              </v-switch>
+            </td>
+            <td class="align-center justify-start">
+              <v-switch value v-model="item.is_recommended"
+                @change="toggle(item.id, item.is_recommended, 'is_recommended' )">
               </v-switch>
             </td>
             <td width="50%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
@@ -402,6 +412,18 @@ export default {
         },
         {
           sortable: false,
+          text: this.$t('nav.leaderboard'),
+          value: 'is_rank',
+          width: '10%'
+        },
+        {
+          sortable: false,
+          text: this.$t('nav.recommended'),
+          value: 'is_recommended',
+          width: '10%'
+        },
+        {
+          sortable: false,
           text: this.$t('common.created_at'),
           value: 'created_at'
         },
@@ -504,8 +526,41 @@ export default {
     websiteSelectMultiple(val) {
       this.query.websites = val
     },
-    toggleStatus(){
-      // insert api
+    toggle(id, value, mode){
+      this.snackbar.show = false
+      let toggleResult
+      let action_title
+      if (mode == 'is_active') {
+        toggleResult = {
+          is_active: value
+        }
+        action_title = this.$t('common.status')
+      } else if (mode == 'is_rank') {
+        toggleResult = {
+          is_rank: value
+        }
+        action_title = this.$t('nav.leaderboard')
+      } else {
+        toggleResult = {
+          is_recommended: value
+        }
+        action_title = this.$t('nav.recommended')
+      }
+      this.$http.put(this.appsApi + id + '/', toggleResult).then((response) => {
+        let action_text = response[mode] ? this.$t('status.enabled') : this.$t('status.disabled')
+        this.snackbar = {
+          color: 'success',
+          show: true,
+          text: `[${action_title}]: ${action_text}`
+        }
+      }, error => {
+        this.snackbar = {
+          color: 'error',
+          show: true,
+          text: `${this.$t('system_msg.error')}: ${error}`
+        }
+      })
+      this.snackbar.show = false
     },
     submit() {
       if (!$.compareQuery(this.query, this.$route.query)) {

@@ -149,7 +149,7 @@ export default new Router({
       meta: {
         icon: 'format_list_numbered',
         auth: true,
-        title: i18n.t('nav.rank')
+        title: i18n.t('nav.leaderboard')
       }
     },
     {
