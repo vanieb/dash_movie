@@ -25,7 +25,9 @@ export default {
     create_multiple: 'Add Multiple',
     search: 'Search',
     submit: 'Submit',
-    change_file: 'Change File'
+    change_file: 'Change File',
+    sort: 'Sort',
+    cancel: 'Cancel'
   },
   status: {
     success: 'Success',
