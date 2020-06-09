@@ -412,7 +412,7 @@ export default {
             this.snackbar = {
               color: 'success',
               show: true,
-              text: `${this.$t('actions.update')} - ${this.$t('nav.staff')}: ${this.$t('status.success')}`
+              text: `${this.$t('actions.update')} - ${this.$t('nav.apps')}: ${this.$t('status.success')}`
             }
             this.$router.push(`/apps/${response.id}`)
           }, error => {
@@ -427,7 +427,7 @@ export default {
             this.snackbar = {
               color: 'success',
               show: true,
-              text: `${this.$t('actions.update')} - ${this.$t('nav.staff')}: ${this.$t('status.success')}`
+              text: `${this.$t('actions.update')} - ${this.$t('nav.apps')}: ${this.$t('status.success')}`
             }
             this.$router.push(`/apps/${response.id}`)
           }, error => {

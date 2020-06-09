@@ -68,19 +68,40 @@
               </span>
             </v-row> -->
             <v-row>
-              <span
-              >{{$t('common.status')}}: {{apps.status}}
-              </span>
+              <v-chip
+                v-if="apps.is_active"
+                class="ma-1"
+                color="green"
+                text-color="white"
+                style="height:20px; !important font-size:11px;">
+                {{$t('status.enabled')}}
+              </v-chip>
+              <v-chip
+                v-else
+                class="ma-1"
+                color="gray"
+                style="height:20px;
+                !important font-size:11px;">
+                {{$t('status.disabled')}}
+              </v-chip>
             </v-row>
             <v-row>
-              <span
-              >{{$t('apps.is_rank')}}: {{apps.status}}
-              </span>
-            </v-row>
-            <v-row>
-              <span
-              >{{$t('apps.is_recommended')}}: {{apps.status}}
-              </span>
+              <v-chip
+                v-if="apps.is_rank"
+                class="ma-1"
+                color="red"
+                text-color="white"
+                style="height:20px; !important font-size:11px;">
+                {{$t('nav.leaderboard')}}
+              </v-chip>
+              <v-chip
+                v-if="apps.is_recommended"
+                class="ma-1"
+                color="red"
+                text-color="white"
+                style="height:20px; !important font-size:11px;">
+                {{$t('nav.recommended')}}
+              </v-chip>
             </v-row>
           </v-col>
           <v-col cols="12" md="4">
@@ -138,7 +159,6 @@
                   dark
                   class="mr-3"
                   v-on="on">
-                 
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
                       <span v-on="on"> {{$t('actions.change_file')}}</span>
@@ -229,7 +249,6 @@ export default {
   },
   data() {
     return {
-      mode: 1,
       file: '',
       apps: {},
       appsApi: api.apps,
@@ -253,20 +272,15 @@ export default {
     }
   },
   beforeRouteEnter (to, from, next) {
-      next(vm => {
-          let id = to.params.appsId
-          vm.getAppDetails(id)
-      })
+    next(vm => {
+      let id = to.params.appsId
+      vm.getAppDetails(id)
+    })
   },
   methods: {
     getAppDetails(id) {
       this.$http.get(`${this.appsApi}${id }/`).then((response) => {
         this.apps = response
-        this.apps.release_date = new Date(this.apps.created_at).toISOString().substr(0, 10)
-      }, response => {
-          if (('' + response.status).indexOf('4') === 0) {
-              this.$router.push('/login?next=' + this.$route.path)
-          }
       })
     },
     async uploadFile() {
@@ -284,7 +298,6 @@ export default {
           this.uploadLoading = false
           this.uploadInstallerDialog = false
         })
-        // insert api
       }
     }
   }
