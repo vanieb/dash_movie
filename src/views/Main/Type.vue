@@ -46,7 +46,7 @@
                       type="'select'"
                       req="true"
                       :mode="'one'"
-                      :website="type.website"
+                      :website="type.website_id"
                       @website-select-one="websiteSetOne">
                     </website>
                   </div>
@@ -177,7 +177,7 @@
             <td>{{ item.name }}</td>
             <td class="align-center justify-start layout">
               <v-switch value v-model="item.is_active"
-                @change="toggleStatus(item.id, item.is_active)">
+                @change="toggleStatus(item.id, item.is_active, item.website.id)">
               </v-switch>
             </td>
             <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
@@ -377,9 +377,10 @@ export default {
     queryParam(query) {
       this.query = Object.assign(this.query, query)
     },
-    toggleStatus(id, is_active){
+    toggleStatus(id, is_active, website_id){
       this.$http.put(this.typesApi + id + '/', {
-        is_active: is_active
+        is_active: is_active,
+        website_id: website_id
       }).then((response) => {
         let status_text = response.is_active ? this.$t('status.enabled') : this.$t('status.disabled')
         this.snackbar = {
@@ -387,6 +388,8 @@ export default {
           show: true,
           text: `[${this.$t('common.status')}]: ${status_text}`
         }
+        this.$refs.pulling.rebase()
+        this.query.website = response.website.id
       }, error => {
         this.snackbar = {
           color: 'error',
@@ -394,6 +397,7 @@ export default {
           text: `${this.$t('system_msg.error')}: ${error}`
         }
       })
+      
       this.snackbar.show = false
     },
     submit() {
@@ -406,7 +410,7 @@ export default {
       this.submit()
     },
     websiteSetOne(val) {
-      this.type.website = val
+      this.type.website_id = val
     },
     search:
       debounce(function() {
@@ -429,7 +433,7 @@ export default {
         id: item.id,
         name: item.name,
         memo: item.memo,
-        website: item.website
+        website_id: item.website.id
       })
       this.name = item.name
       this.showForm = true
@@ -449,7 +453,7 @@ export default {
       const isValid = await this.$refs.form.validate()
       let typeResult = Object({
         name: this.type.name,
-        website: this.type.website,
+        website_id: this.type.website_id,
         memo: this.type.memo,
       })
       if (isValid) {
@@ -461,7 +465,7 @@ export default {
             text: `${this.$t('actions.update')}-${this.$t('nav.types')}: ${this.$t('status.success')}`
           }
           this.$refs.pulling.rebase()
-          this.query.website = response.website
+          this.query.website = response.website.id
           this.close()
         }, error => {
           this.snackbar = {
@@ -471,13 +475,14 @@ export default {
           }
         })
       } else {
-        this.$http.post(this.typesApi, typeResult).then(() => {
+        this.$http.post(this.typesApi, typeResult).then((response) => {
           this.snackbar = {
             color: 'success',
             show: true,
             text: `${this.$t('actions.add')}-${this.$t('nav.types')}: ${this.$t('status.success')}`
           }
           this.$refs.pulling.rebase()
+          this.query.website = response.website.id
           this.close()
         }, error => {
           this.snackbar = {
@@ -496,7 +501,7 @@ export default {
       this.type.name = ''
       this.type.memo=''
       this.name = ''
-      this.type.website = '' 
+      this.type.website_id = '' 
       this.submitting = false
       this.$refs.form.reset()
       this.showForm = false
