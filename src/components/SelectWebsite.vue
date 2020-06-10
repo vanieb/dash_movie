@@ -1,5 +1,5 @@
 <template>
-  <ValidationProvider :name="$t('nav.websites')" :rules="`${req ? 'required' : ''}`" >
+  <ValidationProvider :name="$t('apps.website')" :rules="`${req ? 'required' : ''}`" >
     <v-select
       v-if="mode==='one'"
       :error-messages="errors"
@@ -10,7 +10,7 @@
       v-model="mywebsite"
       :disabled="!disabled"
       :label="elLabel"
-      outlined
+      :outlined="elementType != 'modal' ? true : false"
       dense
       :prepend-icon="type === 'set' ? 'web' : '' "
       placeholder=" ">
@@ -68,13 +68,16 @@ export default {
     },
     disabled: {
       default: true
+    },
+    elementType: {
+      default: ''
     }
   },
   data() {
     return {
       websites: [],
       mywebsite: this.website,
-      elLabel: this.$t('nav.websites'),
+      elLabel: this.$t('apps.website'),
       rules: ''
     }
   },
@@ -94,7 +97,10 @@ export default {
       this.elLabel = `${this.$t('nav.websites')}*`
     }
     this.$http.get(api.websites + '?limit=400&offset=0').then(response => {
-      this.websites = response.results 
+      this.websites = response.results
+      .sort((a, b) => {
+          return a['id'] - b['id']
+        })
       let _this = this
       setTimeout(function() {
         _this.mywebsite = _this.website
