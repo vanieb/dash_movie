@@ -123,9 +123,9 @@
         items: [
           { icon: 'apps', text: this.$t('nav.apps'), path: '/apps' },
           { icon: 'web', text: this.$t('nav.websites'), path: '/websites'},
-          { icon: 'category', text: this.$t('nav.category'), path: '/category'},
-          { icon: 'label', text: this.$t('nav.labels'), path: '/label'},
           { icon: 'new_releases', text: this.$t('nav.types'), path: '/types?website=1'},
+          { icon: 'category', text: this.$t('nav.category'), path: '/category?website=1'},
+          { icon: 'label', text: this.$t('nav.labels'), path: '/label?website=1'},
           { icon: 'format_list_numbered', text: this.$t('nav.leaderboard'), path: '/leaderboard'},
           { icon: 'star_outline', text: this.$t('nav.recommended'), path: '/recommended'},
           { heading: this.$t('nav.users') },
