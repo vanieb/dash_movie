@@ -1,12 +1,21 @@
 <template>
-  <v-container >
+  <v-layout wrap>
+    <v-container >
+      <v-layout>
+        <v-layout justify-start>
+          <websites
+            type="filter"
+            :mode="'one'"
+            :website="query.website"
+            @website-select-one="websiteSelectOne">
+          </websites>
+        </v-layout>
       <v-layout justify-end>
         <v-btn
           color="primary"
           dark
           @click="mode=true"
-          v-if="!mode"
-          >
+          v-if="!mode">
           <v-icon class="mr-3">sort</v-icon>
           {{ $t('actions.sort') }}
         </v-btn>
@@ -15,8 +24,7 @@
           dark
           class="mr-2"
           @click="submitRank"
-          v-if="mode"
-          >
+          v-if="mode">
           <v-icon class="mr-3">save</v-icon>
           {{$t('actions.submit')}}
         </v-btn>
@@ -24,11 +32,11 @@
           color="primary"
           dark
           @click="cancelSort"
-          v-if="mode"
-          >
+          v-if="mode">
           <v-icon class="mr-3">close</v-icon>
           {{$t('actions.cancel')}}
         </v-btn>
+      </v-layout>
       </v-layout>
       <v-tabs v-model="selected_tab">
         <v-tab
@@ -65,18 +73,21 @@
         :text="snackbar.text" 
       >
       </snack-bar>
-  </v-container>    
+    </v-container>    
+  </v-layout>
 </template>
 <script>
 import api from '@/api/apis'
 import draggable from 'vuedraggable'
 import SnackBar from '@/components/SnackBar'
+import Websites from '../../components/SelectWebsite.vue'
 
 export default {
   name: 'Leaderboard',
   components: {
     draggable,
-    SnackBar
+    SnackBar,
+    Websites
   },
   data() {
     return {
@@ -84,6 +95,7 @@ export default {
       mode: false,
       app_types: '',
       querySet: [],
+      query: {website: 1},
       filteredQuerySet: [],
       typesApi: api.types,
       appsApi: api.apps,
@@ -110,8 +122,11 @@ export default {
   watch: {
     selected_tab(newObj) {
       this.getApps(newObj + 1)
+    },
+    websites(newObj) {
+      this.query.website = newObj
+      this.getAppsTypes()
     }
-      
   },
   created() {
     this.getAppTypes()
@@ -133,7 +148,7 @@ export default {
     },
     getApps(type) {
       this.type = type
-      this.$http.get(`${this.appsApi}?ordering=rank&is_rank=true&types=${type}`).then(response => {
+      this.$http.get(`${this.appsApi}?ordering=rank&is_rank=true&types=${type}&website=${this.query.website}`).then(response => {
         this.filteredQuerySet = response.results
         .sort((a, b) => {
           return a['rank'] - b['rank']
@@ -168,6 +183,9 @@ export default {
     },
     cancelSort() {
       this.mode = !this.mode
+    },
+    websiteSelectOne(val) {
+      this.query.websites = val
     }
   }
 }

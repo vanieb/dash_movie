@@ -141,6 +141,18 @@ export default new Router({
       }
     },
     {
+      path: '/types',
+      name: 'Types',
+      component: function(resolve) {
+        require(['./views/Main/Type.vue'], resolve)
+      },
+      meta: {
+        icon: 'new_releases',
+        auth: true,
+        title: i18n.t('nav.types')
+      }
+    },
+    {
       path: '/leaderboard',
       name: 'Leaderboard',
       component: function(resolve) {
