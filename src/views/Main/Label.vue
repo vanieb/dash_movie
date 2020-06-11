@@ -42,6 +42,16 @@
                   <v-flex xs12>
                     <div width="452px;">
                       <types
+                        v-if="isUpdate"
+                        elementType="modal"
+                        :typeFilter="`website=${query.website}`"
+                        :mode="'one'"
+                        type="'set'"
+                        :types="label.type_label_id"
+                        @type-select-one="typeSetOne">
+                      </types>
+                      <types
+                        v-else
                         :typeFilter="`website=${query.website}`"
                         elementType="modal"
                         type="'set'"
@@ -437,6 +447,9 @@ export default {
       this.query.type_label = val
       this.submit()
     },
+    typeSetOne(val) {
+      this.label.type_label_id = val
+    },
     typeSetMultiple(val) {
       this.label.type_label_id = val
     },
@@ -480,10 +493,16 @@ export default {
     async saveLabel() {
       const isValid = await this.$refs.form.validate()
       if (isValid) {
+        let typeLabelId
+        if (this.isUpdate) {
+          typeLabelId = this.label.type_label_id.id
+        } else {
+          typeLabelId = this.label.type_label_id.join(',')
+        }
         let labelResult = Object({
           name: this.label.name,
           memo: this.label.memo,
-          type_label_id: this.label.type_label_id.join(',')
+          type_label_id: typeLabelId
         })
         if (this.label.id) {
         this.$http.put(`${this.labelsApi}${this.label.id}/`, labelResult).then(() => {
