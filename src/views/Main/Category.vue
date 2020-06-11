@@ -2,67 +2,93 @@
   <v-layout wrap>
     <v-container>
       <v-layout>
-        <validation-observer ref="form">
-          <v-dialog v-model="showForm" persistent max-width="500">
-            <template v-slot:activator="{ on }">
-              <v-btn color="primary" dark v-on="on" align-right><v-icon class="mr-3">add_box</v-icon> &nbsp;{{ $t('actions.add') }}</v-btn>
-            </template>
-            <v-card>
-              <v-card-title class="headline">
-                <v-icon class="mr-3">{{ cardIcon }}</v-icon> &nbsp;
-                {{ cardTitle }}
-              </v-card-title>
-              <!-- FORM INPUTS -->
-            <v-card-text>
-              <v-layout wrap>
-                <v-flex xs12 >
-                  <validation-provider rules="required|max:15" :name="$t('common.name')">
-                    <v-text-field
-                      :counter="15"
-                      :error-messages="errors"
-                      :label="`${$t('common.name')}*`"
-                      placeholder=" "
-                      required
-                      slot-scope="{ errors }"
+        <v-layout justify-start>
+          <div style="width:200px !important;">
+            <website
+              type="filter"
+              :mode="'one'"
+              :website="query.website"
+              @website-select-one="websiteSelectOne">
+            </website>
+          </div>
+        </v-layout>
+        <v-layout justify-end>
+          <validation-observer ref="form">
+            <v-dialog v-model="showForm" persistent max-width="500">
+              <template v-slot:activator="{ on }">
+                <v-btn color="primary" dark v-on="on" align-right><v-icon class="mr-3">add_box</v-icon> &nbsp;{{ $t('actions.add') }}</v-btn>
+              </template>
+              <v-card>
+                <v-card-title class="headline">
+                  <v-icon class="mr-3">{{ cardIcon }}</v-icon> &nbsp;
+                  {{ cardTitle }}
+                </v-card-title>
+                <!-- FORM INPUTS -->
+              <v-card-text>
+                <v-layout wrap>
+                  <v-flex xs12 >
+                    <validation-provider rules="required|max:15" :name="$t('common.name')">
+                      <v-text-field
+                        :counter="15"
+                        :error-messages="errors"
+                        :label="`${$t('common.name')}*`"
+                        placeholder=" "
+                        required
+                        slot-scope="{ errors }"
                       v-model="category.name"
-                    ></v-text-field>
-                  </validation-provider>
+                      ></v-text-field>
+                    </validation-provider>
                 </v-flex>
                 <v-flex xs12>
-                  <validation-provider rules="max:50" :name="$t('common.remarks')">
-                    <v-textarea
-                      :counter="50"
-                      :error-messages="errors"
-                      :label="$t('common.remarks')"
-                      placeholder=" "
-                      rows="1"
-                      slot-scope="{ errors }"
+                  <div width="452px;">
+                    <types
+                      :typeFilter="`website=${query.website}`"
+                      elementType="modal"
+                      type="'set'"
+                      req="true"
+                      :mode="'multiple'"
+                      :types="category.type_category_id"
+                      @type-select-multiple="typeSetMultiple">
+                    </types>
+                  </div>
+                  </v-flex>
+                  <v-flex xs12>
+                    <validation-provider rules="max:50" :name="$t('common.remarks')">
+                      <v-textarea
+                        :counter="50"
+                        :error-messages="errors"
+                        :label="$t('common.remarks')"
+                        placeholder=" "
+                        rows="1"
+                        slot-scope="{ errors }"
                       v-model="category.memo"
-                    ></v-textarea>
-                  </validation-provider>
-                </v-flex>
-              </v-layout>
+                      ></v-textarea>
+                    </validation-provider>
+                  </v-flex>
+                </v-layout>
 
-              <small color="red">*{{ $t('errors.required') }}</small>
-            </v-card-text>
-              <!-- BUTTONS -->
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                color="grey lighten-1"
-                :disabled="submitting"
-                @click="close"
-              >{{ $t('actions.close') }}</v-btn>
-              <v-btn
-                color="blue darken-1"
-                :loading="submitting"
+                <small color="red">*{{ $t('errors.required') }}</small>
+              </v-card-text>
+                <!-- BUTTONS -->
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="grey lighten-1"
+                  :disabled="submitting"
+                  @click="close"
+                >{{ $t('actions.close') }}</v-btn>
+                <v-btn
+                  color="blue darken-1"
+                  :loading="submitting"
                 @click="saveCategory"
-              >{{ $t('actions.save') }}</v-btn>
-            </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </validation-observer>
+                >{{ $t('actions.save') }}</v-btn>
+              </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </validation-observer>
+        </v-layout>
       </v-layout>
+      <!-- SEARCH -->
       <v-card>
         <v-col cols="12" md="12" class="mt-2">
           <v-row class="ml-1 mt-5">
@@ -83,6 +109,15 @@
                   <span class="ml-3">{{ data.item.text }}</span>
                 </template>
               </v-select>
+            </div>
+            <div style="width:200px;" class="mr-2">
+              <types
+                :typeFilter="`website=${query.website}`"
+                :mode="'one'"
+                type="'filter'"
+                :types="query.type_category"
+                @type-select-one="typeSelectOne">
+              </types>
             </div>
             <div style="width:200px;" class="mr-2">
               <v-text-field
@@ -132,8 +167,7 @@
               <v-btn
                 color="blue"
                 :loading="loading"
-                @click="clearAll"
-              >
+                @click="clearAll">
                 <v-icon>clear_all</v-icon>{{ $t('actions.clear') }}
               </v-btn>
             </v-layout>
@@ -153,9 +187,10 @@
             <td>{{ item.name }}</td>
             <td class="align-center justify-start layout">
               <v-switch value v-model="item.is_active"
-                @change="toggleStatus(item.id, item.is_active)">
+                @change="toggleStatus(item.id, item.is_active, item.type_category.id)">
               </v-switch>
             </td>
+            <td>{{ item.type_category.name }}</td>
             <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td>{{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td>{{ item.memo || '-'}}</td>
@@ -208,29 +243,37 @@ import Pagination from '@/components/Pagination'
 import SnackBar from '@/components/SnackBar'
 import { debounce } from 'lodash'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
+import Types from '../../components/SelectType.vue'
+import Website from '../../components/SelectWebsite.vue'
 
 export default {
   name: 'Category',
   components: {
     Pagination,
     SnackBar,
+    Types,
     ValidationObserver,
-    ValidationProvider
+    ValidationProvider,
+    Website
   },
   data() {
     return {
       name: '',
       showForm: false,
-      query: {},
+      query: {
+        website: 1
+      },
       querySet: [],
       is_active: '',
       created_at: ['', ''],
       categoriesApi: api.categories,
       loading: true,
+      website: 1,
       submitting: false,
       date_menu: false,
       category: {
         name: '',
+        type_category_id: '',
         memo: ''
       },
       statusOptions: [
@@ -253,6 +296,12 @@ export default {
           sortable: false,
           text: this.$t('common.status'),
           value: 'status',
+          width: '10%'
+        },
+        {
+          sortable: false,
+          text: this.$t('nav.types'),
+          value: 'type',
           width: '10%'
         },
         {
@@ -290,6 +339,14 @@ export default {
       this.query.is_active = newObj
       this.search()
     },
+    website(newObj) {
+      this.query.website = newObj
+      this.search()
+    },
+    type(newObj) {
+      this.query.type_category = newObj
+      this.search()
+    },
     created_at(newObj) {
       [this.query.created_at_after, this.query.created_at_before] = [...newObj]
       this.search()
@@ -299,6 +356,8 @@ export default {
     this.setQueryAll()
     this.$nextTick(() => {
       this.$refs.pulling.rebase()
+      this.query.website = 1
+      this.submit()
     })
     this.lang = $.getLanguage() == 'zh_CN' ? 'zh-cn' : ''
   },
@@ -330,7 +389,9 @@ export default {
       } else {
         this.created_at = [undefined, undefined]
       }
+      this.website = this.$route.query.website || ''
       this.is_active = this.$route.query.is_active || ''
+      this.type = this.$route.query.type_category || ''
       this.query = Object.assign({}, this.$route.query)
 
     },
@@ -341,9 +402,10 @@ export default {
     queryParam(query) {
       this.query = Object.assign(this.query, query)
     },
-    toggleStatus(id, is_active){
+    toggleStatus(id, is_active, type_category_id){
       this.$http.put(this.categoriesApi + id + '/', {
-        is_active: is_active
+        is_active: is_active,
+        type_category_id: type_category_id
       }).then((response) => {
         let status_text = response.is_active ? this.$t('status.enabled') : this.$t('status.disabled')
         this.snackbar = {
@@ -351,6 +413,8 @@ export default {
           show: true,
           text: `[${this.$t('common.status')}]: ${status_text}`
         }
+        this.$refs.pulling.rebase()
+        this.query.website = response.type_category.website.id
       }, error => {
         this.snackbar = {
           color: 'error',
@@ -361,11 +425,20 @@ export default {
       this.snackbar.show = false
     },
     submit() {
-      console.log(this.$route.query.is_active)
-      // console.log($.compareQuery(this.query, this.$route.query))
       if (!$.compareQuery(this.query, this.$route.query)) {
         this.$refs.pulling.submit()
       }
+    },
+    websiteSelectOne(val) {
+      this.query.website = val
+      this.submit()
+    },
+    typeSelectOne(val) {
+      this.query.type_category = val
+      this.submit()
+    },
+    typeSetMultiple(val) {
+      this.category.type_category_id = val
     },
     search:
       debounce(function() {
@@ -374,6 +447,7 @@ export default {
     700),
     clearAll() {
       this.query = {}
+      this.query.website = 1
       this.$nextTick(() => {
         this.submit()
       })
@@ -386,7 +460,8 @@ export default {
       Object.assign(this.category, {
         id: item.id,
         name: item.name,
-        memo: item.memo
+        memo: item.memo,
+        type_category_id: item.type_category
       })
       this.name = item.name
       this.showForm = true
@@ -404,11 +479,12 @@ export default {
     },
     async saveCategory() {
       const isValid = await this.$refs.form.validate()
-      let categoryResult = Object({
-        name: this.category.name,
-        memo: this.category.memo,
-      })
       if (isValid) {
+        let categoryResult = Object({
+          name: this.category.name,
+          memo: this.category.memo,
+          type_category_id: this.category.type_category_id.join(',')
+        })
         if (this.category.id) {
         this.$http.put(`${this.categoriesApi}${this.category.id}/`, categoryResult).then(() => {
           this.snackbar = {
@@ -450,6 +526,7 @@ export default {
       this.category.id = ''
       this.category.name = ''
       this.category.memo=''
+      this.category.type_category_id = []
       this.name = ''
       this.submitting = false
       this.$refs.form.reset()

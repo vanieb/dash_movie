@@ -10,8 +10,9 @@
         v-model="mytypes"
         :disabled="!disabled"
         :label="elLabel"
-        outlined
+        :outlined="elementType != 'modal' ? true : false"
         dense
+        clearable
         :prepend-icon="type === 'set' ? 'new_releases' : '' "
         placeholder=" ">
       </v-select>
@@ -25,7 +26,7 @@
         :value="mytypes.id"
         :disabled="!disabled"
         :label="elLabel"
-        outlined
+        :outlined="elementType != 'modal' ? true : false"
         dense
         attach
         chips
@@ -69,6 +70,12 @@ export default {
     },
     disabled: {
       default: true
+    },
+    typeFilter: {
+      default: true
+    },
+    elementType: {
+      default: ''
     }
   },
   data() {
@@ -84,28 +91,32 @@ export default {
       this.mytypes = this.types
     },
     mytypes(newObj) {
-      if (newObj !== undefined) {
-        this.$emit('type-select-one', newObj)
-        this.$emit('type-select-multiple', this.mytypes, this.index)
-      }
+      this.$emit('type-select-one', newObj)
+      this.$emit('type-select-multiple', this.mytypes, this.index)
+    },
+    typeFilter(newObj) {
+      this.getFilteredAppTypes(newObj)
     }
   },
   created() {
     if (this.req) {
       this.elLabel = `${this.$t('apps.type')}*`
     }
-    this.$http.get(api.types + '?limit=400&offset=0').then(response => {
-      this.app_types = response.results
-      let _this = this
-      setTimeout(function() {
-        _this.mytypes = _this.types[0]
-      }, 100)
-    })
+    this.getFilteredAppTypes(this.typeFilter)
   },
   methods: {
     remove (item) {
       this.mytypes.splice(this.mytypes.indexOf(item), 1)
       this.mytypes = [...this.mytypes]
+    },
+    getFilteredAppTypes(typeFilter) {
+      this.$http.get(`${api.types}?limit=400&offset=0&${typeFilter}`).then(response => {
+        this.app_types = response.results
+        let _this = this
+        setTimeout(function() {
+          _this.mytypes = _this.types
+        }, 100)
+      })
     }
   }
 }
