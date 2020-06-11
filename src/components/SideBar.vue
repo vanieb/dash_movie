@@ -122,6 +122,8 @@
         drawer: null,
         items: [
           { icon: 'apps', text: this.$t('nav.apps'), path: '/apps' },
+          { heading: this.$t('nav.website_view') },
+          { icon: 'view_quilt', text: this.$t('nav.website_apps'), path: '/webapps'},
           { icon: 'web', text: this.$t('nav.websites'), path: '/websites'},
           { icon: 'new_releases', text: this.$t('nav.types'), path: '/types?website=1'},
           { icon: 'category', text: this.$t('nav.category'), path: '/category?website=1'},

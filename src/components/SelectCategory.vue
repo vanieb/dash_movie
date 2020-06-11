@@ -56,6 +56,9 @@ export default {
     ValidationProvider
   },
   props: {
+    categoryFilter: {
+      default: false
+    },
     req: {
       default: false
     },
@@ -85,24 +88,35 @@ export default {
         this.$emit('category-select-one', newObj)
         this.$emit('category-select-multiple', this.mycategory, this.index)
       }
+    },
+    categoryFilter(newObj) {
+      if (newObj && !newObj.id) {
+        this.categories = []
+        this.mycategory = ''
+        this.getFilteredCategories(newObj)
+      }
     }
   },
   created() {
     if (this.req) {
       this.elLabel = `${this.$t('nav.category')}*`
     }
-    this.$http.get(api.categories + '?limit=400&offset=0').then(response => {
-      this.categories = response.results
-      let _this = this
-        setTimeout(function() {
-          _this.mycategory = _this.category[0]
-        }, 100)
-    })
+    this.getFilteredCategories(this.categoryFilter)
   },
   methods: {
     remove (item) {
       this.mycategory.splice(this.mycategory.indexOf(item), 1)
       this.mycategory = [...this.mycategory]
+    },
+    getFilteredCategories(categoryFilter='') {
+      console.log(this.categoryFilter)
+      this.$http.get(`${api.categories}?limit=400&offset=0&${categoryFilter}`).then(response => {
+        this.categories = response.results
+        let _this = this
+          setTimeout(function() {
+            _this.mycategory = _this.category[0]
+          }, 100)
+      })
     }
   }
 }

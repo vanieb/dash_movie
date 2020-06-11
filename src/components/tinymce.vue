@@ -52,7 +52,6 @@
           }
     },
     created() {
-      console.log(this.id)
       let _this = this
       setTimeout(function() {
         _this.myContent = _this.content

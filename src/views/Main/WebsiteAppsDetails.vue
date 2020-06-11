@@ -17,12 +17,13 @@
               </v-breadcrumbs-item>
             </template>
           </v-breadcrumbs>
-      </v-layout>
-      <v-layout justify-end>
+        </v-layout>
+        <v-layout justify-end>
           <v-btn
+            v-if="webapp.app"
             color="primary"
             dark
-            :to="`/apps/${apps.id}/edit`"
+            :to="`/webapps/${webapp.id}/${websiteId}/edit`"
             >
             <v-icon class="mr-3">edit</v-icon> &nbsp;{{ $t('actions.update') }}
           </v-btn>
@@ -31,45 +32,38 @@
       <v-card>
       <v-container>
         <v-row class="ml-3">
-          <span class="title"
-          >{{apps.name}}
-          </span>
+          <span class="title" v-if="webapp.app">{{webapp.app.name}}</span>
         </v-row>
         <v-row>
           <v-col cols="12" md="2">
             <v-img
-              :src="`${apps.icon}`"
+              v-if="webapp.app"
+              :src="`${webapp.app.icon}`"
               class="my-1"
               contain
               height="100"
             />
             <v-layout justify-center mb5>
               <v-rating
-                x-small dense color="orange" v-model="apps.star">
+                v-if="webapp.app"
+                x-small dense color="orange" v-model="webapp.app.star">
               </v-rating>
             </v-layout>
-            <small><v-icon>event</v-icon> {{apps.created_at | moment("YYYY-MM-DD HH:mm:ss") }}
+            <small v-if="webapp.app">
+              <v-icon>event</v-icon> {{webapp.app.created_at | moment("YYYY-MM-DD HH:mm:ss") }}
             </small>
           </v-col>
           <v-col cols="12" md="2">
             <v-row>
-              <span
-              >{{$t('apps.installer_size')}}: {{apps.size_mb}} MB
-              </span>
+              <span v-if="webapp.app">{{$t('apps.installer_size')}}: {{webapp.app.size_mb}} MB</span>
             </v-row>
             <v-row>
-              <span
-              >{{$t('apps.version')}}: {{apps.version || $t('system_msg.no_data')}}
+              <span v-if="webapp.app">{{$t('apps.version')}}: {{webapp.app.version || $t('system_msg.no_data')}}
               </span>
             </v-row>
-            <!-- <v-row>
-              <span
-              >{{$t('apps.release_date')}}: {{apps.created_at | moment("YYYY-MM-DD HH:mm:ss") }}
-              </span>
-            </v-row> -->
             <v-row>
               <v-chip
-                v-if="apps.is_active"
+                v-if="webapp.is_active"
                 class="ma-1"
                 color="green"
                 text-color="white"
@@ -87,7 +81,7 @@
             </v-row>
             <v-row>
               <v-chip
-                v-if="apps.is_rank"
+                v-if="webapp.is_rank"
                 class="ma-1"
                 color="red"
                 text-color="white"
@@ -95,7 +89,7 @@
                 {{$t('nav.leaderboard')}}
               </v-chip>
               <v-chip
-                v-if="apps.is_recommended"
+                v-if="webapp.is_recommended"
                 class="ma-1"
                 color="red"
                 text-color="white"
@@ -107,20 +101,16 @@
           <v-col cols="12" md="4">
             <v-card>
               <v-card-text px-0>
-                <v-icon>new_releases</v-icon> {{$t('apps.type')}}:
-                <span v-if="apps.types">
-                  <span v-for="type in apps.types" :key="type.name">
-                    <v-chip class="ma-1" color="red" outlined>{{type.name}}</v-chip>
-                  </span>
+                <v-icon>web</v-icon> {{$t('nav.websites')}}:
+                <span v-if="webapp.website">
+                  <v-chip class="ma-1" color="orange" outlined>{{webapp.website.name}}</v-chip>
                 </span>
                 <span v-else> {{ $t('system_msg.no_data') }}</span>
               </v-card-text>
               <v-card-text >
-                <v-icon>web</v-icon> {{$t('nav.websites')}}:
-                <span v-if="apps.websites">
-                  <span v-for="website in apps.websites" :key="website.id">
-                    <v-chip class="ma-1" color="orange" outlined>{{website.name}}</v-chip>
-                  </span>
+                <v-icon>new_releases</v-icon> {{$t('apps.type')}}:
+                <span v-if="webapp.types">
+                  <v-chip class="ma-1" color="red" outlined>{{webapp.types.name}}</v-chip>
                 </span>
                 <span v-else> {{ $t('system_msg.no_data') }}</span>
              </v-card-text>
@@ -129,18 +119,18 @@
           <v-col cols="12" md="4">
             <v-card>
               <v-card-text >
-                <v-icon>category</v-icon> {{$t('nav.category')}}:
-                <span v-if="apps.categories">
-                  <span v-for="category in apps.categories" :key="category.name">
-                    <v-chip class="ma-1" color="green" outlined>{{category.name}}</v-chip>
+                <v-icon>category</v-icon> {{$t('app.category')}}:
+                <span v-if="webapp.categories">
+                  <span v-for="category in webapp.categories" :key="category.name">
+                    <v-chip class="ma-1" color="green" outlined>{{webapp.categories.name}}</v-chip>
                   </span>
                 </span>
                 <span v-else> {{ $t('system_msg.no_data') }}</span>
               </v-card-text>
              <v-card-text >
               <v-icon>label</v-icon> {{$t('nav.labels')}}:
-              <span v-if="apps.labels">
-                  <span v-for="label in apps.labels" :key="label.name">
+              <span v-if="webapp.labels">
+                  <span v-for="label in webapp.labels" :key="label.name">
                     <v-chip class="ma-1" color="blue" outlined>{{label.name}}</v-chip>
                   </span>
                 </span>
@@ -207,21 +197,27 @@
             </v-card>
           </v-dialog>
             <!-- <v-icon>cloud_upload</v-icon>&nbsp;&nbsp; -->
-            <span>{{ $t('apps.download_link')}}: {{ apps.download_link || $t('system_msg.no_data') }}</span>
+            <span v-if="webapp.app">{{ $t('apps.download_link')}}: {{ webapp.app.app_file || $t('system_msg.no_data') }}</span>
              </v-card-text>
           </v-card>
         </v-flex>
+        <v-banner color="primary" dark>{{$t('apps.seo_data')}}</v-banner>
         <v-flex>
-          <v-card-title>{{$t('apps.basic_introduction')}}</v-card-title>
-          <v-card-text v-html="apps.basic_introduction  || $t('system_msg.no_data')"></v-card-text>
+          <v-card-title>{{$t('apps.keywords')}}</v-card-title>
+          <v-card-text v-if="webapp.app">{{webapp.keywords  || $t('system_msg.no_data')}}</v-card-text>
         </v-flex>
         <v-flex>
+          <v-card-title>{{$t('apps.basic_introduction')}}</v-card-title>
+          <v-card-text v-if="webapp.app">{{webapp.app.basic_introduction  || $t('system_msg.no_data')}}</v-card-text>
+        </v-flex>
+        <v-banner color="primary" dark>{{$t('apps.other_details')}}</v-banner>
+        <v-flex>
           <v-card-title>{{$t('apps.introduction')}}</v-card-title>
-          <v-card-text v-html="apps.introduction  || $t('system_msg.no_data')"></v-card-text>
+          <v-card-text v-if="webapp.app" v-html="webapp.app.introduction  || $t('system_msg.no_data')"></v-card-text>
         </v-flex>
         <v-flex>
           <v-card-title>{{$t('apps.features')}}</v-card-title>
-          <v-card-text v-html="apps.features  || $t('system_msg.no_data')"></v-card-text>
+          <v-card-text v-if="webapp.app" v-html="webapp.app.features  || $t('system_msg.no_data')"></v-card-text>
         </v-flex>
         </v-container>
       </v-card>
@@ -250,8 +246,9 @@ export default {
   data() {
     return {
       file: '',
-      apps: {},
-      appsApi: api.apps,
+      webapp: {types: [], website: []},
+      websiteId: '',
+      webAppsApi: api.webapps,
       uploadInstallerDialog: false,
       uploadLoading: false,
       snackbar: {
@@ -262,7 +259,7 @@ export default {
       bread_crumbs: [{
           text: this.$t('nav.apps'),
           disabled: false,
-          to: '/apps'
+          to: '/webapps'
         },
         {
           text: this.$t('nav.apps_detail'),
@@ -273,16 +270,18 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
-      let id = to.params.appsId
-      let websiteId =  to.params.websiteId
-      vm.getAppDetails(id, websiteId)
+      let appId = to.params.appsId
+      let websiteId = to.params.websiteId
+      if (appId) {
+        vm.getAppDetails(appId, websiteId)
+      }
     })
   },
   methods: {
     getAppDetails(id, websiteId='') {
-      console.log(websiteId)
-      this.$http.get(`${this.appsApi}${id }/`).then((response) => {
-        this.apps = response
+      this.$http.get(`${this.webAppsApi}${id }/`).then((response) => {
+        this.webapp = response
+        this.websiteId = websiteId
       })
     },
     async uploadFile() {
@@ -291,7 +290,7 @@ export default {
         this.uploadLoading = true
         const formData = new window.FormData()
         formData.set('app_file', this.file)
-        this.$http.put(`${api.apps}${this.apps.id}/`, formData).then(() => {
+        this.$http.put(`${this.webAppsApi}${this.webapp.id}/`, formData).then(() => {
           this.snackbar = {
             color: 'success',
             show: true,
@@ -299,7 +298,14 @@ export default {
           }
           this.uploadLoading = false
           this.uploadInstallerDialog = false
+        }, error => {
+          this.snackbar = {
+            color: 'red',
+            show: true,
+            text: `${this.$t('system_msg.error')}: ${error}`
+          }
         })
+        this.snackbar.show = false
       }
     }
   }

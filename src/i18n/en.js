@@ -58,6 +58,8 @@ export default {
     apps_detail: 'App Details',
     edit_apps: 'Edit Apps',
     add_apps: 'Add Apps',
+    website_view: 'Website View',
+    website_apps: 'Apps (per Website)',
     websites: 'Websites',
     labels: 'Labels',
     category: 'Categories',
@@ -89,12 +91,15 @@ export default {
     games: 'Games',
     software: 'Software',
     website: 'Website',
+    category: 'Category',
     hot: 'Hot',
+    keywords: 'Keywords',
     basic_introduction: 'Basic Introduction',
     introduction: 'Introduction',
     features: 'Features',
     download_link: 'Download Link',
-    other_details: 'Other Details'
+    other_details: 'Other Details',
+    seo_data: 'SEO数据'
   },
   website: {
     code: 'Code'

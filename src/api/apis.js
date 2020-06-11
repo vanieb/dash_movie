@@ -20,6 +20,7 @@ export default {
   upload: `${apps}upload/`,
   download_link: `${apps}download/`,
   websites: `${websites}`,
+  webapps:  `${websites}apps/`,
   types: `${websites}types/`,
   categories: `${websites}categories/`,
   labels: `${websites}labels/`,
