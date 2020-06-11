@@ -58,6 +58,8 @@ export default {
     apps_detail: '应用详情',
     edit_apps: '编辑应用',
     add_apps: '添加应用',
+    website_view: '网站浏览',
+    website_apps: '应用程序（每个网站）',
     websites: '网站',
     labels: '标签',
     category: '类别',
@@ -89,11 +91,14 @@ export default {
     software: '软体',
     hot: '新闻（热门）',
     websites: '网站',
+    category: '类别',
+    keywords: '关键字',
     basic_introduction: '基本介绍',
     introduction: '简介',
     features: '功能',
     download_link: '下载链接',
-    other_details: '下载链接'
+    other_details: '下载链接',
+    seo_data: ''
   },
   website: {
     code: '码'

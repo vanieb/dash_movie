@@ -105,6 +105,40 @@ export default new Router({
         }
     },
     {
+      path: '/webapps',
+      name: 'WebsiteApps',
+      component: function(resolve) {
+        require(['./views/Main/WebsiteApps.vue'], resolve)
+      },
+      meta: {
+        icon: 'apps',
+        auth: true,
+        title: i18n.t('nav.apps')
+      }
+    },
+    {
+      path: '/webapps/:appsId/:websiteId/edit',
+      name: 'Edit Web Apps',
+      component: function (resolve) {
+          require(['./views/Main/WebsiteAppsForm.vue'], resolve)
+      },
+      meta: {
+        auth: true,
+        title: i18n.t('nav.edit_apps'),
+      }
+    },
+    {
+      path: '/webapps/:appsId/:websiteId/',
+      name: 'Web Apps Details',
+      component: function (resolve) {
+          require(['./views/Main/WebsiteAppsDetails.vue'], resolve)
+      },
+      meta: {
+        auth: true,
+        title: i18n.t('nav.apps_detail'),
+      }
+    },
+    {
       path: '/websites',
       name: 'Websites',
       component: function(resolve) {

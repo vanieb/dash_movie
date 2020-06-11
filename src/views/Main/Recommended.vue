@@ -1,36 +1,45 @@
 <template>
-  <v-container >
-      <v-layout justify-end>
-        <v-btn
-          color="primary"
-          dark
-          @click="mode=true"
-          v-if="!mode"
-          >
-          <v-icon class="mr-3">sort</v-icon>
-          {{ $t('actions.sort') }}
-        </v-btn>
-        <v-btn
-          color="primary"
-          dark
-          class="mr-2"
-          @click="submitRank"
-          v-if="mode"
-          >
-          <v-icon class="mr-3">save</v-icon>
-          {{$t('actions.submit')}}
-        </v-btn>
-        <v-btn
-          color="primary"
-          dark
-          @click="cancelSort"
-          v-if="mode"
-          >
-          <v-icon class="mr-3">close</v-icon>
-          {{$t('actions.cancel')}}
-        </v-btn>
+  <v-layout wrap>
+    <v-container >
+      <v-layout>
+        <v-layout justify-start>
+          <websites
+            type="filter"
+            :mode="'one'"
+            :disabled="!mode"
+            :website="query.website"
+            @website-select-one="websiteSelectOne">
+          </websites>
+        </v-layout>
+        <v-layout justify-end>
+          <v-btn
+            color="primary"
+            dark
+            @click="mode=true"
+            v-if="!mode">
+            <v-icon class="mr-3">sort</v-icon>
+            {{ $t('actions.sort') }}
+          </v-btn>
+          <v-btn
+            color="primary"
+            dark
+            class="mr-2"
+            @click="submitRank"
+            v-if="mode">
+            <v-icon class="mr-3">save</v-icon>
+            {{$t('actions.submit')}}
+          </v-btn>
+          <v-btn
+            color="primary"
+            dark
+            @click="cancelSort"
+            v-if="mode">
+            <v-icon class="mr-3">close</v-icon>
+            {{$t('actions.cancel')}}
+          </v-btn>
+        </v-layout>
       </v-layout>
-      <v-tabs v-model="selected_tab">
+      <v-tabs v-model="selected_tab" v-if="showTab">
         <v-tab
           v-for="type in app_types"
           :key="type.id">
@@ -38,6 +47,7 @@
         </v-tab>
       </v-tabs>
       <v-data-table
+        v-if="showTab"
         :headers="headers"
         :hide-default-footer="true"
         :items="filteredQuerySet">
@@ -47,7 +57,7 @@
             v-model="filteredQuerySet"
             :tag="'tbody'"
             :disabled="!mode">
-            <tr v-for="item in filteredQuerySet" :key="item.id">
+            <tr v-for="item in filteredQuerySet" :key="item.id" >
               <td width="5%">
                 <v-btn :color ="iconColor" icon>
                   <v-icon>sort</v-icon>
@@ -56,8 +66,12 @@
               <td>{{ item.name }}</td>
             </tr>
           </draggable>
+          
         </template>
       </v-data-table>
+      <v-layout v-else justify-center align-center>
+        <small>{{$t('pagination.no_record')}}</small>
+      </v-layout>
       <!-- SNACKBAR -->
       <snack-bar
         :show="snackbar.show"
@@ -65,18 +79,21 @@
         :text="snackbar.text" 
       >
       </snack-bar>
-  </v-container>    
+    </v-container>    
+  </v-layout>
 </template>
 <script>
 import api from '@/api/apis'
 import draggable from 'vuedraggable'
 import SnackBar from '@/components/SnackBar'
+import Websites from '../../components/SelectWebsite.vue'
 
 export default {
   name: 'Recommended',
   components: {
     draggable,
-    SnackBar
+    SnackBar,
+    Websites
   },
   data() {
     return {
@@ -84,10 +101,12 @@ export default {
       mode: false,
       app_types: '',
       querySet: [],
+      query: {website: 1},
       filteredQuerySet: [],
       typesApi: api.types,
       appsApi: api.apps,
-      leaderboardsApi: `${api.websites}update_recommended`,
+      recommendedApi: `${api.websites}update_recommended`,
+      showTab: true,
       snackbar: {
         color: '',
         text: '',
@@ -110,8 +129,11 @@ export default {
   watch: {
     selected_tab(newObj) {
       this.getApps(newObj + 1)
+    },
+    websites(newObj) {
+      this.query.website = newObj
+      this.getAppTypes()
     }
-      
   },
   created() {
     this.getAppTypes()
@@ -123,17 +145,24 @@ export default {
   },
   methods: {
     getAppTypes() {
-      this.$http.get(this.typesApi + '?limit=400&offset=0').then(response => {
+      this.$http.get(`${this.typesApi}?limit=400&offset=0&website=${this.query.website}`).then(response => {
         this.app_types = response.results
         .sort((a, b) => {
           return a['id'] - b['id']
         })
-        this.selected_tab = 0
+        if (this.app_types.length == 0 ) {
+          this.selected_tab = ''
+          this.filteredQuerySet = []
+          this.showTab = false
+        } else {
+          this.showTab = true
+          this.selected_tab = 0
+        }
       })
     },
     getApps(type) {
       this.type = type
-      this.$http.get(`${this.appsApi}?ordering=rank&is_recommended=true&types=${type}`).then(response => {
+      this.$http.get(`${this.appsApi}?ordering=rank&is_recommended=true&types=${this.type}&website=${this.query.website}`).then(response => {
         this.filteredQuerySet = response.results
         .sort((a, b) => {
           return a['rank'] - b['rank']
@@ -149,7 +178,7 @@ export default {
       let sortResult = Object({
         rank: rank
       })
-      this.$http.put(`${this.leaderboardsApi}/${this.type}/`, sortResult).then(() => {
+      this.$http.put(`${this.recommendedApi}/${this.type}/`, sortResult).then(() => {
         this.getApps(this.type)
         this.snackbar = {
           color: 'success',
@@ -168,6 +197,10 @@ export default {
     },
     cancelSort() {
       this.mode = !this.mode
+    },
+    websiteSelectOne(val) {
+      this.query.website = val
+      this.getAppTypes()
     }
   }
 }
