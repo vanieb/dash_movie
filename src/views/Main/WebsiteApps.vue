@@ -40,18 +40,6 @@
                   <small>{{ $t('system_notes.upload_installer_memo') }}</small>
                 </v-card-text>
                 <v-card-text>
-                  <!-- <v-flex xs12>
-                  <div width="452px;">
-                      <website
-                        elementType="modal"
-                        type="'select'"
-                        req="true"
-                        :mode="'one'"
-                        :website="type.website_id"
-                        @website-select-one="websiteSetOne">
-                      </website>
-                    </div>
-                  </v-flex> -->
                   <v-spacer></v-spacer>
                   <validation-provider style="width:310px;" rules="required" :name="$t('common.file')">
                     <v-file-input
@@ -516,14 +504,20 @@ export default {
           this.uploadLoading = true
           const formData = new window.FormData()
           formData.set('app_file', this.file)
+          formData.set('websites', this.query.website)
           this.$http.post(api.upload, formData).then(() => {
             this.snackbar = {
               color: 'success',
               show: true,
               text: `${this.$t('actions.upload')}: ${this.$t('status.success')}`
             }
+            this.$refs.pulling.rebase()
+            this.query.website = 1
+            this.submit()
             this.uploadLoading = false
             this.uploadInstallerDialog = false
+            this.file = ''
+            this.$refs.form.reset()
           })
         // insert api
         } else {
@@ -573,7 +567,11 @@ export default {
           show: true,
           text: `${this.$t('system_msg.error')}: ${error}`
         }
+        this.$refs.pulling.rebase()
       })
+      //       this.query.website = 1
+      //       this.submit()
+      // this.submit()
       this.snackbar.show = false
     },
     submit() {
