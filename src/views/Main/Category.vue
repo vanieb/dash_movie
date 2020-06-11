@@ -42,6 +42,16 @@
                 <v-flex xs12>
                   <div width="452px;">
                     <types
+                      v-if="isUpdate"
+                      elementType="modal"
+                      :typeFilter="`website=${query.website}`"
+                      :mode="'one'"
+                      type="'set'"
+                      :types="category.type_category_id"
+                      @type-select-one="typeSetOne">
+                    </types>
+                    <types
+                      v-else
                       :typeFilter="`website=${query.website}`"
                       elementType="modal"
                       type="'set'"
@@ -437,6 +447,9 @@ export default {
       this.query.type_category = val
       this.submit()
     },
+    typeSetOne(val) {
+      this.category.type_category_id = val
+    },
     typeSetMultiple(val) {
       this.category.type_category_id = val
     },
@@ -483,7 +496,8 @@ export default {
         let categoryResult = Object({
           name: this.category.name,
           memo: this.category.memo,
-          type_category_id: this.category.type_category_id.join(',')
+          type_category_id: this.isUpdate ? (this.category.type_category_id && this.category.type_category_id.id ? this.category.type_category_id.id : this.category.type_category_id)
+          : this.category.type_category_id.join(',')
         })
         if (this.category.id) {
         this.$http.put(`${this.categoriesApi}${this.category.id}/`, categoryResult).then(() => {

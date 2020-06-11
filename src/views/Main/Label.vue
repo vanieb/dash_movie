@@ -493,16 +493,11 @@ export default {
     async saveLabel() {
       const isValid = await this.$refs.form.validate()
       if (isValid) {
-        let typeLabelId
-        if (this.isUpdate) {
-          typeLabelId = this.label.type_label_id.id
-        } else {
-          typeLabelId = this.label.type_label_id.join(',')
-        }
         let labelResult = Object({
           name: this.label.name,
           memo: this.label.memo,
-          type_label_id: typeLabelId
+          type_label_id: this.isUpdate ? (this.label.type_label_id && this.label.type_label_id.id ? this.label.type_label_id.id : this.label.type_label_id)
+          : this.label.type_label_id.join(',')
         })
         if (this.label.id) {
         this.$http.put(`${this.labelsApi}${this.label.id}/`, labelResult).then(() => {
