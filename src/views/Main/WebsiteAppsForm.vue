@@ -319,14 +319,11 @@ export default {
         this.showCategories = true
         this.labelFilter = `website${this.websiteId}&type_label=${this.webapp.types.id}`
         this.categoryFilter = `website${this.websiteId}&type_category=${this.webapp.types.id}`
-        // console.log(this.apps.basic_introduction)
         if (this.webapp.app.icon) {
           this.showImage = true
           this.webapp.app.imageURI = this.webapp.app.icon
           this.change_icon = false
         }
-        console.log(this.webapp)
-        console.log(this.selectFields)
         this.selectMultiple.forEach(item => {
           this.pushIDs(item, 'multiple')
         })

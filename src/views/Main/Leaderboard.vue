@@ -63,7 +63,7 @@
                   <v-icon>sort</v-icon>
                 </v-btn>
               </td>
-              <td>{{ item.name }}</td>
+              <td v-if="item.app">{{ item.app.name }}</td>
             </tr>
           </draggable>
           
@@ -105,6 +105,7 @@ export default {
       filteredQuerySet: [],
       typesApi: api.types,
       websiteApi: api.websites,
+      webAppsApi: api.webapps,
       leaderboardsApi: `${api.websites}update_rank`,
       showTab: true,
       snackbar: {
@@ -162,7 +163,7 @@ export default {
     },
     getApps(type) {
       this.type = type
-      this.$http.get(`${this.websiteApi}apps?ordering=rank&is_rank=true&types=${this.type}&website=${this.query.website}`).then(response => {
+      this.$http.get(`${this.webAppsApi}?ordering=rank&is_rank=true&types=${this.type}&website=${this.query.website}`).then(response => {
         this.filteredQuerySet = response.results
         .sort((a, b) => {
           return a['rank'] - b['rank']
@@ -173,9 +174,10 @@ export default {
     submitRank() {
       let rank = {}
       this.filteredQuerySet.map((p, index) => {
-        rank[p.id] = index +1
+        rank[p.id] = index + 1
       })
       let sortResult = Object({
+        recommend: false,
         rank: rank
       })
       this.$http.put(`${this.leaderboardsApi}/${this.type}/`, sortResult).then(() => {
