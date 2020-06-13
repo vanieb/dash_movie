@@ -48,12 +48,17 @@
       </v-tabs>
       <v-data-table
         v-if="showTab"
-        :headers="headers"
+        :headers="filteredQuerySet.length > 0 ? headers : []"
         :hide-default-footer="true"
         :items="filteredQuerySet">
         <template v-slot:body="{ items }">
-          <span v-if="!items">{{items}}</span>
+          <td v-if="items.length <= 0" colspan="2">
+            <v-layout justify-center align-center>
+              {{$t('pagination.no_record')}}
+            </v-layout>
+          </td>
           <draggable
+            v-else
             v-model="filteredQuerySet"
             :tag="'tbody'"
             :disabled="!mode">
@@ -63,7 +68,7 @@
                   <v-icon>sort</v-icon>
                 </v-btn>
               </td>
-              <td v-if="item.app">{{ item.app.name }}</td>
+              <td>{{ item.name }}</td>
             </tr>
           </draggable>
           
@@ -104,7 +109,7 @@ export default {
       query: {website: 1},
       filteredQuerySet: [],
       typesApi: api.types,
-      webAppsApi: api.webapps,
+      appsApi: api.apps,
       recommendedApi: `${api.websites}update_rank`,
       showTab: true,
       snackbar: {
@@ -162,7 +167,7 @@ export default {
     },
     getApps(type) {
       this.type = type
-      this.$http.get(`${this.webAppsApi}?ordering=recommended_rank&is_recommended=true&types=${this.type}&website=${this.query.website}`).then(response => {
+      this.$http.get(`${this.appsApi}?ordering=recommended_rank&is_recommended=true&app_type=${this.type}&website=${this.query.website}`).then(response => {
         this.filteredQuerySet = response.results
         .sort((a, b) => {
           return a['rank'] - b['rank']
