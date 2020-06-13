@@ -9,6 +9,7 @@
         :items="app_types"
         v-model="mytypes"
         :disabled="!disabled"
+        hide-details="type === 'filter' ? true : false"
         :label="elLabel"
         :outlined="elementType != 'modal' ? true : false"
         dense

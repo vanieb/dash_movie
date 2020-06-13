@@ -151,11 +151,13 @@
           </v-btn>
         </v-layout>
       </v-layout>
+      <!-- SEARCH -->
       <v-card>
-        <v-col cols="12" md="12" class="mt-2">
-          <v-row class="ml-1 mt-5">
+        <v-col cols="12" md="12" class="mt-2" style="padding: 20px 20px 10px 20px !important;">
+          <v-row>
             <div style="width:200px;" class="mr-2">
               <v-select
+                small
                 item-name="text"
                 item-value="value"
                 :items="statusOptions"
@@ -163,6 +165,7 @@
                 v-model="is_active"
                 placeholder=" "
                 clearable
+                hide-details=true
                 outlined
                 dense>
                 <template slot="selection" slot-scope="data">
@@ -188,6 +191,7 @@
                 v-model="query.name"
                 placeholder=" "
                 outlined
+                hide-details=true
                 dense>
               </v-text-field>
             </div>
@@ -207,6 +211,7 @@
                     :label="`${$t('common.created_at')}`"
                     placeholder=" "
                     outlined
+                    hide-details=true
                     dense
                     v-on="on"
                     readonly
@@ -225,7 +230,7 @@
                 </v-date-picker>
               </v-menu>
             </div>
-            <v-layout class="justify-end mr-5">
+            <v-layout class="justify-end">
               <v-btn
                 color="blue"
                 :loading="loading"
@@ -322,7 +327,6 @@ export default {
   },
   data() {
     return {
-      // dateRangeText: [],
       href: '',
       file: null,
       uploadLoading: false,
@@ -330,6 +334,7 @@ export default {
       export_query: [],
       querySet: [],
       is_active: '',
+      website: '',
       created_at: ['', ''],
       appsApi: api.apps,
       exportApi: `${api.websites}export/`,
@@ -455,7 +460,7 @@ export default {
         this.created_at = [undefined, undefined]
       }
       this.is_active = this.$route.query.is_active==true || this.$route.query.is_active==false ? this.$route.query.is_active : ''
-      this.website = this.$route.query.websites || ''
+      this.website = this.$route.query.website || ''
       this.query = Object.assign({}, this.$route.query)
     },
     queryData(queryset) {
@@ -547,9 +552,10 @@ export default {
     700),
     clearAll() {
       this.is_active = ''
+      this.website = ''
       this.query = {}
       this.$nextTick(() => {
-        this.$refs.pulling.submit()
+        this.submit()
       })
     },
     clearDateRange() {
