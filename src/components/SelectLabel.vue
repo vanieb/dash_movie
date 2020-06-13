@@ -40,7 +40,7 @@
             close
             @click="select"
             @click:close="remove(item)"
-            >{{ item.name }}
+            >{{ item ? item.name : 0 }}
           </v-chip>
         </template>
       </v-select>
