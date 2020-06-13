@@ -100,13 +100,14 @@
       </v-layout>
       <!-- SEARCH -->
       <v-card>
-        <v-col cols="12" md="12" class="mt-2">
-          <v-row class="ml-1 mt-5">
+        <v-col cols="12" md="12" class="mt-2" style="padding: 20px 20px 10px 20px !important;">
+          <v-row>
             <div style="width:200px;" class="mr-2">
               <v-select
                 item-name="text"
                 item-value="value"
                 :items="statusOptions"
+                hide-details="true"
                 :label="`${$t('common.status')}`"
                 v-model="is_active"
                 placeholder=" "
@@ -134,6 +135,7 @@
                 @input="search"
                 :label="`${$t('common.name')}`"
                 v-model="query.name"
+                hide-details="true"
                 placeholder=" "
                 outlined
                 dense>
@@ -155,6 +157,7 @@
                     :label="`${$t('common.created_at')}`"
                     placeholder=" "
                     outlined
+                    hide-details="true"
                     dense
                     v-on="on"
                     readonly
@@ -173,7 +176,7 @@
                 </v-date-picker>
               </v-menu>
             </div>
-            <v-layout class="justify-end mr-5">
+            <v-layout class="justify-end">
               <v-btn
                 color="blue"
                 :loading="loading"
