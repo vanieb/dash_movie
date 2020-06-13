@@ -1,6 +1,6 @@
 <template>
   <v-app id="app">
-    <side-bar :show-nav="showNav"></side-bar>
+    <side-bar :show-nav="showNav" :username="username"></side-bar>
     <v-content>
       <router-view></router-view>
     </v-content>
@@ -15,6 +15,16 @@ import axios from 'axios'
 
 export default {
   name: 'App',
+  data() {
+    return {
+      username: ''
+    }
+  },
+  watch: {
+    username(newObj) {
+      window.document.cookie = `username=${newObj}`
+    }
+  },
   components: {
     SideBar
   },
@@ -54,7 +64,6 @@ export default {
       }
       this.$http.get(api.my).then(response => {
         this.username = response.username
-        window.document.cookie = `username=${this.username}`
         this.setUpAuth()
         this.setUpRouterHooks()
       })

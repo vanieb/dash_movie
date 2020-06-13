@@ -108,13 +108,15 @@
 </template>
 
 <script>
-  import VueCookie from 'vue-cookie'
   import api from '@/api/apis'
   export default {
     name: 'SideBar',
     props: {
       showNav: {
         default: true
+      },
+      username: {
+        default: ''
       }
     },
     data() {
@@ -136,11 +138,6 @@
           // { icon: 'settings', text: this.$t('nav.settings') }
         ]
     }},
-    computed: {
-      username() {
-        return VueCookie.get('username')
-      }
-    },
     methods: {
       logout() {
         this.$http.post(api.logout).then(() => {
