@@ -57,7 +57,7 @@ export default {
   },
   props: {
     type: {
-      default: 'set'
+      default: 'select'
     },
     req: {
       default: false
@@ -109,9 +109,7 @@ export default {
       this.mytypes.splice(this.mytypes.indexOf(item), 1)
       this.mytypes = [...this.mytypes]
     },
-    getFilteredAppTypes(typeFilter) {
-      console.log('typeFilter in SelectType.vue')
-      console.log(typeFilter)
+    getFilteredAppTypes(typeFilter='') {
       this.$http.get(`${api.types}?limit=400&offset=0&${typeFilter}`).then(response => {
         this.app_types = response.results
         let _this = this
