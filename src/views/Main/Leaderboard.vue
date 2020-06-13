@@ -48,22 +48,27 @@
       </v-tabs>
       <v-data-table
         v-if="showTab"
-        :headers="headers"
+        :headers="filteredQuerySet.length > 0 ? headers : []"
         :hide-default-footer="true"
         :items="filteredQuerySet">
         <template v-slot:body="{ items }">
-          <span v-if="!items">{{items}}</span>
+          <td v-if="items.length <= 0" colspan="2">
+            <v-layout justify-center align-center>
+              {{$t('pagination.no_record')}}
+            </v-layout>
+          </td>
           <draggable
+            v-else
             v-model="filteredQuerySet"
             :tag="'tbody'"
             :disabled="!mode">
-            <tr v-for="item in filteredQuerySet" :key="item.id" >
+            <tr v-for="item in filteredQuerySet" :key="item.id">
               <td width="5%">
                 <v-btn :color ="iconColor" icon>
                   <v-icon>sort</v-icon>
                 </v-btn>
               </td>
-              <td v-if="item.app">{{ item.app.name }}</td>
+              <td>{{ item.name }}</td>
             </tr>
           </draggable>
           
@@ -104,8 +109,7 @@ export default {
       query: {website: 1},
       filteredQuerySet: [],
       typesApi: api.types,
-      websiteApi: api.websites,
-      webAppsApi: api.webapps,
+      appsApi: api.apps,
       leaderboardsApi: `${api.websites}update_rank`,
       showTab: true,
       snackbar: {
@@ -162,8 +166,8 @@ export default {
       })
     },
     getApps(type) {
-      this.type = type
-      this.$http.get(`${this.webAppsApi}?ordering=rank&is_rank=true&types=${this.type}&website=${this.query.website}`).then(response => {
+      this.app_type = type
+      this.$http.get(`${this.appsApi}?ordering=rank&is_rank=true&app_type=${this.app_type}&website=${this.query.website}`).then(response => {
         this.filteredQuerySet = response.results
         .sort((a, b) => {
           return a['rank'] - b['rank']
@@ -180,8 +184,8 @@ export default {
         recommend: false,
         rank: rank
       })
-      this.$http.put(`${this.leaderboardsApi}/${this.type}/`, sortResult).then(() => {
-        this.getApps(this.type)
+      this.$http.put(`${this.leaderboardsApi}/${this.app_type}/`, sortResult).then(() => {
+        this.getApps(this.app_type)
         this.snackbar = {
           color: 'success',
           show: true,

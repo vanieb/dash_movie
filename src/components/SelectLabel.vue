@@ -55,6 +55,9 @@ export default {
     ValidationProvider
   },
   props: {
+    type: {
+      default: 'select'
+    },
     labelFilter: {
       default: ''
     },
@@ -90,7 +93,7 @@ export default {
     },
     labelFilter(newObj) {
       this.labels = []
-      this.mylabel = ''
+      // this.mylabel = ''
       this.getFilteredLabels(newObj)
     }
   },
@@ -98,14 +101,17 @@ export default {
     if (this.req) {
       this.elLabel = `${this.$t('nav.labels')}*`
     }
-    this.getFilteredLabels(this.labelFilter)
+    if (this.type == 'select') {
+      this.getFilteredLabels()
+    }
+    
   },
   methods: {
     remove (item) {
       this.mylabel.splice(this.mylabel.indexOf(item), 1)
       this.mylabel = [...this.mylabel]
     },
-    getFilteredLabels(labelFilter) {
+    getFilteredLabels(labelFilter='') {
       this.$http.get(`${api.labels}?limit=400&offset=0&${labelFilter}`).then(response => {
         this.labels = response.results
         if (this.default) {

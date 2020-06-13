@@ -75,24 +75,31 @@
               </v-row>
               <v-row>
                 <span style="width:338px;">
-                  <app-types
+                  <types
+                    v-if="showType"
+                    :typeFilter="`website=${apps.website.id}`"
                     req="true"
+                    type="set"
                     :mode="'one'"
-                    :types="apps.types"
+                    :types="apps.app_type"
                     @type-select-one="typeSelectOne">
-                  </app-types>
+                  </types>
                 </span>
+                <v-spacer></v-spacer>
                 <v-spacer></v-spacer>
                 <span style="width:338px;">
                   <categories
+                    v-if="showCategories"
+                    :categoryFilter="categoryFilter"
                     req="true"
                     :mode="'one'"
-                    :category="apps.categories"
+                    type="set"
+                    :category="apps.category"
                     @category-select-one="categorySelectOne">
                   </categories>
                 </span>
               </v-row>
-              <v-row>
+              <!-- <v-row>
                 <span style="width:748px;">
                    <websites
                     req="true"
@@ -101,10 +108,13 @@
                     @website-select-multiple="websiteSelectMultiple">
                   </websites>
                 </span>
-              </v-row>
+              </v-row> -->
               <v-row>
                 <labels
+                  v-if="showLabels"
+                  :labelFilter="labelFilter"
                   req="true"
+                  type="set"
                   :mode="'multiple'"
                   :label="apps.labels"
                   @label-select-multiple="labelSelectMultiple">
@@ -139,18 +149,20 @@
             </v-col>
           </v-row>
           <v-spacer></v-spacer>
-          <v-banner style="color:blue;">{{$t('apps.other_details')}}</v-banner>
+          <v-banner color="primary" dark>{{$t('apps.seo_data')}}</v-banner>
+          <v-flex>
+            <v-card-title>{{$t('apps.keywords')}}</v-card-title>
+            <v-card-text>
+              <v-textarea outlined v-model="apps.keywords">Hello</v-textarea>
+            </v-card-text>
+          </v-flex>
           <v-flex>
             <v-card-title>{{$t('apps.basic_introduction')}}</v-card-title>
             <v-card-text>
-              <tinymce v-if="this.showTinyMce"
-                name="basic"
-                :content="apps.basic_introduction"
-                @change-content="changeBasicContent"
-                >
-              </tinymce>
+              <v-textarea outlined v-model="apps.basic_introduction">Hello</v-textarea>
             </v-card-text>
           </v-flex>
+          <v-banner color="primary" dark>{{$t('apps.other_details')}}</v-banner>
           <v-flex>
             <v-card-title>{{$t('apps.introduction')}}</v-card-title>
             <v-card-text>
@@ -197,9 +209,9 @@ import tinymce from '../../components/tinymce'
 import api from '@/api/apis'
 import SnackBar from '@/components/SnackBar'
 import Categories from '../../components/SelectCategory.vue'
-import AppTypes from '../../components/SelectType.vue'
+import Types from '../../components/SelectType.vue'
 import Labels from '../../components/SelectLabel.vue'
-import Websites from '../../components/SelectWebsite.vue'
+// import Websites from '../../components/SelectWebsite.vue'
 import $ from '../../utils/util'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 
@@ -208,8 +220,7 @@ export default {
   components: {
     Categories,
     Labels,
-    AppTypes,
-    Websites,
+    Types,
     ValidationObserver,
     ValidationProvider,
     SnackBar,
@@ -217,16 +228,16 @@ export default {
   },
   data() {
     return {
+      showCategories: false,
+      showLabels: false,
+      showType: false,
       showTinyMce: '',
-      level_changed: '',
-      website_changed: '',
+      label_changed: '',
       showImage: false,
       lang: '',
-      mode: 1,
-      errorMsg: '',
-      links: [],
-      filteredLinks: [],
       appsApi: api.apps,
+      labelFilter: '',
+      categoryFilter: '',
       loading: false,
       submitting: false,
       snackbar: {
@@ -244,23 +255,14 @@ export default {
           text: this.$route.meta.title,
           disabled: true
         }],
-      apps: {
-        types: [],
-        websites: [],
-        categories: [],
-        labels: [],
-        icon: ''
-      },
+      apps: {},
       uploadInstallerDialog: false,
       uploadLoading: false,
-      file: '',
-      selectOne: ['types', 'categories'],
-      selectMultiple: ['labels', 'websites'],
-      selectFields: ['types', 'categories', 'labels', 'websites'],
+      selectOne: ['app_type', 'category'],
+      selectMultiple: ['labels'],
       data: {
-        websites: '',
-        types: false,
-        categories: false,
+        app_type: false,
+        category: false,
         labels: ''
       }
     }
@@ -273,11 +275,6 @@ export default {
       }
     })
   },
-  filters: {
-    truncate: function(text, length, suffix) {
-      return text.substring(0, length) + suffix
-    }
-  },
   created() {
     this.lang = $.getLanguage() == 'zh_CN' ? 'zh-cn' : ''
   },
@@ -286,14 +283,23 @@ export default {
       this.$http.get(`${this.appsApi}${id }/`).then((response) => {
         this.apps = response
         this.showTinyMce = true
-        console.log(this.apps.basic_introduction)
+        this.showLabels = true
+        this.showType = true
+        this.showCategories = true
+        if (this.apps.app_type) {
+          this.labelFilter = `website=${this.apps.website.id}&type_label=${this.apps.app_type.id}`
+          this.categoryFilter = `website=${this.apps.website.id}&type_category=${this.apps.app_type.id}`
+        }
         if (this.apps.icon) {
           this.showImage = true
           this.apps.imageURI = this.apps.icon
           this.change_icon = false
         }
-        this.selectFields.forEach(item => {
-          this.pushIDs(item)
+        this.selectMultiple.forEach(item => {
+          this.pushIDs(item, 'multiple')
+        })
+        this.selectOne.forEach(item => {
+          this.pushIDs(item, 'one')
         })
       }, response => {
           if (('' + response.status).indexOf('4') === 0) {
@@ -302,12 +308,21 @@ export default {
       })
       this.loading = false
     },
-    pushIDs(item){
+    pushIDs(item, mode){
       let val = []
-      this.apps[item].forEach(item => {
-        val.push(item.id)
-      })
-      this.data[item] = val.join(',')
+      if (mode == 'Multiple') {
+        this.apps[item].forEach(item => {
+          if (item) {
+            val.push(item.id)
+          }
+        })
+        this.data[item] = val.join(',')
+      } else {
+        if (this.apps[item]) {
+          val.push(this.apps[item].id)
+          this.data[item] = val
+        }
+      }
     },
     uploadIcon (e) {
       // file size must less than 1mb
@@ -357,25 +372,24 @@ export default {
       this.apps.features = val
     },
     typeSelectOne(val) {
-      this.apps.types = val
-    },
-    websiteSelectMultiple(val) {
-      if (val && val[0].name==undefined) {
-        this.website_changed = true
-      } else {
-        this.website_changed = false
+      this.apps.app_type = val
+      let type = val
+      if (val && val.id) {
+        type = val.id
       }
-      this.apps.websites = val
+      this.labelFilter = `website=${this.apps.website.id}&type_label=${type}`
+      this.categoryFilter = `website=${this.apps.website.id}&type_category=${type}`
     },
     categorySelectOne(val) {
-      this.apps.categories = val
+      this.apps.category = val
     },
     labelSelectMultiple(val) {
-      if (val && val[0].name==undefined) {
-        this.level_changed = true
-      } else {
-        this.level_changed = false
-      }
+      // console.log(val)
+      // if (val && val[0].name==undefined) {
+      //   this.label_changed = true
+      // } else {
+      //   this.label_changed = false
+      // }
       this.apps.labels = val
     },
     async saveApp() {
@@ -383,11 +397,8 @@ export default {
       if (isValid) {
         let formData = new window.FormData()
         // Select Fields (Multiple) are added if value changed
-        if (this.level_changed) {
+        if (this.label_changed) {
           formData.set('labels', this.apps.labels)
-        }
-        if (this.website_changed) {
-          formData.set('websites', this.apps.websites)
         }
         // Select Fields (One) old values are sent if value did not change
         this.selectOne.forEach(item => {
@@ -406,6 +417,7 @@ export default {
         formData.set('version', this.apps.version)
         formData.set('introduction', this.apps.introduction)
         formData.set('basic_introduction', this.apps.basic_introduction)
+        formData.set('keywords', this.apps.keywords)
         formData.set('features', this.apps.features)
         if (this.apps.id) {
           this.$http.put(`${this.appsApi}${this.apps.id}/`, formData).then(response => {

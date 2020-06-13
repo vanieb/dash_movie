@@ -1,6 +1,6 @@
 <template>
   <v-layout>
-    <ValidationProvider :name="$t('nav.category')" style="width:338px;" :rules="`${req ? 'required' : ''}`" >
+    <ValidationProvider :name="$t('app.category')" style="width:338px;" :rules="`${req ? 'required' : ''}`" >
       <v-select
         v-if="mode==='one'"
         :error-messages="errors"
@@ -9,7 +9,7 @@
         item-text="name"
         :items="categories"
         v-model="mycategory"
-        :value="mycategory.name"
+        :value="mycategory ? mycategory.name : ''"
         :disabled="!disabled"
         :label="elLabel"
         outlined
@@ -56,6 +56,9 @@ export default {
     ValidationProvider
   },
   props: {
+    type: {
+      default: 'select'
+    },
     categoryFilter: {
       default: false
     },
@@ -66,7 +69,7 @@ export default {
       default: ''
     },
     mode: {
-      default: 'select'
+      default: 'one'
     },
     disabled: {
       default: true
@@ -90,18 +93,17 @@ export default {
       }
     },
     categoryFilter(newObj) {
-      if (newObj && !newObj.id) {
-        this.categories = []
-        this.mycategory = ''
-        this.getFilteredCategories(newObj)
-      }
+      this.categories = []
+      this.getFilteredCategories(newObj)
     }
   },
   created() {
     if (this.req) {
-      this.elLabel = `${this.$t('nav.category')}*`
+      this.elLabel = `${this.$t('apps.category')}*`
     }
-    this.getFilteredCategories(this.categoryFilter)
+    if (this.type == 'select') {
+      this.getFilteredCategories(this.categoryFilter)
+    }
   },
   methods: {
     remove (item) {
@@ -109,12 +111,11 @@ export default {
       this.mycategory = [...this.mycategory]
     },
     getFilteredCategories(categoryFilter='') {
-      console.log(this.categoryFilter)
       this.$http.get(`${api.categories}?limit=400&offset=0&${categoryFilter}`).then(response => {
         this.categories = response.results
         let _this = this
           setTimeout(function() {
-            _this.mycategory = _this.category[0]
+            _this.mycategory = _this.category
           }, 100)
       })
     }
