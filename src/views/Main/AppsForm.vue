@@ -378,11 +378,9 @@ export default {
       this.categoryFilter = `website=${this.apps.website.id}&type_category=${type}`
     },
     categorySelectOne(val) {
-      console.log(val)
       this.apps.category = val
     },
     labelSelectMultiple(val) {
-      console.log(val)
       if (val && val[0].name==undefined) {
         this.label_changed = true
       } else {

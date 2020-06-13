@@ -87,11 +87,6 @@ export default {
       rules: ''
     }
   },
-  // computed: {
-  //   hide_details() {
-  //     return this.type != 'set' ? true : false
-  //   }
-  // },
   watch: {
     types() {
       this.mytypes = this.types
