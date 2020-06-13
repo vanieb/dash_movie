@@ -111,6 +111,7 @@ export default {
     rows_per_page: 'Rows per page:',
     showing: 'Showing',
     pages: 'Pages',
-    no_record: 'No Data Available'
+    no_record: 'No Data Available',
+    items: 'Items'
   }
 }
