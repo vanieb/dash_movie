@@ -242,9 +242,7 @@ export default {
       }
       this.myQuery = query
       for (let x in query) {
-        if (query[x]) {
-          params.push(x + '=' + query[x])
-        }
+        params.push(x + '=' + query[x])
       }
       return url + (defaultQuery ? '&' : '?') + params.join('&')
     },

@@ -13,7 +13,7 @@
         </div>
         <v-layout justify-end>
           <!-- Installer Upload -->
-          <v-dialog v-model="uploadInstallerDialog" persistent max-width="350">
+          <v-dialog v-model="uploadInstallerDialog" persistent max-width="600">
             <template v-slot:activator="{ on }">
                <v-btn
                   color="primary"
@@ -39,6 +39,13 @@
                   <small>{{ $t('system_notes.upload_installer_memo') }}</small>
                 </v-card-text>
                 <v-card-text>
+                  <website
+                    type="set"
+                    :mode="'multiple'"
+                    :website="setWebsite"
+                    req="true"
+                    @website-select-multiple="websiteSetMultiple">
+                  </website>
                   <v-spacer></v-spacer>
                   <validation-provider style="width:310px;" rules="required" :name="$t('common.file')">
                     <v-file-input
@@ -46,8 +53,10 @@
                       dense
                       clearable
                       :error-messages="errors"
-                      required
+                      :label="`${$t('common.file')}*`"
+                      placeholder=" "
                       slot-scope="{ errors }"
+                      required
                       v-model="file">    
                     </v-file-input>
                   </validation-provider>
@@ -127,64 +136,19 @@
             </v-card>
           </v-dialog>
           <!-- Export Apps -->
-
-          <v-dialog v-model="createAppDialog" persistent max-width="350">
-            <template v-slot:activator="{ on }">
-
-              <v-btn
-                color="primary"
-                dark 
-                
-                v-on="on">
-                <!-- <v-icon class="mr-3">dynamic_feed</v-icon>&nbsp;{{ $t('actions.create_multiple') }} -->
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                  <v-icon v-on="on">cloud_download</v-icon><!-- {{ $t('actions.upload') }} -->
-
-                  </template>
-                  <span>{{$t('system_notes.add_multiple_apps_memo')}}</span>
-                </v-tooltip>
-              </v-btn>
-            </template>
-            <v-card>
-              <validation-observer ref="form">
-                <v-card-title>
-                  <v-icon class="mr-3">dynamic_feed</v-icon>
-                    &nbsp;{{ $t('actions.create_multiple') }}
-                </v-card-title>
-                <v-card-text>
-                  <v-icon small>info</v-icon>
-                  <small>{{ $t('system_notes.add_multiple_apps_memo') }}</small>
-                </v-card-text>
-                <v-card-text>
-                  <v-spacer></v-spacer>
-                  <validation-provider style="width:310px;" rules="required" :name="$t('common.file')">
-                    <v-file-input
-                      outlined
-                      dense
-                      clearable
-                      :error-messages="errors"
-                      required
-                      slot-scope="{ errors }"
-                      accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                      v-model="file">    
-                    </v-file-input>
-                  </validation-provider>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    color="grey lighten-1"
-                    @click="createAppDialog = false">{{ $t('actions.close') }}
-                  </v-btn>
-                  <v-btn
-                    color="blue darken-1"
-                    @click="uploadFile('add')">{{ $t('actions.submit') }}
-                  </v-btn>
-                </v-card-actions>
-              </validation-observer>
-            </v-card>
-          </v-dialog>
+          <v-btn
+            color="primary"
+            :href="href"
+            v-if="querySet.length"
+            :getReport="getReport"
+            dark>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-icon v-on="on">cloud_download</v-icon><!-- {{ $t('actions.upload') }} -->
+              </template>
+              <span>{{$t('system_notes.add_multiple_apps_memo')}}</span>
+            </v-tooltip>
+          </v-btn>
         </v-layout>
       </v-layout>
       <v-card>
@@ -196,7 +160,7 @@
                 item-value="value"
                 :items="statusOptions"
                 :label="`${$t('common.status')}`"
-                v-model="status"
+                v-model="is_active"
                 placeholder=" "
                 clearable
                 outlined
@@ -210,12 +174,12 @@
               </v-select>
             </div>
             <div style="width:200px;" class="mr-2">
-              <websites
+              <website
                 type="filter"
                 :mode="'one'"
                 :website="query.website"
-                @website-select-multiple="websiteSelectMultiple">
-              </websites>
+                @website-select-one="websiteSelectOne">
+              </website>
             </div>
             <div style="width:200px;" class="mr-2">
               <v-text-field
@@ -224,7 +188,6 @@
                 v-model="query.name"
                 placeholder=" "
                 outlined
-                clearable
                 dense>
               </v-text-field>
             </div>
@@ -290,12 +253,12 @@
               </v-btn>
             </td>
             <td class="align-center" width="20%">{{ item.name }}</td>
-            <!-- <td class="align-center justify-center" width="50%">
-              <span v-for="website in item.websites" :key="website.id">{{website.name}}<br/></span>
-            </td> -->
+            <td class="align-center justify-center" width="50%" >
+              <span>{{item.website ? item.website.name : '-' }}<br/></span>
+            </td>
             <td class="align-center justify-start">
               <v-switch value v-model="item.is_active"
-                @change="toggle(item.id, item.status, 'is_active')">
+                @change="toggle(item.id, item.is_active, 'is_active')">
               </v-switch>
             </td>
             <td class="align-center justify-start">
@@ -326,6 +289,7 @@
       ref="pulling"
       @query-data="queryData"
       @query-param="queryParam"
+      :export_query="export_query"
     >
     </pagination>
     <!-- SNACKBAR -->
@@ -342,14 +306,15 @@ import api from '@/api/apis'
 import $ from '../../utils/util'
 import Pagination from '@/components/Pagination'
 import SnackBar from '@/components/SnackBar'
-import Websites from '../../components/SelectWebsite.vue'
+import Website from '../../components/SelectWebsite.vue'
 import { debounce } from 'lodash'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
+import VueCookie from 'vue-cookie'
 
 export default {
   name: 'Apps',
   components: {
-    Websites,
+    Website,
     Pagination,
     SnackBar,
     ValidationObserver,
@@ -358,31 +323,27 @@ export default {
   data() {
     return {
       // dateRangeText: [],
+      href: '',
       file: null,
       uploadLoading: false,
       query: {},
+      export_query: [],
       querySet: [],
-      status: '',
+      is_active: '',
       created_at: ['', ''],
       appsApi: api.apps,
+      exportApi: `${api.websites}export/`,
       loading: true,
       uploadInstallerDialog: false,
       createAppDialog: false,
       date_menu: false,
-      apps: {
-        mode: '',
-        linkId: '',
-        name: '',
-        link: 'http://',
-        category: '',
-        country: '',
-        description: ''
-      },
+      setWebsite: '',
+      apps: {},
       statusOptions: [
         { text: this.$t('status.enabled'),
-          value: 1}, 
+          value: true}, 
         { text: this.$t('status.disabled'),
-          value: 2}],
+          value: false}],
       snackbar: {
         color: '',
         text: '',
@@ -443,13 +404,13 @@ export default {
       },
       deep: true
     },
-    websites(newObj) {
-      this.query.websites = newObj
-      this.submit()
+    website(newObj) {
+      this.query.website = newObj
+      this.search()
     },
-    status(newObj) {
-      this.query.status = newObj
-      this.submit()
+    is_active(newObj) {
+      this.query.is_active = newObj
+      this.$refs.pulling.submit()
     },
     created_at(newObj) {
       [this.query.created_at_after, this.query.created_at_before] = [...newObj]
@@ -473,13 +434,18 @@ export default {
       return $.compareQuery(this.query, {})
     },
     dateRangeText () {
-      console.log()
       if (this.query.created_at_after || this.query.created_at_before ) {
         return this.created_at.join(' ~ ')
       } else {
         return ''
       }
-    }
+    },
+    getReport() {
+      this.$refs.pulling.getExportQuery()
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+      this.href = `${this.exportApi}?token=${VueCookie.get('access_token')}&${this.export_query}`
+      return this.querySet.length
+    },
   },
   methods: {
     setQueryAll() {
@@ -488,10 +454,9 @@ export default {
       } else {
         this.created_at = [undefined, undefined]
       }
-      this.status = this.$route.query.status || ''
-      this.websites = this.$route.query.websites || ''
+      this.is_active = this.$route.query.is_active==true || this.$route.query.is_active==false ? this.$route.query.is_active : ''
+      this.website = this.$route.query.websites || ''
       this.query = Object.assign({}, this.$route.query)
-
     },
     queryData(queryset) {
       this.loading = false
@@ -500,6 +465,9 @@ export default {
     queryParam(query) {
       this.query = Object.assign(this.query, query)
     },
+    exportQuery(expor) {
+      this.export_query = expor
+    },
     async uploadFile(mode) {
       const isValid = await this.$refs.form.validate()
       if (isValid) {
@@ -507,6 +475,7 @@ export default {
           this.uploadLoading = true
           const formData = new window.FormData()
           formData.set('app_file', this.file)
+          formData.set('website', this.setWebsite)
           this.$http.post(api.upload, formData).then(() => {
             this.snackbar = {
               color: 'success',
@@ -523,8 +492,12 @@ export default {
         }
       }
     },
-    websiteSelectMultiple(val) {
-      this.query.websites = val
+    websiteSetMultiple(val) {
+      this.setWebsite = val
+    },
+    websiteSelectOne(val) {
+      this.query.website = val
+      this.submit()
     },
     toggle(id, value, mode){
       this.snackbar.show = false
@@ -573,9 +546,10 @@ export default {
       },
     700),
     clearAll() {
+      this.is_active = ''
       this.query = {}
       this.$nextTick(() => {
-        this.submit()
+        this.$refs.pulling.submit()
       })
     },
     clearDateRange() {

@@ -428,6 +428,7 @@ export default {
       const isValid = await this.$refs.form.validate()
       if (isValid) {
         let formData = new window.FormData()
+        // let appFormData = new window.FormData()
         // Select Fields (Multiple) are added if value changed
         if (this.level_changed) {
           formData.set('labels', this.webapp.labels)
