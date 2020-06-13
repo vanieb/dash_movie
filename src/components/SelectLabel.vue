@@ -9,6 +9,7 @@
         item-text="name"
         :items="labels"
         v-model="mylabel"
+        :value="mylabel ? mylabel.name : ''"
         :disabled="!disabled"
         :label="elLabel"
         outlined
@@ -102,7 +103,7 @@ export default {
       this.elLabel = `${this.$t('nav.labels')}*`
     }
     if (this.type == 'set') {
-      this.getFilteredLabels()
+      this.getFilteredLabels(this.labelFilter)
     }
     
   },

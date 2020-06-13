@@ -1,6 +1,6 @@
 <template>
   <v-layout>
-    <ValidationProvider :name="$t('app.category')" style="width:338px;" :rules="`${req ? 'required' : ''}`" >
+    <ValidationProvider :name="$t('apps.category')" style="width:338px;" :rules="`${req ? 'required' : ''}`" >
       <v-select
         v-if="mode==='one'"
         :error-messages="errors"
