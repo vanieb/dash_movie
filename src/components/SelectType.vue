@@ -103,7 +103,6 @@ export default {
     if (this.req) {
       this.elLabel = `${this.$t('apps.type')}*`
     }
-    console.log(this.type)
     this.getFilteredAppTypes(this.typeFilter)
   },
   methods: {
