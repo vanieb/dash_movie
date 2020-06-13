@@ -45,7 +45,7 @@
             />
             <v-layout justify-center mb5>
               <v-rating
-                x-small dense color="orange" v-model="apps.star">
+                x-small dense color="orange" v-model="apps.star" disabled="true">
               </v-rating>
             </v-layout>
             <small><v-icon>event</v-icon> {{apps.created_at | moment("YYYY-MM-DD HH:mm:ss") }}
@@ -62,11 +62,6 @@
               >{{$t('apps.version')}}: {{apps.version || $t('system_msg.no_data')}}
               </span>
             </v-row>
-            <!-- <v-row>
-              <span
-              >{{$t('apps.release_date')}}: {{apps.created_at | moment("YYYY-MM-DD HH:mm:ss") }}
-              </span>
-            </v-row> -->
             <v-row>
               <v-chip
                 v-if="apps.is_active"
@@ -106,38 +101,26 @@
           </v-col>
           <v-col cols="12" md="4">
             <v-card>
-              <v-card-text px-0>
+              <v-card-text>
+                <v-icon>web</v-icon> {{$t('nav.websites')}}:
+                  <v-chip class="ma-1" color="orange" outlined v-if="apps.website">{{apps.website.name}}</v-chip>
+                <span v-else> {{ $t('system_msg.no_data') }}</span>
+                <br/>
                 <v-icon>new_releases</v-icon> {{$t('apps.type')}}:
-                <span v-if="apps.types">
-                  <span v-for="type in apps.types" :key="type.name">
-                    <v-chip class="ma-1" color="red" outlined>{{type.name}}</v-chip>
-                  </span>
+                <span v-if="apps.app_type">
+                  <v-chip class="ma-1" color="red" outlined>{{ apps.app_type.name }}</v-chip>
                 </span>
+                <span v-else> {{ $t('system_msg.no_data') }}</span>
+                <br/>
+                <v-icon>category</v-icon> {{$t('nav.category')}}:
+                  <v-chip v-if="apps.category" class="ma-1" color="green" outlined >{{apps.category.name}}</v-chip>
                 <span v-else> {{ $t('system_msg.no_data') }}</span>
               </v-card-text>
-              <v-card-text >
-                <v-icon>web</v-icon> {{$t('nav.websites')}}:
-                <span v-if="apps.websites">
-                  <span v-for="website in apps.websites" :key="website.id">
-                    <v-chip class="ma-1" color="orange" outlined>{{website.name}}</v-chip>
-                  </span>
-                </span>
-                <span v-else> {{ $t('system_msg.no_data') }}</span>
-             </v-card-text>
             </v-card>
           </v-col>
           <v-col cols="12" md="4">
             <v-card>
-              <v-card-text >
-                <v-icon>category</v-icon> {{$t('nav.category')}}:
-                <span v-if="apps.categories">
-                  <span v-for="category in apps.categories" :key="category.name">
-                    <v-chip class="ma-1" color="green" outlined>{{category.name}}</v-chip>
-                  </span>
-                </span>
-                <span v-else> {{ $t('system_msg.no_data') }}</span>
-              </v-card-text>
-             <v-card-text >
+             <v-card-text>
               <v-icon>label</v-icon> {{$t('nav.labels')}}:
               <span v-if="apps.labels">
                   <span v-for="label in apps.labels" :key="label.name">
@@ -145,7 +128,7 @@
                   </span>
                 </span>
                 <span v-else> {{ $t('system_msg.no_data') }}</span>
-            </v-card-text>
+              </v-card-text>
             </v-card>
           </v-col>          
         </v-row>
@@ -207,14 +190,20 @@
             </v-card>
           </v-dialog>
             <!-- <v-icon>cloud_upload</v-icon>&nbsp;&nbsp; -->
-            <span>{{ $t('apps.download_link')}}: {{ apps.download_link || $t('system_msg.no_data') }}</span>
+            <span>{{ $t('apps.download_link')}}: {{ apps.app_file || $t('system_msg.no_data') }}</span>
              </v-card-text>
           </v-card>
+        </v-flex>
+         <v-banner color="primary" dark>{{$t('apps.seo_data')}}</v-banner>
+         <v-flex>
+          <v-card-title>{{$t('apps.keywords')}}</v-card-title>
+          <v-card-text>{{ apps.keywords  || $t('system_msg.no_data')}}</v-card-text>
         </v-flex>
         <v-flex>
           <v-card-title>{{$t('apps.basic_introduction')}}</v-card-title>
           <v-card-text v-html="apps.basic_introduction  || $t('system_msg.no_data')"></v-card-text>
         </v-flex>
+        <v-banner color="primary" dark>{{$t('apps.other_details')}}</v-banner>
         <v-flex>
           <v-card-title>{{$t('apps.introduction')}}</v-card-title>
           <v-card-text v-html="apps.introduction  || $t('system_msg.no_data')"></v-card-text>
@@ -274,13 +263,11 @@ export default {
   beforeRouteEnter (to, from, next) {
     next(vm => {
       let id = to.params.appsId
-      let websiteId =  to.params.websiteId
-      vm.getAppDetails(id, websiteId)
+      vm.getAppDetails(id)
     })
   },
   methods: {
-    getAppDetails(id, websiteId='') {
-      console.log(websiteId)
+    getAppDetails(id) {
       this.$http.get(`${this.appsApi}${id }/`).then((response) => {
         this.apps = response
       })
