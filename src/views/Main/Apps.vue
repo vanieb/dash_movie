@@ -442,7 +442,6 @@ export default {
     },
     getReport() {
       this.$refs.pulling.getExportQuery()
-      console.log(VueCookie.get('access_token'))
       // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       this.href = `${this.exportApi}?token=${VueCookie.get('access_token')}&${this.export_query}`
       return this.querySet.length
