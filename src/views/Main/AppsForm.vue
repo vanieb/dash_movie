@@ -296,7 +296,7 @@ export default {
           this.change_icon = false
         }
         this.selectMultiple.forEach(item => {
-          this.pushIDs(item, 'multiple')
+          this.pushIDs(item, 'Multiple')
         })
         this.selectOne.forEach(item => {
           this.pushIDs(item, 'one')
@@ -383,18 +383,25 @@ export default {
       this.apps.labels = []
     },
     categorySelectOne(val) {
-      if (val && val[0].name==undefined) {
-        this.category_changed = false
-      } else {
-        this.category_changed = true
-      }
       this.apps.category = val
     },
     labelSelectMultiple(val) {
-      if (val && val[0].name==undefined) {
-        this.label_changed = true
+      if (val && val[0].name) {
+        let newVal = []
+        this.apps.labels.forEach(item => {
+          newVal.push(item.id)
+        })
+        // changed Removed
+        if (this.data.labels != newVal.join(',')) {
+          this.label_removed_some = true
+          this.apps.label_removed = newVal.join(',')
+        // unchanged
+        } else {
+          this.label_changed = false
+        }
+      // Changed - Added
       } else {
-        this.label_changed = false
+        this.label_changed = true
       }
       this.apps.labels = val
     },
@@ -405,12 +412,12 @@ export default {
         // Select Fields (Multiple) are added if value changed
         if (this.label_changed) {
           formData.set('label_ids', this.apps.labels)
+        } else if (this.label_removed_some) {
+          formData.set('label_ids', this.apps.label_removed)
         }
         // Select Fields (One) old values are sent if value did not change
         this.selectOne.forEach(item => {
-          if (this.data[item]) {
-            formData.set(`${item}_id`, this.data[item])
-          } else {
+          if ((this.data[item] != this.apps[item][0]) && !this.apps[item].id) {
             formData.set(`${item}_id`, this.apps[item])
           }
         })
