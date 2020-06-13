@@ -9,12 +9,12 @@
         :items="app_types"
         v-model="mytypes"
         :disabled="!disabled"
-        hide-details="type === 'filter' ? true : false"
+        :hide-details="type === 'set' && elementType == 'modal' ? false : true"
         :label="elLabel"
         :outlined="elementType != 'modal' ? true : false"
         dense
         clearable
-        :prepend-icon="type === 'set' ? 'new_releases' : '' "
+        :prepend-icon="type === 'set' && elementType != 'modal' ? 'new_releases' : '' "
         placeholder=" ">
       </v-select>
       <v-select v-else
@@ -87,6 +87,11 @@ export default {
       rules: ''
     }
   },
+  // computed: {
+  //   hide_details() {
+  //     return this.type != 'set' ? true : false
+  //   }
+  // },
   watch: {
     types() {
       this.mytypes = this.types
@@ -103,6 +108,7 @@ export default {
     if (this.req) {
       this.elLabel = `${this.$t('apps.type')}*`
     }
+    console.log(this.type)
     this.getFilteredAppTypes(this.typeFilter)
   },
   methods: {

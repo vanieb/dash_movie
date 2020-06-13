@@ -43,7 +43,7 @@
                   <div width="452px;">
                     <website
                       elementType="modal"
-                      type="'select'"
+                      type="set"
                       req="true"
                       :mode="'one'"
                       :website="type.website_id"

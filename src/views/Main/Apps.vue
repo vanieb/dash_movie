@@ -482,13 +482,15 @@ export default {
           formData.set('app_file', this.file)
           formData.set('website', this.setWebsite)
           this.$http.post(api.upload, formData).then(() => {
+            this.$refs.pulling.rebase()
+            this.uploadLoading = false
+            this.uploadInstallerDialog = false
             this.snackbar = {
               color: 'success',
               show: true,
               text: `${this.$t('actions.upload')}: ${this.$t('status.success')}`
             }
-            this.uploadLoading = false
-            this.uploadInstallerDialog = false
+            
           })
         // insert api
         } else {

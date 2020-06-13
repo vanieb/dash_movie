@@ -101,7 +101,7 @@ export default {
     if (this.req) {
       this.elLabel = `${this.$t('nav.labels')}*`
     }
-    if (this.type == 'select') {
+    if (this.type == 'set') {
       this.getFilteredLabels()
     }
     

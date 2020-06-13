@@ -46,7 +46,8 @@
                         elementType="modal"
                         :typeFilter="`website=${query.website}`"
                         :mode="'one'"
-                        type="'set'"
+                        req="true"
+                        type="set"
                         :types="label.type_label_id"
                         @type-select-one="typeSetOne">
                       </types>

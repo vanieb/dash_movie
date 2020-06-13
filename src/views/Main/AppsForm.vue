@@ -78,7 +78,6 @@
                   <types
                     v-if="showType"
                     :typeFilter="`website=${apps.website.id}`"
-                    req="true"
                     type="set"
                     :mode="'one'"
                     :types="apps.app_type"
@@ -91,7 +90,6 @@
                   <categories
                     v-if="showCategories"
                     :categoryFilter="categoryFilter"
-                    req="true"
                     :mode="'one'"
                     type="set"
                     :category="apps.category"
@@ -113,7 +111,6 @@
                 <labels
                   v-if="showLabels"
                   :labelFilter="labelFilter"
-                  req="true"
                   type="set"
                   :mode="'multiple'"
                   :label="apps.labels"
@@ -381,15 +378,16 @@ export default {
       this.categoryFilter = `website=${this.apps.website.id}&type_category=${type}`
     },
     categorySelectOne(val) {
+      console.log(val)
       this.apps.category = val
     },
     labelSelectMultiple(val) {
-      // console.log(val)
-      // if (val && val[0].name==undefined) {
-      //   this.label_changed = true
-      // } else {
-      //   this.label_changed = false
-      // }
+      console.log(val)
+      if (val && val[0].name==undefined) {
+        this.label_changed = true
+      } else {
+        this.label_changed = false
+      }
       this.apps.labels = val
     },
     async saveApp() {
@@ -398,14 +396,14 @@ export default {
         let formData = new window.FormData()
         // Select Fields (Multiple) are added if value changed
         if (this.label_changed) {
-          formData.set('labels', this.apps.labels)
+          formData.set('label_ids', this.apps.labels)
         }
         // Select Fields (One) old values are sent if value did not change
         this.selectOne.forEach(item => {
           if (this.data[item]) {
-            formData.set(item, this.data[item])
+            formData.set(`${item}_id`, this.data[item])
           } else {
-            formData.set(item, this.apps[item])
+            formData.set(`${item}_id`, this.apps[item])
           }
         })
         if (this.change_icon) {
