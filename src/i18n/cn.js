@@ -110,6 +110,7 @@ export default {
     rows_per_page: '每页行数:',
     showing: '显示',
     pages: '页面',
-    no_record: '无可用数据'
+    no_record: '无可用数据',
+    items: '项目'
   }
 }

@@ -102,17 +102,17 @@
           <v-col cols="12" md="4">
             <v-card>
               <v-card-text>
-                <v-icon>web</v-icon> {{$t('nav.websites')}}:
+                <v-icon color="orange">web</v-icon> {{$t('nav.websites')}}:
                   <v-chip class="ma-1" color="orange" outlined v-if="apps.website">{{apps.website.name}}</v-chip>
                 <span v-else> {{ $t('system_msg.no_data') }}</span>
                 <br/>
-                <v-icon>new_releases</v-icon> {{$t('apps.type')}}:
+                <v-icon color="red" >new_releases</v-icon> {{$t('apps.type')}}:
                 <span v-if="apps.app_type">
                   <v-chip class="ma-1" color="red" outlined>{{ apps.app_type.name }}</v-chip>
                 </span>
                 <span v-else> {{ $t('system_msg.no_data') }}</span>
                 <br/>
-                <v-icon>category</v-icon> {{$t('nav.category')}}:
+                <v-icon color="green">category</v-icon> {{$t('nav.category')}}:
                   <v-chip v-if="apps.category" class="ma-1" color="green" outlined >{{apps.category.name}}</v-chip>
                 <span v-else> {{ $t('system_msg.no_data') }}</span>
               </v-card-text>
@@ -121,7 +121,7 @@
           <v-col cols="12" md="4">
             <v-card>
              <v-card-text>
-              <v-icon>label</v-icon> {{$t('nav.labels')}}:
+              <v-icon color="blue">label</v-icon> {{$t('nav.labels')}}:
               <span v-if="apps.labels">
                   <span v-for="label in apps.labels" :key="label.name">
                     <v-chip class="ma-1" color="blue" outlined>{{label.name}}</v-chip>

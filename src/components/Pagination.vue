@@ -37,7 +37,7 @@
           ></v-text-field>
         </div>
         <div class="d-inline-block mr-2 ml-2">
-          <small> of {{countPage}} {{$t('pagination.pages')}}</small>
+          <small> of {{countPage}} {{$t('pagination.pages')}} ({{count}} {{$t('pagination.pages')}} )</small>
         </div>
         <div class="d-inline-block">
           <v-pagination

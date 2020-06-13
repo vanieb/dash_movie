@@ -311,11 +311,14 @@ export default {
     pushIDs(item, mode){
       let val = []
       if (mode == 'Multiple') {
-        this.apps[item].forEach(item => {
+        if (this.apps[item]) {
+          this.apps[item].forEach(item => {
           if (item) {
             val.push(item.id)
           }
         })
+        }
+        
         this.data[item] = val.join(',')
       } else {
         if (this.apps[item]) {
@@ -463,7 +466,8 @@ export default {
             }
           })
         }
-        
+      } else {
+        window.scrollTo(500, 0)
       }
     }
   }

@@ -14,7 +14,7 @@
         :outlined="elementType != 'modal' ? true : false"
         dense
         clearable
-        :prepend-icon="type === 'set' && elementType != 'modal' ? 'new_releases' : '' "
+        :prepend-icon="type === 'set' && elementType !== 'modal' ? 'new_releases' : '' "
         placeholder=" ">
       </v-select>
       <v-select v-else
@@ -33,7 +33,7 @@
         chips
         clearable
         multiple
-        :prepend-icon="type === 'set' ? 'new_releases' : '' "
+        :prepend-icon="type === 'set' && elementType !== 'modal' ? 'new_releases' : '' "
         placeholder=" ">
         <template v-slot:selection="{ attrs, item, select, selected }">
           <v-chip
