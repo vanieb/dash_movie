@@ -327,7 +327,6 @@ export default {
   },
   data() {
     return {
-      // dateRangeText: [],
       href: '',
       file: null,
       uploadLoading: false,
@@ -503,8 +502,6 @@ export default {
     },
     websiteSelectOne(val) {
       this.query.website = val
-      console.log('val')
-      console.log(val)
       this.submit()
     },
     toggle(id, value, mode){
@@ -559,7 +556,6 @@ export default {
       this.query = {}
       this.$nextTick(() => {
         this.submit()
-        // this.$refs.pulling.submit()
       })
     },
     clearDateRange() {
