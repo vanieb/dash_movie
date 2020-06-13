@@ -80,6 +80,7 @@
                     :typeFilter="`website=${apps.website.id}`"
                     type="set"
                     :mode="'one'"
+                    req=true
                     :types="apps.app_type"
                     @type-select-one="typeSelectOne">
                   </types>
@@ -91,6 +92,7 @@
                     v-if="showCategories"
                     :categoryFilter="categoryFilter"
                     :mode="'one'"
+                    req=true
                     type="set"
                     :category="apps.category"
                     @category-select-one="categorySelectOne">
@@ -112,6 +114,7 @@
                   v-if="showLabels"
                   :labelFilter="labelFilter"
                   type="set"
+                  req=true
                   :mode="'multiple'"
                   :label="apps.labels"
                   @label-select-multiple="labelSelectMultiple">
@@ -369,16 +372,15 @@ export default {
       this.apps.features = val
     },
     typeSelectOne(val) {
-      console.log('typeSelectOne(val')
-      console.log(val)
       this.apps.app_type = val
       let type = val
       if (val && val.id) {
         type = val.id
       }
-      this.type_changed = true
       this.labelFilter = `website=${this.apps.website.id}&type_label=${type}`
       this.categoryFilter = `website=${this.apps.website.id}&type_category=${type}`
+      this.apps.category = ''
+      this.apps.labels = []
     },
     categorySelectOne(val) {
       if (val && val[0].name==undefined) {
@@ -389,26 +391,12 @@ export default {
       this.apps.category = val
     },
     labelSelectMultiple(val) {
-      console.log('labelSelectMultiple(val')
-      console.log(val.length)
-      // changed label
       if (val && val[0].name==undefined) {
         this.label_changed = true
-        this.apps.labels = val
-      // changed label to none
-      } else if (!val) {
-        this.label_changed = true
-        this.apps.labels = val
-      // label did not change
-      } else if (val.length === 0){
-        this.label_changed = true
-        this.apps.labels = 0
       } else {
         this.label_changed = false
-        this.apps.labels = val
       }
-      console.log(this.label_changed)
-      // this.apps.labels = val
+      this.apps.labels = val
     },
     async saveApp() {
       const isValid = await this.$refs.form.validate()
@@ -418,20 +406,14 @@ export default {
         if (this.label_changed) {
           formData.set('label_ids', this.apps.labels)
         }
-        if (this.category_changed) {
-          formData.set('category_id', this.apps.category)
-        }
-        if (this.type_changed) {
-          formData.set('app_type_id', this.apps.app_type)
-        }
         // Select Fields (One) old values are sent if value did not change
-        // this.selectOne.forEach(item => {
-        //   if (this.data[item]) {
-        //     formData.set(`${item}_id`, this.data[item])
-        //   } else {
-        //     formData.set(`${item}_id`, this.apps[item])
-        //   }
-        // })
+        this.selectOne.forEach(item => {
+          if (this.data[item]) {
+            formData.set(`${item}_id`, this.data[item])
+          } else {
+            formData.set(`${item}_id`, this.apps[item])
+          }
+        })
         if (this.change_icon) {
           formData.set('icon', this.apps.icon)
         }
