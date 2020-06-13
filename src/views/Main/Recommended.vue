@@ -3,13 +3,15 @@
     <v-container >
       <v-layout>
         <v-layout justify-start>
-          <websites
-            type="filter"
-            :mode="'one'"
-            :disabled="!mode"
-            :website="query.website"
-            @website-select-one="websiteSelectOne">
-          </websites>
+          <div style="width:200px !important;">
+            <websites
+              type="filter"
+              :mode="'one'"
+              :disabled="!mode"
+              :website="query.website"
+              @website-select-one="websiteSelectOne">
+            </websites>
+          </div>
         </v-layout>
         <v-layout justify-end>
           <v-btn

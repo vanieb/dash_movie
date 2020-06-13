@@ -318,7 +318,7 @@ export default {
     },
     is_active(newObj) {
       this.query.is_active = newObj
-      this.search()
+      this.$refs.pulling.submit()
     },
     website(newObj) {
       this.query.website = newObj
@@ -367,7 +367,7 @@ export default {
         this.created_at = [undefined, undefined]
       }
       this.website = this.$route.query.website || ''
-      this.is_active = this.$route.query.is_active || ''
+      this.is_active = this.$route.query.is_active==true || this.$route.query.is_active==false ? this.$route.query.is_active : ''
       this.query = Object.assign({}, this.$route.query)
     },
     queryData(queryset) {
@@ -418,10 +418,11 @@ export default {
       },
     700),
     clearAll() {
+      this.is_active = ''
       this.query = {}
       this.query.website = 1
       this.$nextTick(() => {
-        this.submit()
+        this.$refs.pulling.submit()
       })
     },
     clearDateRange() {
