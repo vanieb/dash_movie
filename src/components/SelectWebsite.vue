@@ -12,8 +12,8 @@
       :label="elLabel"
       :outlined="elementType != 'modal' ? true : false"
       dense
-      hide-details=true
-      :prepend-icon="type === 'set' ? 'web' : '' "
+      :hide-details="type === 'set' && elementType == 'modal' ? false : true"
+      :prepend-icon="type === 'set' && elementType != 'modal'  ? 'web' : '' "
       placeholder=" ">
     </v-select>
     <v-select v-else

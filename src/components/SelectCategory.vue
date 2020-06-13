@@ -101,7 +101,7 @@ export default {
     if (this.req) {
       this.elLabel = `${this.$t('apps.category')}*`
     }
-    if (this.type == 'select') {
+    if (this.type == 'set') {
       this.getFilteredCategories(this.categoryFilter)
     }
   },

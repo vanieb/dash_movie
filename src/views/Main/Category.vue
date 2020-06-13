@@ -46,7 +46,8 @@
                       elementType="modal"
                       :typeFilter="`website=${query.website}`"
                       :mode="'one'"
-                      type="'set'"
+                      type="set"
+                      req="true"
                       :types="category.type_category_id"
                       @type-select-one="typeSetOne">
                     </types>
@@ -54,7 +55,7 @@
                       v-else
                       :typeFilter="`website=${query.website}`"
                       elementType="modal"
-                      type="'set'"
+                      type="set"
                       req="true"
                       :mode="'multiple'"
                       :types="category.type_category_id"

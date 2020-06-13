@@ -9,12 +9,12 @@
         :items="app_types"
         v-model="mytypes"
         :disabled="!disabled"
-        hide-details="type === 'filter' ? true : false"
+        :hide-details="type === 'set' && elementType == 'modal' ? false : true"
         :label="elLabel"
         :outlined="elementType != 'modal' ? true : false"
         dense
         clearable
-        :prepend-icon="type === 'set' ? 'new_releases' : '' "
+        :prepend-icon="type === 'set' && elementType != 'modal' ? 'new_releases' : '' "
         placeholder=" ">
       </v-select>
       <v-select v-else

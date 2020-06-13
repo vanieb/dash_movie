@@ -40,7 +40,7 @@
             close
             @click="select"
             @click:close="remove(item)"
-            >{{ item.name }}
+            >{{ item ? item.name : 0 }}
           </v-chip>
         </template>
       </v-select>
@@ -101,7 +101,7 @@ export default {
     if (this.req) {
       this.elLabel = `${this.$t('nav.labels')}*`
     }
-    if (this.type == 'select') {
+    if (this.type == 'set') {
       this.getFilteredLabels()
     }
     
