@@ -339,6 +339,7 @@ export default {
       createAppDialog: false,
       submitting: false,
       date_menu: false,
+      file: null,
       setWebsite: '',
       statusOptions: [
         { text: this.$t('status.enabled'),
@@ -564,7 +565,7 @@ export default {
     },
     close() {
       this.setWebsite = ''
-      this.file = ''
+      this.file = null
       this.uploadInstallerDialog = false
       this.uploadLoading = false
       this.$refs.form.reset()
