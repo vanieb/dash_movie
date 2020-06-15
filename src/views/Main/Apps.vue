@@ -65,7 +65,7 @@
                   <v-spacer></v-spacer>
                   <v-btn
                     color="grey lighten-1"
-                    @click="uploadInstallerDialog = false">{{ $t('actions.close') }}
+                    @click="close()">{{ $t('actions.close') }}
                   </v-btn>
                   <v-btn
                     color="blue darken-1"
@@ -77,7 +77,7 @@
             </v-card>
           </v-dialog>
           <!-- Create Multiple Apps -->
-          <v-dialog v-model="createAppDialog" persistent max-width="350">
+          <!-- <v-dialog v-model="createAppDialog" persistent max-width="350">
             <template v-slot:activator="{ on }">
 
               <v-btn
@@ -86,10 +86,9 @@
                 
                 class="mr-3"
                 v-on="on">
-                <!-- <v-icon class="mr-3">dynamic_feed</v-icon>&nbsp;{{ $t('actions.create_multiple') }} -->
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
-                  <v-icon v-on="on">dynamic_feed</v-icon><!-- {{ $t('actions.upload') }} -->
+                  <v-icon v-on="on">dynamic_feed</v-icon>
 
                   </template>
                   <span>{{$t('system_notes.add_multiple_apps_memo')}}</span>
@@ -134,9 +133,9 @@
                 </v-card-actions>
               </validation-observer>
             </v-card>
-          </v-dialog>
+          </v-dialog> -->
           <!-- Export Apps -->
-          <v-btn
+          <!-- <v-btn
             color="primary"
             :href="href"
             v-if="querySet.length"
@@ -144,28 +143,25 @@
             dark>
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
-                <v-icon v-on="on">cloud_download</v-icon><!-- {{ $t('actions.upload') }} -->
+                <v-icon v-on="on">cloud_download</v-icon>
               </template>
               <span>{{$t('system_notes.add_multiple_apps_memo')}}</span>
             </v-tooltip>
-          </v-btn>
+          </v-btn> -->
         </v-layout>
       </v-layout>
-      <!-- SEARCH -->
       <v-card>
         <v-col cols="12" md="12" class="mt-2" style="padding: 20px 20px 10px 20px !important;">
           <v-row>
             <div style="width:200px;" class="mr-2">
               <v-select
-                small
                 item-name="text"
                 item-value="value"
                 :items="statusOptions"
                 :label="`${$t('common.status')}`"
                 v-model="is_active"
+                hide-details="true"
                 placeholder=" "
-                clearable
-                hide-details=true
                 outlined
                 dense>
                 <template slot="selection" slot-scope="data">
@@ -176,7 +172,7 @@
                 </template>
               </v-select>
             </div>
-            <div style="width:200px;" class="mr-2">
+            <div style="width:200px !important;" class="mr-2">
               <website
                 type="filter"
                 :mode="'one'"
@@ -189,9 +185,9 @@
                 @input="search"
                 :label="`${$t('common.name')}`"
                 v-model="query.name"
+                hide-details="true"
                 placeholder=" "
                 outlined
-                hide-details=true
                 dense>
               </v-text-field>
             </div>
@@ -211,10 +207,10 @@
                     :label="`${$t('common.created_at')}`"
                     placeholder=" "
                     outlined
-                    hide-details=true
                     dense
                     v-on="on"
                     readonly
+                    hide-details="true"
                     clearable
                     @click:clear="clearDateRange()"
                   ></v-text-field>
@@ -294,59 +290,59 @@
       ref="pulling"
       @query-data="queryData"
       @query-param="queryParam"
-      :export_query="export_query"
     >
     </pagination>
     <!-- SNACKBAR -->
     <snack-bar
       :show="snackbar.show"
       :color="snackbar.color"
-      :text="snackbar.text" 
+      :text="snackbar.text"
     >
     </snack-bar>
-  </v-layout>    
+  </v-layout>
 </template>
 <script>
 import api from '@/api/apis'
 import $ from '../../utils/util'
 import Pagination from '@/components/Pagination'
 import SnackBar from '@/components/SnackBar'
-import Website from '../../components/SelectWebsite.vue'
 import { debounce } from 'lodash'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
-import VueCookie from 'vue-cookie'
+import Website from '../../components/SelectWebsite.vue'
+// import VueCookie from 'vue-cookie'
 
 export default {
   name: 'Apps',
   components: {
-    Website,
     Pagination,
     SnackBar,
     ValidationObserver,
-    ValidationProvider
+    ValidationProvider,
+    Website
   },
   data() {
     return {
-      href: '',
-      file: null,
-      uploadLoading: false,
-      query: {},
-      export_query: [],
+      name: '',
+      showForm: false,
+      query: {
+        website: 1
+      },
       querySet: [],
       is_active: '',
-      website: '',
       created_at: ['', ''],
+      website: 1,
       appsApi: api.apps,
       exportApi: `${api.websites}export/`,
       loading: true,
+      uploadLoading: false,
       uploadInstallerDialog: false,
       createAppDialog: false,
+      submitting: false,
       date_menu: false,
       setWebsite: '',
-      apps: {},
       statusOptions: [
         { text: this.$t('status.enabled'),
-          value: true}, 
+          value: true},
         { text: this.$t('status.disabled'),
           value: false}],
       snackbar: {
@@ -409,30 +405,28 @@ export default {
       },
       deep: true
     },
-    website(newObj) {
-      this.query.website = newObj
-      this.search()
-    },
     is_active(newObj) {
       this.query.is_active = newObj
       this.$refs.pulling.submit()
     },
+    website(newObj) {
+      this.query.website = newObj
+      this.search()
+    },
     created_at(newObj) {
       [this.query.created_at_after, this.query.created_at_before] = [...newObj]
-      this.submit()
-    }
+      this.search()
+    },
+    
   },
   created() {
     this.setQueryAll()
     this.$nextTick(() => {
       this.$refs.pulling.rebase()
+      this.query.website = 1
+      this.submit()
     })
     this.lang = $.getLanguage() == 'zh_CN' ? 'zh-cn' : ''
-  },
-  filters: {
-    truncate: function(text, length, suffix) {
-      return text.substring(0, length) + suffix
-    }
   },
   computed: {
     isQueryEmpty() {
@@ -445,12 +439,12 @@ export default {
         return ''
       }
     },
-    getReport() {
-      this.$refs.pulling.getExportQuery()
-      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-      this.href = `${this.exportApi}?token=${VueCookie.get('access_token')}&${this.export_query}`
-      return this.querySet.length
-    },
+    // getReport() {
+    //   this.$refs.pulling.getExportQuery()
+    //   // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+    //   this.href = `${this.exportApi}?token=${VueCookie.get('access_token')}&${this.export_query}`
+    //   return this.querySet.length
+    // }
   },
   methods: {
     setQueryAll() {
@@ -459,8 +453,8 @@ export default {
       } else {
         this.created_at = [undefined, undefined]
       }
-      this.is_active = this.$route.query.is_active==true || this.$route.query.is_active==false ? this.$route.query.is_active : ''
       this.website = this.$route.query.website || ''
+      this.is_active = this.$route.query.is_active==true || this.$route.query.is_active==false ? this.$route.query.is_active : ''
       this.query = Object.assign({}, this.$route.query)
     },
     queryData(queryset) {
@@ -470,9 +464,9 @@ export default {
     queryParam(query) {
       this.query = Object.assign(this.query, query)
     },
-    exportQuery(expor) {
-      this.export_query = expor
-    },
+    // exportQuery(expor) {
+    //   this.export_query = expor
+    // },
     async uploadFile(mode) {
       const isValid = await this.$refs.form.validate()
       if (isValid) {
@@ -502,11 +496,8 @@ export default {
     websiteSetMultiple(val) {
       this.setWebsite = val
     },
-    websiteSelectOne(val) {
-      this.query.website = val
-      this.submit()
-    },
     toggle(id, value, mode){
+      let website_query = this.query.website
       this.snackbar.show = false
       let toggleResult
       let action_title
@@ -539,6 +530,9 @@ export default {
           show: true,
           text: `${this.$t('system_msg.error')}: ${error}`
         }
+        this.$refs.pulling.rebase()
+        this.query.website = website_query
+        this.submit()
       })
       this.snackbar.show = false
     },
@@ -547,6 +541,10 @@ export default {
         this.$refs.pulling.submit()
       }
     },
+    websiteSelectOne(val) {
+      this.query.website = val
+      this.submit()
+    },
     search:
       debounce(function() {
         this.submit()
@@ -554,22 +552,28 @@ export default {
     700),
     clearAll() {
       this.is_active = ''
-      this.website = ''
       this.query = {}
+      this.query.website = 1
       this.$nextTick(() => {
-        this.submit()
+        this.$refs.pulling.submit()
       })
     },
     clearDateRange() {
       this.created_at  = ['', '']
       this.dateRangeText = ''
+    },
+    close() {
+      this.setWebsite = ''
+      this.file = ''
+      this.uploadInstallerDialog = false
+      this.uploadLoading = false
+      this.$refs.form.reset()
     }
   }
 }
 </script>
 <style scope lang="scss">
   .v-date-picker-title__date {
-    font-size: 20px !important; 
+    font-size: 20px !important;
   }
 </style>
-
