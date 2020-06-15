@@ -26,7 +26,7 @@ export default {
     search: '搜索',
     submit: '提交',
     change_file: '变更档案',
-    sort: '分类',
+    sort: '调整排序',
     cancel: '取消'
   },
   status: {

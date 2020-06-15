@@ -172,7 +172,7 @@ export default {
       this.$http.get(`${this.appsApi}?ordering=recommended_rank&is_recommended=true&app_type=${this.type}&website=${this.query.website}`).then(response => {
         this.filteredQuerySet = response.results
         .sort((a, b) => {
-          return a['rank'] - b['rank']
+          return a['recommended_rank'] - b['recommended_rank']
         })
         this.mode = false
       })
