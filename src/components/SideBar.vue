@@ -123,7 +123,7 @@
       return {
         drawer: null,
         items: [
-          { icon: 'apps', text: this.$t('nav.apps'), path: '/apps' },
+          { icon: 'apps', text: this.$t('nav.apps'), path: '/apps?website=1' },
           { icon: 'web', text: this.$t('nav.websites'), path: '/websites'},
           { heading: this.$t('nav.website_view') },
           // { icon: 'view_quilt', text: this.$t('nav.website_apps'), path: '/webapps'},
