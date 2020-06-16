@@ -89,7 +89,7 @@
             </v-card>
           </v-dialog>
           <!-- Create Multiple Apps -->
-          <!-- <v-dialog v-model="createAppDialog" persistent max-width="350">
+          <v-dialog v-model="createAppDialog" persistent max-width="350">
             <template v-slot:activator="{ on }">
 
               <v-btn
@@ -108,7 +108,7 @@
               </v-btn>
             </template>
             <v-card>
-              <validation-observer ref="form">
+              <validation-observer ref="importForm">
                 <v-card-title>
                   <v-icon class="mr-3">dynamic_feed</v-icon>
                     &nbsp;{{ $t('actions.create_multiple') }}
@@ -128,7 +128,7 @@
                       required
                       slot-scope="{ errors }"
                       accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                      v-model="file">    
+                      v-model="importFile">    
                     </v-file-input>
                   </validation-provider>
                 </v-card-text>
@@ -136,18 +136,19 @@
                   <v-spacer></v-spacer>
                   <v-btn
                     color="grey lighten-1"
-                    @click="createAppDialog = false">{{ $t('actions.close') }}
+                    @click="closeImport()">{{ $t('actions.close') }}
                   </v-btn>
                   <v-btn
                     color="blue darken-1"
-                    @click="uploadFile('add')">{{ $t('actions.submit') }}
+                    :loading="importLoading"
+                    @click="importCsv()">{{ $t('actions.submit') }}
                   </v-btn>
                 </v-card-actions>
               </validation-observer>
             </v-card>
-          </v-dialog> -->
+          </v-dialog>
           <!-- Export Apps -->
-          <!-- <v-btn
+          <v-btn
             color="primary"
             :href="href"
             v-if="querySet.length"
@@ -159,7 +160,7 @@
               </template>
               <span>{{$t('system_notes.add_multiple_apps_memo')}}</span>
             </v-tooltip>
-          </v-btn> -->
+          </v-btn>
         </v-layout>
       </v-layout>
       <v-card>
@@ -322,7 +323,7 @@ import { debounce } from 'lodash'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import Website from '../../components/SelectWebsite.vue'
 import axios from 'axios'
-// import VueCookie from 'vue-cookie'
+import VueCookie from 'vue-cookie'
 
 export default {
   name: 'Apps',
@@ -336,24 +337,29 @@ export default {
   data() {
     return {
       name: '',
+      href: '',
       uploadPercentage: 0,
       showForm: false,
       query: {
         website: 1
       },
       querySet: [],
+      export_query: [],
       is_active: '',
       created_at: ['', ''],
       website: 1,
       appsApi: api.apps,
-      exportApi: `${api.websites}export/`,
+      exportApi: `${api.apps}export/`,
+      importApi: `${api.apps}import/`,
       loading: true,
       uploadLoading: false,
+      importLoading: false,
       uploadInstallerDialog: false,
       createAppDialog: false,
       submitting: false,
       date_menu: false,
       file: null,
+      importFile: null,
       setWebsite: '',
       statusOptions: [
         { text: this.$t('status.enabled'),
@@ -454,12 +460,12 @@ export default {
         return ''
       }
     },
-    // getReport() {
-    //   this.$refs.pulling.getExportQuery()
-    //   // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-    //   this.href = `${this.exportApi}?token=${VueCookie.get('access_token')}&${this.export_query}`
-    //   return this.querySet.length
-    // }
+    getReport() {
+      // this.$refs.pulling.getExportQuery()
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+      this.href = `${this.exportApi}?token=${VueCookie.get('access_token')}&website=${this.query.website}`
+      return this.querySet.length
+    }
   },
   methods: {
     setQueryAll() {
@@ -508,10 +514,30 @@ export default {
             
           })
         // insert api
-        } else {
-        // insert api
-          // this.uploadFile = this.file
         }
+      }
+    },
+    async importCsv() {
+      const isValid = await this.$refs.importForm.validate()
+      if (isValid) {
+        this.importLoading = true
+        const formData = new window.FormData()
+        formData.set('import_file', this.importFile)
+        this.$http.post(`${this.importApi}?import_type=app_details`, formData).then(() => {
+          this.$refs.pulling.rebase()
+          this.snackbar = {
+            color: 'success',
+            show: true,
+            text: `${this.$t('actions.create_multiple')}: ${this.$t('status.success')}`
+          }
+          this.closeImport()
+        }, error => {
+          this.snackbar = {
+            color: 'red',
+            show: true,
+            text: `${this.$t('system.msg')}: ${error}`
+          }
+        })
       }
     },
     websiteSetMultiple(val) {
@@ -589,6 +615,12 @@ export default {
       this.uploadInstallerDialog = false
       this.uploadLoading = false
       this.$refs.form.reset()
+    },
+    closeImport() {
+      this.importFile = null
+      this.createAppDialog = false
+      this.importLoading = false
+      this.$refs.importForm.reset()
     }
   }
 }
