@@ -60,12 +60,24 @@
                       v-model="file">    
                     </v-file-input>
                   </validation-provider>
+                  <v-progress-linear
+                    v-if="uploadLoading"
+                    color="light-blue"
+                    height="25"
+                    v-model="uploadPercentage"
+                    striped
+                  >
+                    <template v-slot="{ value }">
+                      <strong>{{ Math.ceil(value) }}%</strong>
+                    </template>
+                  </v-progress-linear>
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn
                     color="grey lighten-1"
-                    @click="close()">{{ $t('actions.close') }}
+                    @click="close()"
+                    :disabled="uploadLoading">{{ $t('actions.close') }}
                   </v-btn>
                   <v-btn
                     color="blue darken-1"
@@ -309,6 +321,7 @@ import SnackBar from '@/components/SnackBar'
 import { debounce } from 'lodash'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import Website from '../../components/SelectWebsite.vue'
+import axios from 'axios'
 // import VueCookie from 'vue-cookie'
 
 export default {
@@ -323,6 +336,7 @@ export default {
   data() {
     return {
       name: '',
+      uploadPercentage: 0,
       showForm: false,
       query: {
         website: 1
@@ -476,15 +490,21 @@ export default {
           const formData = new window.FormData()
           formData.set('app_file', this.file)
           formData.set('website', this.setWebsite)
-          this.$http.post(api.upload, formData).then(() => {
+          await axios.post(api.upload, 
+            formData, 
+            { headers: {'Content-Type': 'multipart/form-data'},
+            onUploadProgress: function( progressEvent ) {
+              this.uploadPercentage = parseInt( Math.round( ( progressEvent.loaded / progressEvent.total ) * 100 ))
+            }.bind(this)
+          }).then(() => {
             this.$refs.pulling.rebase()
-            this.uploadLoading = false
-            this.uploadInstallerDialog = false
+            this.close()
             this.snackbar = {
               color: 'success',
               show: true,
               text: `${this.$t('actions.upload')}: ${this.$t('status.success')}`
             }
+          }).catch(function(){
             
           })
         // insert api
