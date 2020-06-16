@@ -104,7 +104,7 @@ export default {
         }
         this.$root.getMy()
         let url = this.$route.query.next
-        url = url ? decodeURIComponent(url.split('?')[0]) : '/'
+        url = url ? decodeURIComponent(url.split('?')[0]) : '/apps?website=1'
         this.$router.push(url)
       }, error => {
         this.snackbar = {

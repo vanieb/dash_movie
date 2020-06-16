@@ -37,7 +37,7 @@ export default new Router({
       }
     },
     {
-      path: '/',
+      path: '/apps',
       name: 'Overview',
       component: function(resolve) {
         require(['./views/Main/Apps.vue'], resolve)
