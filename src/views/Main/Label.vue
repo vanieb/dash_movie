@@ -13,90 +13,89 @@
           </div>
         </v-layout>
         <v-layout justify-end>
-          <validation-observer ref="form">
-            <v-dialog v-model="showForm" persistent max-width="500">
-              <template v-slot:activator="{ on }">
-                <v-btn color="primary" dark v-on="on" align-right><v-icon class="mr-3">add_box</v-icon> &nbsp;{{ $t('actions.add') }}</v-btn>
-              </template>
-              <v-card>
+          <v-dialog v-model="showForm" persistent max-width="500">
+            <template v-slot:activator="{ on }">
+              <v-btn color="primary" dark v-on="on" align-right><v-icon class="mr-3">add_box</v-icon> &nbsp;{{ $t('actions.add') }}</v-btn>
+            </template>
+            <v-card>
+              <validation-observer ref="form">
                 <v-card-title class="headline">
                   <v-icon class="mr-3">{{ cardIcon }}</v-icon> &nbsp;
                   {{ cardTitle }}
                 </v-card-title>
                 <!-- FORM INPUTS -->
-              <v-card-text>
-                <v-layout wrap>
-                  <v-flex xs12 >
-                    <validation-provider rules="required|max:15" :name="$t('common.name')">
-                      <v-text-field
-                        :counter="15"
-                        :error-messages="errors"
-                        :label="`${$t('common.name')}*`"
-                        placeholder=" "
-                        required
-                        slot-scope="{ errors }"
-                        v-model="label.name"
-                      ></v-text-field>
-                    </validation-provider>
-                  </v-flex>
-                  <v-flex xs12>
-                    <div width="452px;">
-                      <types
-                        v-if="isUpdate"
-                        elementType="modal"
-                        :typeFilter="`website=${query.website}`"
-                        :mode="'one'"
-                        req="true"
-                        type="set"
-                        :types="label.type_label_id"
-                        @type-select-one="typeSetOne">
-                      </types>
-                      <types
-                        v-else
-                        :typeFilter="`website=${query.website}`"
-                        elementType="modal"
-                        type="'set'"
-                        req="true"
-                        :mode="'multiple'"
-                        :types="label.type_label_id"
-                        @type-select-multiple="typeSetMultiple">
-                      </types>
-                    </div>
-                  </v-flex>
-                  <v-flex xs12>
-                    <validation-provider rules="max:50" :name="$t('common.remarks')">
-                      <v-textarea
-                        :counter="50"
-                        :error-messages="errors"
-                        :label="$t('common.remarks')"
-                        placeholder=" "
-                        rows="1"
-                        slot-scope="{ errors }"
-                        v-model="label.memo"
-                      ></v-textarea>
-                    </validation-provider>
-                  </v-flex>
-                </v-layout>
-
-                <small color="red">*{{ $t('errors.required') }}</small>
-              </v-card-text>
+                <v-card-text>
+                  <v-layout wrap>
+                    <v-flex xs12 >
+                      <validation-provider rules="required|max:15" :name="$t('common.name')">
+                        <v-text-field
+                          :counter="15"
+                          :error-messages="errors"
+                          :label="`${$t('common.name')}*`"
+                          placeholder=" "
+                          required
+                          slot-scope="{ errors }"
+                          v-model="label.name"
+                        ></v-text-field>
+                      </validation-provider>
+                    </v-flex>
+                    <v-flex xs12>
+                      <div width="452px;">
+                        <types
+                          v-if="isUpdate"
+                          elementType="modal"
+                          :typeFilter="`website=${query.website}`"
+                          :mode="'one'"
+                          req="true"
+                          type="set"
+                          :types="label.type_label_id"
+                          @type-select-one="typeSetOne">
+                        </types>
+                        <types
+                          v-else
+                          :typeFilter="`website=${query.website}`"
+                          elementType="modal"
+                          type="'set'"
+                          req="true"
+                          :mode="'multiple'"
+                          :types="label.type_label_id"
+                          @type-select-multiple="typeSetMultiple">
+                        </types>
+                      </div>
+                    </v-flex>
+                    <v-flex xs12>
+                      <validation-provider rules="max:50" :name="$t('common.remarks')">
+                        <v-textarea
+                          :counter="50"
+                          :error-messages="errors"
+                          :label="$t('common.remarks')"
+                          placeholder=" "
+                          rows="1"
+                          slot-scope="{ errors }"
+                          v-model="label.memo"
+                        ></v-textarea>
+                      </validation-provider>
+                    </v-flex>
+                  </v-layout>
+                  <small color="red">*{{ $t('errors.required') }}</small>
+                </v-card-text>
                 <!-- BUTTONS -->
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn
-                  color="grey lighten-1"
-                  :disabled="submitting"
-                  @click="close"
-                >{{ $t('actions.close') }}</v-btn>
-                <v-btn
-                  color="blue darken-1"
-                  :loading="submitting"
-                  @click="saveLabel"
-                >{{ $t('actions.save') }}</v-btn>
-              </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </validation-observer>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="grey lighten-1"
+                    :disabled="submitting"
+                    @click="close"
+                  >{{ $t('actions.close') }}</v-btn>
+                  <v-btn
+                    color="blue darken-1"
+                    :loading="submitting"
+                    @click="saveLabel"
+                  >{{ $t('actions.save') }}</v-btn>
+                </v-card-actions>
+              </validation-observer>
+            </v-card>
+          </v-dialog>
         </v-layout>
       </v-layout>
       <!-- SEARCH -->
