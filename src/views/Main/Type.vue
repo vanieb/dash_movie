@@ -149,6 +149,7 @@
                   :locale="lang"
                   :selected-items-text="dateRangeText"
                   range
+                  :max="today"
                   landscape
                   smaller
                   >
@@ -230,6 +231,7 @@
 </template>
 <script>
 import api from '@/api/apis'
+import date from '../../utils/date'
 import $ from '../../utils/util'
 import Pagination from '@/components/Pagination'
 import SnackBar from '@/components/SnackBar'
@@ -255,6 +257,7 @@ export default {
       },
       querySet: [],
       is_active: '',
+      today: date.max_today,
       created_at: ['', ''],
       website: 1,
       typesApi: api.types,
@@ -328,8 +331,17 @@ export default {
       this.search()
     },
     created_at(newObj) {
-      [this.query.created_at_after, this.query.created_at_before] = [...newObj]
-      this.search()
+      if (this.query.created_at_after > this.query.created_at_before){
+        this.snackbar = {
+          color: 'error',
+          show: true,
+          text: `[${this.$t('system_msg.error')}]: ${this.$t('system_msg.date_error')}`
+        }
+        this.clearAll()
+      } else {
+        [this.query.created_at_after, this.query.created_at_before] = [...newObj]
+        this.search()
+      }
     }
   },
   created() {
@@ -346,7 +358,7 @@ export default {
       return $.compareQuery(this.query, {})
     },
     dateRangeText () {
-      if (this.query.created_at_after || this.query.created_at_before ) {
+      if (this.query.created_at_after && this.query.created_at_before ) {
         return this.created_at.join(' ~ ')
       } else {
         return ''
@@ -421,6 +433,7 @@ export default {
       },
     700),
     clearAll() {
+      this.created_at = ['','']
       this.is_active = ''
       this.query = {}
       this.query.website = 1

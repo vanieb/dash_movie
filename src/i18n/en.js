@@ -49,7 +49,8 @@ export default {
     confirm_delete: 'Click to confirm deletion of ',
     error: 'Error',
     exceed_file_size: 'Icon size should less than 1MB.',
-    no_data: 'No data'
+    no_data: 'No data',
+    date_error: 'Start Date should be selected first before the end date.'
   },
   nav: {
     login: 'Login',

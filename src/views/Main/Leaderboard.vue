@@ -18,7 +18,7 @@
             color="primary"
             dark
             @click="mode=true"
-            v-if="!mode">
+            v-if="!mode && filteredQuerySet.length > 1">
             <v-icon class="mr-3">sort</v-icon>
             {{ $t('actions.sort') }}
           </v-btn>

@@ -72,7 +72,7 @@
                           placeholder=" "
                           rows="1"
                           slot-scope="{ errors }"
-                        v-model="category.memo"
+                          v-model="category.memo"
                         ></v-textarea>
                       </validation-provider>
                     </v-flex>
@@ -169,6 +169,7 @@
                   v-model="created_at"
                   :locale="lang"
                   :selected-items-text="dateRangeText"
+                  :max="today"
                   range
                   landscape
                   smaller
@@ -251,6 +252,7 @@
 </template>
 <script>
 import api from '@/api/apis'
+import date from '../../utils/date'
 import $ from '../../utils/util'
 import Pagination from '@/components/Pagination'
 import SnackBar from '@/components/SnackBar'
@@ -278,6 +280,7 @@ export default {
       },
       querySet: [],
       is_active: '',
+      today: date.max_today,
       created_at: ['', ''],
       categoriesApi: api.categories,
       loading: true,
@@ -361,8 +364,17 @@ export default {
       this.search()
     },
     created_at(newObj) {
-      [this.query.created_at_after, this.query.created_at_before] = [...newObj]
-      this.search()
+      if (this.query.created_at_after > this.query.created_at_before){
+        this.snackbar = {
+          color: 'error',
+          show: true,
+          text: `[${this.$t('system_msg.error')}]: ${this.$t('system_msg.date_error')}`
+        }
+        this.clearAll()
+      } else {
+        [this.query.created_at_after, this.query.created_at_before] = [...newObj]
+        this.search()
+      }
     }
   },
   created() {
@@ -462,6 +474,7 @@ export default {
       },
     700),
     clearAll() {
+      this.created_at = ['','']
       this.is_active = ''
       this.query = {}
       this.query.website = 1
