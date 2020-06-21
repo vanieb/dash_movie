@@ -49,7 +49,8 @@ export default {
     confirm_delete: '单击以确认删除 ',
     error: '错误',
     exceed_file_size: '图标大小应小于1MB。',
-    no_data: '没有数据'
+    no_data: '没有数据',
+    date_error: '开始日期应设置在结束日期之前'
   },
   nav: {
     login: '登录',
@@ -90,7 +91,7 @@ export default {
     games: '游戏',
     software: '软体',
     hot: '新闻（热门）',
-    websites: '网站',
+    website: '网站',
     category: '类别',
     keywords: '关键字',
     basic_introduction: '基本介绍',
