@@ -566,11 +566,8 @@ export default {
   }
 }
 </script>
-<style scope lang="scss">
+<style scoped lang="scss">
   .v-date-picker-title__date {
     font-size: 20px !important; 
-  }
-  .v-menu__content {
-    top: 40px !important;
   }
 </style>
