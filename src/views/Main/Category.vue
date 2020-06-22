@@ -571,6 +571,6 @@ export default {
     font-size: 20px !important; 
   }
   .v-menu__content {
-    top: 40px;
+    top: 40px !important;
   }
 </style>

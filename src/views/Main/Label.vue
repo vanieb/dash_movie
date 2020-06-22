@@ -13,7 +13,7 @@
           </div>
         </v-layout>
         <v-layout justify-end>
-          <v-dialog v-model="showForm" persistent max-width="500">
+          <v-dialog v-model="showForm" persistent max-width="500" scrollable="true">
             <template v-slot:activator="{ on }">
               <v-btn color="primary" dark v-on="on" align-right><v-icon class="mr-3">add_box</v-icon> &nbsp;{{ $t('actions.add') }}</v-btn>
             </template>
@@ -569,5 +569,8 @@ export default {
 <style scope lang="scss">
   .v-date-picker-title__date {
     font-size: 20px !important; 
+  }
+  .v-menu__content {
+    top: 40px !important;
   }
 </style>
