@@ -570,4 +570,7 @@ export default {
   .v-date-picker-title__date {
     font-size: 20px !important; 
   }
+  .v-menu__content {
+    top: 40px !important;
+  }
 </style>
