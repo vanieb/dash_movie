@@ -13,7 +13,7 @@
           </div>
         </v-layout>
         <v-layout justify-end>
-          <v-dialog v-model="showForm" persistent max-width="500" scrollable="true">
+          <v-dialog v-model="showForm" persistent max-width="500">
             <template v-slot:activator="{ on }">
               <v-btn color="primary" dark v-on="on" align-right><v-icon class="mr-3">add_box</v-icon> &nbsp;{{ $t('actions.add') }}</v-btn>
             </template>
