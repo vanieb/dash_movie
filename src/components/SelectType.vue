@@ -29,6 +29,7 @@
         :label="elLabel"
         :outlined="elementType != 'modal' ? true : false"
         dense
+        :menu-props="{ top: false, offsetY: true }"
         attach
         chips
         clearable
