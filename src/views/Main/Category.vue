@@ -57,6 +57,7 @@
                         elementType="modal"
                         type="set"
                         req="true"
+                        :key="reload"
                         :mode="'multiple'"
                         :types="category.type_category_id"
                         @type-select-multiple="typeSetMultiple">
@@ -280,6 +281,7 @@ export default {
       },
       querySet: [],
       is_active: '',
+      reload: false,
       today: date.max_today,
       created_at: ['', ''],
       categoriesApi: api.categories,
@@ -524,6 +526,7 @@ export default {
             text: `${this.$t('actions.update')}-${this.$t('nav.category')}: ${this.$t('status.success')}`
           }
           this.$refs.pulling.rebase()
+          this.reload=true
           this.close()
         }, error => {
           this.snackbar = {

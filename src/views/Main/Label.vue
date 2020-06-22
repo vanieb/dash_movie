@@ -56,6 +56,7 @@
                           :typeFilter="`website=${query.website}`"
                           elementType="modal"
                           type="'set'"
+                          :key="reload"
                           req="true"
                           :mode="'multiple'"
                           :types="label.type_label_id"
@@ -280,6 +281,7 @@ export default {
       },
       querySet: [],
       is_active: '',
+      reload: false,
       today: date.max_today,
       created_at: ['', ''],
       labelsApi: api.labels,
@@ -517,38 +519,39 @@ export default {
           : this.label.type_label_id.join(',')
         })
         if (this.label.id) {
-        this.$http.put(`${this.labelsApi}${this.label.id}/`, labelResult).then(() => {
-          this.snackbar = {
-            color: 'success',
-            show: true,
-            text: `${this.$t('actions.update')}-${this.$t('nav.labels')}: ${this.$t('status.success')}`
-          }
-          this.$refs.pulling.rebase()
-          this.close()
-        }, error => {
-          this.snackbar = {
-            color: 'red',
-            show: true,
-            text: error
-          }
-        })
-      } else {
-        this.$http.post(this.labelsApi, labelResult).then(() => {
-          this.snackbar = {
-            color: 'success',
-            show: true,
-            text: `${this.$t('actions.add')}-${this.$t('nav.labels')}: ${this.$t('status.success')}`
-          }
-          this.$refs.pulling.rebase()
-          this.close()
-        }, error => {
-          this.snackbar = {
-            color: 'red',
-            show: true,
-            text: error
-          }
-          this.$refs.form.reset()
-        })
+          this.$http.put(`${this.labelsApi}${this.label.id}/`, labelResult).then(() => {
+            this.snackbar = {
+              color: 'success',
+              show: true,
+              text: `${this.$t('actions.update')}-${this.$t('nav.labels')}: ${this.$t('status.success')}`
+            }
+            this.$refs.pulling.rebase()
+            this.close()
+            this.reload=true
+          }, error => {
+            this.snackbar = {
+              color: 'red',
+              show: true,
+              text: error
+            }
+          })
+        } else {
+          this.$http.post(this.labelsApi, labelResult).then(() => {
+            this.snackbar = {
+              color: 'success',
+              show: true,
+              text: `${this.$t('actions.add')}-${this.$t('nav.labels')}: ${this.$t('status.success')}`
+            }
+            this.$refs.pulling.rebase()
+            this.close()
+          }, error => {
+            this.snackbar = {
+              color: 'red',
+              show: true,
+              text: error
+            }
+            this.$refs.form.reset()
+          })
         }
       }
       this.snackbar.show=false
