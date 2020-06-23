@@ -3,13 +3,13 @@
     <v-container>
       <v-layout>
         <div d-inline-block>
-          <!-- <v-layout justify-start>
+          <v-layout justify-start>
             <v-btn
               color="primary"
               dark to="/apps/add">
               <v-icon class="mr-3">library_add</v-icon> &nbsp;{{ $t('actions.add') }}
             </v-btn>
-          </v-layout>  -->
+          </v-layout> 
         </div>
         <v-layout justify-end>
           <!-- Installer Upload -->
@@ -268,7 +268,7 @@
               </v-btn>
             </td>
             <td class="align-center" width="20%">{{ item.name }}</td>
-            <td class="align-center justify-center" width="50%" >
+            <td class="align-center justify-center" width="10%" >
               <span>{{item.website ? item.website.name : '-' }}<br/></span>
             </td>
             <td class="align-center justify-start">
@@ -286,11 +286,31 @@
                 @change="toggle(item.id, item.is_recommended, 'is_recommended' )">
               </v-switch>
             </td>
-            <td width="50%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
-            <td class="align-center justify-center">
+            <td width="30%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
+            <td width="30%" class="align-center justify-center">
+              <v-layout>
               <v-btn class="mr-2" icon :to="`/apps/${item.id}/edit`">
-                <v-icon>edit</v-icon>
+                <v-icon small >edit</v-icon>
               </v-btn>
+              <v-menu offset-y>
+                <template v-slot:activator="{ on }">
+                  <v-icon color="red" small v-on="on" icon>delete</v-icon>
+                </template>
+                <v-list dark>
+                  <v-list-item @click="deleteApp(item.id, true, $event)">
+                    <v-list-item-title>
+                      <v-icon class="mr-2" color="orange">warning</v-icon>
+                      {{ $t('system_msg.confirm_delete') }}
+                      <strong>{{ item.name }}</strong>
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+              <!-- <v-btn class="mr-2" icon :to="`/apps/${item.id}/edit`">
+                <v-icon color="red" small>delete</v-icon>
+              </v-btn> -->
+              </v-layout>
+              
             </td>
           </tr>
         </tbody>
@@ -633,6 +653,17 @@ export default {
       this.createAppDialog = false
       this.importLoading = false
       this.$refs.importForm.reset()
+    },
+    deleteApp(id) {
+      this.$http.delete(this.appsApi + id + '/').then(() => {
+        this.snackbar = {
+          color: 'success',
+          show: true,
+          text: `${this.$t('actions.delete')}: ${this.$t('status.success')}`
+        }
+        this.$refs.pulling.rebase()
+      })
+      this.snackbar.show = false
     }
   }
 }
