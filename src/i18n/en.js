@@ -98,9 +98,11 @@ export default {
     basic_introduction: 'Basic Introduction',
     introduction: 'Introduction',
     features: 'Features',
-    download_link: 'Download Link',
+    download_link: 'Download Links',
+    android_download_link: 'Android Download Link',
+    ios_download_link: 'iOS Download Link',
     other_details: 'Other Details',
-    seo_data: 'SEO数据'
+    seo_data: 'SEO Data'
   },
   website: {
     code: 'Code'

@@ -98,8 +98,10 @@ export default {
     introduction: '简介',
     features: '功能',
     download_link: '下载链接',
+    android_download_link: ' Android下载链接',
+    ios_download_link: 'iOS下载链接',
     other_details: '下载链接',
-    seo_data: ''
+    seo_data: 'SEO数据'
   },
   website: {
     code: '码'

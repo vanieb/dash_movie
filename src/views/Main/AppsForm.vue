@@ -74,10 +74,22 @@
                 </validation-provider>
               </v-row>
               <v-row>
+                <span :style="{width:'748px', marginBottom: isUpdate ? '0px' :'20px' } ">
+                   <websites
+                    style="margin-bottom: 20px;"
+                    v-if="!isUpdate"
+                    req="true"
+                    :mode="'one'"
+                    :website="apps.websites"
+                    @website-select-one="websiteSelectOne">
+                  </websites>
+                </span>
+              </v-row>
+              <v-row>
                 <span style="width:338px;">
                   <types
-                    v-if="showType"
-                    :typeFilter="`website=${apps.website.id}`"
+                    v-if="showType || !isUpdate"
+                    :typeFilter="typeFilter"
                     type="set"
                     :mode="'one'"
                     req=true
@@ -89,7 +101,7 @@
                 <v-spacer></v-spacer>
                 <span style="width:338px;">
                   <categories
-                    v-if="showCategories"
+                    v-if="showCategories || !isUpdate"
                     :categoryFilter="categoryFilter"
                     :mode="'one'"
                     req=true
@@ -99,19 +111,10 @@
                   </categories>
                 </span>
               </v-row>
-              <!-- <v-row>
-                <span style="width:748px;">
-                   <websites
-                    req="true"
-                    :mode="'multiple'"
-                    :website="apps.websites"
-                    @website-select-multiple="websiteSelectMultiple">
-                  </websites>
-                </span>
-              </v-row> -->
+             
               <v-row>
                 <labels
-                  v-if="showLabels"
+                  v-if="showLabels || !isUpdate"
                   :labelFilter="labelFilter"
                   type="set"
                   req=true
@@ -149,6 +152,37 @@
             </v-col>
           </v-row>
           <v-spacer></v-spacer>
+          <v-banner color="primary" dark>{{$t('apps.download_link')}}</v-banner>
+          <v-flex>
+            <v-card-text>
+              <v-row>
+                <v-col>
+                  <v-text-field
+                    :label="`${$t('apps.android_download_link')}`"
+                    placeholder=" "
+                    dense
+                    number
+                    prepend-icon="android"
+                    v-model.number="apps.download_link"
+                    outlined>
+                  </v-text-field>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-text-field
+                    :label="`${$t('apps.ios_download_link')}`"
+                    placeholder=" "
+                    dense
+                    number
+                    prepend-icon="phone_iphone"
+                    v-model.number="apps.ios_download_link"
+                    outlined>
+                  </v-text-field>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-flex>
           <v-banner color="primary" dark>{{$t('apps.seo_data')}}</v-banner>
           <v-flex>
             <v-card-title>{{$t('apps.keywords')}}</v-card-title>
@@ -211,7 +245,7 @@ import SnackBar from '@/components/SnackBar'
 import Categories from '../../components/SelectCategory.vue'
 import Types from '../../components/SelectType.vue'
 import Labels from '../../components/SelectLabel.vue'
-// import Websites from '../../components/SelectWebsite.vue'
+import Websites from '../../components/SelectWebsite.vue'
 import $ from '../../utils/util'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 
@@ -223,19 +257,22 @@ export default {
     Types,
     ValidationObserver,
     ValidationProvider,
+    Websites,
     SnackBar,
     tinymce,
   },
   data() {
     return {
+      id: '',
       showCategories: false,
       showLabels: false,
       showType: false,
-      showTinyMce: '',
+      showTinyMce: true,
       label_changed: '',
       showImage: false,
       lang: '',
       appsApi: api.apps,
+      typeFilter: '',
       labelFilter: '',
       categoryFilter: '',
       loading: false,
@@ -249,7 +286,7 @@ export default {
         {
           text: this.$t('nav.apps'),
           disabled: false,
-          to: '/'
+          to: '/apps?website=1'
         },
         {
           text: this.$route.meta.title,
@@ -260,6 +297,7 @@ export default {
       uploadLoading: false,
       selectOne: ['app_type', 'category'],
       selectMultiple: ['labels'],
+      nonRequired: ['basic_introduction', 'features', 'introduction', 'keywords', 'ios_download_link', 'download_link'],
       data: {
         app_type: false,
         category: false,
@@ -275,17 +313,29 @@ export default {
       }
     })
   },
+  // watch: {
+  //   isUpdate(newObj) {
+      
+  //   }
+  // },
+  computed: {
+    isUpdate() {
+      return this.id ? true : false
+    }
+  },
   created() {
     this.lang = $.getLanguage() == 'zh_CN' ? 'zh-cn' : ''
   },
   methods: {
     getAppDetails(id) {
+      this.id = id
       this.$http.get(`${this.appsApi}${id }/`).then((response) => {
         this.apps = response
         this.showTinyMce = true
         this.showLabels = true
         this.showType = true
         this.showCategories = true
+        this.typeFilter = `website=${this.apps.website.id}`
         if (this.apps.app_type) {
           this.labelFilter = `website=${this.apps.website.id}&type_label=${this.apps.app_type.id}`
           this.categoryFilter = `website=${this.apps.website.id}&type_category=${this.apps.app_type.id}`
@@ -318,7 +368,6 @@ export default {
           }
         })
         }
-        
         this.data[item] = val.join(',')
       } else {
         if (this.apps[item]) {
@@ -380,15 +429,22 @@ export default {
       if (val && val.id) {
         type = val.id
       }
-      this.labelFilter = `website=${this.apps.website.id}&type_label=${type}`
-      this.categoryFilter = `website=${this.apps.website.id}&type_category=${type}`
+      let websiteFilter = this.isUpdate ? this.apps.website.id : this.apps.website
+      this.labelFilter = `website=${websiteFilter}&type_label=${type}`
+      this.categoryFilter = `website=${websiteFilter}&type_category=${type}`
       this.apps.category = ''
       this.apps.labels = []
+    },
+    websiteSelectOne(val) {
+      this.apps.website = val
+      console.log(val)
+      this.typeFilter = `website=${this.apps.website}`
     },
     categorySelectOne(val) {
       this.apps.category = val
     },
     labelSelectMultiple(val) {
+      console.log(val)
       if (val && val[0].name) {
         let newVal = []
         this.apps.labels.forEach(item => {
@@ -431,11 +487,12 @@ export default {
         formData.set('name', this.apps.name)
         formData.set('star', this.apps.star)
         formData.set('version', this.apps.version)
-        formData.set('introduction', this.apps.introduction)
-        formData.set('basic_introduction', this.apps.basic_introduction)
-        formData.set('keywords', this.apps.keywords)
-        formData.set('features', this.apps.features)
-        if (this.apps.id) {
+        this.nonRequired.forEach(item => {
+          if (this.apps[item]) {
+            formData.set(item, this.apps[item])
+          }
+        })
+        if (this.isUpdate) {
           this.$http.put(`${this.appsApi}${this.apps.id}/`, formData).then(response => {
             this.snackbar = {
               color: 'success',
@@ -451,11 +508,13 @@ export default {
             }
           })
         } else {
+          console.log(this.apps.website)
+          formData.set('website_id', this.apps.website)
           this.$http.post(this.appsApi, formData).then(response => {
             this.snackbar = {
               color: 'success',
               show: true,
-              text: `${this.$t('actions.update')} - ${this.$t('nav.apps')}: ${this.$t('status.success')}`
+              text: `${this.$t('actions.create')} - ${this.$t('nav.apps')}: ${this.$t('status.success')}`
             }
             this.$router.push(`/apps/${response.id}`)
           }, error => {

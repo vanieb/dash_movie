@@ -132,16 +132,19 @@
             </v-card>
           </v-col>          
         </v-row>
+        <v-card-title>{{$t('apps.download_link')}}</v-card-title>
+        <v-banner color="primary" dark>{{$t('apps.download_link')}}</v-banner>
         <v-flex>
-          <v-card class="mb-5">
+          <!-- <v-card class="mb-5"> -->
             <v-card-text>
             <v-dialog v-model="uploadInstallerDialog" persistent max-width="350">
             <template v-slot:activator="{ on }">
                <v-btn
-                  color="primary"
+                  color="blue lighten-2"
                   dark
                   class="mr-3"
                   v-on="on">
+                  <v-icon>android</v-icon>
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
                       <span v-on="on"> {{$t('actions.change_file')}}</span>
@@ -153,8 +156,8 @@
             <v-card>
               <validation-observer ref="uploadFileform">
                 <v-card-title>
-                  <!-- <v-icon class="mr-3">cloud_upload</v-icon> -->
-                    &nbsp;{{$t('actions.change_file')}}
+                  <v-icon class="mr-3">android</v-icon>
+                    &nbsp;{{$t('actions.change_file')}} - Android
                 </v-card-title>
                 <v-card-text>
                   <v-icon small>info</v-icon>&nbsp;&nbsp;
@@ -183,16 +186,74 @@
                   <v-btn
                     color="blue darken-1"
                     :loading="uploadLoading"
-                    @click="uploadFile()">{{ $t('actions.submit') }}
+                    @click="uploadFile('apk')">{{ $t('actions.submit') }}
+                  </v-btn>
+                </v-card-actions>
+              </validation-observer>
+            </v-card>
+          </v-dialog>
+            <span>{{ $t('apps.android_download_link')}}: {{ apps.app_file || $t('system_msg.no_data') }}</span>
+             </v-card-text>
+            <v-card-text>
+            <v-dialog v-model="uploadiOSInstallerDialog" persistent max-width="350">
+            <template v-slot:activator="{ on }">
+               <v-btn
+                  color="blue lighten-2"
+                  dark
+                  class="mr-3"
+                  v-on="on">
+                  <v-icon>phone_iphone</v-icon>
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                      <span v-on="on"> {{$t('actions.change_file')}}</span>
+                    </template>
+                    <span>{{$t('system_notes.upload_one_installer_memo')}}</span>
+                  </v-tooltip>
+                </v-btn>
+              </template>
+            <v-card>
+              <validation-observer ref="uploadFileform">
+                <v-card-title>
+                  <v-icon class="mr-3">phone_iphone</v-icon>
+                    &nbsp;{{$t('actions.change_file')}} - iOS
+                </v-card-title>
+                <v-card-text>
+                  <v-icon small>info</v-icon>&nbsp;&nbsp;
+                  <small>{{ $t('system_notes.upload_one_installer_memo') }}</small>
+                </v-card-text>
+                <v-card-text>
+                  <v-spacer></v-spacer>
+                  <validation-provider style="width:310px;" rules="required" :name="$t('common.file')">
+                    <v-file-input
+                      outlined
+                      dense
+                      clearable
+                      :error-messages="errors"
+                      required
+                      slot-scope="{ errors }"
+                      v-model="file">    
+                    </v-file-input>
+                  </validation-provider>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="grey lighten-1"
+                    @click="uploadiOSInstallerDialog = false">{{ $t('actions.close') }}
+                  </v-btn>
+                  <v-btn
+                    color="blue darken-1"
+                    :loading="uploadLoading"
+                    @click="uploadFile('ios')">{{ $t('actions.submit') }}
                   </v-btn>
                 </v-card-actions>
               </validation-observer>
             </v-card>
           </v-dialog>
             <!-- <v-icon>cloud_upload</v-icon>&nbsp;&nbsp; -->
-            <span>{{ $t('apps.download_link')}}: {{ apps.app_file || $t('system_msg.no_data') }}</span>
+            <span>{{ $t('apps.ios_download_link')}}: {{ apps.app_file || $t('system_msg.no_data') }}</span>
              </v-card-text>
-          </v-card>
+          <!-- </v-card> -->
         </v-flex>
          <v-banner color="primary" dark>{{$t('apps.seo_data')}}</v-banner>
          <v-flex>
@@ -242,6 +303,7 @@ export default {
       apps: {},
       appsApi: api.apps,
       uploadInstallerDialog: false,
+      uploadiOSInstallerDialog: false,
       uploadLoading: false,
       snackbar: {
         color: '',
@@ -251,7 +313,7 @@ export default {
       bread_crumbs: [{
           text: this.$t('nav.apps'),
           disabled: false,
-          to: '/apps'
+          to: '/apps?website=1'
         },
         {
           text: this.$t('nav.apps_detail'),
@@ -272,12 +334,16 @@ export default {
         this.apps = response
       })
     },
-    async uploadFile() {
+    async uploadFile(installerType) {
       const isValid = await this.$refs.uploadFileform.validate()
       if (isValid) {
         this.uploadLoading = true
         const formData = new window.FormData()
-        formData.set('app_file', this.file)
+        if (installerType == 'apk') {
+          formData.set('app_file', this.file)
+        } else{
+          formData.set('ios_app_file', this.file)
+        }
         this.$http.put(`${api.apps}${this.apps.id}/`, formData).then(() => {
           this.snackbar = {
             color: 'success',
