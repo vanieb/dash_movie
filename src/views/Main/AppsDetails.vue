@@ -251,7 +251,7 @@
             </v-card>
           </v-dialog>
             <!-- <v-icon>cloud_upload</v-icon>&nbsp;&nbsp; -->
-            <span>{{ $t('apps.ios_download_link')}}: {{ apps.app_file || $t('system_msg.no_data') }}</span>
+            <span>{{ $t('apps.ios_download_link')}}: {{ apps.ios_file || $t('system_msg.no_data') }}</span>
              </v-card-text>
           <!-- </v-card> -->
         </v-flex>
