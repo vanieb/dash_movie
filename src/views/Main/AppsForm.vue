@@ -163,7 +163,7 @@
                     dense
                     number
                     prepend-icon="android"
-                    v-model.number="apps.download_link"
+                    v-model.number="apps.app_file"
                     outlined>
                   </v-text-field>
                 </v-col>
@@ -176,7 +176,7 @@
                     dense
                     number
                     prepend-icon="phone_iphone"
-                    v-model.number="apps.ios_download_link"
+                    v-model.number="apps.ios_file"
                     outlined>
                   </v-text-field>
                 </v-col>

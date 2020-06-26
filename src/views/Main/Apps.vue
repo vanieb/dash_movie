@@ -521,30 +521,41 @@ export default {
     // },
     async uploadFile(mode) {
       const isValid = await this.$refs.form.validate()
+      let continueUpload = true
       if (isValid) {
-        if (mode == 'upload') {
-          this.uploadLoading = true
-          const formData = new window.FormData()
-          formData.set('app_file', this.file)
-          formData.set('website', this.setWebsite)
-          await axios.post(api.upload, 
-            formData, 
-            { headers: {'Content-Type': 'multipart/form-data'},
-            onUploadProgress: function( progressEvent ) {
-              this.uploadPercentage = parseInt( Math.round( ( progressEvent.loaded / progressEvent.total ) * 100 ))
-            }.bind(this)
-          }).then(() => {
-            this.$refs.pulling.rebase()
-            this.close()
-            this.snackbar = {
-              color: 'success',
-              show: true,
-              text: `${this.$t('actions.upload')}: ${this.$t('status.success')}`
+        await this.$http.get(`${api.upload}?website=${this.website}&filename=${this.file.name}`).then(response => {
+          this.count = response.length !== 0 ? response.length : false
+          if (this.count) {
+            continueUpload = window.confirm(this.$t('system_msg.confirm_upload',{ count: this.count}))
+            if (!continueUpload) {
+              return
             }
-          }).catch(function(){
-            
-          })
-        // insert api
+          }
+        })
+        if (continueUpload) {
+          if (mode == 'upload') {
+            this.uploadLoading = true
+            const formData = new window.FormData()
+            formData.set('app_file', this.file)
+            formData.set('website', this.setWebsite)
+            await axios.post(api.upload, 
+              formData, 
+              { headers: {'Content-Type': 'multipart/form-data'},
+              onUploadProgress: function( progressEvent ) {
+                this.uploadPercentage = parseInt( Math.round( ( progressEvent.loaded / progressEvent.total ) * 100 ))
+              }.bind(this)
+            }).then(() => {
+              this.$refs.pulling.rebase()
+              this.close()
+              this.snackbar = {
+                color: 'success',
+                show: true,
+                text: `${this.$t('actions.upload')}: ${this.$t('status.success')}`
+              }
+            }).catch(function(){
+              
+            })
+          }
         }
       }
     },
