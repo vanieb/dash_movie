@@ -126,6 +126,9 @@
             </v-col>
             <v-spacer></v-spacer>
             <v-col cols="12" md="3">
+              <v-banner color="primary" dark>
+                {{$t('actions.upload')}} - {{$t('apps.icon')}}
+              </v-banner>
               <v-card>
                 <v-card-text>
                  <v-img
