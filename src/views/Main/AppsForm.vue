@@ -206,6 +206,7 @@
               <tinymce v-if="showTinyMce"
                 name="introduction"
                 :content="apps.introduction"
+                :key="introKey"
                 @change-content="changeIntroContent"
                 >
               </tinymce>
@@ -215,6 +216,7 @@
             <v-card-title>{{$t('apps.features')}}</v-card-title><v-card-text>
               <tinymce v-if="showTinyMce"
                 name="features"
+                :key="featuresKey"
                 :content="apps.features"
                 @change-content="changeFeaturesContent"
                 >
@@ -285,6 +287,8 @@ export default {
         text: '',
         show: false,
       },
+      introKey: false,
+      featuresKey: false,
       bread_crumbs: [
         {
           text: this.$t('nav.apps'),
@@ -335,6 +339,8 @@ export default {
       this.$http.get(`${this.appsApi}${id }/`).then((response) => {
         this.apps = response
         this.showTinyMce = true
+        this.introKey = true
+        this.featuresKey = true
         this.showLabels = true
         this.showType = true
         this.showCategories = true
