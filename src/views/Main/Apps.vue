@@ -673,6 +673,12 @@ export default {
           text: `${this.$t('actions.delete')}: ${this.$t('status.success')}`
         }
         this.$refs.pulling.rebase()
+      }, error => {
+         this.snackbar = {
+          color: 'red',
+          show: true,
+          text: `${this.$t('system_msg.error')}: ${error}`
+        }
       })
       this.snackbar.show = false
     }
