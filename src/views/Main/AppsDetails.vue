@@ -430,6 +430,10 @@ export default {
           }.bind(this)
         }).then(() => {
           this.getAppDetails(this.apps.id)
+          this.uploadInstallerDialog = false
+          this.uploadLoading = false
+          this.file = null
+          this.$refs.uploadFileform.reset()
           this.snackbar = {
             color: 'success',
             show: true,
