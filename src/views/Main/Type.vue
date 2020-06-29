@@ -427,7 +427,6 @@ export default {
       this.submit()
     },
     websiteSetOne(val) {
-      console.log(val)
       this.type.website_id = val
     },
     search:
