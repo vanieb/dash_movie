@@ -42,6 +42,7 @@
                 <v-flex xs12>
                   <div width="452px;">
                     <website
+                      :key="websiteKey" 
                       elementType="modal"
                       type="set"
                       req="true"
@@ -264,6 +265,7 @@ export default {
       loading: true,
       submitting: false,
       date_menu: false,
+      websiteKey: false,
       type: {
         name: '',
         website: '',
@@ -425,6 +427,7 @@ export default {
       this.submit()
     },
     websiteSetOne(val) {
+      console.log(val)
       this.type.website_id = val
     },
     search:
@@ -468,9 +471,10 @@ export default {
     },
     async saveType() {
       const isValid = await this.$refs.form.validate()
+      this.websiteKey = true
       let typeResult = Object({
         name: this.type.name,
-        website_id: this.type.website_id,
+        website_id: this.query.website,
         memo: this.type.memo,
       })
       if (isValid) {
@@ -514,6 +518,7 @@ export default {
       this.snackbar.show=false
     },
     close() {
+      this.websiteKey = false
       this.type.id = ''
       this.type.name = ''
       this.type.memo=''
