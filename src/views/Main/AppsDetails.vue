@@ -37,12 +37,22 @@
         </v-row>
         <v-row>
           <v-col cols="12" md="2">
-            <v-img
+            <v-img v-if="apps.icon"
               :src="`${apps.icon}`"
               class="my-1"
               contain
               height="100"
             />
+            <v-avatar
+              v-else
+              class="profile ml-10"
+              contain
+              size="100"
+              tile><v-icon size="120">photo</v-icon>
+            </v-avatar>
+            <v-layout justify-center mb5 v-if="!apps.icon">
+              <small>{{$t('apps.icon')}}: {{$t('system_msg.not_set')}}</small>
+            </v-layout>
             <v-layout justify-center mb5>
               <v-rating
                 x-small dense color="orange" v-model="apps.star" disabled="true">
