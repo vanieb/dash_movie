@@ -132,6 +132,7 @@
             </v-card>
           </v-col>          
         </v-row>
+       
         <v-card-title>{{$t('apps.download_link')}}</v-card-title>
         <v-banner color="primary" dark>{{$t('apps.download_link')}}</v-banner>
         <v-flex>
@@ -153,7 +154,7 @@
                   </v-tooltip>
                 </v-btn>
               </template>
-            <v-card>
+            <v-card :loading="uploadLoading">
               <validation-observer ref="uploadFileform">
                 <v-card-title>
                   <v-icon class="mr-3">android</v-icon>
@@ -176,16 +177,28 @@
                       v-model="file">    
                     </v-file-input>
                   </validation-provider>
+                  <v-progress-linear
+                    v-if="uploadLoading"
+                    color="light-blue"
+                    height="25"
+                    v-model="uploadPercentage"
+                    striped
+                  >
+                    <template v-slot="{ value }">
+                      <strong>{{ Math.ceil(value) }}%</strong>
+                    </template>
+                  </v-progress-linear>
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn
                     color="grey lighten-1"
+                    :disabled="uploadLoading"
                     @click="uploadInstallerDialog = false">{{ $t('actions.close') }}
                   </v-btn>
                   <v-btn
                     color="blue darken-1"
-                    :loading="uploadLoading"
+                    :disabled="uploadLoading"
                     @click="uploadFile('apk')">{{ $t('actions.submit') }}
                   </v-btn>
                 </v-card-actions>
@@ -211,7 +224,7 @@
                   </v-tooltip>
                 </v-btn>
               </template>
-            <v-card>
+            <v-card :loading="uploadLoading">
               <validation-observer ref="uploadFileform">
                 <v-card-title>
                   <v-icon class="mr-3">phone_iphone</v-icon>
@@ -234,16 +247,28 @@
                       v-model="file">    
                     </v-file-input>
                   </validation-provider>
+                  <v-progress-linear
+                    v-if="uploadLoading"
+                    color="light-blue"
+                    height="25"
+                    v-model="uploadPercentage"
+                    striped
+                  >
+                    <template v-slot="{ value }">
+                      <strong>{{ Math.ceil(value) }}%</strong>
+                    </template>
+                  </v-progress-linear>
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn
                     color="grey lighten-1"
+                    :disabled="uploadLoading"
                     @click="uploadiOSInstallerDialog = false">{{ $t('actions.close') }}
                   </v-btn>
                   <v-btn
                     color="blue darken-1"
-                    :loading="uploadLoading"
+                    :disabled="uploadLoading"
                     @click="uploadFile('ios')">{{ $t('actions.submit') }}
                   </v-btn>
                 </v-card-actions>
@@ -255,6 +280,11 @@
              </v-card-text>
           <!-- </v-card> -->
         </v-flex>
+        <v-banner color="primary" dark>{{$t('apps.external_download_link')}}</v-banner>
+        <v-card-text>
+         <span>{{ $t('apps.android_download_link')}}: {{ apps.download_link || $t('system_msg.no_data') }}</span><br/>
+         <span>{{ $t('apps.ios_download_link')}}: {{ apps.ios_download_link || $t('system_msg.no_data') }}</span>
+        </v-card-text>
          <v-banner color="primary" dark>{{$t('apps.seo_data')}}</v-banner>
          <v-flex>
           <v-card-title>{{$t('apps.keywords')}}</v-card-title>
@@ -289,6 +319,7 @@
 import api from '@/api/apis'
 import SnackBar from '@/components/SnackBar'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
+import axios from 'axios'
 
 export default {
   name: 'AppDetails',
@@ -302,6 +333,7 @@ export default {
       file: '',
       apps: {},
       appsApi: api.apps,
+      uploadPercentage: 0,
       uploadInstallerDialog: false,
       uploadiOSInstallerDialog: false,
       uploadLoading: false,
@@ -335,6 +367,7 @@ export default {
       })
     },
     async uploadFile(installerType) {
+      this.snackbar.show = false
       const isValid = await this.$refs.uploadFileform.validate()
       if (isValid) {
         this.uploadLoading = true
@@ -344,14 +377,28 @@ export default {
         } else{
           formData.set('ios_app_file', this.file)
         }
-        this.$http.put(`${api.apps}${this.apps.id}/`, formData).then(() => {
+        await axios.put(`${api.apps}${this.apps.id}/`,
+          formData,
+          { headers: {'Content-Type': 'multipart/form-data'},
+          onUploadProgress: function( progressEvent ) {
+            this.uploadPercentage = parseInt( Math.round( ( progressEvent.loaded / progressEvent.total ) * 100 ))
+          }.bind(this)
+        }).then(() => {
+          this.getAppDetails(this.apps.id)
           this.snackbar = {
             color: 'success',
             show: true,
             text: `${this.$t('actions.change_file')}: ${this.$t('status.success')}`
           }
+        }, error => {
+          this.snackbar = {
+            color: 'red',
+            show: true,
+            text: `${this.$t('system_msg.error')}: ${error}`
+          }
           this.uploadLoading = false
-          this.uploadInstallerDialog = false
+          return
+        }).catch(function(){
         })
       }
     }

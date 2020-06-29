@@ -103,7 +103,8 @@ export default {
     android_download_link: 'Android Download Link',
     ios_download_link: 'iOS Download Link',
     other_details: 'Other Details',
-    seo_data: 'SEO Data'
+    seo_data: 'SEO Data',
+    external_download_link: 'External Download Links'
   },
   website: {
     code: 'Code'

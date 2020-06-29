@@ -102,7 +102,8 @@ export default {
     android_download_link: ' Android下载链接',
     ios_download_link: 'iOS下载链接',
     other_details: '下载链接',
-    seo_data: 'SEO数据'
+    seo_data: 'SEO数据',
+    external_download_link: '外部下载链接'
   },
   website: {
     code: '码'

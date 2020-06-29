@@ -152,7 +152,7 @@
             </v-col>
           </v-row>
           <v-spacer></v-spacer>
-          <v-banner color="primary" dark>{{$t('apps.download_link')}}</v-banner>
+          <v-banner color="primary" dark>{{$t('apps.external_download_link')}}</v-banner>
           <v-flex>
             <v-card-text>
               <v-row>
@@ -163,7 +163,7 @@
                     dense
                     number
                     prepend-icon="android"
-                    v-model.number="apps.app_file"
+                    v-model.number="apps.download_link"
                     outlined>
                   </v-text-field>
                 </v-col>
@@ -176,7 +176,7 @@
                     dense
                     number
                     prepend-icon="phone_iphone"
-                    v-model.number="apps.ios_file"
+                    v-model.number="apps.ios_download_link"
                     outlined>
                   </v-text-field>
                 </v-col>
