@@ -51,7 +51,8 @@ export default {
     exceed_file_size: '图标大小应小于1MB。',
     no_data: '没有数据',
     date_error: '开始日期应设置在结束日期之前',
-    confirm_upload: '该安装程序将被添加/更新到现有的{count}个现有应用程序中。 请确认。'
+    confirm_upload: '该安装程序将被添加/更新到现有的{count}个现有应用程序中。 请确认。',
+    not_set: '没有设置'
   },
   nav: {
     login: '登录',

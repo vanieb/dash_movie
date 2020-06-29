@@ -51,7 +51,8 @@ export default {
     exceed_file_size: 'Icon size should less than 1MB.',
     no_data: 'No data',
     date_error: 'Start Date should be selected first before the end date.',
-    confirm_upload: 'This installer will be added/updated to the existing {count} applications. Please confirm.'
+    confirm_upload: 'This installer will be added/updated to the existing {count} applications. Please confirm.',
+    not_set: 'Not Set'
   },
   nav: {
     login: 'Login',
