@@ -111,7 +111,6 @@
                   </categories>
                 </span>
               </v-row>
-             
               <v-row>
                 <labels
                   v-if="showLabels || !isUpdate"
@@ -155,31 +154,51 @@
             </v-col>
           </v-row>
           <v-spacer></v-spacer>
-          <v-banner color="primary" dark>{{$t('apps.external_download_link')}}</v-banner>
+          <v-banner color="primary" dark>
+            {{ apps.use_android_link ? $t('apps.external_download_link') : $t('apps.download_link')}}
+            <template v-slot:actions>
+              <span class="mr-2">{{$t('apps.use_download_link')}} </span>
+              <v-switch
+                class="ma-0"
+                color="white"
+                v-model="apps.use_android_link"
+                hide-details>
+              </v-switch>
+            </template>
+          </v-banner>
           <v-flex>
             <v-card-text>
               <v-row>
                 <v-col>
                   <v-text-field
+                    v-if="apps.use_android_link"
                     :label="`${$t('apps.android_download_link')}`"
                     placeholder=" "
                     dense
-                    number
                     prepend-icon="android"
-                    v-model.number="apps.download_link"
+                    v-model="apps.download_link"
+                    outlined>
+                  </v-text-field>
+                  <v-text-field
+                    v-else
+                    :label="`${$t('apps.android_download_link')}`"
+                    placeholder=" "
+                    dense
+                    disabled="true"
+                    prepend-icon="android"
+                    v-model="apps.app_file"
                     outlined>
                   </v-text-field>
                 </v-col>
               </v-row>
-              <v-row>
+              <v-row v-if="apps.use_android_link">
                 <v-col>
                   <v-text-field
                     :label="`${$t('apps.ios_download_link')}`"
                     placeholder=" "
                     dense
-                    number
                     prepend-icon="phone_iphone"
-                    v-model.number="apps.ios_download_link"
+                    v-model="apps.ios_download_link"
                     outlined>
                   </v-text-field>
                 </v-col>
@@ -320,11 +339,6 @@ export default {
       }
     })
   },
-  // watch: {
-  //   isUpdate(newObj) {
-      
-  //   }
-  // },
   computed: {
     isUpdate() {
       return this.id ? true : false
@@ -446,14 +460,12 @@ export default {
     },
     websiteSelectOne(val) {
       this.apps.website = val
-      console.log(val)
       this.typeFilter = `website=${this.apps.website}`
     },
     categorySelectOne(val) {
       this.apps.category = val
     },
     labelSelectMultiple(val) {
-      console.log(val)
       if (val && val[0].name) {
         let newVal = []
         this.apps.labels.forEach(item => {
@@ -494,6 +506,7 @@ export default {
         }
         // String Fields
         formData.set('name', this.apps.name)
+        formData.set('use_android_link', this.apps.use_android_link)
         formData.set('star', this.apps.star)
         formData.set('version', this.apps.version)
         this.nonRequired.forEach(item => {
@@ -517,7 +530,6 @@ export default {
             }
           })
         } else {
-          console.log(this.apps.website)
           formData.set('website_id', this.apps.website)
           this.$http.post(this.appsApi, formData).then(response => {
             this.snackbar = {

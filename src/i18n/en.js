@@ -105,7 +105,8 @@ export default {
     ios_download_link: 'iOS Download Link',
     other_details: 'Other Details',
     seo_data: 'SEO Data',
-    external_download_link: 'External Download Links'
+    external_download_link: 'External Download Links',
+    use_download_link: 'Display External Download Link'
   },
   website: {
     code: 'Code'
