@@ -143,8 +143,8 @@
           </v-col>          
         </v-row>
         <v-layout>
-        <v-card-title>{{$t('apps.download_link')}}</v-card-title>
-        <v-spacer></v-spacer>
+          <v-card-title>{{$t('apps.download_link')}}</v-card-title>
+          <v-spacer></v-spacer>
           <v-switch
             color="success"
             v-model="apps.use_android_link"
@@ -153,12 +153,10 @@
             hide-details>
           </v-switch>
         </v-layout>
-        <!-- </div> -->
         <v-banner color="primary" dark>{{$t('apps.download_link')}}</v-banner>
         <v-flex>
-          <!-- <v-card class="mb-5"> -->
-            <v-card-text>
-              <v-dialog v-model="uploadInstallerDialog" persistent max-width="350">
+          <v-card-text>
+            <v-dialog v-model="uploadInstallerDialog" persistent max-width="350">
               <template v-slot:activator="{ on }">
                 <v-btn
                   color="blue lighten-2"
