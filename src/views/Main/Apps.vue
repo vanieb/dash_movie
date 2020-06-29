@@ -28,7 +28,7 @@
                   </v-tooltip>
                 </v-btn>
               </template>
-            <v-card>
+            <v-card :loading="uploadLoading">
               <validation-observer ref="form">
                 <v-card-title>
                   <v-icon class="mr-3">cloud_upload</v-icon>
@@ -81,7 +81,7 @@
                   </v-btn>
                   <v-btn
                     color="blue darken-1"
-                    :loading="uploadLoading"
+                    :disabled="uploadLoading"
                     @click="uploadFile('upload')">{{ $t('actions.submit') }}
                   </v-btn>
                 </v-card-actions>

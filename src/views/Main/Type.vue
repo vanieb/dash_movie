@@ -414,7 +414,6 @@ export default {
           text: `${this.$t('system_msg.error')}: ${error}`
         }
       })
-      
       this.snackbar.show = false
     },
     submit() {
