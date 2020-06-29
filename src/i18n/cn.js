@@ -104,7 +104,8 @@ export default {
     ios_download_link: 'iOS下载链接',
     other_details: '下载链接',
     seo_data: 'SEO数据',
-    external_download_link: '外部下载链接'
+    external_download_link: '外部下载链接',
+    use_download_link: '显示外部下载链接'
   },
   website: {
     code: '码'

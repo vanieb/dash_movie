@@ -142,12 +142,21 @@
             </v-card>
           </v-col>          
         </v-row>
-        <v-card-title>{{$t('apps.download_link')}}</v-card-title>
+        <v-layout>
+          <v-card-title>{{$t('apps.download_link')}}</v-card-title>
+          <v-spacer></v-spacer>
+          <v-switch
+            color="success"
+            v-model="apps.use_android_link"
+            :label="$t('apps.use_download_link')"
+            @change="toggle(apps.id, apps.use_android_link, 'use_android_link')"
+            hide-details>
+          </v-switch>
+        </v-layout>
         <v-banner color="primary" dark>{{$t('apps.download_link')}}</v-banner>
         <v-flex>
-          <!-- <v-card class="mb-5"> -->
-            <v-card-text>
-              <v-dialog v-model="uploadInstallerDialog" persistent max-width="350">
+          <v-card-text>
+            <v-dialog v-model="uploadInstallerDialog" persistent max-width="350">
               <template v-slot:activator="{ on }">
                 <v-btn
                   color="blue lighten-2"
@@ -374,6 +383,33 @@ export default {
       this.$http.get(`${this.appsApi}${id }/`).then((response) => {
         this.apps = response
       })
+    },
+    toggle(id, value, mode){
+      this.snackbar.show = false
+      let toggleResult
+      let action_title
+      if (mode == 'use_android_link') {
+        toggleResult = {
+          use_android_link: value
+        }
+        action_title = this.$t('apps.use_download_link')
+      }
+      this.$http.put(this.appsApi + id + '/', toggleResult).then((response) => {
+        let action_text = response[mode] ? this.$t('status.enabled') : this.$t('status.disabled')
+        this.snackbar = {
+          color: 'success',
+          show: true,
+          text: `[${action_title}]: ${action_text}`
+        }
+        this.getAppDetails(this.apps.id)
+      }, error => {
+        this.snackbar = {
+          color: 'error',
+          show: true,
+          text: `${this.$t('system_msg.error')}: ${error}`
+        }
+      })
+      this.snackbar.show = false
     },
     async uploadFile(installerType) {
       this.snackbar.show = false
