@@ -153,6 +153,7 @@
               color="white"
               v-model="apps.use_android_link"
               :disabled="!apps.app_file || !apps.download_link"
+              @change="toggle(apps.id, apps.use_android_link, 'use_android_link')"
               hide-details>
             </v-switch>
           </template>
@@ -168,7 +169,6 @@
                     dark
                     class="mr-3"
                     v-on="on">
-                    
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on }">
                         <span v-on="on"> {{$t('actions.change_file')}}</span>
