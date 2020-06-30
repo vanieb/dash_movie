@@ -552,6 +552,14 @@ export default {
                 show: true,
                 text: `${this.$t('actions.upload')}: ${this.$t('status.success')}`
               }
+            }, error => {
+              this.snackbar = {
+                color: 'red',
+                show: true,
+                text: `${this.$t('system_msg.error')}: ${error}`
+              }
+              this.uploadLoading = false
+              return
             }).catch(function(){
               
             })
