@@ -144,86 +144,92 @@
         </v-row>
         <v-layout>
           <v-card-title>{{$t('apps.download_link')}}</v-card-title>
-          <v-spacer></v-spacer>
-          <v-switch
-            color="success"
-            v-model="apps.use_android_link"
-            :label="$t('apps.use_download_link')"
-            @change="toggle(apps.id, apps.use_android_link, 'use_android_link')"
-            hide-details>
-          </v-switch>
         </v-layout>
-        <v-banner color="primary" dark>{{$t('apps.download_link')}}</v-banner>
+        <v-banner color="primary" dark><v-icon small>android</v-icon> {{$t('apps.android_download_link')}}
+          <template v-slot:actions>
+            <span class="mr-2">{{$t('apps.use_download_link')}} </span>
+            <v-switch
+              class="ma-0"
+              color="white"
+              v-model="apps.use_android_link"
+              :disabled="!apps.app_file || !apps.download_link"
+              hide-details>
+            </v-switch>
+          </template>
+        </v-banner>
         <v-flex>
           <v-card-text>
-            <v-dialog v-model="uploadInstallerDialog" persistent max-width="350">
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  color="blue lighten-2"
-                  dark
-                  class="mr-3"
-                  v-on="on">
-                  <v-icon>android</v-icon>
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                      <span v-on="on"> {{$t('actions.change_file')}}</span>
-                    </template>
-                    <span>{{$t('system_notes.upload_one_installer_memo')}}</span>
-                  </v-tooltip>
-                </v-btn>
-              </template>
-              <v-card :loading="uploadLoading">
-                <validation-observer ref="uploadFileform">
-                  <v-card-title>
-                    <v-icon class="mr-3">android</v-icon>
-                      &nbsp;{{$t('actions.change_file')}} - Android
-                  </v-card-title>
-                  <v-card-text>
-                    <v-icon small>info</v-icon>&nbsp;&nbsp;
-                    <small>{{ $t('system_notes.upload_one_installer_memo') }}</small>
-                  </v-card-text>
-                  <v-card-text>
-                    <v-spacer></v-spacer>
-                    <validation-provider style="width:310px;" rules="required" :name="$t('common.file')">
-                      <v-file-input
-                        outlined
-                        dense
-                        clearable
-                        :error-messages="errors"
-                        required
-                        slot-scope="{ errors }"
-                        v-model="file">    
-                      </v-file-input>
-                    </validation-provider>
-                    <v-progress-linear
-                      v-if="uploadLoading"
-                      color="light-blue"
-                      height="25"
-                      v-model="uploadPercentage"
-                      striped
-                    >
-                      <template v-slot="{ value }">
-                        <strong>{{ Math.ceil(value) }}%</strong>
+            <li>{{ $t('apps.external_download_link')}}: {{ apps.download_link || $t('system_msg.no_data') }}<br/></li>
+            <li>
+              <v-dialog v-model="uploadInstallerDialog" persistent max-width="350">
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    color="blue lighten-2"
+                    dark
+                    class="mr-3"
+                    v-on="on">
+                    
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on }">
+                        <span v-on="on"> {{$t('actions.change_file')}}</span>
                       </template>
-                    </v-progress-linear>
-                  </v-card-text>
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn
-                      color="grey lighten-1"
-                      :disabled="uploadLoading"
-                      @click="uploadInstallerDialog = false">{{ $t('actions.close') }}
-                    </v-btn>
-                    <v-btn
-                      color="blue darken-1"
-                      :disabled="uploadLoading"
-                      @click="uploadFile('apk')">{{ $t('actions.submit') }}
-                    </v-btn>
-                  </v-card-actions>
-                </validation-observer>
-              </v-card>
-            </v-dialog>
-            <span>{{ $t('apps.android_download_link')}}: {{ apps.app_file || $t('system_msg.no_data') }}</span>
+                      <span>{{$t('system_notes.upload_one_installer_memo')}}</span>
+                    </v-tooltip>
+                  </v-btn>
+                </template>
+                <v-card :loading="uploadLoading">
+                  <validation-observer ref="uploadFileform">
+                    <v-card-title>
+                      <v-icon class="mr-3">android</v-icon>
+                        &nbsp;{{$t('actions.change_file')}} - Android
+                    </v-card-title>
+                    <v-card-text>
+                      <v-icon small>info</v-icon>&nbsp;&nbsp;
+                      <small>{{ $t('system_notes.upload_one_installer_memo') }}</small>
+                    </v-card-text>
+                    <v-card-text>
+                      <v-spacer></v-spacer>
+                      <validation-provider style="width:310px;" rules="required" :name="$t('common.file')">
+                        <v-file-input
+                          outlined
+                          dense
+                          clearable
+                          :error-messages="errors"
+                          required
+                          slot-scope="{ errors }"
+                          v-model="file">    
+                        </v-file-input>
+                      </validation-provider>
+                      <v-progress-linear
+                        v-if="uploadLoading"
+                        color="light-blue"
+                        height="25"
+                        v-model="uploadPercentage"
+                        striped
+                      >
+                        <template v-slot="{ value }">
+                          <strong>{{ Math.ceil(value) }}%</strong>
+                        </template>
+                      </v-progress-linear>
+                    </v-card-text>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        color="grey lighten-1"
+                        :disabled="uploadLoading"
+                        @click="uploadInstallerDialog = false">{{ $t('actions.close') }}
+                      </v-btn>
+                      <v-btn
+                        color="blue darken-1"
+                        :disabled="uploadLoading"
+                        @click="uploadFile('apk')">{{ $t('actions.submit') }}
+                      </v-btn>
+                    </v-card-actions>
+                  </validation-observer>
+                </v-card>
+              </v-dialog>
+              <span>{{ $t('apps.android_download_link')}}: {{ apps.app_file || $t('system_msg.no_data') }}</span>
+            </li>
           </v-card-text>
           <!-- <v-card-text>
             <v-dialog v-model="uploadiOSInstallerDialog" persistent max-width="350">
@@ -297,11 +303,13 @@
             <!-- <span>{{ $t('apps.ios_download_link')}}: {{ apps.ios_file || $t('system_msg.no_data') }}</span>
              </v-card-text> -->
           <!-- </v-card> -->
+           
         </v-flex>
-        <v-banner color="primary" dark>{{$t('apps.external_download_link')}}</v-banner>
+        <v-banner color="primary" dark><v-icon small>phone_iphone</v-icon> {{$t('apps.ios_download_link')}}</v-banner>
         <v-card-text>
-         <span>{{ $t('apps.android_download_link')}}: {{ apps.download_link || $t('system_msg.no_data') }}</span><br/>
-         <span>{{ $t('apps.ios_download_link')}}: {{ apps.ios_download_link || $t('system_msg.no_data') }}</span>
+          <li>
+            <span>{{ $t('apps.ios_download_link')}}: {{ apps.ios_download_link || $t('system_msg.no_data') }}</span>
+          </li>
         </v-card-text>
          <v-banner color="primary" dark>{{$t('apps.seo_data')}}</v-banner>
          <v-flex>

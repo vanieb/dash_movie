@@ -38,7 +38,8 @@ export default {
     required: 'Required',
     less_than: 'should be <',
     greater_than: 'should be >',
-    server_error: 'Server Error'
+    server_error: 'Server Error',
+    switch_error: 'No installer is uploaded in our server.'
   },
   system_notes: {
     upload_installer_memo: 'This option will allow you to upload installers. For batch upload, zip first your file then upload. ',
@@ -105,8 +106,8 @@ export default {
     ios_download_link: 'iOS Download Link',
     other_details: 'Other Details',
     seo_data: 'SEO Data',
-    external_download_link: 'External Download Links',
-    use_download_link: 'Display External Download Link'
+    external_download_link: 'External Download Link',
+    use_download_link: 'Display External Download Link (Android)'
   },
   website: {
     code: 'Code'

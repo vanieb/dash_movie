@@ -38,7 +38,8 @@ export default {
     required: '必填',
     less_than: '应该小于 <',
     greater_than: '应该大于',
-    server_error: '服务器错误'
+    server_error: '服务器错误',
+    switch_error: '没有安装程序上传到我们的服务器中。'
   },
   system_notes: {
     upload_installer_memo: '此选项将允许您上传安装程序。 对于批量上传，请先压缩文件，然后再上传。',
@@ -100,12 +101,12 @@ export default {
     introduction: '简介',
     features: '功能',
     download_link: '下载链接',
-    android_download_link: ' Android下载链接',
+    android_download_link: 'Android下载链接',
     ios_download_link: 'iOS下载链接',
     other_details: '下载链接',
     seo_data: 'SEO数据',
     external_download_link: '外部下载链接',
-    use_download_link: '显示外部下载链接'
+    use_download_link: '显示外部下载链接(Android)'
   },
   website: {
     code: '码'

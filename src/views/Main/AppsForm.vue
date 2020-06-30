@@ -154,53 +154,60 @@
             </v-col>
           </v-row>
           <v-spacer></v-spacer>
-          <v-banner color="primary" dark>
-            {{ apps.use_android_link ? $t('apps.external_download_link') : $t('apps.download_link')}}
+          <v-layout>
+            <v-card-title>{{$t('apps.download_link')}}</v-card-title>
+          </v-layout>
+          <v-banner color="primary" dark><v-icon small>android</v-icon> {{$t('apps.android_download_link')}}
             <template v-slot:actions>
               <span class="mr-2">{{$t('apps.use_download_link')}} </span>
               <v-switch
                 class="ma-0"
                 color="white"
+                :key="switchKey"
                 v-model="apps.use_android_link"
+                :disabled="!isUpdate"
+                @change="checkLinks()"
                 hide-details>
               </v-switch>
             </template>
           </v-banner>
           <v-flex>
             <v-card-text>
+              <li>
+              <span>{{ $t('apps.android_download_link')}}: {{ apps.app_file || $t('system_msg.no_data') }}</span>
+              </li>
               <v-row>
                 <v-col>
-                  <v-text-field
-                    v-if="apps.use_android_link"
-                    :label="`${$t('apps.android_download_link')}`"
-                    placeholder=" "
-                    dense
-                    prepend-icon="android"
-                    v-model="apps.download_link"
-                    outlined>
-                  </v-text-field>
-                  <v-text-field
-                    v-else
-                    :label="`${$t('apps.android_download_link')}`"
-                    placeholder=" "
-                    dense
-                    disabled="true"
-                    prepend-icon="android"
-                    v-model="apps.app_file"
-                    outlined>
-                  </v-text-field>
+                  <validation-provider style="width:338px;" :rules="`${apps.use_android_link ? 'required' : ''}`" :name="`${$t('apps.external_download_link')}(Android)`">
+                    <v-text-field
+                      :label="`${$t('apps.external_download_link')}(Android)`"
+                      :error-messages="errors"
+                      slot-scope="{ errors }"
+                      placeholder=" "
+                      dense
+                      prepend-icon="android"
+                      v-model="apps.download_link"
+                      outlined>
+                    </v-text-field>
+                  </validation-provider>
                 </v-col>
               </v-row>
-              <v-row v-if="apps.use_android_link">
+            </v-card-text>
+          </v-flex>
+          <v-banner color="primary" dark><v-icon small>phone_iphone</v-icon> {{$t('apps.ios_download_link')}}
+          </v-banner>
+          <v-flex>
+            <v-card-text>
+              <v-row>
                 <v-col>
-                  <v-text-field
-                    :label="`${$t('apps.ios_download_link')}`"
-                    placeholder=" "
-                    dense
-                    prepend-icon="phone_iphone"
-                    v-model="apps.ios_download_link"
-                    outlined>
-                  </v-text-field>
+                    <v-text-field
+                      :label="`${$t('apps.external_download_link')}(iOS)`"
+                      placeholder=" "
+                      dense
+                      prepend-icon="phone_iphone"
+                      v-model="apps.ios_download_link"
+                      outlined>
+                    </v-text-field>
                 </v-col>
               </v-row>
             </v-card-text>
@@ -308,6 +315,7 @@ export default {
       },
       introKey: false,
       featuresKey: false,
+      switchKey: false,
       bread_crumbs: [
         {
           text: this.$t('nav.apps'),
@@ -318,7 +326,9 @@ export default {
           text: this.$route.meta.title,
           disabled: true
         }],
-      apps: {},
+      apps: {
+        use_android_link: true
+      },
       uploadInstallerDialog: false,
       uploadLoading: false,
       selectOne: ['app_type', 'category'],
@@ -485,6 +495,28 @@ export default {
       }
       this.apps.labels = val
     },
+    checkLinks() {
+      this.snackbar.show = false
+      if (!this.apps.use_android_link) {
+        if (this.apps.download_link && !this.apps.app_file) {
+          this.snackbar = {
+            color: 'error',
+            show: true,
+            text: `${this.$t('system_msg.error')} - ${this.$t('errors.switch_error')}`
+          }
+          this.switchKey = true
+          this.apps.use_android_link = true
+        } else if (!this.apps.download_link && !this.apps.app_file) {
+          this.snackbar = {
+            color: 'error',
+            show: true,
+            text: `${this.$t('system_msg.error')} - ${this.$t('errors.switch_error')}`
+          }
+          this.switchKey = true
+          this.apps.use_android_link = true
+        }
+      }
+    },
     async saveApp() {
       const isValid = await this.$refs.form.validate()
       if (isValid) {
@@ -500,18 +532,22 @@ export default {
           if ((this.data[item] != this.apps[item][0]) && !this.apps[item].id) {
             formData.set(`${item}_id`, this.apps[item])
           }
-        })
+        })        
         if (this.change_icon) {
           formData.set('icon', this.apps.icon)
         }
         // String Fields
         formData.set('name', this.apps.name)
-        formData.set('use_android_link', this.apps.use_android_link)
         formData.set('star', this.apps.star)
         formData.set('version', this.apps.version)
+        formData.set('use_android_link', this.apps.use_android_link)
         this.nonRequired.forEach(item => {
           if (this.apps[item]) {
             formData.set(item, this.apps[item])
+          }
+          if (item == 'ios_download_link'|| item == 'download_link') {
+            formData.set(item, this.apps[item] !== undefined ? this.apps[item] : '')
+            formData.set('use_android_link', false)
           }
         })
         if (this.isUpdate) {
