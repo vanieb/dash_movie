@@ -518,6 +518,7 @@ export default {
       }
     },
     async saveApp() {
+      this.snackbar.show = false
       const isValid = await this.$refs.form.validate()
       if (isValid) {
         let formData = new window.FormData()
