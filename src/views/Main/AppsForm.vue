@@ -52,9 +52,8 @@
                     placeholder=" "
                     slot-scope="{ errors }"
                     dense
-                    number
                     prepend-icon="view_week"
-                    v-model.number="apps.version"
+                    v-model="apps.version"
                     outlined>
                   </v-text-field>
                 </validation-provider>
