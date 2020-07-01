@@ -248,6 +248,17 @@
               </tinymce>
             </v-card-text>
           </v-flex>
+          <v-flex>
+            <v-card-title>{{$t('apps.editors_comment')}}</v-card-title><v-card-text>
+              <tinymce v-if="showTinyMce"
+                name="editors_comment"
+                :key="commentKey"
+                :content="apps.editors_comment"
+                @change-content="changeCommentContent"
+                >
+              </tinymce>
+            </v-card-text>
+          </v-flex>
           <v-layout justify-start mt-3>
           <v-btn
               color="blue darken-1"
@@ -314,6 +325,7 @@ export default {
       },
       introKey: false,
       featuresKey: false,
+      commentKey: false,
       switchKey: false,
       bread_crumbs: [
         {
@@ -332,7 +344,7 @@ export default {
       uploadLoading: false,
       selectOne: ['app_type', 'category'],
       selectMultiple: ['labels'],
-      nonRequired: ['basic_introduction', 'features', 'introduction', 'keywords', 'ios_download_link', 'download_link'],
+      nonRequired: ['basic_introduction', 'features', 'introduction', 'keywords', 'editors_comment', 'ios_download_link', 'download_link'],
       data: {
         app_type: false,
         category: false,
@@ -454,6 +466,9 @@ export default {
     },
     changeFeaturesContent(val) {
       this.apps.features = val
+    },
+    changeCommentContent(val) {
+      this.apps.editors_comment = val
     },
     typeSelectOne(val) {
       this.apps.app_type = val
