@@ -37,7 +37,7 @@ jobs:
       - checkout
       - setup_remote_docker:
           docker_layer_caching: true
-      - run: docker login -u "_json_key" -p "<< parameters.docker_password >>" https://asia.gcr.io
+      - run: docker login -u "_json_key" -p "<< parameters.docker_password >>" https://<< parameters.organization >>
       - run: >-
              docker build
              --cache-from=<< parameters.organization >>/<< parameters.project_id >>/$CIRCLE_PROJECT_REPONAME
@@ -109,7 +109,7 @@ workflows:
           project_id: $PROJECT_ID
           storage_buckets_key: $STORAGE_BUCKETS_KEY
           organization: asia.gcr.io
-          on_fail_message: <b>$CIRCLE_PROJECT_REPONAME:$CIRCLE_BRANCH</b> push docker image failed.
+          on_fail_message: <b>$CIRCLE_PROJECT_REPONAME:$CIRCLE_BRANCH</b> push docker image staging failed.
           docker_password: $GCR_KEY
           vue_app_api_url: $VUE_APP_API_URL
           filters:
@@ -138,8 +138,8 @@ workflows:
           project_id: $PROD_PROJECT_ID
           storage_buckets_key: $PROD_STORAGE_BUCKETS_KEY
           organization: asia.gcr.io
-          on_fail_message: <b>$CIRCLE_PROJECT_REPONAME:$CIRCLE_BRANCH</b> push docker image failed.
-          docker_password: $PROD_GCR_KEY
+          on_fail_message: <b>$CIRCLE_PROJECT_REPONAME:$CIRCLE_BRANCH</b> push docker image production failed.
+          docker_password: $PROD_CLOUD_BUILD_DS_KEY
           vue_app_api_url: $PROD_VUE_APP_API_URL
           filters:
             branches:
@@ -147,7 +147,7 @@ workflows:
                 - production
       - deploy_notification:
           env: production
-          url: https://dashbord.hga66886.com
+          url: https://admin.0a5.com
           requires:
             - push_docker_image
           filters:
