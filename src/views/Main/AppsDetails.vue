@@ -329,6 +329,10 @@
           <v-card-title>{{$t('apps.features')}}</v-card-title>
           <v-card-text v-html="apps.features  || $t('system_msg.no_data')"></v-card-text>
         </v-flex>
+        <v-flex>
+          <v-card-title>{{$t('apps.editors_comment')}}</v-card-title>
+          <v-card-text v-html="apps.editors_comment  || $t('system_msg.no_data')"></v-card-text>
+        </v-flex>
         </v-container>
       </v-card>
       <!-- SNACKBAR -->
