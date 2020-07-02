@@ -135,7 +135,7 @@ export default {
   },
   watch: {
     selected_tab(newObj) {
-      this.getApps(newObj + 1)
+      this.getApps(newObj)
     },
     websites(newObj) {
       this.query.website = newObj
@@ -152,11 +152,8 @@ export default {
   },
   methods: {
     getAppTypes() {
-      this.$http.get(`${this.typesApi}?limit=400&offset=0&website=${this.query.website}`).then(response => {
+      this.$http.get(`${this.typesApi}?limit=400&offset=0&website=${this.query.website}&is_active=true`).then(response => {
         this.app_types = response.results
-        .sort((a, b) => {
-          return a['id'] - b['id']
-        })
         if (this.app_types.length == 0 ) {
           this.selected_tab = ''
           this.filteredQuerySet = []
@@ -168,7 +165,7 @@ export default {
       })
     },
     getApps(type) {
-      this.app_type = type
+      this.app_type = this.app_types[type].id
       this.$http.get(`${this.appsApi}?ordering=rank&is_rank=true&app_type=${this.app_type}&website=${this.query.website}`).then(response => {
         this.filteredQuerySet = response.results
         .sort((a, b) => {
