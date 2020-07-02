@@ -166,7 +166,24 @@
       <v-card>
         <v-col cols="12" md="12" class="mt-2" style="padding: 20px 20px 10px 20px !important;">
           <v-row>
-            <div style="width:200px;" class="mr-2">
+            <div style="width:200px !important;" class="mr-2">
+              <website
+                type="filter"
+                :mode="'one'"
+                :website="query.website"
+                @website-select-one="websiteSelectOne">
+              </website>
+            </div>
+            <div style="width:200px !important;" class="mr-2">
+             <types
+                :mode="'one'"
+                type="filter"
+                :typeFilter="`website=${query.website}`"
+                :types="query.app_type"
+                @type-select-one="typeSelectOne">
+              </types>
+            </div>
+            <div style="width:150px;" class="mr-2">
               <v-select
                 item-name="text"
                 item-value="value"
@@ -185,24 +202,44 @@
                 </template>
               </v-select>
             </div>
-            <div style="width:200px !important;" class="mr-2">
-              <website
-                type="filter"
-                :mode="'one'"
-                :website="query.website"
-                @website-select-one="websiteSelectOne">
-              </website>
+            <div style="width:150px;" class="mr-2">
+              <v-select
+                item-name="text"
+                item-value="value"
+                :items="statusOptions"
+                :label="`${$t('nav.leaderboard')}-${$t('common.status')}`"
+                v-model="is_rank"
+                hide-details="true"
+                placeholder=" "
+                outlined
+                dense>
+                <template slot="selection" slot-scope="data">
+                  <span class="ml-3">{{ data.item.text }}</span>
+                </template>
+                <template slot="item" slot-scope="data">
+                  <span class="ml-3">{{ data.item.text }}</span>
+                </template>
+              </v-select>
             </div>
-            <div style="width:200px !important;" class="mr-2">
-             <types
-                :mode="'one'"
-                type="filter"
-                :typeFilter="`website=${query.website}`"
-                :types="query.app_type"
-                @type-select-one="typeSelectOne">
-              </types>
+            <div style="width:150px;" class="mr-2">
+              <v-select
+                item-name="text"
+                item-value="value"
+                :items="statusOptions"
+                :label="`${$t('nav.recommended')}-${$t('common.status')}`"
+                v-model="is_recommended"
+                hide-details="true"
+                placeholder=" "
+                outlined
+                dense>
+                <template slot="selection" slot-scope="data">
+                  <span class="ml-3">{{ data.item.text }}</span>
+                </template>
+                <template slot="item" slot-scope="data">
+                  <span class="ml-3">{{ data.item.text }}</span>
+                </template>
+              </v-select>
             </div>
-            
             <v-layout class="justify-end">
               <v-btn
                 color="blue"
@@ -382,6 +419,8 @@ export default {
       querySet: [],
       export_query: [],
       is_active: '',
+      is_rank: '',
+      is_recommended: '',
       today: date.max_today,
       created_at: ['', ''],
       website: 1,
@@ -467,6 +506,14 @@ export default {
       this.query.is_active = newObj
       this.$refs.pulling.submit()
     },
+    is_rank(newObj) {
+      this.query.is_rank = newObj
+      this.$refs.pulling.submit()
+    },
+    is_recommended(newObj) {
+      this.query.is_recommended = newObj
+      this.$refs.pulling.submit()
+    },
     type(newObj) {
       this.query.app_type = newObj
       this.search()
@@ -525,6 +572,8 @@ export default {
       }
       this.website = this.$route.query.website || ''
       this.is_active = this.$route.query.is_active==true || this.$route.query.is_active==false ? this.$route.query.is_active : ''
+      this.is_rank = this.$route.query.is_rank==true || this.$route.query.is_rank==false ? this.$route.query.is_rank : ''
+      this.is_recommended = this.$route.query.is_recommended==true || this.$route.query.is_recommended==false ? this.$route.query.is_recommended : ''
       this.type = this.$route.query.app_type || ''
       this.query = Object.assign({}, this.$route.query)
     },
@@ -665,6 +714,7 @@ export default {
     },
     websiteSelectOne(val) {
       this.query.website = val
+      this.typeFilter = `website=${this.query.website}`
       this.submit()
     },
     search:
