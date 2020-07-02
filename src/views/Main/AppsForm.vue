@@ -376,6 +376,7 @@ export default {
         this.showTinyMce = true
         this.introKey = true
         this.featuresKey = true
+        this.commentKey = true
         this.showLabels = true
         this.showType = true
         this.showCategories = true
