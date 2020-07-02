@@ -193,6 +193,7 @@
                 hide-details="true"
                 placeholder=" "
                 outlined
+                clearable
                 dense>
                 <template slot="selection" slot-scope="data">
                   <span class="ml-3">{{ data.item.text }}</span>
@@ -212,6 +213,7 @@
                 hide-details="true"
                 placeholder=" "
                 outlined
+                clearable
                 dense>
                 <template slot="selection" slot-scope="data">
                   <span class="ml-3">{{ data.item.text }}</span>
@@ -231,6 +233,7 @@
                 hide-details="true"
                 placeholder=" "
                 outlined
+                clearable
                 dense>
                 <template slot="selection" slot-scope="data">
                   <span class="ml-3">{{ data.item.text }}</span>
