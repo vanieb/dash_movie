@@ -135,7 +135,6 @@ export default {
   },
   watch: {
     selected_tab(newObj) {
-      console.log(newObj)
       this.getApps(newObj)
     },
     websites(newObj) {
