@@ -125,7 +125,7 @@
             <v-spacer></v-spacer>
             <v-col cols="12" md="3">
               <v-banner color="primary" dark>
-                {{$t('actions.upload')}} - {{$t('apps.icon')}}
+                {{$t('actions.upload')}} - {{$t('common.icon')}}
               </v-banner>
               <v-card>
                 <v-card-text>
@@ -211,15 +211,15 @@
               </v-row>
             </v-card-text>
           </v-flex>
-          <v-banner color="primary" dark>{{$t('apps.seo_data')}}</v-banner>
+          <v-banner color="primary" dark>{{$t('seo.seo_data')}}</v-banner>
           <v-flex>
-            <v-card-title>{{$t('apps.keywords')}}</v-card-title>
+            <v-card-title>{{$t('seo.keywords')}}</v-card-title>
             <v-card-text>
               <v-textarea outlined v-model="apps.keywords">Hello</v-textarea>
             </v-card-text>
           </v-flex>
           <v-flex>
-            <v-card-title>{{$t('apps.basic_introduction')}}</v-card-title>
+            <v-card-title>{{$t('seo.basic_introduction')}}</v-card-title>
             <v-card-text>
               <v-textarea outlined v-model="apps.basic_introduction">Hello</v-textarea>
             </v-card-text>
@@ -376,6 +376,7 @@ export default {
         this.showTinyMce = true
         this.introKey = true
         this.featuresKey = true
+        this.commentKey = true
         this.showLabels = true
         this.showType = true
         this.showCategories = true
@@ -557,13 +558,7 @@ export default {
         formData.set('version', this.apps.version)
         formData.set('use_android_link', this.apps.use_android_link)
         this.nonRequired.forEach(item => {
-          if (this.apps[item]) {
-            formData.set(item, this.apps[item])
-          }
-          if (item == 'ios_download_link'|| item == 'download_link') {
-            formData.set(item, this.apps[item] !== undefined ? this.apps[item] : '')
-            formData.set('use_android_link', false)
-          }
+          formData.set(item, this.apps[item] !== undefined ? this.apps[item] : '')
         })
         if (this.isUpdate) {
           this.$http.put(`${this.appsApi}${this.apps.id}/`, formData).then(response => {

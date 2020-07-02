@@ -10,7 +10,8 @@ export default {
     updated_at: 'Updated On',
     action: 'Action',
     remarks: 'Remarks',
-    file: 'File'
+    file: 'File',
+    icon: 'Icon'
   },
   actions: {
     add: 'Add',
@@ -72,7 +73,11 @@ export default {
     recommended: 'Recommended',
     users: 'Users',
     staff: 'Staff',
-    settings: 'Settings'
+    settings: 'Settings',
+    articles: 'Articles',
+    article_details: 'Article Details',
+    edit_article: 'Edit Article',
+    add_article: 'Add Article'
   },
   login: {
     login: 'Login Form',
@@ -97,8 +102,6 @@ export default {
     website: 'Website',
     category: 'Category',
     hot: 'Hot',
-    keywords: 'Keywords',
-    basic_introduction: 'Basic Introduction',
     introduction: 'Introduction',
     features: 'Features',
     editors_comment: 'Editor\'s Comment',
@@ -106,9 +109,18 @@ export default {
     android_download_link: 'Android Download Link',
     ios_download_link: 'iOS Download Link',
     other_details: 'Other Details',
-    seo_data: 'SEO Data',
     external_download_link: 'External Download Link',
     use_download_link: 'Display External Download Link (Android)'
+  },
+  seo: {
+    seo_data: 'SEO Data',
+    keywords: 'Keywords',
+    basic_introduction: 'Basic Introduction',
+    description: 'Description',
+  },
+  articles: {
+    title: 'Title',
+    content: 'Content'
   },
   website: {
     code: 'Code'
