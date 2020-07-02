@@ -558,12 +558,7 @@ export default {
         formData.set('version', this.apps.version)
         formData.set('use_android_link', this.apps.use_android_link)
         this.nonRequired.forEach(item => {
-          if (this.apps[item]) {
-            formData.set(item, this.apps[item])
-          }
-          if (item == 'ios_download_link'|| item == 'download_link') {
-            formData.set(item, this.apps[item] !== undefined ? this.apps[item] : '')
-          }
+          formData.set(item, this.apps[item] !== undefined ? this.apps[item] : '')
         })
         if (this.isUpdate) {
           this.$http.put(`${this.appsApi}${this.apps.id}/`, formData).then(response => {
