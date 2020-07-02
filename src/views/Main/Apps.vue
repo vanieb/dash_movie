@@ -166,7 +166,24 @@
       <v-card>
         <v-col cols="12" md="12" class="mt-2" style="padding: 20px 20px 10px 20px !important;">
           <v-row>
-            <div style="width:200px;" class="mr-2">
+            <div style="width:200px !important;" class="mr-2">
+              <website
+                type="filter"
+                :mode="'one'"
+                :website="query.website"
+                @website-select-one="websiteSelectOne">
+              </website>
+            </div>
+            <div style="width:200px !important;" class="mr-2">
+             <types
+                :mode="'one'"
+                type="filter"
+                :typeFilter="`website=${query.website}`"
+                :types="query.app_type"
+                @type-select-one="typeSelectOne">
+              </types>
+            </div>
+            <div style="width:150px;" class="mr-2">
               <v-select
                 item-name="text"
                 item-value="value"
@@ -176,6 +193,7 @@
                 hide-details="true"
                 placeholder=" "
                 outlined
+                clearable
                 dense>
                 <template slot="selection" slot-scope="data">
                   <span class="ml-3">{{ data.item.text }}</span>
@@ -185,14 +203,57 @@
                 </template>
               </v-select>
             </div>
-            <div style="width:200px !important;" class="mr-2">
-              <website
-                type="filter"
-                :mode="'one'"
-                :website="query.website"
-                @website-select-one="websiteSelectOne">
-              </website>
+            <div style="width:150px;" class="mr-2">
+              <v-select
+                item-name="text"
+                item-value="value"
+                :items="statusOptions"
+                :label="`${$t('nav.leaderboard')}-${$t('common.status')}`"
+                v-model="is_rank"
+                hide-details="true"
+                placeholder=" "
+                outlined
+                clearable
+                dense>
+                <template slot="selection" slot-scope="data">
+                  <span class="ml-3">{{ data.item.text }}</span>
+                </template>
+                <template slot="item" slot-scope="data">
+                  <span class="ml-3">{{ data.item.text }}</span>
+                </template>
+              </v-select>
             </div>
+            <div style="width:150px;" class="mr-2">
+              <v-select
+                item-name="text"
+                item-value="value"
+                :items="statusOptions"
+                :label="`${$t('nav.recommended')}-${$t('common.status')}`"
+                v-model="is_recommended"
+                hide-details="true"
+                placeholder=" "
+                outlined
+                clearable
+                dense>
+                <template slot="selection" slot-scope="data">
+                  <span class="ml-3">{{ data.item.text }}</span>
+                </template>
+                <template slot="item" slot-scope="data">
+                  <span class="ml-3">{{ data.item.text }}</span>
+                </template>
+              </v-select>
+            </div>
+            <v-layout class="justify-end">
+              <v-btn
+                color="blue"
+                :loading="loading"
+                @click="clearAll"
+              >
+                <v-icon>clear_all</v-icon>{{ $t('actions.clear') }}
+              </v-btn>
+            </v-layout>
+          </v-row>
+          <v-row>
             <div style="width:200px;" class="mr-2">
               <v-text-field
                 @input="search"
@@ -240,15 +301,6 @@
                 </v-date-picker>
               </v-menu>
             </div>
-            <v-layout class="justify-end">
-              <v-btn
-                color="blue"
-                :loading="loading"
-                @click="clearAll"
-              >
-                <v-icon>clear_all</v-icon>{{ $t('actions.clear') }}
-              </v-btn>
-            </v-layout>
           </v-row>
         </v-col>
       </v-card>
@@ -344,6 +396,7 @@ import SnackBar from '@/components/SnackBar'
 import { debounce } from 'lodash'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import Website from '../../components/SelectWebsite.vue'
+import Types from '../../components/SelectType.vue'
 import axios from 'axios'
 import VueCookie from 'vue-cookie'
 
@@ -354,7 +407,8 @@ export default {
     SnackBar,
     ValidationObserver,
     ValidationProvider,
-    Website
+    Website,
+    Types
   },
   data() {
     return {
@@ -368,6 +422,8 @@ export default {
       querySet: [],
       export_query: [],
       is_active: '',
+      is_rank: '',
+      is_recommended: '',
       today: date.max_today,
       created_at: ['', ''],
       website: 1,
@@ -453,6 +509,18 @@ export default {
       this.query.is_active = newObj
       this.$refs.pulling.submit()
     },
+    is_rank(newObj) {
+      this.query.is_rank = newObj
+      this.$refs.pulling.submit()
+    },
+    is_recommended(newObj) {
+      this.query.is_recommended = newObj
+      this.$refs.pulling.submit()
+    },
+    type(newObj) {
+      this.query.app_type = newObj
+      this.search()
+    },
     website(newObj) {
       this.query.website = newObj
       this.search()
@@ -507,6 +575,9 @@ export default {
       }
       this.website = this.$route.query.website || ''
       this.is_active = this.$route.query.is_active==true || this.$route.query.is_active==false ? this.$route.query.is_active : ''
+      this.is_rank = this.$route.query.is_rank==true || this.$route.query.is_rank==false ? this.$route.query.is_rank : ''
+      this.is_recommended = this.$route.query.is_recommended==true || this.$route.query.is_recommended==false ? this.$route.query.is_recommended : ''
+      this.type = this.$route.query.app_type || ''
       this.query = Object.assign({}, this.$route.query)
     },
     queryData(queryset) {
@@ -523,15 +594,17 @@ export default {
       const isValid = await this.$refs.form.validate()
       let continueUpload = true
       if (isValid) {
-        await this.$http.get(`${api.upload}?website=${this.website}&filename=${this.file.name}`).then(response => {
-          this.count = response.length !== 0 ? response.length : false
-          if (this.count) {
-            continueUpload = window.confirm(this.$t('system_msg.confirm_upload',{ count: this.count}))
-            if (!continueUpload) {
-              return
+        if (this.file.name.split('.').pop() !== 'zip') {
+          await this.$http.get(`${api.upload}?website=${this.website}&filename=${this.file.name}`).then(response => {
+            this.count = response.length !== 0 ? response.length : false
+            if (this.count) {
+              continueUpload = window.confirm(this.$t('system_msg.confirm_upload',{ count: this.count}))
+              if (!continueUpload) {
+                return
+              }
             }
-          }
-        })
+          })
+        }
         if (continueUpload) {
           if (mode == 'upload') {
             this.uploadLoading = true
@@ -590,6 +663,10 @@ export default {
         })
       }
     },
+    typeSelectOne(val) {
+      this.query.app_type = val
+      this.submit()
+    },
     websiteSetMultiple(val) {
       this.setWebsite = val
     },
@@ -640,6 +717,7 @@ export default {
     },
     websiteSelectOne(val) {
       this.query.website = val
+      this.typeFilter = `website=${this.query.website}`
       this.submit()
     },
     search:
