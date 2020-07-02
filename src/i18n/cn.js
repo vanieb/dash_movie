@@ -10,7 +10,8 @@ export default {
     updated_at: '更新于',
     action: '动作',
     remarks: '备注',
-    file: '文件'
+    file: '文件',
+    icon: '图标'
   },
   actions: {
     add: '添加',
@@ -72,7 +73,11 @@ export default {
     recommended: '推荐',
     users: '使用者',
     staff: '员工',
-    settings: '设定值'
+    settings: '设定值',
+    articles: '文章',
+    article_details: '文章详细信息',
+    edit_article: '编辑文章',
+    add_article: '添加文章'
   },
   login: {
     login: '登录表单',
@@ -96,8 +101,6 @@ export default {
     hot: '新闻（热门）',
     website: '网站',
     category: '类别',
-    keywords: '关键字',
-    basic_introduction: '基本介绍',
     introduction: '简介',
     features: '功能特色',
     editors_comment: '小编点评',
@@ -105,9 +108,18 @@ export default {
     android_download_link: 'Android下载链接',
     ios_download_link: 'iOS下载链接',
     other_details: '下载链接',
-    seo_data: 'SEO数据',
     external_download_link: '外部下载链接',
     use_download_link: '显示外部下载链接(Android)'
+  },
+  seo: {
+    seo_data: 'SEO数据',
+    keywords: '关键字',
+    basic_introduction: '基本介绍',
+    description: '描述'
+  },
+  articles: {
+    title: '标题',
+    content: '正文'
   },
   website: {
     code: '码'
