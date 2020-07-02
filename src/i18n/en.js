@@ -101,6 +101,7 @@ export default {
     basic_introduction: 'Basic Introduction',
     introduction: 'Introduction',
     features: 'Features',
+    editors_comment: 'Editor\'s Comment',
     download_link: 'Download Links',
     android_download_link: 'Android Download Link',
     ios_download_link: 'iOS Download Link',
