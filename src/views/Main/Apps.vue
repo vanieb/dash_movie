@@ -665,6 +665,7 @@ export default {
     },
     websiteSelectOne(val) {
       this.query.website = val
+      this.typeFilter = `website=${this.query.website}`
       this.submit()
     },
     search:
