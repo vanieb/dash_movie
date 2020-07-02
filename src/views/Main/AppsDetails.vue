@@ -311,13 +311,13 @@
             <span>{{ $t('apps.ios_download_link')}}: {{ apps.ios_download_link || $t('system_msg.no_data') }}</span>
           </li>
         </v-card-text>
-         <v-banner color="primary" dark>{{$t('apps.seo_data')}}</v-banner>
+         <v-banner color="primary" dark>{{$t('seo.seo_data')}}</v-banner>
          <v-flex>
-          <v-card-title>{{$t('apps.keywords')}}</v-card-title>
+          <v-card-title>{{$t('seo.keywords')}}</v-card-title>
           <v-card-text>{{ apps.keywords  || $t('system_msg.no_data')}}</v-card-text>
         </v-flex>
         <v-flex>
-          <v-card-title>{{$t('apps.basic_introduction')}}</v-card-title>
+          <v-card-title>{{$t('seo.basic_introduction')}}</v-card-title>
           <v-card-text v-html="apps.basic_introduction  || $t('system_msg.no_data')"></v-card-text>
         </v-flex>
         <v-banner color="primary" dark>{{$t('apps.other_details')}}</v-banner>
