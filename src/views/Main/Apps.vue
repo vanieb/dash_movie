@@ -541,8 +541,6 @@ export default {
     async uploadFile(mode) {
       const isValid = await this.$refs.form.validate()
       let continueUpload = true
-      console.log('11')
-      console.log(this.file.name.split('.').pop())
       if (isValid) {
         if (this.file.name.split('.').pop() !== 'zip') {
           await this.$http.get(`${api.upload}?website=${this.website}&filename=${this.file.name}`).then(response => {
