@@ -51,7 +51,7 @@
                     style="margin-bottom: 20px;"
                     req="true"
                     :mode="'multiple'"
-                    :website="article.website"
+                    :website="article.websites"
                     @website-select-multiple="websiteSelectMultiple">
                   </websites>
                 </span>
@@ -152,7 +152,7 @@ export default {
     return {
       id: '',
       showTinyMce: true,
-      showWebsites: true,
+      showWebsites: false,
       article_changed: '',
       showImage: false,
       lang: '',
@@ -179,7 +179,7 @@ export default {
       uploadInstallerDialog: false,
       uploadLoading: false,
       // selectOne: ['app_type', 'category'],
-      selectMultiple: ['website'],
+      selectMultiple: ['websites'],
       nonRequired: ['content', 'subject', 'keywords'],
       data: {
         app_type: false,
@@ -301,9 +301,9 @@ export default {
         let formData = new window.FormData()
         // Select Fields (Multiple) are added if value changed
         if (this.website_changed) {
-          formData.set('website', this.article.website)
+          formData.set('websites', this.article.website)
         } else if (this.website_removed_some) {
-          formData.set('website', this.article.website_removed)
+          formData.set('websites', this.article.website_removed)
         }
         // Select Fields (One) old values are sent if value did not change
         // this.selectOne.forEach(item => {
