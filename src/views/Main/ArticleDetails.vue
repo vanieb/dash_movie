@@ -58,8 +58,8 @@
             </v-row>
             <v-row>
               <v-icon color="orange" class="mr-2">web</v-icon>
-              <v-chip class="ma-1" color="orange" outlined v-if="article.website">{{article.website.name}}</v-chip>
-              <span v-else> {{ $t('system_msg.no_data') }}</span><br/>
+              <v-chip class="ma-1" color="orange" outlined v-for="website in article.websites" :key="website.id">{{website.name}}</v-chip>
+              <br/>
             </v-row>
           </v-col>
         </v-row>

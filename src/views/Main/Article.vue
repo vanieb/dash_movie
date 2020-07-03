@@ -117,8 +117,8 @@
               </v-btn>
             </td>
             <td class="align-center" width="30%">{{ item.title | truncate(20, '...') }}</td>
-            <td class="align-center justify-center" width="10%" >
-              <span>{{item.website ? item.website.name : '-' }}<br/></span>
+            <td class="align-center justify-center" width="10%" v-for="website in item.websites" :key=website.id>
+              <span>{{website.name }}<br/></span>
             </td>
             <td class="align-center justify-start">
               <v-switch value v-model="item.is_active"
