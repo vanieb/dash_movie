@@ -1,24 +1,24 @@
 <template>
   <div wrap v-if="showNav">
     <v-app-bar 
-        app
-        clipped-left
-        color="blue lighten-3"
-      >
-        <v-flex sm2>
-          <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-          <span class="title ml-3 mr-5">{{$t('title.title')}}&nbsp;
-            <span class="font-weight-light">{{$t('title.subtitle')}}</span>
-          </span>
-        </v-flex>
-        <v-flex lg3>
-        <span class="subtitle mr-2">
-          <v-icon>{{$route.meta.icon}}</v-icon>
+      app
+      clipped-left
+      color="blue lighten-3"
+    >
+      <v-flex sm2>
+        <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+        <span class="title ml-3 mr-5">{{$t('title.title')}}&nbsp;
+          <span class="font-weight-light">{{$t('title.subtitle')}}</span>
         </span>
-        {{$route.meta.title}}
-        </v-flex>
-        <v-spacer></v-spacer>
-      </v-app-bar>
+      </v-flex>
+      <v-flex lg3>
+      <span class="subtitle mr-2">
+        <v-icon>{{$route.meta.icon}}</v-icon>
+      </span>
+      {{$route.meta.title}}
+      </v-flex>
+      <v-spacer></v-spacer>
+    </v-app-bar>
     <v-navigation-drawer
       v-model="drawer"
       app
@@ -29,34 +29,34 @@
         dense
         class="grey lighten-4"
       >
-      <template align-center justify-center>
-        <v-row justify="space-around">
-          <v-avatar color="indigo">
-            <v-icon dark>mdi-account-circle</v-icon>
-          </v-avatar>
-        </v-row>
-        <v-layout justify-center mb5>
-          <small>{{ username }}</small>
-        </v-layout>
-        <v-spacer></v-spacer>
-        <v-layout justify-start>
-          <v-list-item
-            link
-            to="/change_password"
-          >
-            <v-list-item-action>
-              <v-icon>vpn_key</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title class="grey--text">
-                {{ $t('nav.change_password') }}
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
+        <template align-center justify-center>
+          <v-row justify="space-around">
+            <v-avatar color="indigo">
+              <v-icon dark>mdi-account-circle</v-icon>
+            </v-avatar>
+          </v-row>
+          <v-layout justify-center mb5>
+            <small>{{ username }}</small>
           </v-layout>
-      <v-divider></v-divider>
-      <v-spacer></v-spacer>
-      </template>
+          <v-spacer></v-spacer>
+          <v-layout justify-start>
+            <v-list-item
+              link
+              to="/change_password"
+            >
+              <v-list-item-action>
+                <v-icon>vpn_key</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title class="grey--text">
+                  {{ $t('nav.change_password') }}
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-layout>
+          <v-divider></v-divider>
+        <!-- <v-spacer></v-spacer> -->
+        </template>
         <template v-for="(item, i) in items">
           <v-row
             v-if="item.heading"
@@ -126,7 +126,7 @@
           { icon: 'apps', text: this.$t('nav.apps'), path: '/apps?website=1' },
           { icon: 'web', text: this.$t('nav.websites'), path: '/websites'},
           { heading: this.$t('nav.website_view') },
-          // { icon: 'view_quilt', text: this.$t('nav.website_apps'), path: '/webapps'},
+          { icon: 'description', text: this.$t('nav.articles'), path: '/articles'},
           { icon: 'new_releases', text: this.$t('nav.types'), path: '/types?website=1'},
           { icon: 'category', text: this.$t('nav.category'), path: '/category?website=1'},
           { icon: 'label', text: this.$t('nav.labels'), path: '/label?website=1'},

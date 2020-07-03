@@ -21,6 +21,7 @@ export default {
   download_link: `${apps}download/`,
   websites: `${websites}`,
   webapps:  `${websites}apps/`,
+  articles: `${host}articles/v1/`,
   types: `${websites}types/`,
   categories: `${websites}categories/`,
   labels: `${websites}labels/`,

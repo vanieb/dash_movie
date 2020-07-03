@@ -40,7 +40,7 @@
       }, 100)
       this.navLang = $.getLanguage()
       this.init = {
-       height: 300,
+       height: 500,
        menubar: true,
        language: `${this.navLang}`,
        plugins: [
