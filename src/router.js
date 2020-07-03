@@ -104,40 +104,51 @@ export default new Router({
           title: i18n.t('nav.edit_apps'),
         }
     },
-    // {
-    //   path: '/webapps',
-    //   name: 'WebsiteApps',
-    //   component: function(resolve) {
-    //     require(['./views/Main/WebsiteApps.vue'], resolve)
-    //   },
-    //   meta: {
-    //     icon: 'apps',
-    //     auth: true,
-    //     title: i18n.t('nav.apps')
-    //   }
-    // },
-    // {
-    //   path: '/webapps/:appsId/:websiteId/edit',
-    //   name: 'Edit Web Apps',
-    //   component: function (resolve) {
-    //       require(['./views/Main/WebsiteAppsForm.vue'], resolve)
-    //   },
-    //   meta: {
-    //     auth: true,
-    //     title: i18n.t('nav.edit_apps'),
-    //   }
-    // },
-    // {
-    //   path: '/webapps/:appsId/:websiteId/',
-    //   name: 'Web Apps Details',
-    //   component: function (resolve) {
-    //       require(['./views/Main/WebsiteAppsDetails.vue'], resolve)
-    //   },
-    //   meta: {
-    //     auth: true,
-    //     title: i18n.t('nav.apps_detail'),
-    //   }
-    // },
+    {
+      path: '/articles',
+      name: 'Articles',
+      component: function(resolve) {
+        require(['./views/Main/Article.vue'], resolve)
+      },
+      meta: {
+        icon: 'description',
+        auth: true,
+        title: i18n.t('nav.articles')
+      }
+    },
+    {
+      path: '/articles/add',
+      name: 'Add Article',
+      component: function (resolve) {
+          require(['./views/Main/ArticleForm.vue'], resolve)
+      },
+      meta: {
+        auth: true,
+        title: i18n.t('nav.add_article'),
+      }
+    },
+    {
+      path: '/articles/:articleId/',
+      name: 'Article Details',
+      component: function (resolve) {
+          require(['./views/Main/ArticleDetails.vue'], resolve)
+      },
+      meta: {
+        auth: true,
+        title: i18n.t('nav.article_details'),
+      }
+    },
+    {
+      path: '/articles/:articleId/edit',
+      name: 'Edit Article',
+      component: function (resolve) {
+          require(['./views/Main/ArticleForm.vue'], resolve)
+      },
+      meta: {
+        auth: true,
+        title: i18n.t('nav.edit_article'),
+      }
+    },
     {
       path: '/websites',
       name: 'Websites',
