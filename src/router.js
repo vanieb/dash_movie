@@ -162,6 +162,17 @@ export default new Router({
       }
     },
     {
+      path: '/websites/:websiteId/edit',
+      name: 'Edit Website',
+      component: function (resolve) {
+          require(['./views/Main/WebsiteForm.vue'], resolve)
+      },
+      meta: {
+        auth: true,
+        title: i18n.t('nav.edit_website'),
+      }
+    },
+    {
       path: '/label',
       name: 'Label',
       component: function(resolve) {

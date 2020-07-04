@@ -183,7 +183,7 @@
                 @type-select-one="typeSelectOne">
               </types>
             </div>
-            <div style="width:150px;" class="mr-2">
+            <div style="width:155px;" class="mr-2">
               <v-select
                 item-name="text"
                 item-value="value"
@@ -203,7 +203,7 @@
                 </template>
               </v-select>
             </div>
-            <div style="width:150px;" class="mr-2">
+            <div style="width:155px;" class="mr-2">
               <v-select
                 item-name="text"
                 item-value="value"
@@ -223,7 +223,7 @@
                 </template>
               </v-select>
             </div>
-            <div style="width:150px;" class="mr-2">
+            <div style="width:155px;" class="mr-2">
               <v-select
                 item-name="text"
                 item-value="value"
