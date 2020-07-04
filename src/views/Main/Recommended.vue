@@ -64,7 +64,8 @@
             v-model="filteredQuerySet"
             :tag="'tbody'"
             :disabled="!mode">
-            <tr v-for="item in filteredQuerySet" :key="item.id" >
+            <tr v-for="(item, index) in filteredQuerySet" :key="item.id" >
+              <td width="2%">{{index + 1}}</td>
               <td width="5%">
                 <v-btn :color ="iconColor" icon>
                   <v-icon>sort</v-icon>
@@ -120,6 +121,11 @@ export default {
         show: false,
       },
       headers: [
+        {
+          sortable: false,
+          text: '',
+          value: 'index'
+        },
         {
           sortable: false,
           text: '',

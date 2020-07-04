@@ -103,7 +103,7 @@
       <v-card>
         <v-col cols="12" md="12" class="mt-2" style="padding: 20px 20px 10px 20px !important;">
           <v-row>
-            <div style="width:200px;" class="mr-2">
+            <div style="width:155px;" class="mr-2">
               <v-select
                 item-name="text"
                 item-value="value"
@@ -122,7 +122,7 @@
                 </template>
               </v-select>
             </div>
-            <div style="width:200px;" class="mr-2">
+            <div style="width:155px;" class="mr-2">
               <types
                 :typeFilter="`website=${query.website}`"
                 :mode="'one'"

@@ -15,7 +15,7 @@
       <v-card>
         <v-col cols="12" md="12" class="mt-2" style="padding: 20px 20px 10px 20px !important;">
           <v-row>
-            <div style="width:200px !important;" class="mr-2">
+            <div style="width:155px !important;" class="mr-2">
               <website
                 type="filter"
                 :mode="'one'"
@@ -23,7 +23,7 @@
                 @website-select-one="websiteSelectOne">
               </website>
             </div>
-            <div style="width:200px;" class="mr-2">
+            <div style="width:155px;" class="mr-2">
               <v-select
                 item-name="text"
                 item-value="value"
@@ -42,11 +42,30 @@
                 </template>
               </v-select>
             </div>
+            <div style="width:155px;" class="mr-2">
+              <v-select
+                item-name="text"
+                item-value="value"
+                :items="statusOptions"
+                :label="`${$t('nav.popular_articles')}`"
+                v-model="is_popular"
+                hide-details="true"
+                placeholder=" "
+                outlined
+                dense>
+                <template slot="selection" slot-scope="data">
+                  <span class="ml-3">{{ data.item.text }}</span>
+                </template>
+                <template slot="item" slot-scope="data">
+                  <span class="ml-3">{{ data.item.text }}</span>
+                </template>
+              </v-select>
+            </div>
             <div style="width:200px;" class="mr-2">
               <v-text-field
                 @input="search"
                 :label="`${$t('articles.title')}`"
-                v-model="query.title"
+                v-model="query.title_q"
                 hide-details="true"
                 placeholder=" "
                 outlined
@@ -126,12 +145,12 @@
                 @change="toggle(item.id, item.is_active, 'is_active', item.title)">
               </v-switch>
             </td>
-            <!-- <td class="align-center justify-start">
-              <v-switch value v-model="item.is_rank"
-                @change="toggle(item.id, item.is_rank, 'is_rank')">
+            <td class="align-center justify-start">
+              <v-switch value v-model="item.is_popular"
+                @change="toggle(item.id, item.is_popular, 'is_popular')">
               </v-switch>
             </td>
-            <td class="align-center justify-start">
+            <!-- <td class="align-center justify-start">
               <v-switch value v-model="item.is_recommended"
                 @change="toggle(item.id, item.is_recommended, 'is_recommended' )">
               </v-switch>
@@ -266,12 +285,12 @@ export default {
           value: 'status',
           width: '10%'
         },
-        // {
-        //   sortable: false,
-        //   text: this.$t('nav.leaderboard'),
-        //   value: 'is_rank',
-        //   width: '10%'
-        // },
+        {
+          sortable: false,
+          text: this.$t('nav.popular_articles'),
+          value: 'is_popular',
+          width: '10%'
+        },
         // {
         //   sortable: false,
         //   text: this.$t('nav.recommended'),
@@ -298,6 +317,10 @@ export default {
         this.$refs.pulling.rebase()
       },
       deep: true
+    },
+    is_popular(newObj) {
+      this.query.is_popular = newObj
+      this.$refs.pulling.submit()
     },
     is_active(newObj) {
       this.query.is_active = newObj
@@ -362,6 +385,7 @@ export default {
       }
       this.website = this.$route.query.website || ''
       this.is_active = this.$route.query.is_active==true || this.$route.query.is_active==false ? this.$route.query.is_active : ''
+      this.is_popular = this.$route.query.is_popular==true || this.$route.query.is_popular==false ? this.$route.query.is_popular : ''
       this.query = Object.assign({}, this.$route.query)
     },
     queryData(queryset) {
@@ -463,11 +487,11 @@ export default {
           title: title
         }
         action_title = this.$t('common.status')
-      } else if (mode == 'is_rank') {
+      } else if (mode == 'is_popular') {
         toggleResult = {
-          is_rank: value
+          is_popular: value
         }
-        action_title = this.$t('nav.leaderboard')
+        action_title = this.$t('nav.popular_articles')
       } else {
         toggleResult = {
           is_recommended: value
