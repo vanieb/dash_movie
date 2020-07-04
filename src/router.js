@@ -233,6 +233,18 @@ export default new Router({
       }
     },
     {
+      path: '/popular',
+      name: 'Popular',
+      component: function(resolve) {
+        require(['./views/Main/PopularArticle.vue'], resolve)
+      },
+      meta: {
+        icon: 'whatshot',
+        auth: true,
+        title: i18n.t('nav.popular_articles')
+      }
+    },
+    {
       path: '/staff',
       name: 'Staff',
       component: function(resolve) {

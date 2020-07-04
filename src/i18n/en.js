@@ -77,7 +77,8 @@ export default {
     articles: 'Articles',
     article_details: 'Article Details',
     edit_article: 'Edit Article',
-    add_article: 'Add Article'
+    add_article: 'Add Article',
+    popular_articles: 'Popular Articles'
   },
   login: {
     login: 'Login Form',
