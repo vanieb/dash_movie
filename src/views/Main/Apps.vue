@@ -77,7 +77,7 @@
                   <v-btn
                     color="grey lighten-1"
                     @click="close()"
-                    :disabled="uploadLoading">{{ $t('actions.close') }}
+                    >{{ uploadLoading ? $t('actions.cancel') : $t('actions.close') }}
                   </v-btn>
                   <v-btn
                     color="blue darken-1"
@@ -166,7 +166,7 @@
       <v-card>
         <v-col cols="12" md="12" class="mt-2" style="padding: 20px 20px 10px 20px !important;">
           <v-row>
-            <div style="width:200px !important;" class="mr-2">
+            <div style="width:155px !important;" class="mr-2">
               <website
                 type="filter"
                 :mode="'one'"
@@ -174,7 +174,7 @@
                 @website-select-one="websiteSelectOne">
               </website>
             </div>
-            <div style="width:200px !important;" class="mr-2">
+            <div style="width:155px !important;" class="mr-2">
              <types
                 :mode="'one'"
                 type="filter"

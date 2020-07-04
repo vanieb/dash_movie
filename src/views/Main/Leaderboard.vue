@@ -52,9 +52,10 @@
         v-if="showTab"
         :headers="filteredQuerySet.length > 0 ? headers : []"
         :hide-default-footer="true"
-        :items="filteredQuerySet">
+        :items="filteredQuerySet"
+        >
         <template v-slot:body="{ items }">
-          <td v-if="items.length <= 0" colspan="2">
+          <td v-if="!items.length" colspan="2">
             <v-layout justify-center align-center>
               {{$t('pagination.no_record')}}
             </v-layout>
@@ -64,8 +65,9 @@
             v-model="filteredQuerySet"
             :tag="'tbody'"
             :disabled="!mode">
-            <tr v-for="item in filteredQuerySet" :key="item.id">
-              <td width="5%">
+            <tr v-for="(item, index) in filteredQuerySet" :key="item.id">
+              <td width="2%">{{index + 1}}</td>
+              <td width="2%">
                 <v-btn :color ="iconColor" icon>
                   <v-icon>sort</v-icon>
                 </v-btn>
@@ -120,6 +122,11 @@ export default {
         show: false,
       },
       headers: [
+        {
+          sortable: false,
+          text: '',
+          value: 'index'
+        },
         {
           sortable: false,
           text: '',

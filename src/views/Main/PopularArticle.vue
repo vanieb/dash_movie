@@ -41,13 +41,13 @@
           </v-btn>
         </v-layout>
       </v-layout>
-      <v-tabs v-model="selected_tab" v-if="showTab">
+      <!-- <v-tabs v-model="selected_tab" v-if="showTab">
         <v-tab
           v-for="type in app_types"
           :key="type.id">
           {{type.name}}
         </v-tab>
-      </v-tabs>
+      </v-tabs> -->
       <v-data-table
         v-if="showTab"
         :headers="filteredQuerySet.length > 0 ? headers : []"
@@ -64,14 +64,14 @@
             v-model="filteredQuerySet"
             :tag="'tbody'"
             :disabled="!mode">
-            <tr v-for="(item, index) in filteredQuerySet" :key="item.id" >
-              <td width="2%">{{index + 1}}</td>
+            <tr v-for="(item, index) in filteredQuerySet" :key="item.id">
+              <td width="1%">{{index + 1}}</td>
               <td width="5%">
                 <v-btn :color ="iconColor" icon>
                   <v-icon>sort</v-icon>
                 </v-btn>
               </td>
-              <td>{{ item.name }}</td>
+              <td>{{ item.title }}</td>
             </tr>
           </draggable>
           
@@ -97,7 +97,7 @@ import SnackBar from '@/components/SnackBar'
 import Websites from '../../components/SelectWebsite.vue'
 
 export default {
-  name: 'Recommended',
+  name: 'Popular',
   components: {
     draggable,
     SnackBar,
@@ -112,8 +112,8 @@ export default {
       query: {website: 1},
       filteredQuerySet: [],
       typesApi: api.types,
-      appsApi: api.apps,
-      recommendedApi: `${api.websites}update_rank`,
+      articleApi: api.articles,
+      leaderboardsApi: `${api.websites}update_rank`,
       showTab: true,
       snackbar: {
         color: '',
@@ -124,32 +124,29 @@ export default {
         {
           sortable: false,
           text: '',
-          value: 'index'
-        },
-        {
-          sortable: false,
-          text: '',
           value: 'mode'
         },
         {
           sortable: false,
-          text: this.$t('common.name'),
-          value: 'name'
+          text: '',
+          value: 'index'
+        },
+        {
+          sortable: false,
+          text: this.$t('articles.title'),
+          value: 'title'
         }
       ]
     }
   },
   watch: {
-    selected_tab(newObj) {
-      this.getApps(newObj)
-    },
     websites(newObj) {
       this.query.website = newObj
       this.getAppTypes()
     }
   },
   created() {
-    this.getAppTypes()
+    this.getArticles()
   },
   computed: {
     iconColor() {
@@ -157,25 +154,11 @@ export default {
     }
   },
   methods: {
-    getAppTypes() {
-      this.$http.get(`${this.typesApi}?limit=400&offset=0&website=${this.query.website}&is_active=true`).then(response => {
-        this.app_types = response.results
-        if (this.app_types.length == 0 ) {
-          this.selected_tab = ''
-          this.filteredQuerySet = []
-          this.showTab = false
-        } else {
-          this.showTab = true
-          this.selected_tab = 0
-        }
-      })
-    },
-    getApps(type) {
-      this.type = this.app_types[type].id
-      this.$http.get(`${this.appsApi}?ordering=recommended_rank&is_recommended=true&app_type=${this.type}&website=${this.query.website}`).then(response => {
+    getArticles() {
+      this.$http.get(`${this.articleApi}?&website=${this.query.website}`).then(response => {
         this.filteredQuerySet = response.results
         .sort((a, b) => {
-          return a['recommended_rank'] - b['recommended_rank']
+          return a['rank'] - b['rank']
         })
         this.mode = false
       })
@@ -186,11 +169,11 @@ export default {
         rank[p.id] = index + 1
       })
       let sortResult = Object({
-        recommend: true,
+        recommend: false,
         rank: rank
       })
-      this.$http.put(`${this.recommendedApi}/${this.type}/`, sortResult).then(() => {
-        this.getApps(this.type)
+      this.$http.put(`${this.leaderboardsApi}/${this.app_type}/`, sortResult).then(() => {
+        this.getArticles()
         this.snackbar = {
           color: 'success',
           show: true,
@@ -211,7 +194,7 @@ export default {
     },
     websiteSelectOne(val) {
       this.query.website = val
-      this.getAppTypes()
+      this.getArticles()
     }
   }
 }

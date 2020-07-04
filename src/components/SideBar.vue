@@ -164,12 +164,21 @@
             'icon-alt': 'mdi-chevron-down',
             text: this.$t('nav.website_view'),
             model: true,
-            children: [{ icon: 'description', text: this.$t('nav.articles'), path: '/articles'},
+            children: [
+              { icon: 'description', text: this.$t('nav.articles'), path: '/articles'},
               { icon: 'new_releases', text: this.$t('nav.types'), path: '/types?website=1'},
               { icon: 'category', text: this.$t('nav.category'), path: '/category?website=1'},
-              { icon: 'label', text: this.$t('nav.labels'), path: '/label?website=1'},
-              { icon: 'format_list_numbered', text: this.$t('nav.leaderboard'), path: '/leaderboard'},
-              { icon: 'star_outline', text: this.$t('nav.recommended'), path: '/recommended'}]
+              { icon: 'label', text: this.$t('nav.labels'), path: '/label?website=1'}
+              ]
+          }, {
+          icon: 'mdi-chevron-up',
+          'icon-alt': 'mdi-chevron-down',
+          text: this.$t('nav.settings'),
+          model: true,
+          children: [
+            { icon: 'format_list_numbered', text: this.$t('nav.leaderboard'), path: '/leaderboard'},
+            { icon: 'star_outline', text: this.$t('nav.recommended'), path: '/recommended'},
+            { icon: 'whatshot', text: this.$t('nav.popular_articles'), path: '/popular'}]
           }, {
           icon: 'mdi-chevron-up',
           'icon-alt': 'mdi-chevron-down',

@@ -77,7 +77,8 @@ export default {
     articles: '文章',
     article_details: '文章详细信息',
     edit_article: '编辑文章',
-    add_article: '添加文章'
+    add_article: '添加文章',
+    popular_articles: '热门文章'
   },
   login: {
     login: '登录表单',
