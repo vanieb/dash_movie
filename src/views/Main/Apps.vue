@@ -258,7 +258,7 @@
               <v-text-field
                 @input="search"
                 :label="`${$t('common.name')}`"
-                v-model="query.name"
+                v-model="query.name_q"
                 hide-details="true"
                 placeholder=" "
                 outlined
