@@ -135,7 +135,7 @@
                 <v-icon>touch_app</v-icon>
               </v-btn>
             </td>
-            <td class="align-center" width="30%" v-if="item.websites.length == 1">{{ item.title | truncate(20, '...') }}</td>
+            <td class="align-center" width="30%" v-if="item.websites.length == 1 && item.title.length > 20">{{ item.title | truncate(20, '...') }}</td>
             <td class="align-center" width="30%" v-else>{{ item.title }}</td>
             <td class="align-center justify-center" width="10%">
               <span  v-for="website in item.websites" :key="website.id">{{website.name }}<br/></span>

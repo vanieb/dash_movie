@@ -320,13 +320,14 @@ export default {
           formData.set(item, this.article[item] !== undefined ? this.article[item] : '')
         })
         if (this.isUpdate) {
+          console.log(this.article.slug)
           this.$http.put(`${this.articleApi}${this.article.slug}/`, formData).then(response => {
             this.snackbar = {
               color: 'success',
               show: true,
               text: `${this.$t('actions.update')} - ${this.$t('nav.article')}: ${this.$t('status.success')}`
             }
-            this.$router.push(`/articles/${response.id}`)
+            this.$router.push(`/articles/${response.slug}`)
           }, error => {
             this.snackbar = {
               color: 'red',
