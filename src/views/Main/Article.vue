@@ -142,12 +142,12 @@
             </td>
             <td class="align-center justify-start">
               <v-switch value v-model="item.is_active"
-                @change="toggle(item.id, item.is_active, 'is_active', item.title)">
+                @change="toggle(item.slug, item.is_active, 'is_active', item.title)">
               </v-switch>
             </td>
             <td class="align-center justify-start">
               <v-switch value v-model="item.is_popular"
-                @change="toggle(item.id, item.is_popular, 'is_popular')">
+                @change="toggle(item.slug, item.is_popular, 'is_popular')">
               </v-switch>
             </td>
             <!-- <td class="align-center justify-start">
@@ -166,11 +166,11 @@
                   <v-icon color="red" small v-on="on" icon>delete</v-icon>
                 </template>
                 <v-list dark>
-                  <v-list-item @click="deleteArticle(item.id, true, $event)">
+                  <v-list-item @click="deleteArticle(item.slug, true, $event)">
                     <v-list-item-title>
                       <v-icon class="mr-2" color="orange">warning</v-icon>
                       {{ $t('system_msg.confirm_delete') }}
-                      <strong>{{ item.name }}</strong>
+                      <strong>{{ item.title }}</strong>
                     </v-list-item-title>
                   </v-list-item>
                 </v-list>
