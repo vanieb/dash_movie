@@ -131,7 +131,7 @@
         <tbody>
           <tr v-for="item in querySet" :key="item.id">
             <td width="5%">
-              <v-btn class="mr-2" icon color="info" :to="`/articles/${item.id}`">
+              <v-btn class="mr-2" icon color="info" :to="`/articles/${item.slug}`">
                 <v-icon>touch_app</v-icon>
               </v-btn>
             </td>
@@ -158,7 +158,7 @@
             <td width="30%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td width="30%" class="align-center justify-center">
               <v-layout>
-              <v-btn class="mr-2" icon :to="`/articles/${item.id}/edit`">
+              <v-btn class="mr-2" icon :to="`/articles/${item.slug}/edit`">
                 <v-icon small >edit</v-icon>
               </v-btn>
               <v-menu offset-y>
