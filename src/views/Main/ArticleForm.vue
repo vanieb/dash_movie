@@ -152,7 +152,7 @@ export default {
     return {
       id: '',
       showTinyMce: true,
-      showWebsites: false,
+      showWebsites: true,
       article_changed: '',
       showImage: false,
       lang: '',
