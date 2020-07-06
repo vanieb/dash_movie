@@ -326,7 +326,7 @@ export default {
               show: true,
               text: `${this.$t('actions.update')} - ${this.$t('nav.article')}: ${this.$t('status.success')}`
             }
-            this.$router.push(`/articles/${response.id}`)
+            this.$router.push(`/articles/${response.slug}`)
           }, error => {
             this.snackbar = {
               color: 'red',
