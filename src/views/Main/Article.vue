@@ -2,15 +2,70 @@
   <v-layout wrap>
     <v-container>
       <v-layout>
-        <div d-inline-block>
-          <v-layout justify-start>
-            <v-btn
-              color="primary"
-              dark to="/articles/add">
-              <v-icon class="mr-3">library_add</v-icon> &nbsp;{{ $t('actions.add') }}
-            </v-btn>
-          </v-layout> 
-        </div>
+        <v-layout justify-start>
+          <v-btn
+            color="primary"
+            dark to="/articles/add">
+            <v-icon class="mr-3">library_add</v-icon> &nbsp;{{ $t('actions.add') }}
+          </v-btn>
+        </v-layout>
+        <v-layout justify-end>
+          <v-dialog v-model="importArticlesDialog" persistent max-width="600">
+            <template v-slot:activator="{ on }">
+              <v-btn
+                color="primary"
+                dark 
+                class="mr-3"
+                v-on="on">
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-icon v-on="on">dynamic_feed</v-icon>
+                  </template>
+                  <span>{{$t('system_notes.add_multiple_articles_memo')}}</span>
+                </v-tooltip>
+              </v-btn>
+            </template>
+            <v-card>
+              <validation-observer ref="importForm">
+                <v-card-title>
+                  <v-icon class="mr-3">dynamic_feed</v-icon>
+                    &nbsp;{{ $t('actions.import') }} - {{ $t('nav.articles') }}
+                </v-card-title>
+                <v-card-text>
+                  <v-icon small>info</v-icon>
+                  <small>{{ $t('system_notes.add_multiple_articles_memo') }}</small>
+                </v-card-text>
+                <v-card-text>
+                  <v-spacer></v-spacer>
+                  <validation-provider style="width:310px;" rules="required" :name="$t('common.file')">
+                    <v-file-input
+                      outlined
+                      dense
+                      clearable
+                      :error-messages="errors"
+                      required
+                      slot-scope="{ errors }"
+                      accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                      v-model="importFile">    
+                    </v-file-input>
+                  </validation-provider>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="grey lighten-1"
+                    @click="closeImport()">{{ $t('actions.close') }}
+                  </v-btn>
+                  <v-btn
+                    color="blue darken-1"
+                    :loading="importLoading"
+                    @click="importCsv()">{{ $t('actions.submit') }}
+                  </v-btn>
+                </v-card-actions>
+              </validation-observer>
+            </v-card>
+          </v-dialog>
+        </v-layout>
       </v-layout>
       <v-card>
         <v-col cols="12" md="12" class="mt-2" style="padding: 20px 20px 10px 20px !important;">
@@ -150,36 +205,27 @@
                 @change="toggle(item.slug, item.is_popular, 'is_popular')">
               </v-switch>
             </td>
-            <!-- <td class="align-center justify-start">
-              <v-switch value v-model="item.is_recommended"
-                @change="toggle(item.id, item.is_recommended, 'is_recommended' )">
-              </v-switch>
-            </td> -->
             <td width="30%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td width="30%" class="align-center justify-center">
               <v-layout>
-              <v-btn class="mr-2" icon :to="`/articles/${item.slug}/edit`">
-                <v-icon small >edit</v-icon>
-              </v-btn>
-              <v-menu offset-y>
-                <template v-slot:activator="{ on }">
-                  <v-icon color="red" small v-on="on" icon>delete</v-icon>
-                </template>
-                <v-list dark>
-                  <v-list-item @click="deleteArticle(item.slug, true, $event)">
-                    <v-list-item-title>
-                      <v-icon class="mr-2" color="orange">warning</v-icon>
-                      {{ $t('system_msg.confirm_delete') }}
-                      <strong>{{ item.title }}</strong>
-                    </v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
-              <!-- <v-btn class="mr-2" icon :to="`/apps/${item.id}/edit`">
-                <v-icon color="red" small>delete</v-icon>
-              </v-btn> -->
+                <v-btn class="mr-2" icon :to="`/articles/${item.slug}/edit`">
+                  <v-icon small >edit</v-icon>
+                </v-btn>
+                <v-menu offset-y>
+                  <template v-slot:activator="{ on }">
+                    <v-icon color="red" small v-on="on" icon>delete</v-icon>
+                  </template>
+                  <v-list dark>
+                    <v-list-item @click="deleteArticle(item.slug, true, $event)">
+                      <v-list-item-title>
+                        <v-icon class="mr-2" color="orange">warning</v-icon>
+                        {{ $t('system_msg.confirm_delete') }}
+                        <strong>{{ item.title }}</strong>
+                      </v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
               </v-layout>
-              
             </td>
           </tr>
         </tbody>
@@ -211,7 +257,7 @@ import $ from '../../utils/util'
 import Pagination from '@/components/Pagination'
 import SnackBar from '@/components/SnackBar'
 import { debounce } from 'lodash'
-// import { ValidationObserver, ValidationProvider } from 'vee-validate'
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import Website from '../../components/SelectWebsite.vue'
 // import axios from 'axios'
 import VueCookie from 'vue-cookie'
@@ -221,8 +267,8 @@ export default {
   components: {
     Pagination,
     SnackBar,
-    // ValidationObserver,
-    // ValidationProvider,
+    ValidationObserver,
+    ValidationProvider,
     Website
   },
   data() {
@@ -242,12 +288,12 @@ export default {
       website: 1,
       articleApi: api.articles,
       // exportApi: `${api.apps}export/`,
-      // importApi: `${api.apps}import/`,
+      importApi: `${api.articles}import/`,
       loading: true,
       uploadLoading: false,
       importLoading: false,
       uploadInstallerDialog: false,
-      createAppDialog: false,
+      importArticlesDialog: false,
       submitting: false,
       date_menu: false,
       file: null,
@@ -291,12 +337,6 @@ export default {
           value: 'is_popular',
           width: '10%'
         },
-        // {
-        //   sortable: false,
-        //   text: this.$t('nav.recommended'),
-        //   value: 'is_recommended',
-        //   width: '10%'
-        // },
         {
           sortable: false,
           text: this.$t('common.created_at'),
@@ -450,29 +490,29 @@ export default {
     //     }
     //   }
     // },
-    // async importCsv() {
-    //   const isValid = await this.$refs.importForm.validate()
-    //   if (isValid) {
-    //     this.importLoading = true
-    //     const formData = new window.FormData()
-    //     formData.set('import_file', this.importFile)
-    //     this.$http.post(`${this.importApi}?import_type=app_details`, formData).then(() => {
-    //       this.$refs.pulling.rebase()
-    //       this.snackbar = {
-    //         color: 'success',
-    //         show: true,
-    //         text: `${this.$t('actions.create_multiple')}: ${this.$t('status.success')}`
-    //       }
-    //       this.closeImport()
-    //     }, error => {
-    //       this.snackbar = {
-    //         color: 'red',
-    //         show: true,
-    //         text: `${this.$t('system.msg')}: ${error}`
-    //       }
-    //     })
-    //   }
-    // },
+    async importCsv() {
+      const isValid = await this.$refs.importForm.validate()
+      if (isValid) {
+        this.importLoading = true
+        const formData = new window.FormData()
+        formData.set('import_file', this.importFile)
+        this.$http.post(`${this.importApi}`, formData).then(() => {
+          this.$refs.pulling.rebase()
+          this.snackbar = {
+            color: 'success',
+            show: true,
+            text: `${this.$t('actions.import')} - ${this.$t('nav.articles')}: ${this.$t('status.success')}`
+          }
+          this.closeImport()
+        }, error => {
+          this.snackbar = {
+            color: 'red',
+            show: true,
+            text: `${this.$t('system.msg')}: ${error}`
+          }
+        })
+      }
+    },
     // websiteSetMultiple(val) {
     //   this.setWebsite = val
     // },
@@ -492,11 +532,6 @@ export default {
           is_popular: value
         }
         action_title = this.$t('nav.popular_articles')
-      } else {
-        toggleResult = {
-          is_recommended: value
-        }
-        action_title = this.$t('nav.recommended')
       }
       this.$http.put(this.articleApi + id + '/', toggleResult).then((response) => {
         let action_text = response[mode] ? this.$t('status.enabled') : this.$t('status.disabled')
@@ -553,7 +588,7 @@ export default {
     },
     closeImport() {
       this.importFile = null
-      this.createAppDialog = false
+      this.importArticlesDialog = false
       this.importLoading = false
       this.$refs.importForm.reset()
     },
