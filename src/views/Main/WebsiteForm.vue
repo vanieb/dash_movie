@@ -49,7 +49,7 @@
                   style="width:670px;"
                   prepend-icon="notes"
                   outlined
-                  v-model="website.remarks"
+                  v-model="website.memo"
                   rows="2"
                   placeholder=" "
                   :label="`${$t('common.remarks')}`" 
@@ -207,7 +207,7 @@ export default {
         }
         // String Fields
         formData.set('name', this.website.name)
-        formData.set('memo', this.website.remarks !== undefined ? this.website.remarks : '')
+        formData.set('memo', this.website.memo !== undefined ? this.website.memo : '')
         if (this.isUpdate) {
           this.$http.put(`${this.websiteApi}${this.website.id}/`, formData).then(() => {
             this.snackbar = {
