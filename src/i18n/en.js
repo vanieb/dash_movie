@@ -118,7 +118,8 @@ export default {
   },
   articles: {
     title: 'Title',
-    content: 'Content'
+    content: 'Content',
+    subject: 'Subject'
   },
   website: {
     code: 'Code'
