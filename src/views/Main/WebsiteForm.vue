@@ -27,7 +27,7 @@
       <v-container mt5>
         <small>*{{$t('errors.required')}}</small>
           <v-row class="ml-1 mr-8">
-            <v-col cols="12" md="9">
+            <v-col cols="12" md="8">
               <v-row>
                 <validation-provider style="width:748px;" rules="required" :name="$t('common.name')">
                   <v-text-field
@@ -55,7 +55,7 @@
                   :label="`${$t('common.remarks')}`" 
                   dense>
                 </v-textarea>
-                <v-spacer></v-spacer>
+                <v-spacer style="min-width: 232px !important; "></v-spacer>
               </v-row>
             </v-col>
             <v-spacer></v-spacer>
