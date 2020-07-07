@@ -28,7 +28,8 @@ export default {
     submit: '提交',
     change_file: '变更档案',
     sort: '调整排序',
-    cancel: '取消'
+    cancel: '取消',
+    import: '导入'
   },
   status: {
     success: '成功',
@@ -45,7 +46,8 @@ export default {
   system_notes: {
     upload_installer_memo: '此选项将允许您上传安装程序。 对于批量上传，请先压缩文件，然后再上传。',
     upload_one_installer_memo: '该选项将允许您更改安装程序文件。',
-    add_multiple_apps_memo: '此选项将允许您通过导入csv，xls或xlsx文件来创建多个应用程序。'
+    add_multiple_apps_memo: '此选项将允许您通过导入csv，xls或xlsx文件来创建多个应用程序。',
+    add_multiple_articles_memo: '此选项将允许您通过导入csv，xls或xlsx文件来创建多个文章。'
   },
   system_msg: {
     confirm_delete: '单击以确认删除 ',

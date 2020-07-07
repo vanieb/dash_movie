@@ -28,7 +28,8 @@ export default {
     submit: 'Submit',
     change_file: 'Change File',
     sort: 'Sort',
-    cancel: 'Cancel'
+    cancel: 'Cancel',
+    import: 'Import'
   },
   status: {
     success: 'Success',
@@ -45,7 +46,8 @@ export default {
   system_notes: {
     upload_installer_memo: 'This option will allow you to upload installers. For batch upload, zip first your file then upload. ',
     upload_one_installer_memo: 'This option will allow you to change installer file. ',
-    add_multiple_apps_memo: 'This option will allow you to multiple create apps by importing csv, xls, or xlsx file.'
+    add_multiple_apps_memo: 'This option will allow you to multiple create apps by importing csv, xls, or xlsx file.',
+    add_multiple_articles_memo: 'This option will allow you to multiple create articles by importing csv, xls, or xlsx file.'
   },
   system_msg: {
     confirm_delete: 'Click to confirm deletion of ',

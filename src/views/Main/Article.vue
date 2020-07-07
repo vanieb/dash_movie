@@ -2,15 +2,75 @@
   <v-layout wrap>
     <v-container>
       <v-layout>
-        <div d-inline-block>
-          <v-layout justify-start>
-            <v-btn
-              color="primary"
-              dark to="/articles/add">
-              <v-icon class="mr-3">library_add</v-icon> &nbsp;{{ $t('actions.add') }}
-            </v-btn>
-          </v-layout> 
-        </div>
+        <v-layout justify-start>
+          <v-btn
+            color="primary"
+            dark to="/articles/add">
+            <v-icon class="mr-3">library_add</v-icon> &nbsp;{{ $t('actions.add') }}
+          </v-btn>
+        </v-layout>
+        <v-layout justify-end>
+          <v-dialog v-model="importArticlesDialog" persistent max-width="600">
+            <template v-slot:activator="{ on }">
+              <v-btn
+                color="primary"
+                dark 
+                
+                class="mr-3"
+                v-on="on">
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                  <v-icon v-on="on">dynamic_feed</v-icon>
+
+                  </template>
+                  <span>{{$t('system_notes.add_multiple_articles_memo')}}</span>
+                </v-tooltip>
+              </v-btn>
+            </template>
+            <v-card>
+              <validation-observer ref="importForm">
+                <v-card-title>
+                  <v-icon class="mr-3">dynamic_feed</v-icon>
+                    &nbsp;{{ $t('actions.import') }} - {{ $t('nav.articles') }}
+                </v-card-title>
+                <v-card-text>
+                  <v-icon small>info</v-icon>
+                  <small>{{ $t('system_notes.add_multiple_articles_memo') }}</small>
+                </v-card-text>
+                <v-card-text>
+                  <v-spacer></v-spacer>
+                  <validation-provider style="width:310px;" rules="required" :name="$t('common.file')">
+                    <v-file-input
+                      outlined
+                      dense
+                      clearable
+                      :error-messages="errors"
+                      required
+                      slot-scope="{ errors }"
+                      accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                      v-model="importFile">    
+                    </v-file-input>
+                  </validation-provider>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="grey lighten-1"
+                    @click="closeImport()">{{ $t('actions.close') }}
+                  </v-btn>
+                  <v-btn
+                    color="blue darken-1"
+                    :loading="importLoading"
+                    @click="importCsv()">{{ $t('actions.submit') }}
+                  </v-btn>
+                </v-card-actions>
+              </validation-observer>
+            </v-card>
+          </v-dialog>
+          </v-layout>
+          
+        <!-- </div> -->
+        
       </v-layout>
       <v-card>
         <v-col cols="12" md="12" class="mt-2" style="padding: 20px 20px 10px 20px !important;">
@@ -211,7 +271,7 @@ import $ from '../../utils/util'
 import Pagination from '@/components/Pagination'
 import SnackBar from '@/components/SnackBar'
 import { debounce } from 'lodash'
-// import { ValidationObserver, ValidationProvider } from 'vee-validate'
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import Website from '../../components/SelectWebsite.vue'
 // import axios from 'axios'
 import VueCookie from 'vue-cookie'
@@ -221,8 +281,8 @@ export default {
   components: {
     Pagination,
     SnackBar,
-    // ValidationObserver,
-    // ValidationProvider,
+    ValidationObserver,
+    ValidationProvider,
     Website
   },
   data() {
@@ -242,12 +302,12 @@ export default {
       website: 1,
       articleApi: api.articles,
       // exportApi: `${api.apps}export/`,
-      // importApi: `${api.apps}import/`,
+      importApi: `${api.articles}import/`,
       loading: true,
       uploadLoading: false,
       importLoading: false,
       uploadInstallerDialog: false,
-      createAppDialog: false,
+      importArticlesDialog: false,
       submitting: false,
       date_menu: false,
       file: null,
@@ -450,29 +510,29 @@ export default {
     //     }
     //   }
     // },
-    // async importCsv() {
-    //   const isValid = await this.$refs.importForm.validate()
-    //   if (isValid) {
-    //     this.importLoading = true
-    //     const formData = new window.FormData()
-    //     formData.set('import_file', this.importFile)
-    //     this.$http.post(`${this.importApi}?import_type=app_details`, formData).then(() => {
-    //       this.$refs.pulling.rebase()
-    //       this.snackbar = {
-    //         color: 'success',
-    //         show: true,
-    //         text: `${this.$t('actions.create_multiple')}: ${this.$t('status.success')}`
-    //       }
-    //       this.closeImport()
-    //     }, error => {
-    //       this.snackbar = {
-    //         color: 'red',
-    //         show: true,
-    //         text: `${this.$t('system.msg')}: ${error}`
-    //       }
-    //     })
-    //   }
-    // },
+    async importCsv() {
+      const isValid = await this.$refs.importForm.validate()
+      if (isValid) {
+        this.importLoading = true
+        const formData = new window.FormData()
+        formData.set('import_file', this.importFile)
+        this.$http.post(`${this.importApi}`, formData).then(() => {
+          this.$refs.pulling.rebase()
+          this.snackbar = {
+            color: 'success',
+            show: true,
+            text: `${this.$t('actions.import')} - ${this.$t('nav.articles')}: ${this.$t('status.success')}`
+          }
+          this.closeImport()
+        }, error => {
+          this.snackbar = {
+            color: 'red',
+            show: true,
+            text: `${this.$t('system.msg')}: ${error}`
+          }
+        })
+      }
+    },
     // websiteSetMultiple(val) {
     //   this.setWebsite = val
     // },
@@ -553,7 +613,7 @@ export default {
     },
     closeImport() {
       this.importFile = null
-      this.createAppDialog = false
+      this.importArticlesDialog = false
       this.importLoading = false
       this.$refs.importForm.reset()
     },
