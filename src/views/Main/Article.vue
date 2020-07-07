@@ -15,13 +15,11 @@
               <v-btn
                 color="primary"
                 dark 
-                
                 class="mr-3"
                 v-on="on">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
-                  <v-icon v-on="on">dynamic_feed</v-icon>
-
+                    <v-icon v-on="on">dynamic_feed</v-icon>
                   </template>
                   <span>{{$t('system_notes.add_multiple_articles_memo')}}</span>
                 </v-tooltip>
@@ -67,10 +65,7 @@
               </validation-observer>
             </v-card>
           </v-dialog>
-          </v-layout>
-          
-        <!-- </div> -->
-        
+        </v-layout>
       </v-layout>
       <v-card>
         <v-col cols="12" md="12" class="mt-2" style="padding: 20px 20px 10px 20px !important;">
@@ -210,36 +205,27 @@
                 @change="toggle(item.slug, item.is_popular, 'is_popular')">
               </v-switch>
             </td>
-            <!-- <td class="align-center justify-start">
-              <v-switch value v-model="item.is_recommended"
-                @change="toggle(item.id, item.is_recommended, 'is_recommended' )">
-              </v-switch>
-            </td> -->
             <td width="30%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td width="30%" class="align-center justify-center">
               <v-layout>
-              <v-btn class="mr-2" icon :to="`/articles/${item.slug}/edit`">
-                <v-icon small >edit</v-icon>
-              </v-btn>
-              <v-menu offset-y>
-                <template v-slot:activator="{ on }">
-                  <v-icon color="red" small v-on="on" icon>delete</v-icon>
-                </template>
-                <v-list dark>
-                  <v-list-item @click="deleteArticle(item.slug, true, $event)">
-                    <v-list-item-title>
-                      <v-icon class="mr-2" color="orange">warning</v-icon>
-                      {{ $t('system_msg.confirm_delete') }}
-                      <strong>{{ item.title }}</strong>
-                    </v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
-              <!-- <v-btn class="mr-2" icon :to="`/apps/${item.id}/edit`">
-                <v-icon color="red" small>delete</v-icon>
-              </v-btn> -->
+                <v-btn class="mr-2" icon :to="`/articles/${item.slug}/edit`">
+                  <v-icon small >edit</v-icon>
+                </v-btn>
+                <v-menu offset-y>
+                  <template v-slot:activator="{ on }">
+                    <v-icon color="red" small v-on="on" icon>delete</v-icon>
+                  </template>
+                  <v-list dark>
+                    <v-list-item @click="deleteArticle(item.slug, true, $event)">
+                      <v-list-item-title>
+                        <v-icon class="mr-2" color="orange">warning</v-icon>
+                        {{ $t('system_msg.confirm_delete') }}
+                        <strong>{{ item.title }}</strong>
+                      </v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
               </v-layout>
-              
             </td>
           </tr>
         </tbody>
@@ -351,12 +337,6 @@ export default {
           value: 'is_popular',
           width: '10%'
         },
-        // {
-        //   sortable: false,
-        //   text: this.$t('nav.recommended'),
-        //   value: 'is_recommended',
-        //   width: '10%'
-        // },
         {
           sortable: false,
           text: this.$t('common.created_at'),
@@ -552,11 +532,6 @@ export default {
           is_popular: value
         }
         action_title = this.$t('nav.popular_articles')
-      } else {
-        toggleResult = {
-          is_recommended: value
-        }
-        action_title = this.$t('nav.recommended')
       }
       this.$http.put(this.articleApi + id + '/', toggleResult).then((response) => {
         let action_text = response[mode] ? this.$t('status.enabled') : this.$t('status.disabled')
