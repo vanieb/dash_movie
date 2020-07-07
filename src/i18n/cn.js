@@ -117,7 +117,8 @@ export default {
   },
   articles: {
     title: '标题',
-    content: '正文'
+    content: '正文',
+    subject: '学科'
   },
   website: {
     code: '码'

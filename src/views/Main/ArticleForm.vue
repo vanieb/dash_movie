@@ -45,6 +45,20 @@
                 <v-spacer></v-spacer>
               </v-row>
               <v-row>
+                <validation-provider style="width:748px;" :name="$t('articles.subject')">
+                  <v-text-field
+                    required
+                    :label="`${$t('articles.subject')}`"
+                    placeholder=" "
+                    prepend-icon="subject"
+                    v-model="article.subject"
+                    dense
+                    outlined>
+                  </v-text-field>
+                </validation-provider>
+                <v-spacer></v-spacer>
+              </v-row>
+              <v-row>
                 <span :style="{width:'748px', marginBottom: isUpdate ? '0px' :'20px' } ">
                    <websites
                     v-if="showWebsites"
@@ -96,7 +110,7 @@
             </v-card-text>
             <v-card-title>{{$t('seo.description')}}</v-card-title>
             <v-card-text>
-              <v-textarea outlined v-model="article.subject"></v-textarea>
+              <v-textarea outlined v-model="article.description"></v-textarea>
             </v-card-text>
           </v-flex>
           <v-flex>
@@ -180,7 +194,7 @@ export default {
       uploadLoading: false,
       // selectOne: ['app_type', 'category'],
       selectMultiple: ['websites'],
-      nonRequired: ['content', 'subject', 'keywords'],
+      nonRequired: ['content', 'subject', 'keywords', 'description'],
       data: {
         app_type: false,
         category: false,
@@ -223,10 +237,12 @@ export default {
         // this.selectOne.forEach(item => {
         //   this.pushIDs(item, 'one')
         // })
-      }, response => {
-          if (('' + response.status).indexOf('4') === 0) {
-              this.$router.push('/login?next=' + this.$route.path)
-          }
+      }, error => {
+        this.snackbar = {
+          color: 'red',
+          show: true,
+          text: error
+        }
       })
       this.loading = false
     },
