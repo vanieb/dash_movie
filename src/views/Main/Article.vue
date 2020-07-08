@@ -202,7 +202,7 @@
             </td>
             <td class="align-center justify-start">
               <v-switch value v-model="item.is_popular"
-                @change="toggle(item.slug, item.is_popular, 'is_popular')">
+                @change="toggle(item.slug, item.is_popular, 'is_popular', item.title)">
               </v-switch>
             </td>
             <td width="30%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
@@ -521,6 +521,7 @@ export default {
       this.snackbar.show = false
       let toggleResult
       let action_title
+      console.log(id)
       if (mode == 'is_active') {
         toggleResult = {
           is_active: value,
@@ -529,7 +530,8 @@ export default {
         action_title = this.$t('common.status')
       } else if (mode == 'is_popular') {
         toggleResult = {
-          is_popular: value
+          is_popular: value,
+          title: title
         }
         action_title = this.$t('nav.popular_articles')
       }
@@ -569,6 +571,7 @@ export default {
     clearAll() {
       this.created_at = ['','']
       this.is_active = ''
+      this.is_popular = ''
       this.query = {}
       this.query.website = 1
       this.$nextTick(() => {

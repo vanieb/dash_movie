@@ -113,7 +113,7 @@ export default {
       filteredQuerySet: [],
       typesApi: api.types,
       articleApi: api.articles,
-      leaderboardsApi: `${api.websites}update_rank`,
+      popularApi: `${api.articles}popular/ordering`,
       showTab: true,
       snackbar: {
         color: '',
@@ -155,10 +155,10 @@ export default {
   },
   methods: {
     getArticles() {
-      this.$http.get(`${this.articleApi}?&website=${this.query.website}`).then(response => {
+      this.$http.get(`${this.articleApi}?&website=${this.query.website}&is_popular=true`).then(response => {
         this.filteredQuerySet = response.results
         .sort((a, b) => {
-          return a['rank'] - b['rank']
+          return a['popular_order'] - b['popular_order']
         })
         this.mode = false
       })
@@ -168,11 +168,7 @@ export default {
       this.filteredQuerySet.map((p, index) => {
         rank[p.id] = index + 1
       })
-      let sortResult = Object({
-        recommend: false,
-        rank: rank
-      })
-      this.$http.put(`${this.leaderboardsApi}/${this.app_type}/`, sortResult).then(() => {
+      this.$http.post(`${this.popularApi}/`, rank).then(() => {
         this.getArticles()
         this.snackbar = {
           color: 'success',
