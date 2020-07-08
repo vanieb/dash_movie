@@ -521,7 +521,6 @@ export default {
       this.snackbar.show = false
       let toggleResult
       let action_title
-      console.log(id)
       if (mode == 'is_active') {
         toggleResult = {
           is_active: value,
