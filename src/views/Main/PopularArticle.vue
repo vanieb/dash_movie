@@ -41,13 +41,6 @@
           </v-btn>
         </v-layout>
       </v-layout>
-      <!-- <v-tabs v-model="selected_tab" v-if="showTab">
-        <v-tab
-          v-for="type in app_types"
-          :key="type.id">
-          {{type.name}}
-        </v-tab>
-      </v-tabs> -->
       <v-data-table
         v-if="showTab"
         :headers="filteredQuerySet.length > 0 ? headers : []"
@@ -74,7 +67,6 @@
               <td>{{ item.title }}</td>
             </tr>
           </draggable>
-          
         </template>
       </v-data-table>
       <v-layout v-else justify-center align-center>
@@ -113,7 +105,7 @@ export default {
       filteredQuerySet: [],
       typesApi: api.types,
       articleApi: api.articles,
-      popularApi: `${api.articles}popular/ordering`,
+      popularApi: `${api.articles}popular/ordering/?ordering=popular`,
       showTab: true,
       snackbar: {
         color: '',
@@ -155,7 +147,7 @@ export default {
   },
   methods: {
     getArticles() {
-      this.$http.get(`${this.articleApi}?&website=${this.query.website}&is_popular=true`).then(response => {
+      this.$http.get(`${this.articleApi}?&website=${this.query.website}&popular=true&active=true`).then(response => {
         this.filteredQuerySet = response.results
         .sort((a, b) => {
           return a['popular_order'] - b['popular_order']

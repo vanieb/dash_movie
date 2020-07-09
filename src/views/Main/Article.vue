@@ -84,7 +84,7 @@
                 item-value="value"
                 :items="statusOptions"
                 :label="`${$t('common.status')}`"
-                v-model="is_active"
+                v-model="active"
                 hide-details="true"
                 placeholder=" "
                 outlined
@@ -103,7 +103,7 @@
                 item-value="value"
                 :items="statusOptions"
                 :label="`${$t('nav.popular_articles')}`"
-                v-model="is_popular"
+                v-model="popular"
                 hide-details="true"
                 placeholder=" "
                 outlined
@@ -282,7 +282,8 @@ export default {
       },
       querySet: [],
       export_query: [],
-      is_active: '',
+      active: '',
+      popular: '',
       today: date.max_today,
       created_at: ['', ''],
       website: 1,
@@ -358,12 +359,12 @@ export default {
       },
       deep: true
     },
-    is_popular(newObj) {
-      this.query.is_popular = newObj
+    popular(newObj) {
+      this.query.popular = newObj
       this.$refs.pulling.submit()
     },
-    is_active(newObj) {
-      this.query.is_active = newObj
+    active(newObj) {
+      this.query.active = newObj
       this.$refs.pulling.submit()
     },
     website(newObj) {
@@ -424,8 +425,8 @@ export default {
         this.created_at = [undefined, undefined]
       }
       this.website = this.$route.query.website || ''
-      this.is_active = this.$route.query.is_active==true || this.$route.query.is_active==false ? this.$route.query.is_active : ''
-      this.is_popular = this.$route.query.is_popular==true || this.$route.query.is_popular==false ? this.$route.query.is_popular : ''
+      this.active = this.$route.query.active==true || this.$route.query.active==false ? this.$route.query.active : ''
+      this.popular = this.$route.query.popular==true || this.$route.query.popular==false ? this.$route.query.popular : ''
       this.query = Object.assign({}, this.$route.query)
     },
     queryData(queryset) {
@@ -569,8 +570,8 @@ export default {
     700),
     clearAll() {
       this.created_at = ['','']
-      this.is_active = ''
-      this.is_popular = ''
+      this.active = ''
+      this.popular = ''
       this.query = {}
       this.query.website = 1
       this.$nextTick(() => {
