@@ -245,6 +245,18 @@ export default new Router({
       }
     },
     {
+      path: '/import_article_logs',
+      name: 'Import Article Logs',
+      component: function(resolve) {
+        require(['./views/Logs/ImportArticleLogs.vue'], resolve)
+      },
+      meta: {
+        icon: 'list_alt',
+        auth: true,
+        title: `${i18n.t('nav.import_logs')} - ${i18n.t('nav.articles')}`
+      }
+    },
+    {
       path: '/staff',
       name: 'Staff',
       component: function(resolve) {

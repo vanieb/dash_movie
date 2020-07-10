@@ -34,7 +34,9 @@ export default {
   status: {
     success: '成功',
     enabled: '已启用',
-    disabled: '已禁用'
+    disabled: '已禁用',
+    canceled: '取消',
+    ongoing: '进行中'
   },
   errors: {
     required: '必填',
@@ -81,7 +83,9 @@ export default {
     article_details: '文章详细信息',
     edit_article: '编辑文章',
     add_article: '添加文章',
-    popular_articles: '热门文章'
+    popular_articles: '热门文章',
+    logs: '日志',
+    import_logs: '导入日志'
   },
   login: {
     login: '登录表单',

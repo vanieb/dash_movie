@@ -34,7 +34,9 @@ export default {
   status: {
     success: 'Success',
     enabled: 'Enabled',
-    disabled: 'Disabled'
+    disabled: 'Disabled',
+    canceled: 'Canceled',
+    ongoing: 'Ongoing'
   },
   errors: {
     required: 'Required',
@@ -81,7 +83,9 @@ export default {
     article_details: 'Article Details',
     edit_article: 'Edit Article',
     add_article: 'Add Article',
-    popular_articles: 'Popular Articles'
+    popular_articles: 'Popular Articles',
+    logs: 'Logs',
+    import_logs: 'Import Logs'
   },
   login: {
     login: 'Login Form',

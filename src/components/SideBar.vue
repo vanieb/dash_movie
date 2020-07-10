@@ -182,6 +182,13 @@
           }, {
           icon: 'mdi-chevron-up',
           'icon-alt': 'mdi-chevron-down',
+          text: this.$t('nav.logs'),
+          model: true,
+          children: [
+            { icon: 'list_alt', text: `${this.$t('nav.import_logs')} - ${this.$t('nav.articles')}`, path: '/import_article_logs' }
+          ]}, {
+          icon: 'mdi-chevron-up',
+          'icon-alt': 'mdi-chevron-down',
           text: this.$t('nav.users'),
           model: true,
           children: [
