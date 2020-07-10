@@ -23,11 +23,11 @@
             <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td>{{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td>{{ item.memo || '-'}}</td>
-            <!-- <td class="align-center justify-center">
-              <v-btn class="mr-2" icon :to="`/apps/${item.id}/edit`">
+            <td class="align-center justify-center">
+              <v-btn class="mr-2" icon :to="`/websites/${item.id}/edit`">
                 <v-icon>edit</v-icon>
               </v-btn>
-            </td> -->
+            </td>
           </tr>
         </tbody>
         </template>
@@ -93,11 +93,11 @@ export default {
           sortable: false,
           text: this.$t('common.remarks'),
           value: 'memo'
+        },
+        {
+          sortable: false,
+          text: this.$t('common.action')
         }
-        // {
-        //   sortable: false,
-        //   text: this.$t('common.action')
-        // }
       ]
     }
   },

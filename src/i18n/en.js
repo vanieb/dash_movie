@@ -28,12 +28,15 @@ export default {
     submit: 'Submit',
     change_file: 'Change File',
     sort: 'Sort',
-    cancel: 'Cancel'
+    cancel: 'Cancel',
+    import: 'Import'
   },
   status: {
     success: 'Success',
     enabled: 'Enabled',
-    disabled: 'Disabled'
+    disabled: 'Disabled',
+    canceled: 'Canceled',
+    ongoing: 'Ongoing'
   },
   errors: {
     required: 'Required',
@@ -45,7 +48,9 @@ export default {
   system_notes: {
     upload_installer_memo: 'This option will allow you to upload installers. For batch upload, zip first your file then upload. ',
     upload_one_installer_memo: 'This option will allow you to change installer file. ',
-    add_multiple_apps_memo: 'This option will allow you to multiple create apps by importing csv, xls, or xlsx file.'
+    add_multiple_apps_memo: 'This option will allow you to multiple create apps by importing csv, xls, or xlsx file.',
+    add_multiple_articles_memo: 'This option will allow you to multiple create articles by importing csv, xls, or xlsx file.',
+    subject_memo: 'These will be used as keywords in the Article Index Page.'
   },
   system_msg: {
     confirm_delete: 'Click to confirm deletion of ',
@@ -64,8 +69,8 @@ export default {
     edit_apps: 'Edit Apps',
     add_apps: 'Add Apps',
     website_view: 'Website View',
-    website_apps: 'Apps (per Website)',
     websites: 'Websites',
+    edit_website: 'Edit Website',
     labels: 'Labels',
     category: 'Categories',
     types: 'Types',
@@ -77,7 +82,10 @@ export default {
     articles: 'Articles',
     article_details: 'Article Details',
     edit_article: 'Edit Article',
-    add_article: 'Add Article'
+    add_article: 'Add Article',
+    popular_articles: 'Popular Articles',
+    logs: 'Logs',
+    import_logs: 'Import Logs'
   },
   login: {
     login: 'Login Form',
@@ -97,11 +105,8 @@ export default {
     version: 'Version',
     icon: 'Icon',
     type: 'Type',
-    games: 'Games',
-    software: 'Software',
     website: 'Website',
     category: 'Category',
-    hot: 'Hot',
     introduction: 'Introduction',
     features: 'Features',
     editors_comment: 'Editor\'s Comment',
@@ -117,6 +122,7 @@ export default {
     keywords: 'Keywords',
     basic_introduction: 'Basic Introduction',
     description: 'Description',
+    subject: 'Subject'
   },
   articles: {
     title: 'Title',

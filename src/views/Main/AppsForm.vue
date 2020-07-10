@@ -57,7 +57,7 @@
                     outlined>
                   </v-text-field>
                 </validation-provider>
-                <v-spacer></v-spacer>
+                <v-spacer style="max-width:75px !important;"></v-spacer>
                 <validation-provider style="width:338px;" rules="required|between:1,5" :name="$t('apps.rating')">
                   <v-text-field
                     :error-messages="errors"
@@ -96,8 +96,7 @@
                     @type-select-one="typeSelectOne">
                   </types>
                 </span>
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
+                <v-spacer style="max-width:75px !important;"></v-spacer>
                 <span style="width:338px;">
                   <categories
                     v-if="showCategories || !isUpdate"

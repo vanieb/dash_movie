@@ -28,12 +28,15 @@ export default {
     submit: '提交',
     change_file: '变更档案',
     sort: '调整排序',
-    cancel: '取消'
+    cancel: '取消',
+    import: '导入'
   },
   status: {
     success: '成功',
     enabled: '已启用',
-    disabled: '已禁用'
+    disabled: '已禁用',
+    canceled: '取消',
+    ongoing: '进行中'
   },
   errors: {
     required: '必填',
@@ -45,7 +48,9 @@ export default {
   system_notes: {
     upload_installer_memo: '此选项将允许您上传安装程序。 对于批量上传，请先压缩文件，然后再上传。',
     upload_one_installer_memo: '该选项将允许您更改安装程序文件。',
-    add_multiple_apps_memo: '此选项将允许您通过导入csv，xls或xlsx文件来创建多个应用程序。'
+    add_multiple_apps_memo: '此选项将允许您通过导入csv，xls或xlsx文件来创建多个应用程序。',
+    add_multiple_articles_memo: '此选项将允许您通过导入csv，xls或xlsx文件来创建多个文章。',
+    subject_memo: '这些将用作文章索引页面中的关键字。'
   },
   system_msg: {
     confirm_delete: '单击以确认删除 ',
@@ -64,8 +69,8 @@ export default {
     edit_apps: '编辑应用',
     add_apps: '添加应用',
     website_view: '网站浏览',
-    website_apps: '应用程序（每个网站）',
     websites: '网站',
+    edit_website: '编辑网站',
     labels: '标签',
     category: '类别',
     types: '类型',
@@ -77,7 +82,10 @@ export default {
     articles: '文章',
     article_details: '文章详细信息',
     edit_article: '编辑文章',
-    add_article: '添加文章'
+    add_article: '添加文章',
+    popular_articles: '热门文章',
+    logs: '日志',
+    import_logs: '导入日志'
   },
   login: {
     login: '登录表单',
@@ -96,9 +104,6 @@ export default {
     release_date: '发布日期',
     version: '版本',
     type: '类型',
-    games: '游戏',
-    software: '软体',
-    hot: '新闻（热门）',
     website: '网站',
     category: '类别',
     introduction: '简介',
@@ -115,7 +120,8 @@ export default {
     seo_data: 'SEO数据',
     keywords: '关键字',
     basic_introduction: '基本介绍',
-    description: '描述'
+    description: '描述',
+    subject: '学科'
   },
   articles: {
     title: '标题',
