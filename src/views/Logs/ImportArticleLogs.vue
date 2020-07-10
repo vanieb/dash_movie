@@ -85,17 +85,9 @@ export default {
   data() {
     return {
       submitting: false,
-      username: '',
-      staff: {
-        id: '',
-        username: '',
-        password: '',
-        memo: ''
-      },
       importLogsApi: api.import_logs,
       querySet: [],
       query: {},
-      showForm: false,
       snackbar: {
         color: '',
         text: '',
