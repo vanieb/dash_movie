@@ -443,7 +443,7 @@ export default {
           this.snackbar = {
             color: 'red',
             show: true,
-            text: `${this.$t('system.msg')}: ${error}`
+            text: `${this.$t('system_msg.error')}: ${error}`
           }
         })
       }
