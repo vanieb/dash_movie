@@ -96,7 +96,7 @@ export default {
       headers: [
         {
           sortable: false,
-          text: this.$t('login.username'),
+          text: this.$t('common.file'),
           value: 'filename',
           width: '20%'
         },
