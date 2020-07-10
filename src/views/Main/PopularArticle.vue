@@ -147,7 +147,7 @@ export default {
   },
   methods: {
     getArticles() {
-      this.$http.get(`${this.articleApi}?&website=${this.query.website}&popular=true&active=true`).then(response => {
+      this.$http.get(`${this.articleApi}?&website=${this.query.website}&popular=true&active=true&ordering=popular_order`).then(response => {
         this.filteredQuerySet = response.results
         .sort((a, b) => {
           return a['popular_order'] - b['popular_order']
