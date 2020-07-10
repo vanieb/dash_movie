@@ -25,5 +25,6 @@ export default {
   types: `${websites}types/`,
   categories: `${websites}categories/`,
   labels: `${websites}labels/`,
+  import_logs: `${host}articles/v1/import/`,
   staff: `${host}accounts/v1/staff/`
 }

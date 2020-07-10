@@ -259,8 +259,6 @@ import SnackBar from '@/components/SnackBar'
 import { debounce } from 'lodash'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import Website from '../../components/SelectWebsite.vue'
-// import axios from 'axios'
-import VueCookie from 'vue-cookie'
 
 export default {
   name: 'Article',
@@ -281,23 +279,18 @@ export default {
         website: 1
       },
       querySet: [],
-      export_query: [],
       active: '',
       popular: '',
       today: date.max_today,
       created_at: ['', ''],
       website: 1,
       articleApi: api.articles,
-      // exportApi: `${api.apps}export/`,
       importApi: `${api.articles}import/`,
       loading: true,
-      uploadLoading: false,
       importLoading: false,
-      uploadInstallerDialog: false,
       importArticlesDialog: false,
       submitting: false,
       date_menu: false,
-      file: null,
       importFile: null,
       setWebsite: '',
       statusOptions: [
@@ -389,8 +382,10 @@ export default {
     this.setQueryAll()
     this.$nextTick(() => {
       this.$refs.pulling.rebase()
-      this.query.website = 1
-      this.submit()
+      if (!this.query.created_at_before) {
+        this.query.website = 1
+        this.submit()
+      }
     })
     this.lang = $.getLanguage() == 'zh_CN' ? 'zh-cn' : ''
   },
@@ -404,12 +399,6 @@ export default {
       } else {
         return ''
       }
-    },
-    getReport() {
-      // this.$refs.pulling.getExportQuery()
-      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-      this.href = `${this.exportApi}?token=${VueCookie.get('access_token')}&website=${this.query.website}`
-      return this.querySet.length
     }
   },
   filters: {
@@ -436,61 +425,6 @@ export default {
     queryParam(query) {
       this.query = Object.assign(this.query, query)
     },
-    // exportQuery(expor) {
-    //   this.export_query = expor
-    // },
-    // async uploadFile(mode) {
-    //   const isValid = await this.$refs.form.validate()
-    //   let continueUpload = true
-    //   console.log('11')
-    //   console.log(this.file.name.split('.').pop())
-    //   if (isValid) {
-    //     if (this.file.name.split('.').pop() !== 'zip') {
-    //       await this.$http.get(`${api.upload}?website=${this.website}&filename=${this.file.name}`).then(response => {
-    //         this.count = response.length !== 0 ? response.length : false
-    //         if (this.count) {
-    //           continueUpload = window.confirm(this.$t('system_msg.confirm_upload',{ count: this.count}))
-    //           if (!continueUpload) {
-    //             return
-    //           }
-    //         }
-    //       })
-    //     }
-    //     if (continueUpload) {
-    //       if (mode == 'upload') {
-    //         this.uploadLoading = true
-    //         const formData = new window.FormData()
-    //         formData.set('app_file', this.file)
-    //         formData.set('website', this.setWebsite)
-    //         await axios.post(api.upload, 
-    //           formData, 
-    //           { headers: {'Content-Type': 'multipart/form-data'},
-    //           onUploadProgress: function( progressEvent ) {
-    //             this.uploadPercentage = parseInt( Math.round( ( progressEvent.loaded / progressEvent.total ) * 100 ))
-    //           }.bind(this)
-    //         }).then(() => {
-    //           this.$refs.pulling.rebase()
-    //           this.close()
-    //           this.snackbar = {
-    //             color: 'success',
-    //             show: true,
-    //             text: `${this.$t('actions.upload')}: ${this.$t('status.success')}`
-    //           }
-    //         }, error => {
-    //           this.snackbar = {
-    //             color: 'red',
-    //             show: true,
-    //             text: `${this.$t('system_msg.error')}: ${error}`
-    //           }
-    //           this.uploadLoading = false
-    //           return
-    //         }).catch(function(){
-              
-    //         })
-    //       }
-    //     }
-    //   }
-    // },
     async importCsv() {
       const isValid = await this.$refs.importForm.validate()
       if (isValid) {
@@ -498,7 +432,7 @@ export default {
         const formData = new window.FormData()
         formData.set('import_file', this.importFile)
         this.$http.post(`${this.importApi}`, formData).then(() => {
-          this.$refs.pulling.rebase()
+          this.$router.push('/import_article_logs')
           this.snackbar = {
             color: 'success',
             show: true,
@@ -514,9 +448,6 @@ export default {
         })
       }
     },
-    // websiteSetMultiple(val) {
-    //   this.setWebsite = val
-    // },
     toggle(id, value, mode, title){
       let website_query = this.query.website
       this.snackbar.show = false
