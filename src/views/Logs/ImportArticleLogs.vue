@@ -1,6 +1,13 @@
 <template>
   <v-layout wrap>
     <v-container>
+      <v-layout justify-end>
+        <v-btn
+          color="primary"
+          dark @click="refresh">
+          <v-icon>refresh</v-icon>
+        </v-btn>
+      </v-layout> 
       <v-data-table
         :headers="headers"
         :hide-default-footer="true"
@@ -143,6 +150,11 @@ export default {
   methods: {
     queryData(queryset) {
       this.querySet = queryset
+    },
+    refresh() {
+      this.$nextTick(() => {
+        this.$refs.pulling.rebase()
+      })
     },
     queryParam(query) {
       this.query = query
