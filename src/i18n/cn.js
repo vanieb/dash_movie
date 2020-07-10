@@ -47,7 +47,8 @@ export default {
     upload_installer_memo: '此选项将允许您上传安装程序。 对于批量上传，请先压缩文件，然后再上传。',
     upload_one_installer_memo: '该选项将允许您更改安装程序文件。',
     add_multiple_apps_memo: '此选项将允许您通过导入csv，xls或xlsx文件来创建多个应用程序。',
-    add_multiple_articles_memo: '此选项将允许您通过导入csv，xls或xlsx文件来创建多个文章。'
+    add_multiple_articles_memo: '此选项将允许您通过导入csv，xls或xlsx文件来创建多个文章。',
+    subject_memo: '这些将用作文章索引页面中的关键字。'
   },
   system_msg: {
     confirm_delete: '单击以确认删除 ',
@@ -115,12 +116,12 @@ export default {
     seo_data: 'SEO数据',
     keywords: '关键字',
     basic_introduction: '基本介绍',
-    description: '描述'
+    description: '描述',
+    subject: '学科'
   },
   articles: {
     title: '标题',
-    content: '正文',
-    subject: '学科'
+    content: '正文'
   },
   website: {
     code: '码'

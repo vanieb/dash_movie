@@ -45,20 +45,6 @@
                 <v-spacer></v-spacer>
               </v-row>
               <v-row>
-                <validation-provider style="width:748px;" :name="$t('articles.subject')">
-                  <v-text-field
-                    required
-                    :label="`${$t('articles.subject')}`"
-                    placeholder=" "
-                    prepend-icon="subject"
-                    v-model="article.subject"
-                    dense
-                    outlined>
-                  </v-text-field>
-                </validation-provider>
-                <v-spacer></v-spacer>
-              </v-row>
-              <v-row>
                 <span :style="{width:'748px', marginBottom: isUpdate ? '0px' :'20px' } ">
                    <websites
                     v-if="showWebsites"
@@ -104,6 +90,11 @@
           <v-spacer></v-spacer>
           <v-banner color="primary" dark>{{$t('seo.seo_data')}}</v-banner>
           <v-flex>
+            <v-card-title>{{$t('seo.subject')}}</v-card-title>
+            <v-card-text>
+               <small>{{$t('system_notes.subject_memo')}}</small>
+              <v-textarea outlined v-model="article.subject" rows="2"></v-textarea>
+            </v-card-text>
             <v-card-title>{{$t('seo.keywords')}}</v-card-title>
             <v-card-text>
               <v-textarea outlined v-model="article.keywords" rows="2"></v-textarea>
