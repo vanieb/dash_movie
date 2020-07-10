@@ -47,7 +47,8 @@ export default {
     upload_installer_memo: 'This option will allow you to upload installers. For batch upload, zip first your file then upload. ',
     upload_one_installer_memo: 'This option will allow you to change installer file. ',
     add_multiple_apps_memo: 'This option will allow you to multiple create apps by importing csv, xls, or xlsx file.',
-    add_multiple_articles_memo: 'This option will allow you to multiple create articles by importing csv, xls, or xlsx file.'
+    add_multiple_articles_memo: 'This option will allow you to multiple create articles by importing csv, xls, or xlsx file.',
+    subject_memo: 'These will be used as keywords in the Article Index Page.'
   },
   system_msg: {
     confirm_delete: 'Click to confirm deletion of ',
@@ -117,11 +118,11 @@ export default {
     keywords: 'Keywords',
     basic_introduction: 'Basic Introduction',
     description: 'Description',
+    subject: 'Subject'
   },
   articles: {
     title: 'Title',
-    content: 'Content',
-    subject: 'Subject'
+    content: 'Content'
   },
   website: {
     code: 'Code'

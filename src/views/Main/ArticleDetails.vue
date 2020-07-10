@@ -53,9 +53,6 @@
             <v-row class="mb-2">
               <span class="title"><strong>{{article.title}}</strong></span>
             </v-row>
-            <v-row class="mb-2">
-               <v-icon class="mr-2 m-b-xs">subject</v-icon>{{article.subject || $t('system_msg.no_data') }}
-            </v-row>
             <v-row>
               <v-icon class="mr-2 m-b-xs" color="green">event</v-icon> {{article.created_at | moment("YYYY-MM-DD HH:mm:ss") }}
             </v-row>
@@ -67,6 +64,10 @@
           </v-col>
         </v-row>
         <v-banner color="primary" dark>{{$t('seo.seo_data')}}</v-banner>
+        <v-flex>
+          <v-card-title>{{$t('seo.subject')}}</v-card-title>
+          <v-card-text>{{ article.subject  || $t('system_msg.no_data')}}</v-card-text>
+        </v-flex>
         <v-flex>
           <v-card-title>{{$t('seo.keywords')}}</v-card-title>
           <v-card-text>{{ article.keywords  || $t('system_msg.no_data')}}</v-card-text>
