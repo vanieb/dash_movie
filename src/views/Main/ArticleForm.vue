@@ -326,7 +326,6 @@ export default {
         } else {
           this.article.images.push(response)
         }
-        console.log(response)
       }, error => {
         this.snackbar = {
           color: 'red',
