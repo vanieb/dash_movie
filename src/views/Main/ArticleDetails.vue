@@ -61,6 +61,11 @@
               <v-chip class="ma-1" color="orange" outlined v-for="website in article.websites" :key="website.id">{{website.name}}</v-chip>
               <br/>
             </v-row>
+            <v-row v-if="article.is_popular">
+              <v-icon color="red" class="mr-2">whatshot</v-icon>
+              <v-chip class="ma-1" color="red" dark small>{{$t('nav.popular_articles')}}</v-chip>
+              <br/>
+            </v-row>
           </v-col>
         </v-row>
         <v-banner color="primary" dark>{{$t('seo.seo_data')}}</v-banner>
