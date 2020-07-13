@@ -50,7 +50,8 @@ export default {
     upload_one_installer_memo: '该选项将允许您更改安装程序文件。',
     add_multiple_apps_memo: '此选项将允许您通过导入csv，xls或xlsx文件来创建多个应用程序。',
     add_multiple_articles_memo: '此选项将允许您通过导入csv，xls或xlsx文件来创建多个文章。',
-    subject_memo: '这些将用作文章索引页面中的关键字。'
+    subject_memo: '这些将用作文章索引页面中的关键字。',
+    image_memo: '如果要在文章内容上添加图片，请在此处上传内容，然后将图片URL粘贴到文章内容编辑器对应的图片位置上。'
   },
   system_msg: {
     confirm_delete: '单击以确认删除 ',
@@ -125,7 +126,8 @@ export default {
   },
   articles: {
     title: '标题',
-    content: '正文'
+    content: '正文',
+    images: '图片'
   },
   website: {
     code: '码'
