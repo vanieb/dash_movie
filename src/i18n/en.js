@@ -50,7 +50,8 @@ export default {
     upload_one_installer_memo: 'This option will allow you to change installer file. ',
     add_multiple_apps_memo: 'This option will allow you to multiple create apps by importing csv, xls, or xlsx file.',
     add_multiple_articles_memo: 'This option will allow you to multiple create articles by importing csv, xls, or xlsx file.',
-    subject_memo: 'These will be used as keywords in the Article Index Page.'
+    subject_memo: 'These will be used as keywords in the Article Index Page.',
+    image_memo: 'If you want to add images on article content, upload the content here then paste the image URL in the article content editor.'
   },
   system_msg: {
     confirm_delete: 'Click to confirm deletion of ',
@@ -126,7 +127,8 @@ export default {
   },
   articles: {
     title: 'Title',
-    content: 'Content'
+    content: 'Content',
+    images: 'Images'
   },
   website: {
     code: 'Code'

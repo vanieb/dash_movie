@@ -92,7 +92,7 @@
           <v-flex>
             <v-card-title>{{$t('seo.subject')}}</v-card-title>
             <v-card-text>
-               <small>{{$t('system_notes.subject_memo')}}</small>
+              <small>{{$t('system_notes.subject_memo')}}</small>
               <v-textarea outlined v-model="article.subject" rows="2"></v-textarea>
             </v-card-text>
             <v-card-title>{{$t('seo.keywords')}}</v-card-title>
@@ -104,6 +104,7 @@
               <v-textarea outlined v-model="article.description"></v-textarea>
             </v-card-text>
           </v-flex>
+          <v-banner color="primary" dark>{{$t('nav.articles')}} - {{$t('articles.content')}}</v-banner>
           <v-flex>
             <v-card-title>{{$t('articles.content')}}</v-card-title>
             <v-card-text>
@@ -115,6 +116,40 @@
                 >
               </tinymce>
             </v-card-text>
+          </v-flex>
+          <v-flex>
+            <v-card-title>{{$t('articles.images')}}
+              <v-layout class="justify-end">
+                <v-btn color="blue" @click="$refs.inputUploadImage.click()">
+                  <v-icon color="white">add_photo_alternate</v-icon>
+                </v-btn>
+                <input
+                  v-show="false"
+                  ref="inputUploadImage"
+                  type="file"
+                  accept="image/*"
+                  @change="uploadImage">
+              </v-layout>
+            </v-card-title>
+            <v-card-text>
+              <small>{{$t('system_notes.image_memo')}}</small>
+            </v-card-text>
+            <v-data-table item-key="id" :items="article.images" :headers="headers">
+              <template v-slot:item.image_url="{ item }">
+                <img :src="item.image_url" :alt="item.name" height="100" class="mt-2"/>
+              </template>
+              <template v-slot:item.action="{ item }">
+                <v-icon small @click="deleteImage(item)" color="red">delete</v-icon>
+              </template>
+              <tbody>
+                <tr v-for="item in article.images" :key="item.id" >
+                  <td>
+                    <img :src="item.image_url" height="100" class="mt-2"/></td>
+                  <td>{{ item.image_file }}</td>
+                  <td>{{ item.action }}</td>
+                </tr>
+              </tbody>
+            </v-data-table>
           </v-flex>
           <v-layout justify-start mt-3>
           <v-btn
@@ -156,6 +191,7 @@ export default {
   data() {
     return {
       id: '',
+      updateImages: true,
       showTinyMce: true,
       showWebsites: true,
       article_changed: '',
@@ -180,7 +216,9 @@ export default {
           text: this.$route.meta.title,
           disabled: true
         }],
-      article: {},
+      article: {
+        images: []
+      },
       uploadInstallerDialog: false,
       uploadLoading: false,
       // selectOne: ['app_type', 'category'],
@@ -190,7 +228,24 @@ export default {
         app_type: false,
         category: false,
         labels: ''
+      },
+      headers: [
+        {
+          sortable: false,
+          text: this.$t('articles.images'),
+          value: 'image_url'
+      },
+      {
+          sortable: false,
+          text: `${this.$t('articles.images')} URL`,
+          value: 'image_file'
+      },
+      {
+          sortable: false,
+          text: this.$t('common.action'),
+          value: 'action'
       }
+      ]
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -214,6 +269,7 @@ export default {
       this.id = id
       this.$http.get(`${this.articleApi}${id }/`).then((response) => {
         this.article = response
+        this.images = this.article.images
         this.showTinyMce = true
         this.showWebsites = true
         this.contentKey = true
@@ -254,6 +310,41 @@ export default {
           this.data[item] = val
         }
       }
+    },
+    uploadImage (e) {
+      this.image_file = e.target.files[0]
+      let formData = new window.FormData()
+      formData.set('image_file', this.image_file)
+      this.$http.post(`${this.articleApi}images/`, formData).then(response => {
+        this.snackbar = {
+          color: 'success',
+          show: true,
+          text: `${this.$t('actions.upload')} - ${this.$t('nav.articles')} ${this.$t('articles.images')}: ${this.$t('status.success')}`
+        }
+        if (this.article.images) {
+          this.article.images.unshift(response)
+        } else {
+          this.article.images.push(response)
+        }
+        console.log(response)
+      }, error => {
+        this.snackbar = {
+          color: 'red',
+          show: true,
+          text: error
+        }
+      })
+    },
+    deleteImage(article) {
+       this.$http.delete(`${this.articleApi}images/${article.id}`).then(() => {
+         this.snackbar = {
+          color: 'success',
+          show: true,
+          text: `${this.$t('actions.delete')}: ${this.$t('status.success')}`
+        }
+        let itemIndex = this.article.images.indexOf(article)
+        this.article.images.splice(itemIndex, 1)
+      })
     },
     uploadIcon (e) {
       // file size must less than 1mb
