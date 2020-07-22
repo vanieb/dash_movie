@@ -50,8 +50,8 @@ export default {
     upload_one_installer_memo: 'This option will allow you to change installer file. ',
     import_article_docx_memo: 'This option will allow you to upload articles in .docx format. For batch upload, zip first your file then upload. ',
     import_article_docx_memo_format: 'Please ensure that the .docx file followed the provided template. In case you do not know the template, please ask for technical assistance.',
-    add_multiple_apps_memo: 'This option will allow you to multiple create apps by importing csv, xls, or xlsx file.',
-    add_multiple_articles_memo: 'This option will allow you to multiple create articles by importing csv, xls, or xlsx file.',
+    add_multiple_apps_memo: 'This option will allow you to create multiple apps by importing csv, xls, or xlsx file.',
+    add_multiple_articles_memo: 'This option will allow you to create multiple articles by importing csv, xls, or xlsx file.',
     subject_memo: 'These will be used as keywords in the Article Index Page.',
     image_memo: 'If you want to add images on article content, upload the content here then paste the image URL in the article content editor.'
   },
