@@ -10,6 +10,84 @@
           </v-btn>
         </v-layout>
         <v-layout justify-end>
+          <!-- Doc Import -->
+           <v-dialog v-model="importDocDialog" persistent max-width="600">
+            <template v-slot:activator="{ on }">
+               <v-btn
+                  color="primary"
+                  dark
+                  class="mr-3"
+                  v-on="on">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                      <v-icon v-on="on">cloud_upload</v-icon>
+                    </template>
+                    <span>{{$t('system_notes.import_article_docx_memo')}}</span>
+                  </v-tooltip>
+                </v-btn>
+              </template>
+            <v-card :loading="importLoading">
+              <validation-observer ref="form">
+                <v-card-title>
+                  <v-icon class="mr-3">cloud_upload</v-icon>
+                    &nbsp;{{ $t('actions.upload') }}
+                </v-card-title>
+                <v-card-text>
+                  <v-icon small>info</v-icon>&nbsp;&nbsp;
+                  <small>{{ $t('system_notes.import_article_docx_memo') }}</small>
+                  <small>{{ $t('system_notes.import_article_docx_memo_format') }}</small>
+                </v-card-text>
+                <v-card-text>
+                  <website
+                    type="set"
+                    :mode="'multiple'"
+                    :website="setWebsite"
+                    req="true"
+                    @website-select-multiple="websiteSetMultiple">
+                  </website>
+                  <v-spacer></v-spacer>
+                  <validation-provider style="width:310px;" rules="required" :name="$t('common.file')">
+                    <v-file-input
+                      outlined
+                      dense
+                      clearable
+                      :error-messages="errors"
+                      :label="`${$t('common.file')}*`"
+                      placeholder=" "
+                      slot-scope="{ errors }"
+                      required
+                      v-model="importFile">    
+                    </v-file-input>
+                  </validation-provider>
+                  <v-progress-linear
+                    v-if="importLoading"
+                    color="light-blue"
+                    height="25"
+                    v-model="uploadPercentage"
+                    striped
+                  >
+                    <template v-slot="{ value }">
+                      <strong>{{ Math.ceil(value) }}%</strong>
+                    </template>
+                  </v-progress-linear>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="grey lighten-1"
+                    @click="closeImportDoc()"
+                    >{{ importLoading ? $t('actions.cancel') : $t('actions.close') }}
+                  </v-btn>
+                  <v-btn
+                    color="blue darken-1"
+                    :disabled="importLoading"
+                    @click="uploadFile('upload')">{{ $t('actions.submit') }}
+                  </v-btn>
+                </v-card-actions>
+              </validation-observer>
+            </v-card>
+          </v-dialog>
+          <!-- CSV Import -->
           <v-dialog v-model="importArticlesDialog" persistent max-width="600">
             <template v-slot:activator="{ on }">
               <v-btn
@@ -289,6 +367,7 @@ export default {
       loading: true,
       importLoading: false,
       importArticlesDialog: false,
+      importDocDialog: false,
       submitting: false,
       date_menu: false,
       importFile: null,
@@ -425,6 +504,34 @@ export default {
     queryParam(query) {
       this.query = Object.assign(this.query, query)
     },
+    async uploadFile() {
+      const isValid = await this.$refs.form.validate()
+      if (isValid) {
+        this.importLoading = true
+        const formData = new window.FormData()
+        formData.set('website', this.setWebsite)
+        formData.set('upload_file', this.importFile)
+        this.$http.post(`${this.articleApi}?upload=docx`, formData).then(() => {
+          this.closeImportDoc()
+          if (this.importFile.name.split('.').pop() !== 'zip') {
+            this.$router.push('/import_article_logs')
+          } else {
+            this.$refs.pulling.rebase()
+          }
+          this.snackbar = {
+            color: 'success',
+            show: true,
+            text: `${this.$t('actions.import')} - ${this.$t('nav.articles')}: ${this.$t('status.success')}`
+          }
+        }, error => {
+          this.snackbar = {
+            color: 'red',
+            show: true,
+            text: `${this.$t('system_msg.error')}: ${error}`
+          }
+        })
+      }
+    },
     async importCsv() {
       const isValid = await this.$refs.importForm.validate()
       if (isValid) {
@@ -494,6 +601,9 @@ export default {
       this.query.website = val
       this.submit()
     },
+    websiteSetMultiple(val) {
+      this.setWebsite = val
+    },
     search:
       debounce(function() {
         this.submit()
@@ -513,18 +623,18 @@ export default {
       this.created_at  = ['', '']
       this.dateRangeText = ''
     },
-    close() {
-      this.setWebsite = ''
-      this.file = null
-      this.uploadInstallerDialog = false
-      this.uploadLoading = false
-      this.$refs.form.reset()
-    },
     closeImport() {
       this.importFile = null
-      this.importArticlesDialog = false
       this.importLoading = false
+      this.importArticlesDialog = false
       this.$refs.importForm.reset()
+    },
+    closeImportDoc() {
+      this.setWebsite = ''
+      this.importFile = null
+      this.importLoading = false
+      this.importDocDialog = false
+      this.$refs.form.reset()
     },
     deleteArticle(id) {
       this.$http.delete(this.articleApi + id + '/').then(() => {

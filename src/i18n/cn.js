@@ -48,6 +48,8 @@ export default {
   system_notes: {
     upload_installer_memo: '此选项将允许您上传安装程序。 对于批量上传，请先压缩文件，然后再上传。',
     upload_one_installer_memo: '该选项将允许您更改安装程序文件。',
+    import_article_docx_memo: '此选项将允许您上传.docx格式的文章。 对于批量上传，请先压缩文件，然后再上传。',
+    import_article_docx_memo_format: '请确保.docx文件遵循提供的模板。 如果您不知道模板，请寻求技术帮助。',
     add_multiple_apps_memo: '此选项将允许您通过导入csv，xls或xlsx文件来创建多个应用程序。',
     add_multiple_articles_memo: '此选项将允许您通过导入csv，xls或xlsx文件来创建多个文章。',
     subject_memo: '这些将用作文章索引页面中的关键字。',
