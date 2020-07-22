@@ -330,6 +330,7 @@
 </template>
 <script>
 import api from '@/api/apis'
+import axios from 'axios'
 import date from '../../utils/date'
 import $ from '../../utils/util'
 import Pagination from '@/components/Pagination'
@@ -511,7 +512,13 @@ export default {
         const formData = new window.FormData()
         formData.set('website', this.setWebsite)
         formData.set('upload_file', this.importFile)
-        this.$http.post(`${this.articleApi}?upload=docx`, formData).then(() => {
+        await axios.post(`${this.articleApi}?upload=docx`, 
+          formData, 
+          { headers: {'Content-Type': 'multipart/form-data'},
+          onUploadProgress: function( progressEvent ) {
+            this.uploadPercentage = parseInt( Math.round( ( progressEvent.loaded / progressEvent.total ) * 100 ))
+          }.bind(this)
+        }).then(() => {
           if (this.importFile.name.split('.').pop() !== 'zip') {
             this.$refs.pulling.rebase()
           } else {
@@ -529,6 +536,10 @@ export default {
             show: true,
             text: `${this.$t('system_msg.error')}: ${error}`
           }
+          this.importLoading = false
+          return
+        }).catch(function(){
+          
         })
       }
     },
