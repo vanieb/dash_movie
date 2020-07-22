@@ -512,12 +512,12 @@ export default {
         formData.set('website', this.setWebsite)
         formData.set('upload_file', this.importFile)
         this.$http.post(`${this.articleApi}?upload=docx`, formData).then(() => {
-          this.closeImportDoc()
           if (this.importFile.name.split('.').pop() !== 'zip') {
-            this.$router.push('/import_article_logs')
-          } else {
             this.$refs.pulling.rebase()
+          } else {
+            this.$router.push('/import_article_logs')
           }
+          this.closeImportDoc()
           this.snackbar = {
             color: 'success',
             show: true,
