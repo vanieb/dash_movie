@@ -511,7 +511,7 @@ export default {
       if (isValid) {
         this.importLoading = true
         const formData = new window.FormData()
-        formData.set('website', this.setWebsite)
+        formData.set('websites', this.setWebsite)
         formData.set('upload_file', this.importFile)
         await axios.post(`${this.articleApi}?upload=docx`, 
           formData, 
