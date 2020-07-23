@@ -6,7 +6,7 @@
           <v-btn
             color="primary"
             dark to="/articles/add">
-            <v-icon class="mr-3">library_add</v-icon> &nbsp;{{ $t('actions.add') }}
+            <v-icon class="mr-3">post_add</v-icon> &nbsp;{{ $t('actions.add') }}
           </v-btn>
         </v-layout>
         <v-layout justify-end>
@@ -506,6 +506,7 @@ export default {
       this.query = Object.assign(this.query, query)
     },
     async uploadFile() {
+      this.snackbar.show = false
       const isValid = await this.$refs.form.validate()
       if (isValid) {
         this.importLoading = true
