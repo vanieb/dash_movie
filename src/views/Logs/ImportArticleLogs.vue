@@ -47,7 +47,8 @@
             </td>
             <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td>{{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
-            <td>{{ item.memo || '-'}}</td>
+            <td v-html="item.memo" v-if="item.memo"></td>
+            <td v-else>-</td>
             <td class="justify-center">
               <v-btn icon @click="goToArticles(item.created_at)" v-if="item.status == 1"> 
                 <v-icon small color="blue" class="icon__flip">reply_all</v-icon>
@@ -141,11 +142,6 @@ export default {
     this.$nextTick(() => {
       this.$refs.pulling.rebase()
     })
-  },
-  filters: {
-    moment: function (date) {
-      return Vue.moment(date).format('YYYY-MM-DD')
-    }
   },
   methods: {
     queryData(queryset) {
