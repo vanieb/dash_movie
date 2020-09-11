@@ -47,7 +47,7 @@
             </td>
             <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td>{{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
-            <td v-html="item.memo" v-if="item.memo"></td>
+            <td v-html="item.memo" width="40%" style="word-break:break-all;" v-if="item.memo"></td>
             <td v-else>-</td>
             <td class="justify-center">
               <v-btn icon @click="goToArticles(item.created_at)" v-if="item.status == 1"> 
@@ -129,7 +129,8 @@ export default {
         {
           sortable: false,
           text: this.$t('common.remarks'),
-          value: 'memo'
+          value: 'memo',
+          width: '40%'
         },
         {
           sortable: false,
