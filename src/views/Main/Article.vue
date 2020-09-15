@@ -243,7 +243,8 @@
             </div>
             <v-layout class="justify-end">
               <v-btn
-                color="blue"
+                color="primary"
+                dark
                 :loading="loading"
                 @click="clearAll"
               >

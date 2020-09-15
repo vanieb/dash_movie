@@ -91,7 +91,8 @@
           <v-spacer></v-spacer>
           <v-layout justify-start mt-3>
             <v-btn
-              color="blue darken-1"
+              color="primary"
+              dark
               :loading="submitting"
               @click="saveWebsite"
             >{{ $t('actions.save') }}</v-btn>
