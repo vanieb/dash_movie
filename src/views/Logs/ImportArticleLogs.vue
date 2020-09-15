@@ -1,11 +1,12 @@
 <template>
   <v-layout wrap>
     <v-container>
-      <v-layout justify-end>
+      <v-layout justify-start>
         <v-btn
           color="primary"
           dark @click="refresh">
-          <v-icon>refresh</v-icon>
+          <v-icon>refresh</v-icon>&nbsp;
+          {{$t('actions.refresh')}}
         </v-btn>
       </v-layout> 
       <v-data-table

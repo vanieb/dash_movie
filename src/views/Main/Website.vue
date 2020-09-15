@@ -15,11 +15,6 @@
           <tr v-for="item in querySet" :key="item.id">
             <td>{{ item.name }}</td>
             <td>{{ item.code }}</td>
-            <!-- <td class="align-center justify-start layout">
-              <v-switch value v-model="item.status"
-                @change="toggleStatus(item.id, item.status)">
-              </v-switch>
-            </td> -->
             <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td>{{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td>{{ item.memo || '-'}}</td>

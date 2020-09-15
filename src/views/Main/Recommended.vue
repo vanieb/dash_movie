@@ -65,13 +65,14 @@
             :tag="'tbody'"
             :disabled="!mode">
             <tr v-for="(item, index) in filteredQuerySet" :key="item.id" >
-              <td width="2%">{{index + 1}}</td>
-              <td width="5%">
-                <v-btn :color ="iconColor" icon>
-                  <v-icon>sort</v-icon>
+              <td width="5%" class="px-0" v-if="mode"><strong class="primary--text">{{index + 1}}</strong>
+                <v-btn icon v-if="mode">
+                  <v-icon :color="iconColor">sort</v-icon>
                 </v-btn>
               </td>
+              <td v-else width="1%">{{index + 1}}</td>
               <td>{{ item.name }}</td>
+              <td>{{ item.website.name }}</td>
             </tr>
           </draggable>
           
@@ -128,14 +129,14 @@ export default {
         },
         {
           sortable: false,
-          text: '',
-          value: 'mode'
+          text: this.$t('common.name'),
+          value: 'name'
         },
         {
           sortable: false,
-          text: this.$t('common.name'),
-          value: 'name'
-        }
+          text: this.$t('apps.website'),
+          value: 'website'
+        },
       ]
     }
   },

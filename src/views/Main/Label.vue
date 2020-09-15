@@ -180,7 +180,8 @@
             </div>
             <v-layout class="justify-end">
               <v-btn
-                color="blue"
+                color="primary"
+                dark
                 :loading="loading"
                 @click="clearAll">
                 <v-icon>clear_all</v-icon>{{ $t('actions.clear') }}
