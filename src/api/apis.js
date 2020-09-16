@@ -22,6 +22,7 @@ export default {
   websites: `${websites}`,
   webapps:  `${websites}apps/`,
   articles: `${host}articles/v1/`,
+  keywords: `${host}articles/v1/keywords/`,
   types: `${websites}types/`,
   categories: `${websites}categories/`,
   labels: `${websites}labels/`,

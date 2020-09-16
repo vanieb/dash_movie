@@ -147,7 +147,7 @@
             model: true,
             children: [
               { icon: 'description', text: this.$t('nav.articles'), path: '/articles'},
-              // word and link list
+              { icon: 'link', text: this.$t('nav.keyword_link'), path: '/keyword_link'},
               { icon: 'whatshot', text: this.$t('nav.popular_articles'), path: '/popular'}
               ]
           }, {
