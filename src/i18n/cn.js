@@ -89,6 +89,7 @@ export default {
     article_details: '文章详细信息',
     edit_article: '编辑文章',
     add_article: '添加文章',
+    keyword_link: '关键字链接',
     popular_articles: '热门文章',
     logs: '日志',
     import_logs: '导入日志'

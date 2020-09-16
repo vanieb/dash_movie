@@ -67,17 +67,11 @@
             :disabled="!mode">
             <tr v-for="(item, index) in filteredQuerySet" :key="item.id">
               <td width="5%" class="px-0" v-if="mode"><strong class="primary--text">{{index + 1}}</strong>
-              <v-btn icon v-if="mode">
-                <v-icon :color="iconColor">sort</v-icon>
-              </v-btn>
-            </td>
-            <td v-else width="1%">{{index + 1}}</td>
-              <!-- <td width="2%">{{index + 1}}</td> -->
-              <!-- <td width="2%">
-                <v-btn :color ="iconColor" icon>
-                  <v-icon>sort</v-icon>
+                <v-btn icon v-if="mode">
+                  <v-icon :color="iconColor">sort</v-icon>
                 </v-btn>
-              </td> -->
+              </td>
+              <td v-else width="1%">{{index + 1}}</td>
               <td>{{ item.name }}</td>
               <td>{{ item.website.name }}</td>
             </tr>

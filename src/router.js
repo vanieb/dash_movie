@@ -150,6 +150,18 @@ export default new Router({
       }
     },
     {
+      path: '/keyword_link',
+      name: 'KeywordLink',
+      component: function(resolve) {
+        require(['./views/Main/KeywordLink.vue'], resolve)
+      },
+      meta: {
+        icon: 'link',
+        auth: true,
+        title: i18n.t('nav.keyword_link')
+      }
+    },
+    {
       path: '/websites',
       name: 'Websites',
       component: function(resolve) {
