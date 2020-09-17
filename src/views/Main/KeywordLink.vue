@@ -3,20 +3,16 @@
     <v-container>
       <v-layout>
         <v-layout justify-start>
-          <div style="width:200px !important;">
-          <website
-            type="filter"
-            :mode="'one'"
-            :website="query.website"
-            @website-select-one="websiteSelectOne">
-          </website>
-          </div>
-        </v-layout>
-        <v-layout justify-end>
         <validation-observer ref="form">
           <v-dialog v-model="showForm" persistent max-width="500">
             <template v-slot:activator="{ on }">
-              <v-btn color="primary" dark v-on="on" align-right><v-icon class="mr-3">add_box</v-icon> &nbsp;{{ $t('actions.add') }}</v-btn>
+              <v-btn
+                color="primary"
+                dark
+                v-on="on"
+                align-right>
+                <v-icon class="mr-3">add_box</v-icon> &nbsp;{{ $t('actions.add') }}
+              </v-btn>
             </template>
             <v-card>
               <v-card-title class="headline">
@@ -27,46 +23,30 @@
             <v-card-text>
               <v-layout wrap>
                 <v-flex xs12 >
-                  <validation-provider rules="required|max:15" :name="$t('common.name')">
+                  <validation-provider rules="required" :name="$t('seo.keywords')">
                     <v-text-field
-                      :counter="15"
                       :error-messages="errors"
-                      :label="`${$t('common.name')}*`"
+                      :label="`${$t('seo.keywords')}*`"
                       placeholder=" "
                       required
                       slot-scope="{ errors }"
-                      v-model="type.name"
+                      v-model="keyword.keyword"
                     ></v-text-field>
                   </validation-provider>
                 </v-flex>
                 <v-flex xs12>
-                  <div width="452px;">
-                    <website
-                      :key="websiteKey" 
-                      elementType="modal"
-                      type="set"
-                      req="true"
-                      :mode="'one'"
-                      :website="type.website_id"
-                      @website-select-one="websiteSetOne">
-                    </website>
-                  </div>
-                </v-flex>
-                <v-flex xs12>
-                  <validation-provider rules="max:50" :name="$t('common.remarks')">
+                  <validation-provider rules="required" :name="$t('apps.link')">
                     <v-textarea
-                      :counter="50"
                       :error-messages="errors"
-                      :label="$t('common.remarks')"
+                      :label="`${$t('apps.link')}*`"
                       placeholder=" "
-                      rows="1"
+                      rows="4"
                       slot-scope="{ errors }"
-                      v-model="type.memo"
+                      v-model="keyword.link"
                     ></v-textarea>
                   </validation-provider>
                 </v-flex>
               </v-layout>
-
               <small color="red">*{{ $t('errors.required') }}</small>
             </v-card-text>
               <!-- BUTTONS -->
@@ -80,7 +60,7 @@
               <v-btn
                 color="blue darken-1"
                 :loading="submitting"
-                @click="saveType"
+                @click="saveKeyword"
               >{{ $t('actions.save') }}</v-btn>
             </v-card-actions>
             </v-card>
@@ -91,30 +71,11 @@
       <v-card>
         <v-col cols="12" md="12" class="mt-2" style="padding: 20px 20px 10px 20px !important;">
           <v-row>
-            <div style="width:155px;" class="mr-2">
-              <v-select
-                item-name="text"
-                item-value="value"
-                :items="statusOptions"
-                :label="`${$t('common.status')}`"
-                v-model="is_active"
-                hide-details="true"
-                placeholder=" "
-                outlined
-                dense>
-                <template slot="selection" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-                <template slot="item" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-              </v-select>
-            </div>
             <div style="width:200px;" class="mr-2">
               <v-text-field
                 @input="search"
-                :label="`${$t('common.name')}`"
-                v-model="query.name"
+                :label="`${$t('seo.keywords')}`"
+                v-model="query.keyword_q"
                 hide-details="true"
                 placeholder=" "
                 outlined
@@ -180,17 +141,13 @@
         <span v-if="!items">{{items}}</span>
         <tbody>
           <tr v-for="item in querySet" :key="item.id">
-            <td>{{ item.name }}</td>
-            <td class="align-center justify-start layout">
-              <v-switch value v-model="item.is_active"
-                @change="toggleStatus(item.id, item.is_active, item.website.id)">
-              </v-switch>
+            <td>{{ item.keyword }}</td>
+            <td>{{ item.link }}</td>
+            <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}} / <br/>
+                {{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}
             </td>
-            <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
-            <td>{{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
-            <td>{{ item.memo || '-'}}</td>
             <td class="align-center justify-center">
-              <v-btn class="mr-2" icon @click="updateType(item)">
+              <v-btn class="mr-2" icon @click="updateKeyword(item)">
                 <v-icon>edit</v-icon>
               </v-btn>
               <v-menu offset-y>
@@ -198,11 +155,11 @@
                   <v-icon color="red" small v-on="on">delete</v-icon>
                 </template>
                 <v-list dark>
-                  <v-list-item @click="deleteType(item.id, true, $event)">
+                  <v-list-item @click="deleteKeyword(item.id, true, $event)">
                     <v-list-item-title>
                       <v-icon class="mr-2" color="orange">warning</v-icon>
                       {{ $t('system_msg.confirm_delete') }}
-                      <strong>{{ item.name }}</strong>
+                      <strong>{{ item.keyword }}</strong>
                     </v-list-item-title>
                   </v-list-item>
                 </v-list>
@@ -215,7 +172,7 @@
     </v-container>
     <pagination
       :queryset="querySet"
-      :api="typesApi"
+      :api="keywordsApi"
       :query="query"
       ref="pulling"
       @query-data="queryData"
@@ -239,44 +196,30 @@ import Pagination from '@/components/Pagination'
 import SnackBar from '@/components/SnackBar'
 import { debounce } from 'lodash'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
-import Website from '../../components/SelectWebsite.vue'
 
 export default {
-  name: 'Type',
+  name: 'KeywordLink',
   components: {
     Pagination,
     SnackBar,
     ValidationObserver,
-    ValidationProvider,
-    Website
+    ValidationProvider
   },
   data() {
     return {
       name: '',
       showForm: false,
-      query: {
-        website: 1
-      },
       querySet: [],
-      is_active: '',
       today: date.max_today,
       created_at: ['', ''],
-      website: 1,
-      typesApi: api.types,
+      keywordsApi: api.keywords,
       loading: true,
       submitting: false,
       date_menu: false,
-      websiteKey: false,
-      type: {
-        name: '',
-        website: '',
-        memo: ''
+      keyword: {
+        keyword: '',
+        link: ''
       },
-      statusOptions: [
-        { text: this.$t('status.enabled'),
-          value: true},
-        { text: this.$t('status.disabled'),
-          value: false}],
       snackbar: {
         color: '',
         text: '',
@@ -285,33 +228,25 @@ export default {
       headers: [
         {
           sortable: false,
-          text: this.$t('common.name'),
-          value: 'name'
+          text: this.$t('seo.keywords'),
+          value: 'keyword',
+          width: '15%'
         },
         {
           sortable: false,
-          text: this.$t('common.status'),
-          value: 'status',
-          width: '10%'
+          text: this.$t('apps.link'),
+          value: 'link',
         },
         {
           sortable: false,
-          text: this.$t('common.created_at'),
-          value: 'created_at'
+          text: `${this.$t('common.created_at')}/${this.$t('common.updated_at')}`,
+          value: 'created_at',
+          width: '15%'
         },
         {
           sortable: false,
-          text: this.$t('common.updated_at'),
-          value: 'updated_at'
-        },
-        {
-          sortable: false,
-          text: this.$t('common.remarks'),
-          value: 'memo'
-        },
-        {
-          sortable: false,
-          text: this.$t('common.action')
+          text: this.$t('common.action'),
+          width: '8%'
         }
       ]
     }
@@ -324,14 +259,6 @@ export default {
         this.$refs.pulling.rebase()
       },
       deep: true
-    },
-    is_active(newObj) {
-      this.query.is_active = newObj
-      this.$refs.pulling.submit()
-    },
-    website(newObj) {
-      this.query.website = newObj
-      this.search()
     },
     created_at(newObj) {
       if (this.query.created_at_after > this.query.created_at_before){
@@ -351,8 +278,6 @@ export default {
     this.setQueryAll()
     this.$nextTick(() => {
       this.$refs.pulling.rebase()
-      this.query.website = 1
-      this.submit()
     })
     this.lang = $.getLanguage() == 'zh_CN' ? 'zh-cn' : ''
   },
@@ -371,7 +296,7 @@ export default {
       return this.isUpdate ? 'edit' : 'add_box'
     },
     cardTitle() {
-      return this.isUpdate ? `${this.$t('actions.update')} - ${this.name}` : `${this.$t('actions.add')} - ${this.$t('nav.types')}`
+      return this.isUpdate ? `${this.$t('actions.update')} - ${this.name}` : `${this.$t('actions.add')} - ${this.$t('seo.keywords')}`
     },
     isUpdate() {
       return this.name.length > 0
@@ -384,8 +309,6 @@ export default {
       } else {
         this.created_at = [undefined, undefined]
       }
-      this.website = this.$route.query.website || ''
-      this.is_active = this.$route.query.is_active==true || this.$route.query.is_active==false ? this.$route.query.is_active : ''
       this.query = Object.assign({}, this.$route.query)
     },
     queryData(queryset) {
@@ -395,39 +318,10 @@ export default {
     queryParam(query) {
       this.query = Object.assign(this.query, query)
     },
-    toggleStatus(id, is_active, website_id){
-      this.$http.put(this.typesApi + id + '/', {
-        is_active: is_active,
-        website_id: website_id
-      }).then((response) => {
-        let status_text = response.is_active ? this.$t('status.enabled') : this.$t('status.disabled')
-        this.snackbar = {
-          color: 'success',
-          show: true,
-          text: `[${this.$t('common.status')}]: ${status_text}`
-        }
-        this.$refs.pulling.rebase()
-        this.query.website = response.website.id
-      }, error => {
-        this.snackbar = {
-          color: 'error',
-          show: true,
-          text: `${this.$t('system_msg.error')}: ${error}`
-        }
-      })
-      this.snackbar.show = false
-    },
     submit() {
       if (!$.compareQuery(this.query, this.$route.query)) {
         this.$refs.pulling.submit()
       }
-    },
-    websiteSelectOne(val) {
-      this.query.website = val
-      this.submit()
-    },
-    websiteSetOne(val) {
-      this.type.website_id = val
     },
     search:
       debounce(function() {
@@ -436,9 +330,7 @@ export default {
     700),
     clearAll() {
       this.created_at = ['','']
-      this.is_active = ''
       this.query = {}
-      this.query.website = 1
       this.$nextTick(() => {
         this.$refs.pulling.submit()
       })
@@ -447,19 +339,18 @@ export default {
       this.created_at  = ['', '']
       this.dateRangeText = ''
     },
-    updateType(item) {
-      Object.assign(this.type, {
+    updateKeyword(item) {
+      Object.assign(this.keyword, {
         id: item.id,
-        name: item.name,
-        memo: item.memo,
-        website_id: item.website.id
+        keyword: item.keyword,
+        link: item.link
       })
-      this.name = item.name
+      this.name = item.keyword
       this.showForm = true
     },
-    deleteType(id) {
+    deleteKeyword(id) {
       this.snackbar.show=false
-      this.$http.delete(this.typesApi + id + '/').then(() => {
+      this.$http.delete(this.keywordsApi + id + '/').then(() => {
         this.snackbar = {
           color: 'success',
           show: true,
@@ -468,24 +359,21 @@ export default {
         this.$refs.pulling.rebase()
       })
     },
-    async saveType() {
+    async saveKeyword() {
       const isValid = await this.$refs.form.validate()
-      this.websiteKey = true
-      let typeResult = Object({
-        name: this.type.name,
-        website_id: this.query.website,
-        memo: this.type.memo,
+      let keywordResult = Object({
+        keyword: this.keyword.keyword,
+        link: this.keyword.link,
       })
       if (isValid) {
-        if (this.type.id) {
-        this.$http.put(`${this.typesApi}${this.type.id}/`, typeResult).then((response) => {
+        if (this.keyword.id) {
+        this.$http.put(`${this.keywordsApi}${this.keyword.id}/`, keywordResult).then(() => {
           this.snackbar = {
             color: 'success',
             show: true,
-            text: `${this.$t('actions.update')}-${this.$t('nav.types')}: ${this.$t('status.success')}`
+            text: `${this.$t('actions.update')}-${this.$t('seo.keywords')}: ${this.$t('status.success')}`
           }
           this.$refs.pulling.rebase()
-          this.query.website = response.website.id
           this.close()
         }, error => {
           this.snackbar = {
@@ -495,14 +383,13 @@ export default {
           }
         })
       } else {
-        this.$http.post(this.typesApi, typeResult).then((response) => {
+        this.$http.post(this.keywordsApi, keywordResult).then(() => {
           this.snackbar = {
             color: 'success',
             show: true,
-            text: `${this.$t('actions.add')}-${this.$t('nav.types')}: ${this.$t('status.success')}`
+            text: `${this.$t('actions.add')}-${this.$t('seo.keywords')}: ${this.$t('status.success')}`
           }
           this.$refs.pulling.rebase()
-          this.query.website = response.website.id
           this.close()
         }, error => {
           this.snackbar = {
@@ -517,12 +404,10 @@ export default {
       this.snackbar.show=false
     },
     close() {
-      this.websiteKey = false
-      this.type.id = ''
-      this.type.name = ''
-      this.type.memo=''
+      this.keyword.id = ''
+      this.keyword.keyword = ''
+      this.keyword.link=''
       this.name = ''
-      this.type.website_id = '' 
       this.submitting = false
       this.$refs.form.reset()
       this.showForm = false

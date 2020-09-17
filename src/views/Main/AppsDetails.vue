@@ -90,17 +90,19 @@
                 {{$t('status.disabled')}}
               </v-chip>
             </v-row>
-            <v-row>
+            <v-row v-if="apps.is_rank">
+              <v-icon color="red">format_list_numbered</v-icon>
               <v-chip
-                v-if="apps.is_rank"
                 class="ma-1"
                 color="red"
                 text-color="white"
                 style="height:20px; !important font-size:11px;">
                 {{$t('nav.leaderboard')}}
               </v-chip>
+            </v-row>
+            <v-row v-if="apps.is_recommended">
+              <v-icon color="red">star_outline</v-icon>
               <v-chip
-                v-if="apps.is_recommended"
                 class="ma-1"
                 color="red"
                 text-color="white"

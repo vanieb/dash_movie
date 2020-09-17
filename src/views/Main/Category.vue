@@ -89,9 +89,10 @@
                     @click="close"
                   >{{ $t('actions.close') }}</v-btn>
                   <v-btn
-                    color="blue darken-1"
+                    color="primary"
+                    dark
                     :loading="submitting"
-                  @click="saveCategory"
+                    @click="saveCategory"
                   >{{ $t('actions.save') }}</v-btn>
                 </v-card-actions>
               </validation-observer>
@@ -180,7 +181,8 @@
             </div>
             <v-layout class="justify-end">
               <v-btn
-                color="blue"
+                color="primary"
+                dark
                 :loading="loading"
                 @click="clearAll">
                 <v-icon>clear_all</v-icon>{{ $t('actions.clear') }}

@@ -260,7 +260,8 @@
           </v-flex>
           <v-layout justify-start mt-3>
           <v-btn
-              color="blue darken-1"
+              color="primary"
+              dark
               :loading="submitting"
               @click="saveApp"
             >{{ $t('actions.save') }}</v-btn>

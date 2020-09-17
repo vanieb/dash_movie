@@ -283,7 +283,7 @@ export default {
           })
         }
       }
-      this.$router.push({path: basePath, query})
+      this.$router.push({path: basePath, query}).catch(()=>{})
     }
   },
   computed: {

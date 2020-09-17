@@ -29,7 +29,8 @@ export default {
     change_file: 'Change File',
     sort: 'Sort',
     cancel: 'Cancel',
-    import: 'Import'
+    import: 'Import',
+    refresh: 'Refresh'
   },
   status: {
     success: 'Success',
@@ -68,6 +69,7 @@ export default {
     login: 'Login',
     change_password: 'Change Password',
     apps: 'Apps',
+    apps_management: 'App Management',
     apps_detail: 'App Details',
     edit_apps: 'Edit Apps',
     add_apps: 'Add Apps',
@@ -83,9 +85,11 @@ export default {
     staff: 'Staff',
     settings: 'Settings',
     articles: 'Articles',
+    article_management: 'Article Management',
     article_details: 'Article Details',
     edit_article: 'Edit Article',
     add_article: 'Add Article',
+    keyword_link: 'Keyword Link',
     popular_articles: 'Popular Articles',
     logs: 'Logs',
     import_logs: 'Import Logs'

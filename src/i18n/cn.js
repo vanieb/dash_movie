@@ -29,7 +29,8 @@ export default {
     change_file: '变更档案',
     sort: '调整排序',
     cancel: '取消',
-    import: '导入'
+    import: '导入',
+    refresh: '刷新'
   },
   status: {
     success: '成功',
@@ -68,6 +69,7 @@ export default {
     login: '登录',
     change_password: '更改密码',
     apps: '应用',
+    apps_management: '应用管理',
     apps_detail: '应用详情',
     edit_apps: '编辑应用',
     add_apps: '添加应用',
@@ -83,9 +85,11 @@ export default {
     staff: '员工',
     settings: '设定值',
     articles: '文章',
+    article_management: '物品管理',
     article_details: '文章详细信息',
     edit_article: '编辑文章',
     add_article: '添加文章',
+    keyword_link: '关键字链接',
     popular_articles: '热门文章',
     logs: '日志',
     import_logs: '导入日志'
