@@ -57,8 +57,23 @@
               <v-icon class="mr-2 m-b-xs" color="green">event</v-icon> {{article.created_at | moment("YYYY-MM-DD HH:mm:ss") }}
             </v-row>
             <v-row>
-              <v-icon color="orange" class="mr-2">web</v-icon>
-              <v-chip class="ma-1" color="orange" outlined v-for="website in article.websites" :key="website.id">{{website.name}}</v-chip>
+              <v-icon class="mr-2 m-b-sm" color="error">person</v-icon>{{article.created_by }}
+            </v-row>
+          </v-col>
+          <v-col>
+            <v-row>
+              <v-icon color="orange">web</v-icon>
+              <v-chip class="ma-1" color="orange" outlined small v-for="website in article.websites" :key="website.id">{{website.name}}</v-chip>
+              <br/>
+            </v-row>
+            <v-row v-if="article.is_active">
+              <v-icon color="success" class="mr-2">check_box</v-icon>
+              <v-chip class="ma-1" color="success" small>{{$t('status.enabled')}}</v-chip>
+              <br/>
+            </v-row>
+            <v-row v-else>
+              <v-icon color="gray" class="mr-2">indeterminate_check_box</v-icon>
+              <v-chip class="ma-1" color="gray" small>{{$t('status.disabled')}}</v-chip>
               <br/>
             </v-row>
             <v-row v-if="article.is_popular">
