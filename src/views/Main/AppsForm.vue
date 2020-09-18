@@ -84,7 +84,7 @@
                   </websites>
                 </span>
               </v-row>
-              <v-row>
+              <!-- <v-row>
                 <span style="width:338px;">
                   <types
                     v-if="showType || !isUpdate"
@@ -108,8 +108,8 @@
                     @category-select-one="categorySelectOne">
                   </categories>
                 </span>
-              </v-row>
-              <v-row>
+              </v-row> -->
+              <!-- <v-row>
                 <labels
                   v-if="showLabels || !isUpdate"
                   :labelFilter="labelFilter"
@@ -119,25 +119,25 @@
                   :label="apps.labels"
                   @label-select-multiple="labelSelectMultiple">
                 </labels>
-              </v-row>
+              </v-row> -->
             </v-col>
             <v-spacer></v-spacer>
             <v-col cols="12" md="3">
-              <v-banner color="primary" dark>
+              <v-banner color="primary" dark dense>
                 {{$t('actions.upload')}} - {{$t('common.icon')}}
               </v-banner>
               <v-card>
-                <v-card-text>
+                <!-- <v-card-text> -->
                  <v-img
                   v-if="showImage"
                   :src="`${apps.imageURI}`"
                   class="my-1"
                   contain
                   height="100"></v-img>
-                </v-card-text>
+                <!-- </v-card-text> -->
                 <v-card-actions>
                   <v-layout justify-center>
-                    <v-btn color="blue" @click="$refs.inputUpload.click()">
+                    <v-btn color="blue" small @click="$refs.inputUpload.click()">
                       <v-icon color="white">cloud_upload</v-icon>
                     </v-btn>
                     <input
@@ -151,6 +151,101 @@
               </v-card>
             </v-col>
           </v-row>
+          <v-spacer></v-spacer>
+          <v-layout>
+            <v-card-title>{{$t('apps.classification')}}</v-card-title>
+            <v-layout justify-end>
+              <validation-observer ref="form">
+                <v-dialog v-model="showForm" persistent max-width="500">
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      color="primary"
+                      small
+                      dark v-on="on"
+                      align-right>
+                      <v-icon small left>add_box</v-icon> &nbsp;{{ $t('actions.add') }}
+                    </v-btn>
+                  </template>
+                  <v-card>
+                    <v-card-title class="headline">
+                      <v-icon class="mr-3">{{ cardIcon }}</v-icon> &nbsp;
+                      {{ cardTitle }}
+                    </v-card-title>
+                    <!-- FORM INPUTS -->
+                    <v-card-text>
+                      <v-layout wrap>
+                        <v-flex xs12 >
+                          <types
+                            v-if="showType || !isUpdate"
+                            :typeFilter="typeFilter"
+                            type="set"
+                            :mode="'one'"
+                            req=true
+                            :types="apps.app_type"
+                            @type-select-one="typeSelectOne">
+                          </types>
+                        </v-flex>
+                        <v-flex xs12>
+                          <categories
+                            v-if="showCategories || !isUpdate"
+                            :categoryFilter="categoryFilter"
+                            :mode="'multiple'"
+                            req=true
+                            type="set"
+                            :category="apps.category"
+                            @category-select-multiple="categorySelectMultiple">
+                          </categories>
+                        </v-flex>
+                        <v-flex xs12>
+                            <labels
+                            v-if="showLabels || !isUpdate"
+                            :labelFilter="labelFilter"
+                            type="set"
+                            req=true
+                            :mode="'multiple'"
+                            :label="apps.labels"
+                            @label-select-multiple="labelSelectMultiple">
+                          </labels>
+                        </v-flex>
+                    </v-layout>
+
+                    <small color="red">*{{ $t('errors.required') }}</small>
+                  </v-card-text>
+                    <!-- BUTTONS -->
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                      color="grey lighten-1"
+                      :disabled="submitting"
+                      @click="close"
+                    >{{ $t('actions.close') }}</v-btn>
+                    <v-btn
+                      color="blue darken-1"
+                      :loading="submitting"
+                      @click="saveStaff"
+                    >{{ $t('actions.save') }}</v-btn>
+                  </v-card-actions>
+                  </v-card>
+                </v-dialog>
+              </validation-observer>
+            </v-layout>
+          </v-layout>
+          <v-data-table item-key="id" :items="apps.classification" :headers="headers">
+            <template v-slot:item.image_url="{ item }">
+              <img :src="item.image_url" :alt="item.name" height="100" class="mt-2"/>
+            </template>
+            <template v-slot:item.action="{ item }">
+              <v-icon small @click="deleteImage(item)" color="red">delete</v-icon>
+            </template>
+            <tbody>
+              <tr v-for="item in apps.classification" :key="item.id" >
+                <td>
+                  <img :src="item.image_url" height="100" class="mt-2"/></td>
+                <td>{{ item.image_file }}</td>
+                <td>{{ item.action }}</td>
+              </tr>
+            </tbody>
+          </v-data-table>
           <v-spacer></v-spacer>
           <v-layout>
             <v-card-title>{{$t('apps.download_link')}}</v-card-title>
@@ -338,7 +433,8 @@ export default {
           disabled: true
         }],
       apps: {
-        use_android_link: true
+        use_android_link: true,
+        classification: []
       },
       uploadInstallerDialog: false,
       uploadLoading: false,
@@ -349,7 +445,29 @@ export default {
         app_type: false,
         category: false,
         labels: ''
+      },
+      headers: [
+        {
+          sortable: false,
+          text: this.$t('apps.type'),
+          value: 'image_url'
+      },
+      {
+          sortable: false,
+          text: `${this.$t('apps.category')}`,
+          value: 'image_file'
+      },
+      {
+          sortable: false,
+          text: this.$t('nav.labels'),
+          value: 'action'
+      },
+      {
+          sortable: false,
+          text: this.$t('common.action'),
+          value: 'action'
       }
+      ]
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -363,7 +481,13 @@ export default {
   computed: {
     isUpdate() {
       return this.id ? true : false
-    }
+    },
+    cardTitle() {
+      return this.isUpdate ? `${this.$t('actions.update')} - ${this.$t('apps.classification')} ` : `${this.$t('actions.add')} - ${this.$t('apps.classification')}`
+    },
+    cardIcon() {
+      return this.isUpdate ? 'edit' : 'add_box'
+    },
   },
   created() {
     this.lang = $.getLanguage() == 'zh_CN' ? 'zh-cn' : ''
@@ -487,7 +611,7 @@ export default {
       this.apps.website = val
       this.typeFilter = `website=${this.apps.website}`
     },
-    categorySelectOne(val) {
+    categorySelectMultiple(val) {
       this.apps.category = val
     },
     labelSelectMultiple(val) {

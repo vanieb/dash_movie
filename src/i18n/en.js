@@ -122,7 +122,8 @@ export default {
     ios_download_link: 'iOS Download Link',
     other_details: 'Other Details',
     external_download_link: 'External Download Link',
-    use_download_link: 'Display External Download Link (Android)'
+    use_download_link: 'Display External Download Link (Android)',
+    classification: 'App Classification'
   },
   seo: {
     seo_data: 'SEO Data',
