@@ -79,65 +79,10 @@
                     >{{ importLoading ? $t('actions.cancel') : $t('actions.close') }}
                   </v-btn>
                   <v-btn
-                    color="blue darken-1"
+                    color="primary"
+                    dark
                     :disabled="importLoading"
                     @click="uploadFile('upload')">{{ $t('actions.submit') }}
-                  </v-btn>
-                </v-card-actions>
-              </validation-observer>
-            </v-card>
-          </v-dialog>
-          <!-- CSV Import -->
-          <v-dialog v-model="importArticlesDialog" persistent max-width="600">
-            <template v-slot:activator="{ on }">
-              <v-btn
-                color="primary"
-                dark 
-                class="mr-3"
-                v-on="on">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <v-icon v-on="on">dynamic_feed</v-icon>
-                  </template>
-                  <span>{{$t('system_notes.add_multiple_articles_memo')}}</span>
-                </v-tooltip>
-              </v-btn>
-            </template>
-            <v-card>
-              <validation-observer ref="importForm">
-                <v-card-title>
-                  <v-icon class="mr-3">dynamic_feed</v-icon>
-                    &nbsp;{{ $t('actions.import') }} - {{ $t('nav.articles') }}
-                </v-card-title>
-                <v-card-text>
-                  <v-icon small>info</v-icon>
-                  <small>{{ $t('system_notes.add_multiple_articles_memo') }}</small>
-                </v-card-text>
-                <v-card-text>
-                  <v-spacer></v-spacer>
-                  <validation-provider style="width:310px;" rules="required" :name="$t('common.file')">
-                    <v-file-input
-                      outlined
-                      dense
-                      clearable
-                      :error-messages="errors"
-                      required
-                      slot-scope="{ errors }"
-                      accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                      v-model="importFile">    
-                    </v-file-input>
-                  </validation-provider>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    color="grey lighten-1"
-                    @click="closeImport()">{{ $t('actions.close') }}
-                  </v-btn>
-                  <v-btn
-                    color="blue darken-1"
-                    :loading="importLoading"
-                    @click="importCsv()">{{ $t('actions.submit') }}
                   </v-btn>
                 </v-card-actions>
               </validation-observer>
@@ -284,8 +229,8 @@
                 @change="toggle(item.slug, item.is_popular, 'is_popular', item.title)">
               </v-switch>
             </td>
-            <td width="30%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
-            <td width="30%" class="align-center justify-center">
+            <td width="15%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
+            <td width="10%" class="align-center justify-center">
               <v-layout>
                 <v-btn class="mr-2" icon :to="`/articles/${item.slug}/edit`">
                   <v-icon small >edit</v-icon>
@@ -415,7 +360,8 @@ export default {
         {
           sortable: false,
           text: this.$t('common.created_at'),
-          value: 'created_at'
+          value: 'created_at',
+          width: '15%'
         },
         {
           sortable: false,
