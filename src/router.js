@@ -279,6 +279,39 @@ export default new Router({
         auth: true,
         title: i18n.t('nav.staff')
       }
-    }
+    },
+    {
+      path: '/staff/add',
+      name: 'Add Staff',
+      component: function (resolve) {
+          require(['./views/Users/StaffForm.vue'], resolve)
+      },
+      meta: {
+        auth: true,
+        title: i18n.t('nav.add_staff'),
+      }
+    },
+    {
+      path: '/staff/:staffId/',
+      name: 'Staff Details',
+      component: function (resolve) {
+          require(['./views/Users/StaffDetails.vue'], resolve)
+      },
+      meta: {
+        auth: true,
+        title: i18n.t('nav.staff_details'),
+      }
+    },
+    {
+      path: '/staff/:staffId/edit',
+      name: 'Edit Staff',
+      component: function (resolve) {
+          require(['./views/Users/StaffForm.vue'], resolve)
+      },
+      meta: {
+        auth: true,
+        title: i18n.t('nav.edit_staff'),
+      }
+    },
   ]
 })
