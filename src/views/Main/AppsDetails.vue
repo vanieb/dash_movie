@@ -66,6 +66,9 @@
             <v-row class="mb-1">
               <small><v-icon left dense>event</v-icon>{{apps.created_at | moment("YYYY-MM-DD HH:mm:ss") }}</small>
             </v-row>
+            <v-row class="mb-1">
+              <small><v-icon left dense>person</v-icon>{{apps.created_by}}</small>
+            </v-row>
             <!-- Will be added after likes and comments feature implementation -->
             <!-- <v-row>
               <v-chip small class="ma-1" outlined color="primary lighten-1"><v-icon left small>thumb_up</v-icon>6</v-chip>

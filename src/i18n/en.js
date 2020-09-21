@@ -11,7 +11,8 @@ export default {
     action: 'Action',
     remarks: 'Remarks',
     file: 'File',
-    icon: 'Icon'
+    icon: 'Icon',
+    code: 'Code'
   },
   actions: {
     add: 'Add',

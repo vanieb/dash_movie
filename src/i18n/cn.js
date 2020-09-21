@@ -11,7 +11,8 @@ export default {
     action: '动作',
     remarks: '备注',
     file: '文件',
-    icon: '图标'
+    icon: '图标',
+    code: '码'
   },
   actions: {
     add: '添加',
