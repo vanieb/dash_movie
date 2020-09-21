@@ -662,6 +662,10 @@ export default {
       if (this.isUpdate) {
         this.getAppDetails(this.apps.id)
       }
+      this.isUpdateClass = false
+      let websiteFilter = this.isUpdate ? this.apps.website.id : this.apps.website
+      this.labelFilter = `website=${websiteFilter}`
+      this.categoryFilter = `website=${websiteFilter}`
       this.app_classification = {}
       this.$refs.classForm.reset()
     },
