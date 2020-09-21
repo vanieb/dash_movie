@@ -67,7 +67,7 @@
               <small><v-icon left dense>event</v-icon>{{apps.created_at | moment("YYYY-MM-DD HH:mm:ss") }}</small>
             </v-row>
             <v-row class="mb-1">
-              <small><v-icon left dense>person</v-icon>{{apps.created_by  }}</small>
+              <small><v-icon left dense>person</v-icon>{{apps.created_by}}</small>
             </v-row>
             <!-- Will be added after likes and comments feature implementation -->
             <!-- <v-row>
