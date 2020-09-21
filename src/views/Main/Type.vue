@@ -39,6 +39,19 @@
                     ></v-text-field>
                   </validation-provider>
                 </v-flex>
+                <v-flex xs12 >
+                  <validation-provider rules="required|max:15" :name="$t('common.code')">
+                    <v-text-field
+                      :counter="15"
+                      :error-messages="errors"
+                      :label="`${$t('common.code')}*`"
+                      placeholder=" "
+                      required
+                      slot-scope="{ errors }"
+                      v-model="type.code"
+                    ></v-text-field>
+                  </validation-provider>
+                </v-flex>
                 <v-flex xs12>
                   <div width="452px;">
                     <website
@@ -270,6 +283,7 @@ export default {
       type: {
         name: '',
         website: '',
+        code: '',
         memo: ''
       },
       statusOptions: [
@@ -452,6 +466,7 @@ export default {
         id: item.id,
         name: item.name,
         memo: item.memo,
+        code: item.code,
         website_id: item.website.id
       })
       this.name = item.name
@@ -474,6 +489,7 @@ export default {
       let typeResult = Object({
         name: this.type.name,
         website_id: this.query.website,
+        code: this.type.code,
         memo: this.type.memo,
       })
       if (isValid) {
@@ -520,7 +536,8 @@ export default {
       this.websiteKey = false
       this.type.id = ''
       this.type.name = ''
-      this.type.memo=''
+      this.type.memo =''
+      this.type.code = ''
       this.name = ''
       this.type.website_id = '' 
       this.submitting = false
