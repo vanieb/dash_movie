@@ -121,7 +121,8 @@ export default {
     ios_download_link: 'iOS下载链接',
     other_details: '下载链接',
     external_download_link: '外部下载链接',
-    use_download_link: '显示外部下载链接(Android)'
+    use_download_link: '显示外部下载链接(Android)',
+    classification: '应用分类'
   },
   seo: {
     seo_data: 'SEO数据',
