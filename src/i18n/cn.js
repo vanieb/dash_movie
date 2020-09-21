@@ -122,7 +122,7 @@ export default {
     other_details: '下载链接',
     external_download_link: '外部下载链接',
     use_download_link: '显示外部下载链接(Android)',
-    classification: '分类'
+    classification: '应用分类'
   },
   seo: {
     seo_data: 'SEO数据',

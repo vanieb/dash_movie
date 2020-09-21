@@ -24,13 +24,15 @@
         item-text="name"
         :items="categories"
         v-model="mycategory"
-        :disabled="!disabled"
+        :disabled="!disabled || loading"
         :label="elLabel"
         outlined
         dense
         attach
         chips
         multiple
+        :loading="loading"
+        loader-height="4"
         prepend-icon="category"
         placeholder=" ">
         <template v-slot:selection="{ attrs, item, select, selected }">
@@ -79,7 +81,8 @@ export default {
     return {
       categories: [],
       mycategory: this.category,
-      elLabel: this.$t('nav.category')
+      elLabel: this.$t('nav.category'),
+      loading: true
     }
   },
   watch: {
@@ -112,11 +115,13 @@ export default {
     },
     getFilteredCategories(categoryFilter='') {
       this.$http.get(`${api.categories}?limit=400&offset=0&${categoryFilter}`).then(response => {
+        this.loading = true
         this.categories = response.results
         let _this = this
           setTimeout(function() {
             _this.mycategory = _this.category
           }, 100)
+        this.loading = false
       })
     }
   }

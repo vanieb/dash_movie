@@ -66,11 +66,11 @@
             <v-row class="mb-1">
               <small><v-icon left dense>event</v-icon>{{apps.created_at | moment("YYYY-MM-DD HH:mm:ss") }}</small>
             </v-row>
-            <v-row>
+            <!-- Will be added after likes and comments feature implementation -->
+            <!-- <v-row>
               <v-chip small class="ma-1" outlined color="primary lighten-1"><v-icon left small>thumb_up</v-icon>6</v-chip>
               <v-chip small class="ma-1" outlined color="primary lighten-1"><v-icon small>comments</v-icon>6</v-chip>
-            </v-row>
-           
+            </v-row> -->
           </v-col>
           <v-col cols="12" md="4" >
             <v-icon color="warning" left>web</v-icon>{{$t('apps.website')}}:
@@ -121,22 +121,32 @@
         <v-layout>
           <v-card-title>{{$t('apps.classification')}}</v-card-title>
         </v-layout>
-        <v-data-table item-key="id" :items="apps.classification" :headers="headers">
-            <template v-slot:item.image_url="{ item }">
-              <img :src="item.image_url" :alt="item.name" height="100" class="mt-2"/>
-            </template>
-            <template v-slot:item.action="{ item }">
-              <v-icon small @click="deleteImage(item)" color="red">delete</v-icon>
-            </template>
-            <tbody>
-              <tr v-for="item in apps.classification" :key="item.id" >
-                <td>
-                  <img :src="item.image_url" height="100" class="mt-2"/></td>
-                <td>{{ item.image_file }}</td>
-                <td>{{ item.action }}</td>
-              </tr>
-            </tbody>
-        </v-data-table>
+        <v-simple-table >
+          <thead>
+            <tr>
+              <th width="20%">{{$t('apps.type')}}</th>
+              <th width="30%">{{$t('nav.category')}}</th>
+              <th width="30%">{{$t('nav.labels')}}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in apps.types" :key="item.id" >
+              <td>{{item.name}}</td>
+              <td v-if="item.categories">
+                <span v-for="category in item.categories" :key="category.id">
+                  <v-chip color="success" small outlined class="ma-1">{{category.name}}</v-chip>
+                </span>
+              </td>
+              <td v-else>-</td>
+              <td v-if="item.labels">
+                <span v-for="label in item.labels" :key="label.id">
+                  <v-chip color="info" small outlined class="ma-1">{{label.name}}</v-chip>
+                </span>
+              </td>
+              <td v-else>-</td>
+            </tr>
+          </tbody>
+        </v-simple-table>
         <v-layout>
           <v-card-title>{{$t('apps.download_link')}}</v-card-title>
         </v-layout>
@@ -308,17 +318,17 @@ export default {
         {
           sortable: false,
           text: this.$t('apps.type'),
-          value: 'image_url'
+          value: 'name'
       },
       {
           sortable: false,
           text: `${this.$t('apps.category')}`,
-          value: 'image_file'
+          value: 'categories'
       },
       {
           sortable: false,
           text: this.$t('nav.labels'),
-          value: 'action'
+          value: ''
       }
       ]
     }
@@ -333,6 +343,10 @@ export default {
     getAppDetails(id) {
       this.$http.get(`${this.appsApi}${id }/`).then((response) => {
         this.apps = response
+        this.apps.types.forEach(type => {
+          type.categories = this.apps.categories.filter(category => category.type_category.id == type.id)
+          type.labels = this.apps.labels.filter(label => label.type_label.id==type.id)
+        })
       })
     },
     toggle(id, value, mode){
