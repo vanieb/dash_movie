@@ -662,6 +662,10 @@ export default {
       if (this.isUpdate) {
         this.getAppDetails(this.apps.id)
       }
+      this.isUpdateClass = false
+      let websiteFilter = this.isUpdate ? this.apps.website.id : this.apps.website
+      this.labelFilter = `website=${websiteFilter}`
+      this.categoryFilter = `website=${websiteFilter}`
       this.app_classification = {}
       this.$refs.classForm.reset()
     },
@@ -688,6 +692,12 @@ export default {
         }
         this.$http.put(`${this.classApi}/${this.apps.id}/`, formData).then(response => {
           this.getAppDetails(response.id)
+        }, error => {
+            this.snackbar = {
+              color: 'red',
+              show: true,
+              text: error
+            }
         })
         this.isUpdateClass = false
         this.close()
