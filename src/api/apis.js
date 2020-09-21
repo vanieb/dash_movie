@@ -17,6 +17,7 @@ export default {
   logout: `${auth}logout`,
   refresh_token: `${auth}login/refresh`,
   apps: `${apps}`,
+  classification: `${apps}classification`,
   upload: `${apps}upload/`,
   download_link: `${apps}download/`,
   websites: `${websites}`,

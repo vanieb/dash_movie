@@ -25,7 +25,7 @@
         :items="app_types"
         v-model="mytypes"
         :value="mytypes.id"
-        :disabled="!disabled"
+        :disabled="!disabled || loading"
         :label="elLabel"
         :outlined="elementType != 'modal' ? true : false"
         dense
@@ -34,6 +34,8 @@
         chips
         clearable
         multiple
+        :loading="loading"
+        loader-height="5"
         :prepend-icon="type === 'set' && elementType !== 'modal' ? 'new_releases' : '' "
         placeholder=" ">
         <template v-slot:selection="{ attrs, item, select, selected }">
@@ -85,7 +87,8 @@ export default {
       app_types: [],
       mytypes: this.types,
       elLabel: this.$t('apps.type'),
-      rules: ''
+      rules: '',
+      loading: true
     }
   },
   watch: {
@@ -114,10 +117,12 @@ export default {
     getFilteredAppTypes(typeFilter='') {
       this.$http.get(`${api.types}?limit=400&offset=0&${typeFilter}`).then(response => {
         this.app_types = response.results
+        this.loading = true
         let _this = this
         setTimeout(function() {
           _this.mytypes = _this.types
         }, 100)
+        this.loading = false
       })
     }
   }

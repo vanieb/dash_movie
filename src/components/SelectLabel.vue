@@ -24,13 +24,15 @@
         item-text="name"
         :items="labels"
         v-model="mylabel"
-        :disabled="!disabled"
+        :disabled="!disabled || loading"
         :label="elLabel"
         outlined
         dense
         attach
         chips
         multiple
+        :loading="loading"
+        loader-height="5"
         prepend-icon="label"
         placeholder=" ">
         <template v-slot:selection="{ attrs, item, select, selected }">
@@ -80,6 +82,7 @@ export default {
       labels: [],
       mylabel: this.label,
       elLabel: this.$t('nav.labels'),
+      loading: true
     }
   },
   watch: {
@@ -118,10 +121,12 @@ export default {
         if (this.default) {
           this.label = this.default
         }
+        this.loading = true
         let _this = this
         setTimeout(function() {
           _this.mylabel = _this.label
         }, 100)
+        this.loading = false
       })
     }
   }
