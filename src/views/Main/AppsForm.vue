@@ -692,6 +692,12 @@ export default {
         }
         this.$http.put(`${this.classApi}/${this.apps.id}/`, formData).then(response => {
           this.getAppDetails(response.id)
+        }, error => {
+            this.snackbar = {
+              color: 'red',
+              show: true,
+              text: error
+            }
         })
         this.isUpdateClass = false
         this.close()
