@@ -35,36 +35,36 @@
                           placeholder=" "
                           required
                           slot-scope="{ errors }"
-                        v-model="category.name"
+                          v-model="category.name"
                         ></v-text-field>
                       </validation-provider>
-                  </v-flex>
-                  <v-flex xs12 >
-                    <validation-provider rules="max:50" :name="$t('common.code')">
-                      <v-text-field
-                        :counter="50"
-                        :error-messages="errors"
-                        :label="`${$t('common.code')}*`"
-                        placeholder=" "
-                        required
-                        slot-scope="{ errors }"
-                        v-model="category.code"
-                      ></v-text-field>
-                    </validation-provider>
-                  </v-flex>
-                  <v-flex xs12>
-                    <div width="452px;">
-                      <types
-                        :typeFilter="`website=${query.website}`"
-                        elementType="modal"
-                        type="set"
-                        req="true"
-                        :key="reload"
-                        :mode="'multiple'"
-                        :types="category.types"
-                        @type-select-multiple="typeSetMultiple">
-                      </types>
-                    </div>
+                    </v-flex>
+                    <v-flex xs12 >
+                      <validation-provider rules="required|max:50" :name="$t('common.code')">
+                        <v-text-field
+                          :counter="50"
+                          :error-messages="errors"
+                          :label="`${$t('common.code')}*`"
+                          placeholder=" "
+                          required
+                          slot-scope="{ errors }"
+                          v-model="category.code"
+                        ></v-text-field>
+                      </validation-provider>
+                    </v-flex>
+                    <v-flex xs12>
+                      <div width="452px;">
+                        <types
+                          :typeFilter="`website=${query.website}`"
+                          elementType="modal"
+                          type="set"
+                          req="true"
+                          :key="reload"
+                          :mode="'multiple'"
+                          :types="category.types"
+                          @type-select-multiple="typeSetMultiple">
+                        </types>
+                      </div>
                     </v-flex>
                     <v-flex xs12>
                       <validation-provider rules="max:50" :name="$t('common.remarks')">
@@ -204,7 +204,7 @@
         <tbody>
           <tr v-for="item in querySet" :key="item.id">
             <td>{{ item.name }}</td>
-            <td class="align-center justify-start ">
+            <td class="align-center justify-start">
               <v-switch value v-model="item.is_active"
                 @change="toggleStatus(item.id, item.is_active)">
               </v-switch>
@@ -432,7 +432,6 @@ export default {
       this.is_active = this.$route.query.is_active==true || this.$route.query.is_active==false ? this.$route.query.is_active : ''
       this.type = this.$route.query.types || ''
       this.query = Object.assign({}, this.$route.query)
-
     },
     queryData(queryset) {
       this.loading = false
@@ -493,7 +492,6 @@ export default {
         this.types_changed = true
       }
       this.category.types = val
-      // this.category.types = val
     },
     search:
       debounce(function() {
@@ -557,40 +555,40 @@ export default {
           categoryResult.set('types', this.category.types)
         }
         if (this.category.id) {
-        this.$http.put(`${this.categoriesApi}${this.category.id}/`, categoryResult).then(() => {
-          this.snackbar = {
-            color: 'success',
-            show: true,
-            text: `${this.$t('actions.update')}-${this.$t('nav.category')}: ${this.$t('status.success')}`
-          }
-          this.$refs.pulling.rebase()
-          this.reload=true
-          this.close()
-        }, error => {
-          this.snackbar = {
-            color: 'red',
-            show: true,
-            text: error
-          }
-        })
-      } else {
-        categoryResult.set('website', this.query.website)
-        this.$http.post(this.categoriesApi, categoryResult).then(() => {
-          this.snackbar = {
-            color: 'success',
-            show: true,
-            text: `${this.$t('actions.add')}-${this.$t('nav.category')}: ${this.$t('status.success')}`
-          }
-          this.$refs.pulling.rebase()
-          this.close()
-        }, error => {
-          this.snackbar = {
-            color: 'red',
-            show: true,
-            text: error
-          }
-          this.$refs.form.reset()
-        })
+          this.$http.put(`${this.categoriesApi}${this.category.id}/`, categoryResult).then(() => {
+            this.snackbar = {
+              color: 'success',
+              show: true,
+              text: `${this.$t('actions.update')}-${this.$t('nav.category')}: ${this.$t('status.success')}`
+            }
+            this.$refs.pulling.rebase()
+            this.reload=true
+            this.close()
+          }, error => {
+            this.snackbar = {
+              color: 'red',
+              show: true,
+              text: error
+            }
+          })
+        } else {
+          categoryResult.set('website', this.query.website)
+          this.$http.post(this.categoriesApi, categoryResult).then(() => {
+            this.snackbar = {
+              color: 'success',
+              show: true,
+              text: `${this.$t('actions.add')}-${this.$t('nav.category')}: ${this.$t('status.success')}`
+            }
+            this.$refs.pulling.rebase()
+            this.close()
+          }, error => {
+            this.snackbar = {
+              color: 'red',
+              show: true,
+              text: error
+            }
+            this.$refs.form.reset()
+          })
         }
       }
       this.snackbar.show=false
