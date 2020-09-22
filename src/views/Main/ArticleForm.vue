@@ -398,11 +398,11 @@ export default {
       if (isValid) {
         let formData = new window.FormData()
         // Select Fields (Multiple) are added if value changed
-        if (this.website_changed) {
-          formData.set('websites', this.article.website)
-        } else if (this.website_removed_some) {
+        if (this.website_removed_some) {
           formData.set('websites', this.article.website_removed)
-        }
+        } else if (this.website_changed) {
+          formData.set('websites', this.article.website)
+        } 
         // Select Fields (One) old values are sent if value did not change
         // this.selectOne.forEach(item => {
         //   if ((this.data[item] != this.article[item][0]) && !this.article[item].id) {
