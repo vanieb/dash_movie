@@ -220,7 +220,7 @@
                 <td v-else>-</td>
                 <td>
                   <v-icon small @click="editClass(classification)" class="mr-2" >edit</v-icon>&nbsp;
-                  <v-icon small @click="deleteClass(classification)" color="red">delete</v-icon>
+                  <v-icon small @click="deleteClass(classification.id)" color="red">delete</v-icon>
                 </td>
               </tr>
             </tbody>
@@ -703,6 +703,16 @@ export default {
         this.isUpdateClass = false
         this.close()
       }
+    },
+    deleteClass(id) {
+      this.$http.delete(`${this.appsApi}types/${id}/`).then(() => {
+        this.snackbar = {
+          color: 'success',
+          show: true,
+          text: `${this.$t('actions.delete')}: ${this.$t('status.success')}`
+        }
+        this.getAppDetails(this.id)
+      })
     },
     editClass(item) {
       this.isUpdateClass = true
