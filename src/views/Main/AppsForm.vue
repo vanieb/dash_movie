@@ -183,7 +183,8 @@
                       @click="close"
                     >{{ $t('actions.close') }}</v-btn>
                     <v-btn
-                      color="blue darken-1"
+                      color="primary"
+                      dark
                       :loading="submitting"
                       @click="saveClass"
                     >{{ $t('actions.save') }}</v-btn>
