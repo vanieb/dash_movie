@@ -199,12 +199,12 @@
                 @change="toggleStatus(item.id, item.is_active, item.website.id)">
               </v-switch>
             </td>
-            <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
-            <td>{{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
+            <td>{{ item.code }}</td>
+            <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}} / <br/> {{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td>{{ item.memo || '-'}}</td>
             <td class="align-center justify-center">
-              <v-btn class="mr-2" icon @click="updateType(item)">
-                <v-icon>edit</v-icon>
+              <v-btn class="mr-1" icon @click="updateType(item)">
+                <v-icon small>edit</v-icon>
               </v-btn>
               <v-menu offset-y>
                 <template v-slot:activator="{ on }">
@@ -310,13 +310,13 @@ export default {
         },
         {
           sortable: false,
-          text: this.$t('common.created_at'),
-          value: 'created_at'
+          text: this.$t('common.code'),
+          value: 'code'
         },
         {
           sortable: false,
-          text: this.$t('common.updated_at'),
-          value: 'updated_at'
+          text: `${this.$t('common.created_at')} / ${this.$t('common.updated_at')}`,
+          value: 'created_at'
         },
         {
           sortable: false,
