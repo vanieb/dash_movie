@@ -39,27 +39,29 @@
                         ></v-text-field>
                       </validation-provider>
                     </v-flex>
+                    <v-flex xs12 >
+                      <validation-provider rules="required|max:50" :name="$t('common.code')">
+                        <v-text-field
+                          :counter="50"
+                          :error-messages="errors"
+                          :label="`${$t('common.code')}*`"
+                          placeholder=" "
+                          required
+                          slot-scope="{ errors }"
+                          v-model="label.code"
+                        ></v-text-field>
+                      </validation-provider>
+                    </v-flex>
                     <v-flex xs12>
                       <div width="452px;">
                         <types
-                          v-if="isUpdate"
-                          elementType="modal"
                           :typeFilter="`website=${query.website}`"
-                          :mode="'one'"
-                          req="true"
+                          elementType="modal"
                           type="set"
-                          :types="label.type_label_id"
-                          @type-select-one="typeSetOne">
-                        </types>
-                        <types
-                          v-else
-                          :typeFilter="`website=${query.website}`"
-                          elementType="modal"
-                          type="'set'"
-                          :key="reload"
                           req="true"
+                          :key="reload"
                           :mode="'multiple'"
-                          :types="label.type_label_id"
+                          :types="label.types"
                           @type-select-multiple="typeSetMultiple">
                         </types>
                       </div>
@@ -89,7 +91,8 @@
                     @click="close"
                   >{{ $t('actions.close') }}</v-btn>
                   <v-btn
-                    color="blue darken-1"
+                    color="primary"
+                    dark
                     :loading="submitting"
                     @click="saveLabel"
                   >{{ $t('actions.save') }}</v-btn>
@@ -108,9 +111,9 @@
                 item-name="text"
                 item-value="value"
                 :items="statusOptions"
-                hide-details="true"
                 :label="`${$t('common.status')}`"
                 v-model="is_active"
+                hide-details="true"
                 placeholder=" "
                 outlined
                 dense>
@@ -127,7 +130,7 @@
                 :typeFilter="`website=${query.website}`"
                 :mode="'one'"
                 type="'filter'"
-                :types="query.type_label"
+                :types="query.types"
                 @type-select-one="typeSelectOne">
               </types>
             </div>
@@ -157,8 +160,8 @@
                     v-model="dateRangeText"
                     :label="`${$t('common.created_at')}`"
                     placeholder=" "
-                    outlined
                     hide-details="true"
+                    outlined
                     dense
                     v-on="on"
                     readonly
@@ -201,18 +204,19 @@
         <tbody>
           <tr v-for="item in querySet" :key="item.id">
             <td>{{ item.name }}</td>
-            <td class="align-center justify-start layout">
+            <td class="align-center justify-start">
               <v-switch value v-model="item.is_active"
-                @change="toggleStatus(item.id, item.is_active, item.type_label.id)">
+                @change="toggleStatus(item.id, item.is_active)">
               </v-switch>
             </td>
-            <td>{{ item.type_label.name }}</td>
-            <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
-            <td>{{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
+            <td>{{ item.code }}</td>
+            <td><span v-for="item in item.types " :key="item.id">{{ item.name }}<br/></span></td>
+            <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}} / <br/>
+            {{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td>{{ item.memo || '-'}}</td>
             <td class="align-center justify-center">
-              <v-btn class="mr-2" icon @click="updateLabel(item)">
-                <v-icon>edit</v-icon>
+              <v-btn class="mr-1" icon @click="updateLabel(item)">
+                <v-icon small>edit</v-icon>
               </v-btn>
               <v-menu offset-y>
                 <template v-slot:activator="{ on }">
@@ -290,9 +294,13 @@ export default {
       website: 1,
       submitting: false,
       date_menu: false,
+      data: {
+        types: false
+      },
       label: {
         name: '',
-        type_label_id: '',
+        types: '',
+        code: '',
         memo: ''
       },
       statusOptions: [
@@ -319,19 +327,21 @@ export default {
         },
         {
           sortable: false,
-          text: this.$t('nav.types'),
-          value: 'type',
+          text: this.$t('common.code'),
+          value: 'code',
           width: '10%'
         },
         {
           sortable: false,
-          text: this.$t('common.created_at'),
-          value: 'created_at'
+          text: this.$t('nav.types'),
+          value: 'types',
+          width: '10%'
         },
         {
           sortable: false,
-          text: this.$t('common.updated_at'),
-          value: 'updated_at'
+          text: `${this.$t('common.created_at')} / ${this.$t('common.updated_at')}`,
+          value: 'created_at',
+          width: '20%'
         },
         {
           sortable: false,
@@ -340,7 +350,8 @@ export default {
         },
         {
           sortable: false,
-          text: this.$t('common.action')
+          text: this.$t('common.action'),
+          width: '8%'
         }
       ]
     }
@@ -363,7 +374,7 @@ export default {
       this.search()
     },
     type(newObj) {
-      this.query.type_label = newObj
+      this.query.types = newObj
       this.search()
     },
     created_at(newObj) {
@@ -419,9 +430,8 @@ export default {
       }
       this.website = this.$route.query.website || ''
       this.is_active = this.$route.query.is_active==true || this.$route.query.is_active==false ? this.$route.query.is_active : ''
-      this.type = this.$route.query.type_label || ''
+      this.type = this.$route.query.types || ''
       this.query = Object.assign({}, this.$route.query)
-
     },
     queryData(queryset) {
       this.loading = false
@@ -430,10 +440,9 @@ export default {
     queryParam(query) {
       this.query = Object.assign(this.query, query)
     },
-    toggleStatus(id, is_active, type_label_id){
+    toggleStatus(id, is_active){
       this.$http.put(this.labelsApi + id + '/', {
-        is_active: is_active,
-        type_label_id: type_label_id
+        is_active: is_active
       }).then((response) => {
         let status_text = response.is_active ? this.$t('status.enabled') : this.$t('status.disabled')
         this.snackbar = {
@@ -442,7 +451,6 @@ export default {
           text: `[${this.$t('common.status')}]: ${status_text}`
         }
         this.$refs.pulling.rebase()
-        this.query.website = response.type_label.website.id
       }, error => {
         this.snackbar = {
           color: 'error',
@@ -462,14 +470,28 @@ export default {
       this.submit()
     },
     typeSelectOne(val) {
-      this.query.type_label = val
+      this.query.types = val
       this.submit()
     },
-    typeSetOne(val) {
-      this.label.type_label_id = val
-    },
     typeSetMultiple(val) {
-      this.label.type_label_id = val
+      if (val && val[0].name) {
+        let newVal = []
+        this.label.types.forEach(item => {
+          newVal.push(item.id)
+        })
+        // changed Removed
+        if (this.data.types != newVal.join(',')) {
+          this.types_removed_some = true
+          this.label.types_removed = newVal.join(',')
+        // unchanged
+        } else {
+          this.types_changed = false
+        }
+      // Changed - Added
+      } else {
+        this.types_changed = true
+      }
+      this.label.types = val
     },
     search:
       debounce(function() {
@@ -494,7 +516,15 @@ export default {
         id: item.id,
         name: item.name,
         memo: item.memo,
-        type_label_id: item.type_label
+        code: item.code,
+        types: item.types
+      })
+      let val = []
+      this.label.types.forEach(item => {
+        if (item) {
+          val.push(item.id)
+        }
+        this.data[item] = val.join(',')
       })
       this.name = item.name
       this.showForm = true
@@ -513,12 +543,17 @@ export default {
     async saveLabel() {
       const isValid = await this.$refs.form.validate()
       if (isValid) {
-        let labelResult = Object({
-          name: this.label.name,
-          memo: this.label.memo,
-          type_label_id: this.isUpdate ? (this.label.type_label_id && this.label.type_label_id.id ? this.label.type_label_id.id : this.label.type_label_id)
-          : this.label.type_label_id.join(',')
-        })
+        let labelResult = new window.FormData()
+        labelResult.set('name', this.label.name)
+        labelResult.set('code', this.label.code)
+        if (this.label.memo || this.label.memo == '') {
+          labelResult.set('memo', this.label.memo)
+        }
+        if (this.types_removed_some) {
+          labelResult.set('types', this.label.types_removed)
+        } else if (this.types_changed) {
+          labelResult.set('types', this.label.types)
+        }
         if (this.label.id) {
           this.$http.put(`${this.labelsApi}${this.label.id}/`, labelResult).then(() => {
             this.snackbar = {
@@ -527,8 +562,8 @@ export default {
               text: `${this.$t('actions.update')}-${this.$t('nav.labels')}: ${this.$t('status.success')}`
             }
             this.$refs.pulling.rebase()
-            this.close()
             this.reload=true
+            this.close()
           }, error => {
             this.snackbar = {
               color: 'red',
@@ -537,6 +572,7 @@ export default {
             }
           })
         } else {
+          labelResult.set('website', this.query.website)
           this.$http.post(this.labelsApi, labelResult).then(() => {
             this.snackbar = {
               color: 'success',
@@ -560,8 +596,9 @@ export default {
     close() {
       this.label.id = ''
       this.label.name = ''
+      this.label.code = ''
       this.label.memo=''
-      this.label.type_label_id = []
+      this.label.types = []
       this.name = ''
       this.submitting = false
       this.$refs.form.reset()
