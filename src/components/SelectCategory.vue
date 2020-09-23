@@ -24,7 +24,8 @@
         item-text="name"
         :items="categories"
         v-model="mycategory"
-        :disabled="!disabled || loading"
+        :disabled="!disableSetter || loading"
+        :messages="showMessage"
         :label="elLabel"
         outlined
         dense
@@ -74,7 +75,7 @@ export default {
       default: 'one'
     },
     disabled: {
-      default: true
+      default: false
     }
   },
   data() {
@@ -82,7 +83,18 @@ export default {
       categories: [],
       mycategory: this.category,
       elLabel: this.$t('nav.category'),
-      loading: true
+      loading: true,
+      disableSetter: ''
+    }
+  },
+  computed: {
+    showMessage() {
+      if (this.loading) {
+        return ''
+      } else if (this.disableSetter){
+        return this.$t('system_notes.select_type')
+      }
+      return ''
     }
   },
   watch: {
@@ -97,6 +109,7 @@ export default {
     },
     categoryFilter(newObj) {
       this.categories = []
+      this.loading = true
       this.getFilteredCategories(newObj)
     }
   },
@@ -105,7 +118,11 @@ export default {
       this.elLabel = `${this.$t('apps.category')}*`
     }
     if (this.type == 'set') {
-      this.getFilteredCategories(this.categoryFilter)
+      this.loading = true
+      if (this.categoryFilter) {
+        this.getFilteredCategories(this.categoryFilter)
+      }
+      this.loading = false
     }
   },
   methods: {
@@ -121,6 +138,7 @@ export default {
           setTimeout(function() {
             _this.mycategory = _this.category
           }, 100)
+        this.disableSetter = true
         this.loading = false
       })
     }

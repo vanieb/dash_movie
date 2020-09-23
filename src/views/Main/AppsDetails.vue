@@ -124,7 +124,7 @@
         <v-layout>
           <v-card-title>{{$t('apps.classification')}}</v-card-title>
         </v-layout>
-        <v-simple-table v-if="classification.length > 0">
+        <v-simple-table v-if="classification">
           <thead>
             <tr>
               <th width="20%">{{$t('apps.type')}}</th>
