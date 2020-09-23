@@ -503,10 +503,6 @@ export default {
         this.$http.get(`${this.classApi}/${id }/`).then((response) => {
           this.classifications = response
         })
-        // this.apps.types.forEach(type => {
-        //   type.categories = this.apps.categories.filter(category => category.type_category.id==type.id)
-        //   type.labels = this.apps.labels.filter(label => label.type_label.id==type.id)
-        // })
       }, response => {
           if (('' + response.status).indexOf('4') === 0) {
               this.$router.push('/login?next=' + this.$route.path)
