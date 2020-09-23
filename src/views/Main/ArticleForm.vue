@@ -375,7 +375,7 @@ export default {
     websiteSelectMultiple(val) {
       if (val && val[0].name) {
         let newVal = []
-        this.article.website.forEach(item => {
+        this.article.websites.forEach(item => {
           newVal.push(item.id)
         })
         // changed Removed
@@ -408,7 +408,7 @@ export default {
         //   if ((this.data[item] != this.article[item][0]) && !this.article[item].id) {
         //     formData.set(`${item}_id`, this.article[item])
         //   }
-        // })        
+        // })
         if (this.change_icon) {
           formData.set('icon', this.article.icon)
         }
