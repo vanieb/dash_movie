@@ -124,7 +124,7 @@
         <v-layout>
           <v-card-title>{{$t('apps.classification')}}</v-card-title>
         </v-layout>
-        <v-simple-table >
+        <v-simple-table v-if="classification.length > 0">
           <thead>
             <tr>
               <th width="20%">{{$t('apps.type')}}</th>
@@ -132,10 +132,10 @@
               <th width="30%">{{$t('nav.labels')}}</th>
             </tr>
           </thead>
-          <tbody>
-            <tr v-for="item in apps.types" :key="item.id" >
+          <tbody >
+            <tr v-for="item in classification" :key="item.id" >
               <td>{{item.name}}</td>
-              <td v-if="item.categories">
+              <td v-if="item.categories.length > 0">
                 <span v-for="category in item.categories" :key="category.id">
                   <v-chip color="success" small outlined class="ma-1">{{category.name}}</v-chip>
                 </span>
@@ -149,7 +149,9 @@
               <td v-else>-</td>
             </tr>
           </tbody>
+          
         </v-simple-table>
+        <v-layout v-else justify-center align-center><small >{{$t('pagination.no_record')}}</small></v-layout>
         <v-layout>
           <v-card-title>{{$t('apps.download_link')}}</v-card-title>
         </v-layout>
@@ -297,7 +299,9 @@ export default {
     return {
       file: '',
       apps: {},
+      classification: [],
       appsApi: api.apps,
+      classApi: api.classification,
       uploadPercentage: 0,
       uploadInstallerDialog: false,
       uploadiOSInstallerDialog: false,
@@ -346,9 +350,8 @@ export default {
     getAppDetails(id) {
       this.$http.get(`${this.appsApi}${id }/`).then((response) => {
         this.apps = response
-        this.apps.types.forEach(type => {
-          type.categories = this.apps.categories.filter(category => category.type_category.id == type.id)
-          type.labels = this.apps.labels.filter(label => label.type_label.id==type.id)
+        this.$http.get(`${this.classApi}/${id }/`).then((response) => {
+          this.classification = response
         })
       })
     },
