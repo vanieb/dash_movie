@@ -578,7 +578,7 @@ export default {
       this.is_active = this.$route.query.is_active==true || this.$route.query.is_active==false ? this.$route.query.is_active : ''
       this.is_rank = this.$route.query.is_rank==true || this.$route.query.is_rank==false ? this.$route.query.is_rank : ''
       this.is_recommended = this.$route.query.is_recommended==true || this.$route.query.is_recommended==false ? this.$route.query.is_recommended : ''
-      this.type = this.$route.query.app_type || ''
+      this.type = this.$route.query.types || ''
       this.query = Object.assign({}, this.$route.query)
     },
     queryData(queryset) {
@@ -665,7 +665,7 @@ export default {
       }
     },
     typeSelectOne(val) {
-      this.query.app_type = val
+      this.query.types = val
       this.submit()
     },
     websiteSetMultiple(val) {

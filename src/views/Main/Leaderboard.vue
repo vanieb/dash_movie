@@ -173,8 +173,8 @@ export default {
       })
     },
     getApps(type) {
-      this.app_type = this.app_types[type].id
-      this.$http.get(`${this.appsApi}?ordering=rank&is_rank=true&app_type=${this.app_type}&website=${this.query.website}`).then(response => {
+      this.app_type = this.app_types[type].code
+      this.$http.get(`${this.appsApi}?ordering=rank&is_rank=true&types=${this.app_type}&website=${this.query.website}`).then(response => {
         this.filteredQuerySet = response.results
         .sort((a, b) => {
           return a['rank'] - b['rank']

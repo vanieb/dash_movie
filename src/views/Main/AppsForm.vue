@@ -204,7 +204,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="classification in apps.types" :key="classification.id" >
+              <tr v-for="classification in classifications" :key="classification.id" >
                 <td>{{classification.name}}</td>
                 <td v-if="classification.categories">
                   <span v-for="category in classification.categories" :key="category.id">
@@ -388,6 +388,7 @@ export default {
       label_changed: '',
       category_changed: '',
       showImage: false,
+      classifications: [],
       lang: '',
       appsApi: api.apps,
       classApi: api.classification,
@@ -499,9 +500,8 @@ export default {
         this.selectOne.forEach(item => {
           this.pushIDs(item, 'one')
         })
-        this.apps.types.forEach(type => {
-          type.categories = this.apps.categories.filter(category => category.type_category.id==type.id)
-          type.labels = this.apps.labels.filter(label => label.type_label.id==type.id)
+        this.$http.get(`${this.classApi}/${id }/`).then((response) => {
+          this.classifications = response
         })
       }, response => {
           if (('' + response.status).indexOf('4') === 0) {
