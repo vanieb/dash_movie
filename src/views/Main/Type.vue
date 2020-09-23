@@ -201,6 +201,7 @@
             </td>
             <td>{{ item.code }}</td>
             <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}} / <br/> {{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
+            <td>{{ item.website.name || '-'}}</td>
             <td>{{ item.memo || '-'}}</td>
             <td class="align-center justify-center">
               <v-btn class="mr-1" icon @click="updateType(item)">
@@ -317,6 +318,11 @@ export default {
           sortable: false,
           text: `${this.$t('common.created_at')} / ${this.$t('common.updated_at')}`,
           value: 'created_at'
+        },
+        {
+          sortable: false,
+          text: this.$t('apps.website'),
+          value: 'website'
         },
         {
           sortable: false,
@@ -488,7 +494,7 @@ export default {
       this.websiteKey = true
       let typeResult = Object({
         name: this.type.name,
-        website_id: this.query.website,
+        website_id: this.type.website_id,
         code: this.type.code,
         memo: this.type.memo,
       })
