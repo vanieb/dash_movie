@@ -111,8 +111,8 @@ export default {
   },
   methods: {
     remove (item) {
-      this.mytypes.splice(this.mytypes.indexOf(item), 1)
-      this.mytypes = [...this.mytypes]
+      let index = this.mytypes.findIndex(element => element.id === item.id)
+      this.mytypes.splice(index, 1)
     },
     getFilteredAppTypes(typeFilter='') {
       this.$http.get(`${api.types}?limit=400&offset=0&${typeFilter}`).then(response => {
