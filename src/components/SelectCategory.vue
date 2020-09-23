@@ -110,8 +110,8 @@ export default {
   },
   methods: {
     remove (item) {
-      this.mycategory.splice(this.mycategory.indexOf(item), 1)
-      this.mycategory = [...this.mycategory]
+      let index = this.mycategory.findIndex(element => element.id === item.id)
+      this.mycategory.splice(index, 1)
     },
     getFilteredCategories(categoryFilter='') {
       this.$http.get(`${api.categories}?limit=400&offset=0&${categoryFilter}`).then(response => {

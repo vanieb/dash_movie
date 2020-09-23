@@ -582,11 +582,11 @@ export default {
       this.app_classification.type = val
       let type = val
       if (val && val.id) {
-        type = val.id
+        type = val.code
       }
       let websiteFilter = this.isUpdate ? this.apps.website.id : this.apps.website
-      this.labelFilter = `website=${websiteFilter}&type_label=${type}`
-      this.categoryFilter = `website=${websiteFilter}&type_category=${type}`
+      this.labelFilter = `website=${websiteFilter}&types=${type}`
+      this.categoryFilter = `website=${websiteFilter}&types=${type}`
     },
     websiteSelectOne(val) {
       this.apps.website = val
@@ -717,8 +717,8 @@ export default {
     editClass(item) {
       this.isUpdateClass = true
       this.showType = false
-      this.labelFilter = `website=${this.apps.website.id}&type_label=${item.id}`
-      this.categoryFilter = `website=${this.apps.website.id}&type_category=${item.id}`
+      this.labelFilter = `website=${this.apps.website.id}&types=${item.code}`
+      this.categoryFilter = `website=${this.apps.website.id}&types=${item.id}`
       Object.assign(this.app_classification, {
         type: item,
         categories: item.categories,

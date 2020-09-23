@@ -112,8 +112,8 @@ export default {
   },
   methods: {
     remove (item) {
-      this.mylabel.splice(this.mylabel.indexOf(item), 1)
-      this.mylabel = [...this.mylabel]
+      let index = this.mylabel.findIndex(element => element.id === item.id)
+      this.mylabel.splice(index, 1)
     },
     getFilteredLabels(labelFilter='') {
       this.$http.get(`${api.labels}?limit=400&offset=0&${labelFilter}`).then(response => {
