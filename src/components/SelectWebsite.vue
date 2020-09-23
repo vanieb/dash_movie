@@ -110,8 +110,8 @@ export default {
   },
   methods: {
     remove (item) {
-      this.mywebsite.splice(this.mywebsite.indexOf(item), 1)
-      this.mywebsite = [...this.mywebsite]
+      let index = this.mywebsite.findIndex(element => element.id === item.id)
+      this.mywebsite.splice(index, 1)
     }
   }
 }

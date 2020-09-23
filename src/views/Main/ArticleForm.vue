@@ -192,6 +192,7 @@ export default {
   data() {
     return {
       id: '',
+      website_removed_some: false,
       updateImages: true,
       showTinyMce: true,
       showWebsites: true,
@@ -226,9 +227,7 @@ export default {
       selectMultiple: ['websites'],
       nonRequired: ['content', 'subject', 'keywords', 'description'],
       data: {
-        app_type: false,
-        category: false,
-        labels: ''
+        websites: ''
       },
       headers: [
         {
@@ -379,7 +378,7 @@ export default {
           newVal.push(item.id)
         })
         // changed Removed
-        if (this.data.website != newVal.join(',')) {
+        if (this.data.websites != newVal.join(',')) {
           this.website_removed_some = true
           this.article.website_removed = newVal.join(',')
         // unchanged
@@ -390,7 +389,7 @@ export default {
       } else {
         this.website_changed = true
       }
-      this.article.website = val
+      this.article.websites = val
     },
     async saveArticle() {
       this.snackbar.show = false
@@ -401,8 +400,8 @@ export default {
         if (this.website_removed_some) {
           formData.set('websites', this.article.website_removed)
         } else if (this.website_changed) {
-          formData.set('websites', this.article.website)
-        } 
+          formData.set('websites', this.article.websites)
+        }
         // Select Fields (One) old values are sent if value did not change
         // this.selectOne.forEach(item => {
         //   if ((this.data[item] != this.article[item][0]) && !this.article[item].id) {
