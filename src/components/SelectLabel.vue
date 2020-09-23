@@ -24,7 +24,8 @@
         item-text="name"
         :items="labels"
         v-model="mylabel"
-        :disabled="!disabled || loading"
+        :disabled="!disableSetter || loading"
+        :messages="showMessage"
         :label="elLabel"
         outlined
         dense
@@ -32,7 +33,7 @@
         chips
         multiple
         :loading="loading"
-        loader-height="5"
+        loader-height="4"
         prepend-icon="label"
         placeholder=" ">
         <template v-slot:selection="{ attrs, item, select, selected }">
@@ -62,7 +63,7 @@ export default {
       default: 'select'
     },
     labelFilter: {
-      default: ''
+      default: false
     },
     req: {
       default: false
@@ -74,15 +75,27 @@ export default {
       default: 'one'
     },
     disabled: {
-      default: true
+      default: false
     }
   },
   data() {
     return {
       labels: [],
+      memo: '',
       mylabel: this.label,
       elLabel: this.$t('nav.labels'),
-      loading: true
+      loading: true,
+      disableSetter: ''
+    }
+  },
+  computed: {
+    showMessage() {
+      if (this.loading) {
+        return ''
+      } else if (this.disableSetter){
+        return this.$t('system_notes.select_type')
+      }
+      return ''
     }
   },
   watch: {
@@ -97,7 +110,7 @@ export default {
     },
     labelFilter(newObj) {
       this.labels = []
-      // this.mylabel = ''
+      this.loading = true
       this.getFilteredLabels(newObj)
     }
   },
@@ -106,9 +119,12 @@ export default {
       this.elLabel = `${this.$t('nav.labels')}*`
     }
     if (this.type == 'set') {
-      this.getFilteredLabels(this.labelFilter)
+      this.loading = true
+      if (this.labelFilter) {
+        this.getFilteredLabels(this.labelFilter)
+      }
+      this.loading = false
     }
-    
   },
   methods: {
     remove (item) {
@@ -126,6 +142,7 @@ export default {
         setTimeout(function() {
           _this.mylabel = _this.label
         }, 100)
+        this.disableSetter = true
         this.loading = false
       })
     }
