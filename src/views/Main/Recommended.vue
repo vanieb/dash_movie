@@ -173,6 +173,7 @@ export default {
     },
     getApps(type) {
       this.type = this.app_types[type].code
+      this.typeId = this.app_types[type].id
       this.$http.get(`${this.appsApi}?ordering=recommended_rank&is_recommended=true&types=${this.type}&website=${this.query.website}`).then(response => {
         this.filteredQuerySet = response.results
         .sort((a, b) => {
@@ -190,8 +191,7 @@ export default {
         recommend: true,
         rank: rank
       })
-      this.$http.put(`${this.recommendedApi}/${this.type}/`, sortResult).then(() => {
-        this.getApps(this.type)
+      this.$http.put(`${this.recommendedApi}/${this.typeId}/`, sortResult).then(() => {
         this.snackbar = {
           color: 'success',
           show: true,

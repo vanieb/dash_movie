@@ -379,6 +379,7 @@ export default {
   data() {
     return {
       id: '',
+      types: '',
       isUpdateClass:false,
       showCategories: true,
       showLabels: true,
@@ -686,6 +687,11 @@ export default {
           formData.set('categories', this.app_classification.categories)
         }
         // Select Fields (One) old values are sent if value did not change
+        await this.$http.get(`${api.types}?limit=400&offset=0&${this.typeFilter}`).then(response => {
+          this.types = response.results
+        })
+        this.types.filter(element => element.code == this.app_classification.type)
+
         if (this.isUpdateClass) {
           formData.set('type', this.app_classification.type.id)
         } else {
@@ -718,7 +724,7 @@ export default {
       this.isUpdateClass = true
       this.showType = false
       this.labelFilter = `website=${this.apps.website.id}&types=${item.code}`
-      this.categoryFilter = `website=${this.apps.website.id}&types=${item.id}`
+      this.categoryFilter = `website=${this.apps.website.id}&types=${item.code}`
       Object.assign(this.app_classification, {
         type: item,
         categories: item.categories,

@@ -52,8 +52,7 @@
         v-if="showTab"
         :headers="filteredQuerySet.length > 0 ? headers : []"
         :hide-default-footer="true"
-        :items="filteredQuerySet"
-        >
+        :items="filteredQuerySet">
         <template v-slot:body="{ items }">
           <td v-if="!items.length" colspan="2">
             <v-layout justify-center align-center>
@@ -173,8 +172,9 @@ export default {
       })
     },
     getApps(type) {
-      this.app_type = this.app_types[type].code
-      this.$http.get(`${this.appsApi}?ordering=rank&is_rank=true&types=${this.app_type}&website=${this.query.website}`).then(response => {
+      this.type = this.app_types[type].code
+      this.typeId = this.app_types[type].id
+      this.$http.get(`${this.appsApi}?ordering=rank&is_rank=true&types=${this.type}&website=${this.query.website}`).then(response => {
         this.filteredQuerySet = response.results
         .sort((a, b) => {
           return a['rank'] - b['rank']
@@ -191,8 +191,7 @@ export default {
         recommend: false,
         rank: rank
       })
-      this.$http.put(`${this.leaderboardsApi}/${this.app_type}/`, sortResult).then(() => {
-        this.getApps(this.app_type)
+      this.$http.put(`${this.leaderboardsApi}/${this.typeId}/`, sortResult).then(() => {
         this.snackbar = {
           color: 'success',
           show: true,

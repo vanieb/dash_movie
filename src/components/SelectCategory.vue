@@ -91,7 +91,7 @@ export default {
     showMessage() {
       if (this.loading) {
         return ''
-      } else if (this.disableSetter){
+      } else if (!this.disableSetter){
         return this.$t('system_notes.select_type')
       }
       return ''
