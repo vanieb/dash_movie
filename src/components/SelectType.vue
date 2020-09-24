@@ -4,7 +4,7 @@
         v-if="mode==='one'"
         :error-messages="errors"
         slot-scope="{ errors }"
-        :item-value="type === 'set' ? 'id' : 'code'"
+        item-value="code"
         item-text="name"
         :items="app_types"
         v-model="mytypes"
