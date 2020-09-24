@@ -39,7 +39,7 @@
                         ></v-text-field>
                       </validation-provider>
                     </v-flex>
-                    <v-flex xs12 >
+                    <!-- <v-flex xs12 >
                       <validation-provider rules="required|max:50" :name="$t('common.code')">
                         <v-text-field
                           :counter="50"
@@ -51,7 +51,7 @@
                           v-model="category.code"
                         ></v-text-field>
                       </validation-provider>
-                    </v-flex>
+                    </v-flex> -->
                     <v-flex xs12>
                       <div width="452px;">
                         <types
@@ -300,7 +300,7 @@ export default {
       category: {
         name: '',
         types: '',
-        code: '',
+        // code: '',
         memo: ''
       },
       statusOptions: [
@@ -516,7 +516,7 @@ export default {
         id: item.id,
         name: item.name,
         memo: item.memo,
-        code: item.code,
+        // code: item.code,
         types: item.types
       })
       let val = []
@@ -545,7 +545,7 @@ export default {
       if (isValid) {
         let categoryResult = new window.FormData()
         categoryResult.set('name', this.category.name)
-        categoryResult.set('code', this.category.code)
+        // categoryResult.set('code', this.category.code)
         if (this.category.memo || this.category.memo == '') {
           categoryResult.set('memo', this.category.memo)
         }
@@ -596,7 +596,7 @@ export default {
     close() {
       this.category.id = ''
       this.category.name = ''
-      this.category.code = ''
+      // this.category.code = ''
       this.category.memo=''
       this.category.types = []
       this.name = ''

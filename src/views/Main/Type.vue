@@ -39,7 +39,7 @@
                     ></v-text-field>
                   </validation-provider>
                 </v-flex>
-                <v-flex xs12 >
+                <!-- <v-flex xs12 >
                   <validation-provider rules="required|max:15" :name="$t('common.code')">
                     <v-text-field
                       :counter="15"
@@ -51,7 +51,7 @@
                       v-model="type.code"
                     ></v-text-field>
                   </validation-provider>
-                </v-flex>
+                </v-flex> -->
                 <v-flex xs12>
                   <div width="452px;">
                     <website
@@ -284,7 +284,7 @@ export default {
       type: {
         name: '',
         website: '',
-        code: '',
+        // code: '',
         memo: ''
       },
       statusOptions: [
@@ -472,7 +472,7 @@ export default {
         id: item.id,
         name: item.name,
         memo: item.memo,
-        code: item.code,
+        // code: item.code,
         website_id: item.website.id
       })
       this.name = item.name
@@ -495,7 +495,7 @@ export default {
       let typeResult = Object({
         name: this.type.name,
         website_id: this.type.website_id,
-        code: this.type.code,
+        // code: this.type.code,
         memo: this.type.memo,
       })
       if (isValid) {
@@ -543,7 +543,7 @@ export default {
       this.type.id = ''
       this.type.name = ''
       this.type.memo =''
-      this.type.code = ''
+      // this.type.code = ''
       this.name = ''
       this.type.website_id = '' 
       this.submitting = false
