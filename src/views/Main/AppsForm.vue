@@ -690,12 +690,11 @@ export default {
         await this.$http.get(`${api.types}?limit=400&offset=0&${this.typeFilter}`).then(response => {
           this.types = response.results
         })
-        this.types.filter(element => element.code == this.app_classification.type)
-
+        this.class_type = this.types.filter(element => element.code == this.app_classification.type)
         if (this.isUpdateClass) {
           formData.set('type', this.app_classification.type.id)
         } else {
-          formData.set('type', this.app_classification.type)
+          formData.set('type', this.class_type[0].id)
         }
         this.$http.put(`${this.classApi}/${this.apps.id}/`, formData).then(response => {
           this.getAppDetails(response.id)
