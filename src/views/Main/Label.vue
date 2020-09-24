@@ -39,7 +39,7 @@
                         ></v-text-field>
                       </validation-provider>
                     </v-flex>
-                    <v-flex xs12 >
+                    <!-- <v-flex xs12 >
                       <validation-provider rules="required|max:50" :name="$t('common.code')">
                         <v-text-field
                           :counter="50"
@@ -51,7 +51,7 @@
                           v-model="label.code"
                         ></v-text-field>
                       </validation-provider>
-                    </v-flex>
+                    </v-flex> -->
                     <v-flex xs12>
                       <div width="452px;">
                         <types
@@ -300,7 +300,7 @@ export default {
       label: {
         name: '',
         types: '',
-        code: '',
+        // code: '',
         memo: ''
       },
       statusOptions: [
@@ -516,7 +516,7 @@ export default {
         id: item.id,
         name: item.name,
         memo: item.memo,
-        code: item.code,
+        // code: item.code,
         types: item.types
       })
       let val = []
@@ -545,7 +545,7 @@ export default {
       if (isValid) {
         let labelResult = new window.FormData()
         labelResult.set('name', this.label.name)
-        labelResult.set('code', this.label.code)
+        // labelResult.set('code', this.label.code)
         if (this.label.memo || this.label.memo == '') {
           labelResult.set('memo', this.label.memo)
         }
@@ -596,7 +596,7 @@ export default {
     close() {
       this.label.id = ''
       this.label.name = ''
-      this.label.code = ''
+      // this.label.code = ''
       this.label.memo=''
       this.label.types = []
       this.name = ''
