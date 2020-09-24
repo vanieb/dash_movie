@@ -379,6 +379,7 @@ export default {
   data() {
     return {
       id: '',
+      isUpdate: true,
       types: '',
       isUpdateClass:false,
       showCategories: true,
@@ -460,13 +461,12 @@ export default {
       let appId = to.params.appsId
       if (appId) {
         vm.getAppDetails(appId)
+      } else {
+        vm.isUpdate = false
       }
     })
   },
   computed: {
-    isUpdate() {
-      return this.id ? true : false
-    },
     cardTitle() {
       return this.isUpdateClass ? `${this.$t('actions.update')} - ${this.$t('apps.classification')} ` : `${this.$t('actions.add')} - ${this.$t('apps.classification')}`
     },
