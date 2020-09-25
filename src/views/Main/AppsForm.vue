@@ -155,7 +155,6 @@
                             :categoryFilter="categoryFilter"
                             :mode="'multiple'"
                             :disabled="disableCatLab"
-                            :action="isUpdateClass ? isUpdateClass : false"
                             req=true
                             type="set"
                             :category="app_classification.categories"
