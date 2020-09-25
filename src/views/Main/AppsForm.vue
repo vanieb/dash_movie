@@ -147,7 +147,6 @@
                             :types="app_classification.type"
                             @type-select-one="typeSelectOne">
                           </types>
-
                         </v-flex>
                         <v-flex xs12>
                           <categories
@@ -702,6 +701,12 @@ export default {
         }
         this.$http.put(`${this.classApi}/${this.apps.id}/`, formData).then(response => {
           this.getAppClassDetails(response.id)
+          let snackbarText = this.isUpdateClass ? this.$t('actions.update') : this.$t('actions.create')
+          this.snackbar = {
+            color: 'success',
+            show: true,
+            text: `${snackbarText} ${this.$t('apps.classification')} : ${this.$t('status.success')}`
+          }
           this.close()
         }, error => {
             this.snackbar = {
@@ -713,13 +718,22 @@ export default {
       }
     },
     deleteClass(id) {
-      this.$http.delete(`${this.appsApi}types/${id}/`).then(() => {
+      this.snackbar.show = false
+      let typeIdForm = new window.FormData()
+      typeIdForm.set('type', id)
+      this.$http.delete(`${this.appsApi}types/${this.id}/`, { data: typeIdForm}).then(() => {
         this.snackbar = {
           color: 'success',
           show: true,
-          text: `${this.$t('actions.delete')}: ${this.$t('status.success')}`
+          text: `${this.$t('actions.delete')} ${this.$t('apps.classification')}: ${this.$t('status.success')}`
         }
-        this.getAppDetails(this.id)
+        this.getAppClassDetails(this.id)
+      }, error => {
+          this.snackbar = {
+            color: 'red',
+            show: true,
+            text: error
+        }
       })
     },
     editClass(item) {
