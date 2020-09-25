@@ -701,7 +701,7 @@ export default {
         }
         this.$http.put(`${this.classApi}/${this.apps.id}/`, formData).then(response => {
           this.getAppClassDetails(response.id)
-          let snackbarText = this.isUpdateClass ? this.$t('actions.update') : this.$t('actions.create')
+          let snackbarText = this.isUpdateClass ? this.$t('actions.update') : this.$t('actions.add')
           this.snackbar = {
             color: 'success',
             show: true,
@@ -787,7 +787,7 @@ export default {
             this.snackbar = {
               color: 'success',
               show: true,
-              text: `${this.$t('actions.create')} - ${this.$t('nav.apps')}: ${this.$t('status.success')}`
+              text: `${this.$t('actions.add')} - ${this.$t('nav.apps')}: ${this.$t('status.success')}`
             }
             this.$router.push(`/apps/${response.id}`)
           }, error => {

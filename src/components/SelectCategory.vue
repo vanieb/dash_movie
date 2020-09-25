@@ -103,6 +103,8 @@ export default {
     },
     categoryFilter(newObj) {
       this.categories = []
+      console.log(newObj)
+      console.log(this.categories)
       this.loading = true
       this.getFilteredCategories(newObj)
     }
@@ -126,6 +128,7 @@ export default {
       this.loading = true
       await this.$http.get(`${api.categories}?limit=400&offset=0&${categoryFilter}`).then(response => {
         this.categories = response.results
+        console.log(this.categories)
         let _this = this
           setTimeout(function() {
             _this.mycategory = _this.category
