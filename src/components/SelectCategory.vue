@@ -24,7 +24,7 @@
         item-text="name"
         :items="categories"
         v-model="mycategory"
-        :disabled="!disableSetter || loading"
+        :disabled="loading || disabled"
         :messages="showMessage"
         :label="elLabel"
         outlined
@@ -83,18 +83,12 @@ export default {
       categories: [],
       mycategory: this.category,
       elLabel: this.$t('nav.category'),
-      loading: true,
-      disableSetter: ''
+      loading: false
     }
   },
   computed: {
     showMessage() {
-      if (this.loading) {
-        return ''
-      } else if (!this.disableSetter){
-        return this.$t('system_notes.select_type')
-      }
-      return ''
+      return this.disabled && !this.loading ? this.$t('system_notes.select_type') : ''
     }
   },
   watch: {
@@ -118,11 +112,9 @@ export default {
       this.elLabel = `${this.$t('apps.category')}*`
     }
     if (this.type == 'set') {
-      this.loading = true
       if (this.categoryFilter) {
         this.getFilteredCategories(this.categoryFilter)
       }
-      this.loading = false
     }
   },
   methods: {
@@ -130,15 +122,14 @@ export default {
       let index = this.mycategory.findIndex(element => element.id === item.id)
       this.mycategory.splice(index, 1)
     },
-    getFilteredCategories(categoryFilter='') {
-      this.$http.get(`${api.categories}?limit=400&offset=0&${categoryFilter}`).then(response => {
-        this.loading = true
+    async getFilteredCategories(categoryFilter='') {
+      this.loading = true
+      await this.$http.get(`${api.categories}?limit=400&offset=0&${categoryFilter}`).then(response => {
         this.categories = response.results
         let _this = this
           setTimeout(function() {
             _this.mycategory = _this.category
           }, 100)
-        this.disableSetter = true
         this.loading = false
       })
     }

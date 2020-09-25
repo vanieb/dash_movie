@@ -1,6 +1,11 @@
 <template>
   <v-layout wrap>
-    <v-container>
+    <v-container v-if="loading">
+      <v-layout justify-center align-center >
+        <v-progress-circular indeterminate color="blue"></v-progress-circular>
+      </v-layout>
+    </v-container>
+    <v-container v-else>
       <v-layout>
         <v-layout justify-start>
           <v-breadcrumbs :items="bread_crumbs" style="padding:12px;">
@@ -301,6 +306,7 @@ export default {
       apps: {},
       classification: [],
       appsApi: api.apps,
+      loading: true,
       classApi: api.classification,
       uploadPercentage: 0,
       uploadInstallerDialog: false,
@@ -344,15 +350,19 @@ export default {
     next(vm => {
       let id = to.params.appsId
       vm.getAppDetails(id)
+      vm.getAppClassDetails(id)
     })
   },
   methods: {
-    getAppDetails(id) {
-      this.$http.get(`${this.appsApi}${id }/`).then((response) => {
+    async getAppDetails(id) {
+      await this.$http.get(`${this.appsApi}${id }/`).then((response) => {
         this.apps = response
-        this.$http.get(`${this.classApi}/${id }/`).then((response) => {
-          this.classification = response
-        })
+        this.loading = false
+      })
+    },
+    async getAppClassDetails(id) {
+     await this.$http.get(`${this.classApi}/${id }/`).then((response) => {
+        this.classification = response
       })
     },
     toggle(id, value, mode){

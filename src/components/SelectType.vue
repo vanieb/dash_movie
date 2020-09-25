@@ -114,8 +114,8 @@ export default {
       let index = this.mytypes.findIndex(element => element.id === item.id)
       this.mytypes.splice(index, 1)
     },
-    getFilteredAppTypes(typeFilter='') {
-      this.$http.get(`${api.types}?limit=400&offset=0&${typeFilter}`).then(response => {
+    async getFilteredAppTypes(typeFilter='') {
+      await this.$http.get(`${api.types}?limit=400&offset=0&${typeFilter}`).then(response => {
         this.app_types = response.results
         this.loading = true
         let _this = this
