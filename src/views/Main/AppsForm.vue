@@ -1,9 +1,9 @@
 <template>
   <v-layout wrap>
     <v-container v-if="loading">
-    <v-layout justify-center align-center >
-      <v-progress-circular indeterminate color="blue"></v-progress-circular>
-    </v-layout>
+      <v-layout justify-center align-center >
+        <v-progress-circular indeterminate color="blue"></v-progress-circular>
+      </v-layout>
     </v-container>
     <v-container v-else>
       <v-layout justify-start>
@@ -138,7 +138,7 @@
                       <v-layout wrap>
                         <v-flex xs12 >
                           <types
-                            v-if="showType"
+                            :key="showType"
                             :typeFilter="typeFilter"
                             :disabled="!isUpdateClass"
                             type="set"
@@ -151,9 +151,10 @@
                         </v-flex>
                         <v-flex xs12>
                           <categories
-                            v-if="showCategories"
+                            :key="showCategories"
                             :categoryFilter="categoryFilter"
                             :mode="'multiple'"
+                            :disabled="disableCatLab"
                             req=true
                             type="set"
                             :category="app_classification.categories"
@@ -162,8 +163,9 @@
                         </v-flex>
                         <v-flex xs12>
                             <labels
-                            v-if="showLabels"
+                            :key="showLabels"
                             :labelFilter="labelFilter"
+                            :disabled="disableCatLab"
                             type="set"
                             req=true
                             :mode="'multiple'"
@@ -194,7 +196,7 @@
               </validation-observer>
             </v-layout>
           </v-layout>
-          <v-simple-table v-if="isUpdate">
+          <v-simple-table v-if="isUpdate && !loadingClass">
             <thead>
               <tr>
                 <th width="15%">{{$t('apps.type')}}</th>
@@ -225,6 +227,9 @@
               </tr>
             </tbody>
           </v-simple-table>
+          <v-layout justify-center v-else-if="loadingClass">
+          <v-progress-circular indeterminate color="blue" small></v-progress-circular>
+          </v-layout>
           <v-spacer></v-spacer>
           <v-layout>
             <v-card-title>{{$t('apps.download_link')}}</v-card-title>
@@ -379,11 +384,13 @@ export default {
   data() {
     return {
       id: '',
+      isUpdate: true,
+      disableCatLab: true,
       types: '',
       isUpdateClass:false,
-      showCategories: true,
-      showLabels: true,
-      showType: true,
+      showCategories: false,
+      showLabels: false,
+      showType: false,
       showForm: false,
       showTinyMce: true,
       label_changed: '',
@@ -398,6 +405,7 @@ export default {
       categoryFilter: '',
       loading: false,
       submitting: false,
+      loadingClass: false,
       snackbar: {
         color: '',
         text: '',
@@ -460,13 +468,13 @@ export default {
       let appId = to.params.appsId
       if (appId) {
         vm.getAppDetails(appId)
+        vm.getAppClassDetails(appId)
+      } else {
+        vm.isUpdate = false
       }
     })
   },
   computed: {
-    isUpdate() {
-      return this.id ? true : false
-    },
     cardTitle() {
       return this.isUpdateClass ? `${this.$t('actions.update')} - ${this.$t('apps.classification')} ` : `${this.$t('actions.add')} - ${this.$t('apps.classification')}`
     },
@@ -478,18 +486,16 @@ export default {
     this.lang = $.getLanguage() == 'zh_CN' ? 'zh-cn' : ''
   },
   methods: {
-    getAppDetails(id) {
+    async getAppDetails(id) {
+      this.loading = true
       this.id = id
-      this.$http.get(`${this.appsApi}${id }/`).then((response) => {
+      await this.$http.get(`${this.appsApi}${id }/`).then((response) => {
         this.apps = response
         this.showTinyMce = true
         this.introKey = true
         this.featuresKey = true
         this.commentKey = true
         this.typeFilter = `website=${this.apps.website.id}`
-        this.showCategories = true
-        this.showLabels = true
-        this.showType = true
         if (this.apps.icon) {
           this.showImage = true
           this.apps.imageURI = this.apps.icon
@@ -501,15 +507,19 @@ export default {
         this.selectOne.forEach(item => {
           this.pushIDs(item, 'one')
         })
-        this.$http.get(`${this.classApi}/${id }/`).then((response) => {
-          this.classifications = response
-        })
       }, response => {
           if (('' + response.status).indexOf('4') === 0) {
               this.$router.push('/login?next=' + this.$route.path)
           }
       })
       this.loading = false
+    },
+    async getAppClassDetails(id) {
+      this.loadingClass = true
+      await this.$http.get(`${this.classApi}/${id }/`).then((response) => {
+        this.classifications = response
+      })
+      this.loadingClass = false
     },
     pushIDs(item, mode){
       let val = []
@@ -540,7 +550,6 @@ export default {
         }
         return
       }
-
       const fileRead = new FileReader()
       fileRead.onload = (e) => {
         this.showImage = false
@@ -588,6 +597,9 @@ export default {
       let websiteFilter = this.isUpdate ? this.apps.website.id : this.apps.website
       this.labelFilter = `website=${websiteFilter}&types=${type}`
       this.categoryFilter = `website=${websiteFilter}&types=${type}`
+      this.disableCatLab = type ? false : true
+      this.showCategories = true
+      this.showLabels = true
     },
     websiteSelectOne(val) {
       this.apps.website = val
@@ -658,20 +670,12 @@ export default {
     },
     close() {
       this.showForm = false
-      this.showType = false
-      this.showCategories = false
-      this.showLabels = false
-      if (this.isUpdate) {
-        this.getAppDetails(this.apps.id)
-      }
       this.isUpdateClass = false
-      let websiteFilter = this.isUpdate ? this.apps.website.id : this.apps.website
-      this.labelFilter = `website=${websiteFilter}`
-      this.categoryFilter = `website=${websiteFilter}`
       this.app_classification = {}
       this.$refs.classForm.reset()
     },
     async saveClass() {
+      this.loadingClass = true
       const isValid = await this.$refs.classForm.validate()
       if (isValid) {
         let formData = new window.FormData()
@@ -697,7 +701,8 @@ export default {
           formData.set('type', this.class_type[0].id)
         }
         this.$http.put(`${this.classApi}/${this.apps.id}/`, formData).then(response => {
-          this.getAppDetails(response.id)
+          this.getAppClassDetails(response.id)
+          this.close()
         }, error => {
             this.snackbar = {
               color: 'red',
@@ -705,8 +710,6 @@ export default {
               text: error
             }
         })
-        this.isUpdateClass = false
-        this.close()
       }
     },
     deleteClass(id) {
@@ -721,7 +724,6 @@ export default {
     },
     editClass(item) {
       this.isUpdateClass = true
-      this.showType = false
       this.labelFilter = `website=${this.apps.website.id}&types=${item.code}`
       this.categoryFilter = `website=${this.apps.website.id}&types=${item.code}`
       Object.assign(this.app_classification, {
@@ -731,7 +733,7 @@ export default {
       })
       this.showCategories = true
       this.showLabels = true
-      this.showType = true
+      this.disableCatLab = false
       this.showForm = true
     },
     async saveApp() {

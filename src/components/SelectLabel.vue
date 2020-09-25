@@ -24,7 +24,7 @@
         item-text="name"
         :items="labels"
         v-model="mylabel"
-        :disabled="!disableSetter || loading"
+        :disabled="loading || disabled"
         :messages="showMessage"
         :label="elLabel"
         outlined
@@ -81,21 +81,14 @@ export default {
   data() {
     return {
       labels: [],
-      memo: '',
       mylabel: this.label,
       elLabel: this.$t('nav.labels'),
-      loading: true,
-      disableSetter: ''
+      loading: false
     }
   },
   computed: {
     showMessage() {
-      if (this.loading) {
-        return ''
-      } else if (!this.disableSetter){
-        return this.$t('system_notes.select_type')
-      }
-      return ''
+      return this.disabled && !this.loading ? this.$t('system_notes.select_type') : ''
     }
   },
   watch: {
@@ -119,11 +112,9 @@ export default {
       this.elLabel = `${this.$t('nav.labels')}*`
     }
     if (this.type == 'set') {
-      this.loading = true
       if (this.labelFilter) {
         this.getFilteredLabels(this.labelFilter)
       }
-      this.loading = false
     }
   },
   methods: {
@@ -131,18 +122,17 @@ export default {
       let index = this.mylabel.findIndex(element => element.id === item.id)
       this.mylabel.splice(index, 1)
     },
-    getFilteredLabels(labelFilter='') {
-      this.$http.get(`${api.labels}?limit=400&offset=0&${labelFilter}`).then(response => {
+    async getFilteredLabels(labelFilter='') {
+      this.loading = true
+      await this.$http.get(`${api.labels}?limit=400&offset=0&${labelFilter}`).then(response => {
         this.labels = response.results
         if (this.default) {
           this.label = this.default
         }
-        this.loading = true
         let _this = this
         setTimeout(function() {
           _this.mylabel = _this.label
         }, 100)
-        this.disableSetter = true
         this.loading = false
       })
     }
