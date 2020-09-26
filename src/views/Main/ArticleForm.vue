@@ -436,7 +436,7 @@ export default {
             this.snackbar = {
               color: 'success',
               show: true,
-              text: `${this.$t('actions.create')} - ${this.$t('nav.article')}: ${this.$t('status.success')}`
+              text: `${this.$t('actions.add')} - ${this.$t('nav.article')}: ${this.$t('status.success')}`
             }
             this.$router.push(`/articles/${response.slug}`)
           }, error => {
