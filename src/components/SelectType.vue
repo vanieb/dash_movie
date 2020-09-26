@@ -121,7 +121,7 @@ export default {
         this.app_types = response.results
         this.loading = true
         let _this = this
-        if (this.req) {
+        if (this.req && !this.type == 'set') {
           this.mytypes = this.app_types[0].code
         }
         setTimeout(function() {
