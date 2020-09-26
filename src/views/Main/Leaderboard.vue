@@ -118,7 +118,7 @@ export default {
       filteredQuerySet: [],
       typesApi: api.types,
       appsApi: api.apps,
-      leaderboardsApi: `${api.websites}update_rank`,
+      leaderboardsApi: `${api.apps}rankings/sort-orders/`,
       showTab: false,
       snackbar: {
         color: '',
@@ -181,7 +181,7 @@ export default {
     async getApps(type) {
       this.type = this.app_types[type].code
       this.typeId = this.app_types[type].id
-      await this.$http.get(`${this.appsApi}?ordering=rank&is_rank=true&types=${this.type}&website=${this.query.website}`).then(response => {
+      await this.$http.get(`${this.appsApi}rankings/?ordering=rank&is_rank=true&types=${this.type}&website=${this.query.website}`).then(response => {
         this.filteredQuerySet = response.results
         .sort((a, b) => {
           return a['rank'] - b['rank']
@@ -195,11 +195,7 @@ export default {
       this.filteredQuerySet.map((p, index) => {
         rank[p.id] = index + 1
       })
-      let sortResult = Object({
-        recommend: false,
-        rank: rank
-      })
-      this.$http.put(`${this.leaderboardsApi}/${this.typeId}/`, sortResult).then(() => {
+      this.$http.post(`${this.leaderboardsApi}?field=rank`, rank).then(() => {
         this.snackbar = {
           color: 'success',
           show: true,
