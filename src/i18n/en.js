@@ -12,7 +12,8 @@ export default {
     remarks: 'Remarks',
     file: 'File',
     icon: 'Icon',
-    code: 'Code'
+    code: 'Code',
+    selected: 'Selected'
   },
   actions: {
     add: 'Add',

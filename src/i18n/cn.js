@@ -12,7 +12,8 @@ export default {
     remarks: '备注',
     file: '文件',
     icon: '图标',
-    code: '码'
+    code: '码',
+    selected: '已选'
   },
   actions: {
     add: '添加',
