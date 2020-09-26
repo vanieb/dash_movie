@@ -118,7 +118,7 @@
             <v-card-title>{{$t('apps.classification')}}</v-card-title>
             <v-layout justify-end>
               <validation-observer ref="classForm">
-                <v-dialog v-model="showForm" persistent max-width="500">
+                <v-dialog v-model="showForm" persistent max-width="800">
                   <template v-slot:activator="{ on }">
                     <v-btn
                       color="primary"
@@ -151,9 +151,9 @@
                         <v-flex xs12>
                           <categories
                             :key="showCategories"
-                            :categoryFilter="categoryFilter"
+                            :websiteFilter="websiteFilter"
+                            :categoryFilter="catLabFilter"
                             :mode="'multiple'"
-                            :disabled="disableCatLab"
                             req=true
                             type="set"
                             :category="app_classification.categories"
@@ -163,8 +163,8 @@
                         <v-flex xs12>
                             <labels
                             :key="showLabels"
-                            :labelFilter="labelFilter"
-                            :disabled="disableCatLab"
+                            :websiteFilter="websiteFilter"
+                            :labelFilter="catLabFilter"
                             type="set"
                             req=true
                             :mode="'multiple'"
@@ -384,7 +384,6 @@ export default {
     return {
       id: '',
       isUpdate: true,
-      disableCatLab: true,
       types: '',
       isUpdateClass:false,
       showCategories: false,
@@ -399,9 +398,9 @@ export default {
       lang: '',
       appsApi: api.apps,
       classApi: api.classification,
+      websiteFilter: '',
       typeFilter: '',
-      labelFilter: '',
-      categoryFilter: '',
+      catLabFilter: '',
       loading: false,
       submitting: false,
       loadingClass: false,
@@ -556,7 +555,6 @@ export default {
         this.showImage = true
       }
       fileRead.readAsDataURL(e.target.files[0])
-      
       this.apps.icon = e.target.files[0]
       this.change_icon = true
       // let formData = new window.FormData()
@@ -593,10 +591,8 @@ export default {
       if (val && val.id) {
         type = val.code
       }
-      let websiteFilter = this.isUpdate ? this.apps.website.id : this.apps.website
-      this.labelFilter = `website=${websiteFilter}&types=${type}`
-      this.categoryFilter = `website=${websiteFilter}&types=${type}`
-      this.disableCatLab = type ? false : true
+      this.websiteFilter = this.isUpdate ? this.apps.website.id : this.apps.website
+      this.catLabFilter = type
       this.showCategories = true
       this.showLabels = true
     },
@@ -605,45 +601,22 @@ export default {
       this.typeFilter = `website=${this.apps.website}`
     },
     categorySelectMultiple(val) {
-      this.app_classification.categories = val
-      if (val && val[0].name) {
-        let newVal = []
-        this.app_classification.categories.forEach(item => {
+      let newVal = []
+      if (val) {
+         val.forEach(item => {
           newVal.push(item.id)
         })
-        // changed Removed
-        if (this.data.categories != newVal.join(',')) {
-          this.category_removed_some = true
-          this.app_classification.category_removed = newVal.join(',')
-        // unchanged
-        } else {
-          this.category_changed = false
-        }
-      // Changed - Added
-      } else {
-        this.category_changed = true
       }
-      this.app_classification.categories = val
+      this.app_classification.categories = newVal.join(',')
     },
     labelSelectMultiple(val) {
-      if (val && val[0].name) {
-        let newVal = []
-        this.app_classification.labels.forEach(item => {
+      let newVal = []
+      if (val) {
+         val.forEach(item => {
           newVal.push(item.id)
         })
-        // changed Removed
-        if (this.data.labels != newVal.join(',')) {
-          this.label_removed_some = true
-          this.app_classification.label_removed = newVal.join(',')
-        // unchanged
-        } else {
-          this.label_changed = false
-        }
-      // Changed - Added
-      } else {
-        this.label_changed = true
+        this.app_classification.labels = newVal.join(',')
       }
-      this.app_classification.labels = val
     },
     checkLinks() {
       this.snackbar.show = false
@@ -668,28 +641,22 @@ export default {
       }
     },
     close() {
+      // this.$router.go(this.$router.currentRoute)
       this.showForm = false
       this.isUpdateClass = false
       this.app_classification = {}
       this.$refs.classForm.reset()
+      this.submitting = false
     },
     async saveClass() {
+      this.submitting = true
       this.loadingClass = true
       this.snackbar.show = false
       const isValid = await this.$refs.classForm.validate()
       if (isValid) {
         let formData = new window.FormData()
-        // Select Fields (Multiple) are added if value changed
-        if (this.label_removed_some) {
-          formData.set('labels', this.app_classification.label_removed)
-        } else if (this.label_changed) {
-          formData.set('labels', this.app_classification.labels)
-        } 
-        if (this.category_removed_some) {
-          formData.set('categories', this.app_classification.category_removed)
-        } else if (this.category_changed) {
-          formData.set('categories', this.app_classification.categories)
-        }
+        formData.set('labels', this.app_classification.labels)
+        formData.set('categories', this.app_classification.categories)
         // Select Fields (One) old values are sent if value did not change
         await this.$http.get(`${api.types}?limit=400&offset=0&${this.typeFilter}`).then(response => {
           this.types = response.results
@@ -700,7 +667,7 @@ export default {
         } else {
           formData.set('type', this.class_type[0].id)
         }
-        this.$http.put(`${this.classApi}/${this.apps.id}/`, formData).then(response => {
+        this.$http.put(`${this.classApi}/${this.apps.id}/`, formData).then((response) => {
           this.getAppClassDetails(response.id)
           let snackbarText = this.isUpdateClass ? this.$t('actions.update') : this.$t('actions.add')
           this.snackbar = {
@@ -739,8 +706,8 @@ export default {
     },
     editClass(item) {
       this.isUpdateClass = true
-      this.labelFilter = `website=${this.apps.website.id}&types=${item.code}`
-      this.categoryFilter = `website=${this.apps.website.id}&types=${item.code}`
+      this.websiteFilter = this.apps.website.id
+      this.catLabFilter = item.code
       Object.assign(this.app_classification, {
         type: item,
         categories: item.categories,
@@ -748,7 +715,6 @@ export default {
       })
       this.showCategories = true
       this.showLabels = true
-      this.disableCatLab = false
       this.showForm = true
     },
     async saveApp() {
