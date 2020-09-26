@@ -107,18 +107,23 @@ export default {
     if (this.req) {
       this.elLabel = `${this.$t('apps.type')}*`
     }
-    this.getFilteredAppTypes(this.typeFilter)
+    if (this.typeFilter) {
+      this.getFilteredAppTypes(this.typeFilter)
+    }
   },
   methods: {
     remove (item) {
       let index = this.mytypes.findIndex(element => element.id === item.id)
       this.mytypes.splice(index, 1)
     },
-    async getFilteredAppTypes(typeFilter='') {
-      await this.$http.get(`${api.types}?limit=400&offset=0&${typeFilter}`).then(response => {
+   getFilteredAppTypes(typeFilter='') {
+      this.$http.get(`${api.types}?limit=400&offset=0&website=${typeFilter}`).then(response => {
         this.app_types = response.results
         this.loading = true
         let _this = this
+        if (this.req) {
+          this.mytypes = this.app_types[0].code
+        }
         setTimeout(function() {
           _this.mytypes = _this.types
         }, 100)
