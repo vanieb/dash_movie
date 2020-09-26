@@ -675,6 +675,7 @@ export default {
     },
     async saveClass() {
       this.loadingClass = true
+      this.snackbar.show = false
       const isValid = await this.$refs.classForm.validate()
       if (isValid) {
         let formData = new window.FormData()
