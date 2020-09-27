@@ -118,16 +118,14 @@
             <v-card-title>{{$t('apps.classification')}}</v-card-title>
             <v-layout justify-end>
               <validation-observer ref="classForm">
-                <v-dialog v-model="showForm" persistent max-width="800">
-                  <template v-slot:activator="{ on }">
-                    <v-btn
-                      color="primary"
-                      small
-                      dark v-on="on"
-                      align-right>
-                      <v-icon small left>add_box</v-icon> &nbsp;{{ $t('actions.add') }}
-                    </v-btn>
-                  </template>
+                <v-btn
+                  color="primary"
+                  small
+                  dark @click="showForm = true"
+                  align-right>
+                  <v-icon small left>add_box</v-icon> &nbsp;{{ $t('actions.add') }}
+                </v-btn>
+                <v-dialog v-model="showForm" persistent max-width="800" v-if="showForm">
                   <v-card>
                     <v-card-title class="headline">
                       <v-icon class="mr-3">{{ cardIcon }}</v-icon> &nbsp;
