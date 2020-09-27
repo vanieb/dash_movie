@@ -14,6 +14,7 @@
         :outlined="elementType != 'modal' ? true : false"
         dense
         clearable
+        :menu-props="{'maxHeight': '175px', 'z-index': '1100'}"
         :prepend-icon="type === 'set' && elementType !== 'modal' ? 'new_releases' : '' "
         placeholder=" ">
       </v-select>
@@ -29,7 +30,7 @@
         :label="elLabel"
         :outlined="elementType != 'modal' ? true : false"
         dense
-        :menu-props="{ top: false, offsetY: true }"
+        :menu-props="{'maxHeight': '150px', 'z-index': '1100'}"
         attach
         chips
         clearable
