@@ -84,45 +84,6 @@
             <v-icon color="warning" left>web</v-icon>{{$t('apps.website')}}:
             <v-chip class="ma-1" color="orange" outlined v-if="apps.website" small>{{apps.website.name}}</v-chip>
             <span v-else> {{ $t('system_msg.no_data') }}</span>
-            <v-row>
-              <v-chip
-                v-if="apps.is_active"
-                class="ma-1"
-                color="green"
-                text-color="white"
-                style="height:20px; !important font-size:11px;">
-                {{$t('status.enabled')}}
-              </v-chip>
-              <v-chip
-                v-else
-                class="ma-1"
-                color="gray"
-                style="height:20px;
-                !important font-size:11px;">
-                {{$t('status.disabled')}}
-              </v-chip>
-            </v-row>
-            <v-row v-if="apps.is_rank">
-              <v-chip
-                class="ma-1"
-                color="error"
-                text-color="white"
-                small>
-                <v-icon small left>format_list_numbered</v-icon>
-                {{$t('nav.leaderboard')}}
-              </v-chip>
-            </v-row>
-            <v-row v-if="apps.is_recommended">
-              
-              <v-chip
-                class="ma-1"
-                color="error"
-                text-color="white"
-                small>
-                <v-icon small left>star_outline</v-icon>
-                {{$t('nav.recommended')}}
-              </v-chip>
-            </v-row>
           </v-col>
           <v-spacer></v-spacer>
         </v-row>
@@ -135,6 +96,8 @@
               <th width="20%">{{$t('apps.type')}}</th>
               <th width="30%">{{$t('nav.category')}}</th>
               <th width="30%">{{$t('nav.labels')}}</th>
+              <th width="10%">{{$t('common.status')}}</th>
+              <th width="30%">{{$t('nav.leaderboard')}}/{{$t('nav.recommended')}}</th>
             </tr>
           </thead>
           <tbody >
@@ -152,6 +115,47 @@
                 </span>
               </td>
               <td v-else>-</td>
+              <td>
+                <span v-if="item.apptype_details" >
+                  <v-chip
+                    v-if="item.apptype_details.is_active"
+                    class="ma-1"
+                    color="green"
+                    text-color="white"
+                    style="height:20px; !important font-size:11px;">
+                    {{$t('status.enabled')}}
+                  </v-chip>
+                  <v-chip
+                    v-else
+                    class="ma-1"
+                    color="gray"
+                    style="height:20px;
+                    !important font-size:11px;">
+                    {{$t('status.disabled')}}
+                  </v-chip>
+                </span>
+                </td>
+                <td class="text-center">
+                  <span v-if="item.apptype_details">
+                  <v-chip v-if="item.apptype_details.is_rank"
+                    class="ma-1"
+                    color="error"
+                    text-color="white"
+                    small>
+                    <v-icon small left>format_list_numbered</v-icon>
+                    {{$t('nav.leaderboard')}}
+                  </v-chip>
+                  <span v-if="!item.apptype_details.is_recommended && !item.apptype_details.is_rank">-</span>
+                  <v-chip v-if="item.apptype_details.is_recommended"
+                    class="ma-1"
+                    color="error"
+                    text-color="white"
+                    small>
+                    <v-icon small left>star_outline</v-icon>
+                    {{$t('nav.recommended')}}
+                  </v-chip>
+                </span>
+              </td>
             </tr>
           </tbody>
           

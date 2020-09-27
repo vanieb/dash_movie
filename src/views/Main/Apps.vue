@@ -91,7 +91,6 @@
           <!-- Create Multiple Apps -->
           <v-dialog v-model="createAppDialog" persistent max-width="350">
             <template v-slot:activator="{ on }">
-
               <v-btn
                 color="primary"
                 dark 
@@ -163,26 +162,30 @@
           </v-btn>
         </v-layout>
       </v-layout>
+      <v-layout justify-start class="mt-3">
+        <div style="width:200px !important;" class="mr-2">
+          <website
+            type="filter"
+            :mode="'one'"
+            req="true"
+            :website="query.website"
+            @website-select-one="websiteSelectOne">
+          </website>
+        </div>
+        <div style="width:200px !important;" class="mr-2">
+          <types
+            :mode="'one'"
+            type="filter"
+            req="true"
+            :typeFilter="typeFilter"
+            :types="query.types"
+            @type-select-one="typeSelectOne">
+          </types>
+        </div>
+      </v-layout>
       <v-card>
-        <v-col cols="12" md="12" class="mt-2" style="padding: 20px 20px 10px 20px !important;">
+        <v-col cols="12" md="12" class="" style="padding: 20px 20px 10px 20px !important;">
           <v-row>
-            <div style="width:155px !important;" class="mr-2">
-              <website
-                type="filter"
-                :mode="'one'"
-                :website="query.website"
-                @website-select-one="websiteSelectOne">
-              </website>
-            </div>
-            <div style="width:155px !important;" class="mr-2">
-             <types
-                :mode="'one'"
-                type="filter"
-                :typeFilter="`website=${query.website}`"
-                :types="query.app_type"
-                @type-select-one="typeSelectOne">
-              </types>
-            </div>
             <div style="width:155px;" class="mr-2">
               <v-select
                 item-name="text"
@@ -254,7 +257,7 @@
               </v-btn>
             </v-layout>
           </v-row>
-          <v-row>
+          <v-row class="mt-2">
             <div style="width:200px;" class="mr-2">
               <v-text-field
                 @input="search"
@@ -420,6 +423,7 @@ export default {
       query: {
         website: 1
       },
+      typeFilter: '',
       querySet: [],
       export_query: [],
       is_active: '',
@@ -428,7 +432,7 @@ export default {
       today: date.max_today,
       created_at: ['', ''],
       website: 1,
-      appsApi: api.apps,
+      appsApi: `${api.apps}rankings/`,
       exportApi: `${api.apps}export/`,
       importApi: `${api.apps}import/`,
       loading: true,
@@ -519,7 +523,7 @@ export default {
       this.$refs.pulling.submit()
     },
     type(newObj) {
-      this.query.app_type = newObj
+      this.query.types = newObj
       this.search()
     },
     website(newObj) {
@@ -543,7 +547,7 @@ export default {
   created() {
     this.setQueryAll()
     this.$nextTick(() => {
-      this.$refs.pulling.rebase()
+      // this.$refs.pulling.rebase()
       this.query.website = 1
       this.submit()
     })
@@ -665,8 +669,10 @@ export default {
       }
     },
     typeSelectOne(val) {
-      this.query.types = val
-      this.submit()
+      if (val) {
+        this.query.types = val
+        this.submit()
+      }      
     },
     websiteSetMultiple(val) {
       this.setWebsite = val
@@ -718,7 +724,7 @@ export default {
     },
     websiteSelectOne(val) {
       this.query.website = val
-      this.typeFilter = `website=${this.query.website}`
+      this.typeFilter = this.query.website
       this.submit()
     },
     search:
@@ -728,9 +734,9 @@ export default {
     700),
     clearAll() {
       this.created_at = ['','']
-      this.is_active = ''
       this.query = {}
       this.query.website = 1
+      this.query.types = this.$route.query.types
       this.$nextTick(() => {
         this.$refs.pulling.submit()
       })

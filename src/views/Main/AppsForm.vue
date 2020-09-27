@@ -493,7 +493,7 @@ export default {
         this.introKey = true
         this.featuresKey = true
         this.commentKey = true
-        this.typeFilter = `website=${this.apps.website.id}`
+        this.typeFilter = this.apps.website.id
         if (this.apps.icon) {
           this.showImage = true
           this.apps.imageURI = this.apps.icon
@@ -598,7 +598,7 @@ export default {
     },
     websiteSelectOne(val) {
       this.apps.website = val
-      this.typeFilter = `website=${this.apps.website}`
+      this.typeFilter = this.apps.website
     },
     categorySelectMultiple(val) {
       let newVal = []

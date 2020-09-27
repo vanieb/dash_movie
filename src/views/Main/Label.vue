@@ -55,7 +55,7 @@
                     <v-flex xs12>
                       <div width="452px;">
                         <types
-                          :typeFilter="`website=${query.website}`"
+                          :typeFilter="query.website"
                           elementType="modal"
                           type="set"
                           req="true"
@@ -127,7 +127,7 @@
             </div>
             <div style="width:155px;" class="mr-2">
               <types
-                :typeFilter="`website=${query.website}`"
+                :typeFilter="query.website"
                 :mode="'one'"
                 type="'filter'"
                 :types="query.types"

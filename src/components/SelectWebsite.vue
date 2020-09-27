@@ -97,21 +97,27 @@ export default {
     if (this.req) {
       this.elLabel = `${this.$t('nav.websites')}*`
     }
-    this.$http.get(api.websites + '?limit=400&offset=0').then(response => {
-      this.websites = response.results
-      .sort((a, b) => {
-          return a['id'] - b['id']
-        })
-      let _this = this
-      setTimeout(function() {
-        _this.mywebsite = _this.website
-      }, 100)
-    })
+    this.getWebsites()
   },
   methods: {
     remove (item) {
       let index = this.mywebsite.findIndex(element => element.id === item.id)
       this.mywebsite.splice(index, 1)
+    },
+    async getWebsites() {
+      await this.$http.get(api.websites + '?limit=400&offset=0').then(response => {
+        this.websites = response.results
+        .sort((a, b) => {
+            return a['id'] - b['id']
+          })
+        if (this.req) {
+          this.mywebsite = this.websites[0].id
+        }
+        let _this = this
+        setTimeout(function() {
+          _this.mywebsite = _this.website
+        }, 100)
+      })
     }
   }
 }
