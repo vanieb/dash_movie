@@ -103,7 +103,7 @@
       </v-container>
       </v-card>
     </v-container>
-  </v-layout>    
+  </v-layout>
 </template>
 <script>
 import api from '@/api/apis'

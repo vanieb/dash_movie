@@ -424,7 +424,7 @@ export default {
       if (val) {
         this.query.types = val
         this.submit()
-      }      
+      }
     },
     websiteSetMultiple(val) {
       this.setWebsite = val

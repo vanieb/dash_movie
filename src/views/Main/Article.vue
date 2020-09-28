@@ -56,7 +56,7 @@
                       placeholder=" "
                       slot-scope="{ errors }"
                       required
-                      v-model="importFile">    
+                      v-model="importFile">
                     </v-file-input>
                   </validation-provider>
                   <v-progress-linear
@@ -460,8 +460,8 @@ export default {
         const formData = new window.FormData()
         formData.set('websites', this.setWebsite)
         formData.set('upload_file', this.importFile)
-        await axios.post(`${this.articleApi}?upload=docx`, 
-          formData, 
+        await axios.post(`${this.articleApi}?upload=docx`,
+          formData,
           { headers: {'Content-Type': 'multipart/form-data'},
           onUploadProgress: function( progressEvent ) {
             this.uploadPercentage = parseInt( Math.round( ( progressEvent.loaded / progressEvent.total ) * 100 ))
@@ -487,7 +487,7 @@ export default {
           this.importLoading = false
           return
         }).catch(function(){
-          
+
         })
       }
     },

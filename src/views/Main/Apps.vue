@@ -9,7 +9,7 @@
               dark to="/apps/add">
               <v-icon class="mr-3">library_add</v-icon> &nbsp;{{ $t('actions.add') }}
             </v-btn>
-          </v-layout> 
+          </v-layout>
         </div>
         <v-layout justify-end>
           <!-- Installer Upload -->
@@ -57,7 +57,7 @@
                       placeholder=" "
                       slot-scope="{ errors }"
                       required
-                      v-model="file">    
+                      v-model="file">
                     </v-file-input>
                   </validation-provider>
                   <v-progress-linear
@@ -93,7 +93,7 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 color="primary"
-                dark 
+                dark
                 class="mr-3"
                 v-on="on">
                 <v-tooltip bottom>
@@ -126,7 +126,7 @@
                       required
                       slot-scope="{ errors }"
                       accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                      v-model="importFile">    
+                      v-model="importFile">
                     </v-file-input>
                   </validation-provider>
                 </v-card-text>
@@ -284,7 +284,7 @@
                 </v-list>
               </v-menu>
               </v-layout>
-              
+
             </td>
           </tr>
         </tbody>
@@ -501,8 +501,8 @@ export default {
             const formData = new window.FormData()
             formData.set('app_file', this.file)
             formData.set('website', this.setWebsite)
-            await axios.post(api.upload, 
-              formData, 
+            await axios.post(api.upload,
+              formData,
               { headers: {'Content-Type': 'multipart/form-data'},
               onUploadProgress: function( progressEvent ) {
                 this.uploadPercentage = parseInt( Math.round( ( progressEvent.loaded / progressEvent.total ) * 100 ))
@@ -524,7 +524,7 @@ export default {
               this.uploadLoading = false
               return
             }).catch(function(){
-              
+
             })
           }
         }
@@ -557,7 +557,7 @@ export default {
       if (val) {
         this.query.types = val
         this.submit()
-      }      
+      }
     },
     websiteSetMultiple(val) {
       this.setWebsite = val
