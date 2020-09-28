@@ -193,7 +193,7 @@ export default {
     submitRank() {
       let rank = {}
       this.filteredQuerySet.map((p, index) => {
-        rank[p.id] = index + 1
+        rank[p.apptype_details.id] = index + 1
       })
       this.$http.post(`${this.leaderboardsApi}?field=rank`, rank).then(() => {
         this.snackbar = {
