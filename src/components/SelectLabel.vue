@@ -177,7 +177,7 @@ export default {
     },
     async getFilteredLabels(labelFilter='', mode='') {
       this.loading = true
-      await this.$http.get(`${api.labels}?limit=${this.limit}&offset=${this.offset}&types=${labelFilter}`).then(response => {
+      await this.$http.get(`${api.labels}?limit=${this.limit}&offset=${this.offset}&types=${labelFilter}&active=true`).then(response => {
         this.labels = response.results
         this.count = response.count
         this.getPage()
