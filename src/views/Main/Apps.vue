@@ -759,7 +759,7 @@ export default {
       this.$refs.importForm.reset()
     },
     deleteApp(id) {
-      this.$http.delete(this.appsApi + id + '/').then(() => {
+      this.$http.delete(api.apps + id + '/').then(() => {
         this.snackbar = {
           color: 'success',
           show: true,
