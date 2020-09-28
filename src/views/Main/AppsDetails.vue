@@ -27,7 +27,7 @@
           <v-btn
             color="primary"
             dark
-            :to="`/apps/${apps.id}/edit`"
+            :to="`/apps/${apps.slug}/edit`"
             >
             <v-icon class="mr-3">edit</v-icon> &nbsp;{{ $t('actions.update') }}
           </v-btn>
