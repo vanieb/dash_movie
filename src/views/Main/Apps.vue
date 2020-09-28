@@ -94,7 +94,6 @@
               <v-btn
                 color="primary"
                 dark 
-                
                 class="mr-3"
                 v-on="on">
                 <v-tooltip bottom>
@@ -163,7 +162,7 @@
         </v-layout>
       </v-layout>
       <v-layout justify-start class="mt-3">
-        <div style="width:200px !important;" class="mr-2">
+        <div style="width:200px !important;" class="mr-2 mb-2">
           <website
             type="filter"
             :mode="'one'"
@@ -172,92 +171,19 @@
             @website-select-one="websiteSelectOne">
           </website>
         </div>
-        <div style="width:200px !important;" class="mr-2">
-          <types
-            :mode="'one'"
-            type="filter"
-            req="true"
-            :typeFilter="typeFilter"
-            :types="query.types"
-            @type-select-one="typeSelectOne">
-          </types>
-        </div>
       </v-layout>
       <v-card>
-        <v-col cols="12" md="12" class="" style="padding: 20px 20px 10px 20px !important;">
-          <v-row>
-            <div style="width:155px;" class="mr-2">
-              <v-select
-                item-name="text"
-                item-value="value"
-                :items="statusOptions"
-                :label="`${$t('common.status')}`"
-                v-model="is_active"
-                hide-details="true"
-                placeholder=" "
-                outlined
-                clearable
-                dense>
-                <template slot="selection" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-                <template slot="item" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-              </v-select>
-            </div>
-            <div style="width:155px;" class="mr-2">
-              <v-select
-                item-name="text"
-                item-value="value"
-                :items="statusOptions"
-                :label="`${$t('nav.leaderboard')}-${$t('common.status')}`"
-                v-model="is_rank"
-                hide-details="true"
-                placeholder=" "
-                outlined
-                clearable
-                dense>
-                <template slot="selection" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-                <template slot="item" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-              </v-select>
-            </div>
-            <div style="width:155px;" class="mr-2">
-              <v-select
-                item-name="text"
-                item-value="value"
-                :items="statusOptions"
-                :label="`${$t('nav.recommended')}-${$t('common.status')}`"
-                v-model="is_recommended"
-                hide-details="true"
-                placeholder=" "
-                outlined
-                clearable
-                dense>
-                <template slot="selection" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-                <template slot="item" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-              </v-select>
-            </div>
-            <v-layout class="justify-end">
-              <v-btn
-                color="primary"
-                dark
-                :loading="loading"
-                @click="clearAll"
-              >
-                <v-icon>clear_all</v-icon>{{ $t('actions.clear') }}
-              </v-btn>
-            </v-layout>
-          </v-row>
+        <v-col cols="12" md="12" class="" style="padding: 10px 20px 10px 20px !important;">
           <v-row class="mt-2">
+            <div style="width:200px !important;" class="mr-2">
+              <types
+                :mode="'one'"
+                type="filter"
+                :typeFilter="typeFilter"
+                :types="query.types"
+                @type-select-one="typeSelectOne">
+              </types>
+            </div>
             <div style="width:200px;" class="mr-2">
               <v-text-field
                 @input="search"
@@ -305,6 +231,16 @@
                 </v-date-picker>
               </v-menu>
             </div>
+            <v-layout class="justify-end">
+              <v-btn
+                color="primary"
+                dark
+                :loading="loading"
+                @click="clearAll"
+              >
+                <v-icon>clear_all</v-icon>{{ $t('actions.clear') }}
+              </v-btn>
+            </v-layout>
           </v-row>
         </v-col>
       </v-card>
@@ -327,21 +263,6 @@
             <td class="align-center justify-center" width="10%" >
               <span>{{item.website ? item.website.name : '-' }}<br/></span>
             </td>
-            <td class="align-center justify-start">
-              <v-switch value v-model="item.is_active"
-                @change="toggle(item.id, item.is_active, 'is_active')">
-              </v-switch>
-            </td>
-            <td class="align-center justify-start">
-              <v-switch value v-model="item.is_rank"
-                @change="toggle(item.id, item.is_rank, 'is_rank')">
-              </v-switch>
-            </td>
-            <td class="align-center justify-start">
-              <v-switch value v-model="item.is_recommended"
-                @change="toggle(item.id, item.is_recommended, 'is_recommended' )">
-              </v-switch>
-            </td>
             <td width="30%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td width="30%" class="align-center justify-center">
               <v-layout>
@@ -353,7 +274,7 @@
                   <v-icon color="red" small v-on="on" icon>delete</v-icon>
                 </template>
                 <v-list dark>
-                  <v-list-item @click="deleteApp(item.id, true, $event)">
+                  <v-list-item @click="deleteApp(item.apptype_details.id, true, $event)">
                     <v-list-item-title>
                       <v-icon class="mr-2" color="orange">warning</v-icon>
                       {{ $t('system_msg.confirm_delete') }}
@@ -362,9 +283,6 @@
                   </v-list-item>
                 </v-list>
               </v-menu>
-              <!-- <v-btn class="mr-2" icon :to="`/apps/${item.id}/edit`">
-                <v-icon color="red" small>delete</v-icon>
-              </v-btn> -->
               </v-layout>
               
             </td>
@@ -426,13 +344,10 @@ export default {
       typeFilter: '',
       querySet: [],
       export_query: [],
-      is_active: '',
-      is_rank: '',
-      is_recommended: '',
       today: date.max_today,
       created_at: ['', ''],
       website: 1,
-      appsApi: `${api.apps}rankings/`,
+      appsApi: `${api.apps}`,
       exportApi: `${api.apps}export/`,
       importApi: `${api.apps}import/`,
       loading: true,
@@ -464,7 +379,8 @@ export default {
         {
           sortable: false,
           text: this.$t('common.name'),
-          value: 'name'
+          value: 'name',
+          width: '40%'
         },
         {
           sortable: false,
@@ -473,30 +389,14 @@ export default {
         },
         {
           sortable: false,
-          text: this.$t('common.status'),
-          value: 'status',
-          width: '10%'
-        },
-        {
-          sortable: false,
-          text: this.$t('nav.leaderboard'),
-          value: 'is_rank',
-          width: '10%'
-        },
-        {
-          sortable: false,
-          text: this.$t('nav.recommended'),
-          value: 'is_recommended',
-          width: '10%'
-        },
-        {
-          sortable: false,
           text: this.$t('common.created_at'),
-          value: 'created_at'
+          value: 'created_at',
+          width: '20%'
         },
         {
           sortable: false,
-          text: this.$t('common.action')
+          text: this.$t('common.action'),
+          width: '10%'
         }
       ]
     }
@@ -509,18 +409,6 @@ export default {
         this.$refs.pulling.rebase()
       },
       deep: true
-    },
-    is_active(newObj) {
-      this.query.is_active = newObj
-      this.$refs.pulling.submit()
-    },
-    is_rank(newObj) {
-      this.query.is_rank = newObj
-      this.$refs.pulling.submit()
-    },
-    is_recommended(newObj) {
-      this.query.is_recommended = newObj
-      this.$refs.pulling.submit()
     },
     type(newObj) {
       this.query.types = newObj
@@ -547,7 +435,7 @@ export default {
   created() {
     this.setQueryAll()
     this.$nextTick(() => {
-      // this.$refs.pulling.rebase()
+      this.$refs.pulling.rebase()
       this.query.website = 1
       this.submit()
     })
@@ -579,9 +467,6 @@ export default {
         this.created_at = [undefined, undefined]
       }
       this.website = this.$route.query.website || ''
-      this.is_active = this.$route.query.is_active==true || this.$route.query.is_active==false ? this.$route.query.is_active : ''
-      this.is_rank = this.$route.query.is_rank==true || this.$route.query.is_rank==false ? this.$route.query.is_rank : ''
-      this.is_recommended = this.$route.query.is_recommended==true || this.$route.query.is_recommended==false ? this.$route.query.is_recommended : ''
       this.type = this.$route.query.types || ''
       this.query = Object.assign({}, this.$route.query)
     },
@@ -677,46 +562,6 @@ export default {
     websiteSetMultiple(val) {
       this.setWebsite = val
     },
-    toggle(id, value, mode){
-      let website_query = this.query.website
-      this.snackbar.show = false
-      let toggleResult
-      let action_title
-      if (mode == 'is_active') {
-        toggleResult = {
-          is_active: value
-        }
-        action_title = this.$t('common.status')
-      } else if (mode == 'is_rank') {
-        toggleResult = {
-          is_rank: value
-        }
-        action_title = this.$t('nav.leaderboard')
-      } else {
-        toggleResult = {
-          is_recommended: value
-        }
-        action_title = this.$t('nav.recommended')
-      }
-      this.$http.put(this.appsApi + id + '/', toggleResult).then((response) => {
-        let action_text = response[mode] ? this.$t('status.enabled') : this.$t('status.disabled')
-        this.snackbar = {
-          color: 'success',
-          show: true,
-          text: `[${action_title}]: ${action_text}`
-        }
-      }, error => {
-        this.snackbar = {
-          color: 'error',
-          show: true,
-          text: `${this.$t('system_msg.error')}: ${error}`
-        }
-        this.$refs.pulling.rebase()
-        this.query.website = website_query
-        this.submit()
-      })
-      this.snackbar.show = false
-    },
     submit() {
       if (!$.compareQuery(this.query, this.$route.query)) {
         this.$refs.pulling.submit()
@@ -736,7 +581,6 @@ export default {
       this.created_at = ['','']
       this.query = {}
       this.query.website = 1
-      this.query.types = this.$route.query.types
       this.$nextTick(() => {
         this.$refs.pulling.submit()
       })
