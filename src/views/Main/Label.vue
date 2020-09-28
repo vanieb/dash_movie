@@ -554,7 +554,7 @@ export default {
         } else if (this.types_changed) {
           labelResult.set('types', this.label.types)
         }
-	this.types_changed = false
+        this.types_changed = false
         this.types_removed_some = false
         if (this.label.id) {
           this.$http.put(`${this.labelsApi}${this.label.id}/`, labelResult).then(() => {
