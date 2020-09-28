@@ -564,6 +564,7 @@ export default {
               text: `${this.$t('actions.update')}-${this.$t('nav.labels')}: ${this.$t('status.success')}`
             }
             this.$refs.pulling.rebase()
+            this.website = this.query.website
             this.reload=true
             this.close()
           }, error => {
@@ -581,6 +582,7 @@ export default {
               show: true,
               text: `${this.$t('actions.add')}-${this.$t('nav.labels')}: ${this.$t('status.success')}`
             }
+            this.website = this.query.website
             this.$refs.pulling.rebase()
             this.close()
           }, error => {
