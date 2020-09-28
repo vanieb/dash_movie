@@ -1,6 +1,5 @@
 <template>
     <ValidationProvider :name="$t('apps.type')" style="width:338px;" :rules="`${req ? 'required' : ''}`" >
-      {{req}}
       <v-select
         v-if="mode==='one'"
         :error-messages="errors"
