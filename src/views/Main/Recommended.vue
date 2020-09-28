@@ -195,7 +195,7 @@ export default {
       this.filteredQuerySet.map((p, index) => {
         rank[p.apptype_details.id] = index + 1
       })
-      this.$http.post(`${this.recommendedApi}?field=recommended_rank/`, rank).then(() => {
+      this.$http.post(`${this.recommendedApi}?field=recommended_rank`, rank).then(() => {
         this.snackbar = {
           color: 'success',
           show: true,
