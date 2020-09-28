@@ -85,18 +85,6 @@
                 </template>
               </v-select>
             </div>
-            <v-layout class="justify-end">
-              <v-btn
-                color="primary"
-                dark
-                :loading="loading"
-                @click="clearAll"
-              >
-                <v-icon>clear_all</v-icon>{{ $t('actions.clear') }}
-              </v-btn>
-            </v-layout>
-          </v-row>
-          <v-row class="mt-2">
             <div style="width:200px;" class="mr-2">
               <v-text-field
                 @input="search"
@@ -144,6 +132,16 @@
                 </v-date-picker>
               </v-menu>
             </div>
+            <v-layout class="justify-end">
+              <v-btn
+                color="primary"
+                dark
+                :loading="loading"
+                @click="clearAll"
+              >
+                <v-icon>clear_all</v-icon>{{ $t('actions.clear') }}
+              </v-btn>
+            </v-layout>
           </v-row>
         </v-col>
       </v-card>
