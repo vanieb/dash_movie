@@ -549,11 +549,13 @@ export default {
         if (this.label.memo || this.label.memo == '') {
           labelResult.set('memo', this.label.memo)
         }
-        if (this.types_removed_some) {
+        if (this.types_removed_some && !this.types_changed) {
           labelResult.set('types', this.label.types_removed)
         } else if (this.types_changed) {
           labelResult.set('types', this.label.types)
         }
+        this.types_changed = false
+        this.types_removed_some = false
         if (this.label.id) {
           this.$http.put(`${this.labelsApi}${this.label.id}/`, labelResult).then(() => {
             this.snackbar = {
@@ -562,6 +564,7 @@ export default {
               text: `${this.$t('actions.update')}-${this.$t('nav.labels')}: ${this.$t('status.success')}`
             }
             this.$refs.pulling.rebase()
+            this.website = this.query.website
             this.reload=true
             this.close()
           }, error => {
@@ -579,6 +582,7 @@ export default {
               show: true,
               text: `${this.$t('actions.add')}-${this.$t('nav.labels')}: ${this.$t('status.success')}`
             }
+            this.website = this.query.website
             this.$refs.pulling.rebase()
             this.close()
           }, error => {
