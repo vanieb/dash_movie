@@ -731,7 +731,7 @@ export default {
       this.snackbar.show = false
       const isValid = await this.$refs.form.validate()
       if (isValid) {
-        let formData = new window.FormData()    
+        let formData = new window.FormData()
         if (this.change_icon) {
           formData.set('icon', this.apps.icon)
         }
