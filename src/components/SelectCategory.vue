@@ -177,7 +177,7 @@ export default {
     },
     async getFilteredCategories(categoryFilter='', mode='') {
       this.loading = true
-      await this.$http.get(`${api.categories}?limit=${this.limit}&offset=${this.offset}&website=${this.websiteFilter}&types=${categoryFilter}`).then(response => {
+      await this.$http.get(`${api.categories}?limit=${this.limit}&offset=${this.offset}&website=${this.websiteFilter}&types=${categoryFilter}&active=true`).then(response => {
         this.categories = response.results
         this.count = response.count
         this.getPage()
