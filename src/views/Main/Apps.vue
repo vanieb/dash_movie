@@ -81,7 +81,8 @@
                     >{{ uploadLoading ? $t('actions.cancel') : $t('actions.close') }}
                   </v-btn>
                   <v-btn
-                    color="blue darken-1"
+                    color="primary"
+                    dark
                     :disabled="uploadLoading"
                     @click="uploadFile('upload')">{{ $t('actions.submit') }}
                   </v-btn>
@@ -138,7 +139,8 @@
                     @click="closeImport()">{{ $t('actions.close') }}
                   </v-btn>
                   <v-btn
-                    color="blue darken-1"
+                    color="primary"
+                    dark
                     :loading="importLoading"
                     @click="importCsv()">{{ $t('actions.submit') }}
                   </v-btn>

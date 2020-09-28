@@ -79,7 +79,6 @@
                   </validation-provider>
                 </v-flex>
               </v-layout>
-
               <small color="red">*{{ $t('errors.required') }}</small>
             </v-card-text>
               <!-- BUTTONS -->
@@ -202,7 +201,7 @@
             <td>{{ item.code }}</td>
             <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}} / <br/> {{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td>{{ item.website.name || '-'}}</td>
-            <td>{{ item.memo || '-'}}</td>
+            <td width="40%">{{ item.memo || '-'}}</td>
             <td class="align-center justify-center">
               <v-btn class="mr-1" icon @click="updateType(item)">
                 <v-icon small>edit</v-icon>
@@ -327,7 +326,8 @@ export default {
         {
           sortable: false,
           text: this.$t('common.remarks'),
-          value: 'memo'
+          value: 'memo',
+          width:"40%"
         },
         {
           sortable: false,
