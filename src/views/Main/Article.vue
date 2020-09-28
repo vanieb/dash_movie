@@ -41,6 +41,7 @@
                   <website
                     type="set"
                     :mode="'multiple'"
+                    :action="'add'"
                     :website="setWebsite"
                     req="true"
                     @website-select-multiple="websiteSetMultiple">

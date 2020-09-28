@@ -44,6 +44,7 @@
                     :mode="'multiple'"
                     :website="setWebsite"
                     req="true"
+                    :action="'add'"
                     @website-select-multiple="websiteSetMultiple">
                   </website>
                   <v-spacer></v-spacer>

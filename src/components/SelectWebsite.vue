@@ -72,6 +72,9 @@ export default {
     },
     elementType: {
       default: ''
+    },
+    action: {
+      default: 'update'
     }
   },
   data() {
@@ -101,8 +104,13 @@ export default {
   },
   methods: {
     remove (item) {
-      let index = this.mywebsite.findIndex(element => element.id === item.id)
-      this.mywebsite.splice(index, 1)
+      if (this.action !== 'add') {
+        let index = this.mywebsite.findIndex(element => element.id === item.id)
+        this.mywebsite.splice(index, 1)
+      } else {
+        let index = this.mywebsite.findIndex(element => element === item.id)
+        this.mywebsite.splice(index, 1)
+      }
     },
     async getWebsites() {
       await this.$http.get(api.websites + '?limit=400&offset=0').then(response => {
@@ -110,7 +118,7 @@ export default {
         .sort((a, b) => {
             return a['id'] - b['id']
           })
-        if (this.req) {
+        if (this.req && this.type == 'filter') {
           this.mywebsite = this.websites[0].id
         }
         let _this = this
