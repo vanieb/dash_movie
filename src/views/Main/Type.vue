@@ -55,7 +55,7 @@
                 <v-flex xs12>
                   <div width="452px;">
                     <website
-                      :key="websiteKey" 
+                      :key="websiteKey"
                       elementType="modal"
                       type="set"
                       req="true"
@@ -545,7 +545,7 @@ export default {
       this.type.memo =''
       // this.type.code = ''
       this.name = ''
-      this.type.website_id = '' 
+      this.type.website_id = ''
       this.submitting = false
       this.$refs.form.reset()
       this.showForm = false

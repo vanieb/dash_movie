@@ -166,11 +166,11 @@
       <snack-bar
         :show="snackbar.show"
         :color="snackbar.color"
-        :text="snackbar.text" 
+        :text="snackbar.text"
       >
       </snack-bar>
     </v-container>
-  </v-layout>    
+  </v-layout>
 </template>
 <script>
 import tinymce from '../../components/tinymce'
@@ -364,7 +364,7 @@ export default {
         this.showImage = true
       }
       fileRead.readAsDataURL(e.target.files[0])
-      
+
       this.article.icon = e.target.files[0]
       this.change_icon = true
     },

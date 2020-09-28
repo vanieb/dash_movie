@@ -76,10 +76,10 @@
       <snack-bar
         :show="snackbar.show"
         :color="snackbar.color"
-        :text="snackbar.text" 
+        :text="snackbar.text"
       >
       </snack-bar>
-    </v-container>    
+    </v-container>
   </v-layout>
 </template>
 <script>

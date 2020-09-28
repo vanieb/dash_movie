@@ -6,7 +6,6 @@
     </v-content>
   </v-app>
 </template>
-
 <script>
 import SideBar from './components/SideBar';
 import $ from './utils/util'
@@ -87,7 +86,6 @@ export default {
   }
 };
 </script>
-
 <style>
 #keep .v-navigation-drawer__border {
   display: none

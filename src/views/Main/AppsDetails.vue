@@ -158,7 +158,7 @@
               </td>
             </tr>
           </tbody>
-          
+
         </v-simple-table>
         <v-layout v-else justify-center align-center><small >{{$t('pagination.no_record')}}</small></v-layout>
         <v-layout>
@@ -216,7 +216,7 @@
                           :error-messages="errors"
                           required
                           slot-scope="{ errors }"
-                          v-model="file">    
+                          v-model="file">
                         </v-file-input>
                       </validation-provider>
                       <v-progress-linear
@@ -285,11 +285,11 @@
       <snack-bar
         :show="snackbar.show"
         :color="snackbar.color"
-        :text="snackbar.text" 
+        :text="snackbar.text"
       >
       </snack-bar>
     </v-container>
-  </v-layout>    
+  </v-layout>
 </template>
 <script>
 import api from '@/api/apis'

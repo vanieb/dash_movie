@@ -424,7 +424,7 @@ export default {
       if (val) {
         this.query.types = val
         this.submit()
-      }      
+      }
     },
     websiteSetMultiple(val) {
       this.setWebsite = val
@@ -432,22 +432,16 @@ export default {
     toggle(id, value, mode){
       let website_query = this.query.website
       this.snackbar.show = false
-      let toggleResult
+      let toggleResult = new window.FormData()
       let action_title
       if (mode == 'is_active') {
-        toggleResult = {
-          is_active: value
-        }
+        toggleResult.set('is_active', value)
         action_title = this.$t('common.status')
       } else if (mode == 'is_rank') {
-        toggleResult = {
-          is_rank: value
-        }
+        toggleResult.set('is_rank', value)
         action_title = this.$t('nav.leaderboard')
       } else {
-        toggleResult = {
-          is_recommended: value
-        }
+        toggleResult.set('is_recommended', value)
         action_title = this.$t('nav.recommended')
       }
       this.$http.put(this.appsApi + id + '/', toggleResult).then((response) => {

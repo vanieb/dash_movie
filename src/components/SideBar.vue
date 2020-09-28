@@ -1,6 +1,6 @@
 <template>
   <div wrap v-if="showNav">
-    <v-app-bar 
+    <v-app-bar
       app
       clipped-left
       color="blue lighten-3"

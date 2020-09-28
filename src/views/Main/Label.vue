@@ -251,10 +251,10 @@
     <snack-bar
       :show="snackbar.show"
       :color="snackbar.color"
-      :text="snackbar.text" 
+      :text="snackbar.text"
     >
     </snack-bar>
-  </v-layout>    
+  </v-layout>
 </template>
 <script>
 import api from '@/api/apis'
@@ -305,7 +305,7 @@ export default {
       },
       statusOptions: [
         { text: this.$t('status.enabled'),
-          value: true}, 
+          value: true},
         { text: this.$t('status.disabled'),
           value: false}],
       snackbar: {
@@ -613,6 +613,6 @@ export default {
 </script>
 <style scope lang="scss">
   .v-date-picker-title__date {
-    font-size: 20px !important; 
+    font-size: 20px !important;
   }
 </style>
