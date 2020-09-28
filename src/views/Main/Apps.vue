@@ -15,19 +15,19 @@
           <!-- Installer Upload -->
           <v-dialog v-model="uploadInstallerDialog" persistent max-width="600">
             <template v-slot:activator="{ on }">
-               <v-btn
-                  color="primary"
-                  dark
-                  class="mr-3"
-                  v-on="on">
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                      <v-icon v-on="on">cloud_upload</v-icon>
-                    </template>
-                    <span>{{$t('system_notes.upload_installer_memo')}}</span>
-                  </v-tooltip>
-                </v-btn>
-              </template>
+              <v-btn
+                color="primary"
+                dark
+                class="mr-3"
+                v-on="on">
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-icon v-on="on">cloud_upload</v-icon>
+                  </template>
+                  <span>{{$t('system_notes.upload_installer_memo')}}</span>
+                </v-tooltip>
+              </v-btn>
+            </template>
             <v-card :loading="uploadLoading">
               <validation-observer ref="form">
                 <v-card-title>
@@ -255,7 +255,7 @@
         <tbody>
           <tr v-for="item in querySet" :key="item.id">
             <td width="5%">
-              <v-btn class="mr-2" icon color="info" :to="`/apps/${item.id}`">
+              <v-btn class="mr-2" icon color="info" :to="`/apps/${item.slug}`">
                 <v-icon>touch_app</v-icon>
               </v-btn>
             </td>
@@ -266,7 +266,7 @@
             <td width="30%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td width="30%" class="align-center justify-center">
               <v-layout>
-              <v-btn class="mr-2" icon :to="`/apps/${item.id}/edit`">
+              <v-btn class="mr-2" icon :to="`/apps/${item.slug}/edit`">
                 <v-icon small >edit</v-icon>
               </v-btn>
               <v-menu offset-y>
@@ -274,7 +274,7 @@
                   <v-icon color="red" small v-on="on" icon>delete</v-icon>
                 </template>
                 <v-list dark>
-                  <v-list-item @click="deleteApp(item.apptype_details.id, true, $event)">
+                  <v-list-item @click="deleteApp(item.slug, true, $event)">
                     <v-list-item-title>
                       <v-icon class="mr-2" color="orange">warning</v-icon>
                       {{ $t('system_msg.confirm_delete') }}

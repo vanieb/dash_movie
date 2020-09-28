@@ -675,7 +675,7 @@ export default {
         } else {
           formData.set('type', this.class_type[0].id)
         }
-        this.$http.put(`${this.classApi}/${this.apps.id}/`, formData).then((response) => {
+        this.$http.put(`${this.classApi}/${this.apps.slug}/`, formData).then((response) => {
           this.getAppClassDetails(response.id)
           let snackbarText = this.isUpdateClass ? this.$t('actions.update') : this.$t('actions.add')
           this.snackbar = {
@@ -744,13 +744,13 @@ export default {
           formData.set(item, this.apps[item] !== undefined ? this.apps[item] : '')
         })
         if (this.isUpdate) {
-          this.$http.put(`${this.appsApi}${this.apps.id}/`, formData).then(response => {
+          this.$http.put(`${this.appsApi}${this.apps.slug}/`, formData).then(response => {
             this.snackbar = {
               color: 'success',
               show: true,
               text: `${this.$t('actions.update')} - ${this.$t('nav.apps')}: ${this.$t('status.success')}`
             }
-            this.$router.push(`/apps/${response.id}`)
+            this.$router.push(`/apps/${response.slug}`)
           }, error => {
             this.snackbar = {
               color: 'red',
@@ -766,7 +766,7 @@ export default {
               show: true,
               text: `${this.$t('actions.add')} - ${this.$t('nav.apps')}: ${this.$t('status.success')}`
             }
-            this.$router.push(`/apps/${response.id}`)
+            this.$router.push(`/apps/${response.slug}`)
           }, error => {
             this.snackbar = {
               color: 'red',

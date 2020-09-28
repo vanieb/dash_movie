@@ -156,7 +156,7 @@
         <tbody>
           <tr v-for="item in querySet" :key="item.id">
             <td width="5%">
-              <v-btn class="mr-2" icon color="info" :to="`/apps/${item.id}`">
+              <v-btn class="mr-2" icon color="info" :to="`/apps/${item.slug}`">
                 <v-icon>touch_app</v-icon>
               </v-btn>
             </td>
@@ -166,23 +166,23 @@
             </td>
             <td class="align-center justify-start">
               <v-switch value v-model="item.is_active"
-                @change="toggle(item.id, item.is_active, 'is_active')">
+                @change="toggle(item.apptype_details.id, item.is_active, 'is_active')">
               </v-switch>
             </td>
             <td class="align-center justify-start">
               <v-switch value v-model="item.is_rank"
-                @change="toggle(item.id, item.is_rank, 'is_rank')">
+                @change="toggle(item.apptype_details.id, item.is_rank, 'is_rank')">
               </v-switch>
             </td>
             <td class="align-center justify-start">
               <v-switch value v-model="item.is_recommended"
-                @change="toggle(item.id, item.is_recommended, 'is_recommended' )">
+                @change="toggle(item.apptype_details.id, item.is_recommended, 'is_recommended' )">
               </v-switch>
             </td>
             <td width="30%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td width="30%" class="align-center justify-center">
               <v-layout>
-                <v-btn class="mr-2" icon :to="`/apps/${item.id}/edit`">
+                <v-btn class="mr-2" icon :to="`/apps/${item.slug}/edit`">
                   <v-icon small >edit</v-icon>
                 </v-btn>
                 <v-menu offset-y>
@@ -190,7 +190,7 @@
                     <v-icon color="red" small v-on="on" icon>delete</v-icon>
                   </template>
                   <v-list dark>
-                    <v-list-item @click="deleteApp(item.apptype_details.id, true, $event)">
+                    <v-list-item @click="deleteApp(item.slug, true, $event)">
                       <v-list-item-title>
                         <v-icon class="mr-2" color="orange">warning</v-icon>
                         {{ $t('system_msg.confirm_delete') }}
