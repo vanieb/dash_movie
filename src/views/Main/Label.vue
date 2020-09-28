@@ -549,11 +549,13 @@ export default {
         if (this.label.memo || this.label.memo == '') {
           labelResult.set('memo', this.label.memo)
         }
-        if (this.types_removed_some) {
+        if (this.types_removed_some && !this.types_changed) {
           labelResult.set('types', this.label.types_removed)
         } else if (this.types_changed) {
           labelResult.set('types', this.label.types)
         }
+	this.types_changed = false
+        this.types_removed_some = false
         if (this.label.id) {
           this.$http.put(`${this.labelsApi}${this.label.id}/`, labelResult).then(() => {
             this.snackbar = {
