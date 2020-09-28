@@ -650,7 +650,17 @@ export default {
       this.submitting = true
       this.loadingClass = true
       this.snackbar.show = false
-      const isValid = await this.$refs.classForm.validate()
+      let isValid = await this.$refs.classForm.validate()
+      if (!this.app_classification.labels || !this.app_classification.categories) {
+        this.snackbar = {
+          color: 'red',
+          show: true,
+          text: `${this.$t('nav.labels')}/${this.$t('apps.category')}: ${this.$t('errors.required')}`
+        }
+        isValid = false
+        this.submitting = false
+        this.loadingClass = false
+      }
       if (isValid) {
         let formData = new window.FormData()
         formData.set('labels', this.app_classification.labels)
@@ -681,6 +691,8 @@ export default {
               text: error
             }
         })
+      } else {
+        return
       }
     },
     deleteClass(id) {
