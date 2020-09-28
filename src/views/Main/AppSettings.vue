@@ -235,7 +235,6 @@ import SnackBar from '@/components/SnackBar'
 import { debounce } from 'lodash'
 import Website from '../../components/SelectWebsite.vue'
 import Types from '../../components/SelectType.vue'
-import axios from 'axios'
 import VueCookie from 'vue-cookie'
 
 export default {
