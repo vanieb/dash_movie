@@ -514,8 +514,10 @@ export default {
       this.loadingClass = true
       await this.$http.get(`${this.classApi}/${id }/`).then((response) => {
         this.classifications = response
+        this.loadingClass = false
+      }, () => {
+        this.loadingClass = false
       })
-      this.loadingClass = false
     },
     pushIDs(item, mode){
       let val = []
