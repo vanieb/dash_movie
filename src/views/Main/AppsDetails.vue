@@ -1,6 +1,11 @@
 <template>
   <v-layout wrap>
-    <v-container>
+    <v-container v-if="loading">
+      <v-layout justify-center align-center >
+        <v-progress-circular indeterminate color="blue"></v-progress-circular>
+      </v-layout>
+    </v-container>
+    <v-container v-else>
       <v-layout>
         <v-layout justify-start>
           <v-breadcrumbs :items="bread_crumbs" style="padding:12px;">
@@ -17,12 +22,12 @@
               </v-breadcrumbs-item>
             </template>
           </v-breadcrumbs>
-      </v-layout>
-      <v-layout justify-end>
+        </v-layout>
+        <v-layout justify-end>
           <v-btn
             color="primary"
             dark
-            :to="`/apps/${apps.id}/edit`"
+            :to="`/apps/${apps.slug}/edit`"
             >
             <v-icon class="mr-3">edit</v-icon> &nbsp;{{ $t('actions.update') }}
           </v-btn>
@@ -30,11 +35,6 @@
       </v-layout>
       <v-card>
       <v-container>
-        <v-row class="ml-3">
-          <span class="title"
-          >{{apps.name}}
-          </span>
-        </v-row>
         <v-row>
           <v-col cols="12" md="2">
             <v-img v-if="apps.icon"
@@ -55,95 +55,112 @@
             </v-layout>
             <v-layout justify-center mb5>
               <v-rating
-                x-small dense color="orange" v-model="apps.star" disabled="true">
+                x-small dense color="orange" v-model="apps.star" disabled="true">{{apps.star}}
               </v-rating>
             </v-layout>
-            <small><v-icon>event</v-icon> {{apps.created_at | moment("YYYY-MM-DD HH:mm:ss") }}
-            </small>
-          </v-col>
-          <v-col cols="12" md="2">
-            <v-row>
-              <span
-              >{{$t('apps.installer_size')}}: {{apps.size_mb}} MB
-              </span>
-            </v-row>
-            <v-row>
-              <span
-              >{{$t('apps.version')}}: {{apps.version || $t('system_msg.no_data')}}
-              </span>
-            </v-row>
-            <v-row>
-              <v-chip
-                v-if="apps.is_active"
-                class="ma-1"
-                color="green"
-                text-color="white"
-                style="height:20px; !important font-size:11px;">
-                {{$t('status.enabled')}}
-              </v-chip>
-              <v-chip
-                v-else
-                class="ma-1"
-                color="gray"
-                style="height:20px;
-                !important font-size:11px;">
-                {{$t('status.disabled')}}
-              </v-chip>
-            </v-row>
-            <v-row v-if="apps.is_rank">
-              <v-icon color="red">format_list_numbered</v-icon>
-              <v-chip
-                class="ma-1"
-                color="red"
-                text-color="white"
-                style="height:20px; !important font-size:11px;">
-                {{$t('nav.leaderboard')}}
-              </v-chip>
-            </v-row>
-            <v-row v-if="apps.is_recommended">
-              <v-icon color="red">star_outline</v-icon>
-              <v-chip
-                class="ma-1"
-                color="red"
-                text-color="white"
-                style="height:20px; !important font-size:11px;">
-                {{$t('nav.recommended')}}
-              </v-chip>
-            </v-row>
           </v-col>
           <v-col cols="12" md="4">
-            <v-card>
-              <v-card-text>
-                <v-icon color="orange">web</v-icon> {{$t('nav.websites')}}:
-                  <v-chip class="ma-1" color="orange" outlined v-if="apps.website">{{apps.website.name}}</v-chip>
-                <span v-else> {{ $t('system_msg.no_data') }}</span>
-                <br/>
-                <v-icon color="red" >new_releases</v-icon> {{$t('apps.type')}}:
-                <span v-if="apps.app_type">
-                  <v-chip class="ma-1" color="red" outlined>{{ apps.app_type.name }}</v-chip>
-                </span>
-                <span v-else> {{ $t('system_msg.no_data') }}</span>
-                <br/>
-                <v-icon color="green">category</v-icon> {{$t('nav.category')}}:
-                  <v-chip v-if="apps.category" class="ma-1" color="green" outlined >{{apps.category.name}}</v-chip>
-                <span v-else> {{ $t('system_msg.no_data') }}</span>
-              </v-card-text>
-            </v-card>
+            <v-row>
+              <strong class="title" style="font-weight=0px; !important"
+              >{{apps.name}}
+              </strong>
+            </v-row>
+            <v-row class="mb-1">
+              <small>{{$t('apps.version')}}: {{apps.version || $t('system_msg.no_data')}} | {{apps.size_mb}} MB</small>
+            </v-row>
+            <v-row class="mb-1">
+              <small><v-icon left dense>event</v-icon>{{apps.created_at | moment("YYYY-MM-DD HH:mm:ss") }}</small>
+            </v-row>
+            <v-row class="mb-1">
+              <small><v-icon left dense>person</v-icon>{{apps.created_by}}</small>
+            </v-row>
+            <!-- Will be added after likes and comments feature implementation -->
+            <!-- <v-row>
+              <v-chip small class="ma-1" outlined color="primary lighten-1"><v-icon left small>thumb_up</v-icon>6</v-chip>
+              <v-chip small class="ma-1" outlined color="primary lighten-1"><v-icon small>comments</v-icon>6</v-chip>
+            </v-row> -->
           </v-col>
-          <v-col cols="12" md="4">
-            <v-card>
-             <v-card-text>
-              <v-icon color="blue">label</v-icon> {{$t('nav.labels')}}:
-              <span v-if="apps.labels">
-                  <span v-for="label in apps.labels" :key="label.name">
-                    <v-chip class="ma-1" color="blue" outlined>{{label.name}}</v-chip>
-                  </span>
-                </span>
-                <span v-else> {{ $t('system_msg.no_data') }}</span>
-              </v-card-text>
-            </v-card>
-          </v-col>          
+          <v-col cols="12" md="4" >
+            <v-icon color="warning" left>web</v-icon>{{$t('apps.website')}}:
+            <v-chip class="ma-1" color="orange" outlined v-if="apps.website" small>{{apps.website.name}}</v-chip>
+            <span v-else> {{ $t('system_msg.no_data') }}</span>
+          </v-col>
+          <v-spacer></v-spacer>
         </v-row>
+        <v-layout>
+          <v-card-title>{{$t('apps.classification')}}</v-card-title>
+        </v-layout>
+        <v-simple-table v-if="classification">
+          <thead>
+            <tr>
+              <th width="20%">{{$t('apps.type')}}</th>
+              <th width="30%">{{$t('nav.category')}}</th>
+              <th width="30%">{{$t('nav.labels')}}</th>
+              <th width="10%">{{$t('common.status')}}</th>
+              <th width="30%">{{$t('nav.leaderboard')}}/{{$t('nav.recommended')}}</th>
+            </tr>
+          </thead>
+          <tbody >
+            <tr v-for="item in classification" :key="item.id" >
+              <td>{{item.name}}</td>
+              <td v-if="item.categories.length > 0">
+                <span v-for="category in item.categories" :key="category.id">
+                  <v-chip color="success" small outlined class="ma-1">{{category.name}}</v-chip>
+                </span>
+              </td>
+              <td v-else>-</td>
+              <td v-if="item.labels">
+                <span v-for="label in item.labels" :key="label.id">
+                  <v-chip color="info" small outlined class="ma-1">{{label.name}}</v-chip>
+                </span>
+              </td>
+              <td v-else>-</td>
+              <td>
+                <span v-if="item.apptype_details" >
+                  <v-chip
+                    v-if="item.apptype_details.is_active"
+                    class="ma-1"
+                    color="green"
+                    text-color="white"
+                    style="height:20px; !important font-size:11px;">
+                    {{$t('status.enabled')}}
+                  </v-chip>
+                  <v-chip
+                    v-else
+                    class="ma-1"
+                    color="gray"
+                    style="height:20px;
+                    !important font-size:11px;">
+                    {{$t('status.disabled')}}
+                  </v-chip>
+                </span>
+                </td>
+                <td class="text-center">
+                  <span v-if="item.apptype_details">
+                  <v-chip v-if="item.apptype_details.is_rank"
+                    class="ma-1"
+                    color="error"
+                    text-color="white"
+                    small>
+                    <v-icon small left>format_list_numbered</v-icon>
+                    {{$t('nav.leaderboard')}}
+                  </v-chip>
+                  <span v-if="!item.apptype_details.is_recommended && !item.apptype_details.is_rank">-</span>
+                  <v-chip v-if="item.apptype_details.is_recommended"
+                    class="ma-1"
+                    color="error"
+                    text-color="white"
+                    small>
+                    <v-icon small left>star_outline</v-icon>
+                    {{$t('nav.recommended')}}
+                  </v-chip>
+                </span>
+              </td>
+            </tr>
+          </tbody>
+
+        </v-simple-table>
+        <v-layout v-else justify-center align-center><small >{{$t('pagination.no_record')}}</small></v-layout>
         <v-layout>
           <v-card-title>{{$t('apps.download_link')}}</v-card-title>
         </v-layout>
@@ -199,7 +216,7 @@
                           :error-messages="errors"
                           required
                           slot-scope="{ errors }"
-                          v-model="file">    
+                          v-model="file">
                         </v-file-input>
                       </validation-provider>
                       <v-progress-linear
@@ -233,79 +250,6 @@
               <span>{{ $t('apps.android_download_link')}}: {{ apps.app_file || $t('system_msg.no_data') }}</span>
             </li>
           </v-card-text>
-          <!-- <v-card-text>
-            <v-dialog v-model="uploadiOSInstallerDialog" persistent max-width="350">
-            <template v-slot:activator="{ on }">
-               <v-btn
-                  color="blue lighten-2"
-                  dark
-                  class="mr-3"
-                  v-on="on">
-                  <v-icon>phone_iphone</v-icon>
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                      <span v-on="on"> {{$t('actions.change_file')}}</span>
-                    </template>
-                    <span>{{$t('system_notes.upload_one_installer_memo')}}</span>
-                  </v-tooltip>
-                </v-btn>
-              </template>
-            <v-card :loading="uploadLoading">
-              <validation-observer ref="uploadFileform">
-                <v-card-title>
-                  <v-icon class="mr-3">phone_iphone</v-icon>
-                    &nbsp;{{$t('actions.change_file')}} - iOS
-                </v-card-title>
-                <v-card-text>
-                  <v-icon small>info</v-icon>&nbsp;&nbsp;
-                  <small>{{ $t('system_notes.upload_one_installer_memo') }}</small>
-                </v-card-text>
-                <v-card-text>
-                  <v-spacer></v-spacer>
-                  <validation-provider style="width:310px;" rules="required" :name="$t('common.file')">
-                    <v-file-input
-                      outlined
-                      dense
-                      clearable
-                      :error-messages="errors"
-                      required
-                      slot-scope="{ errors }"
-                      v-model="file">    
-                    </v-file-input>
-                  </validation-provider>
-                  <v-progress-linear
-                    v-if="uploadLoading"
-                    color="light-blue"
-                    height="25"
-                    v-model="uploadPercentage"
-                    striped
-                  >
-                    <template v-slot="{ value }">
-                      <strong>{{ Math.ceil(value) }}%</strong>
-                    </template>
-                  </v-progress-linear>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    color="grey lighten-1"
-                    :disabled="uploadLoading"
-                    @click="uploadiOSInstallerDialog = false">{{ $t('actions.close') }}
-                  </v-btn>
-                  <v-btn
-                    color="blue darken-1"
-                    :disabled="uploadLoading"
-                    @click="uploadFile('ios')">{{ $t('actions.submit') }}
-                  </v-btn>
-                </v-card-actions>
-              </validation-observer>
-            </v-card>
-          </v-dialog> -->
-            <!-- <v-icon>cloud_upload</v-icon>&nbsp;&nbsp; -->
-            <!-- <span>{{ $t('apps.ios_download_link')}}: {{ apps.ios_file || $t('system_msg.no_data') }}</span>
-             </v-card-text> -->
-          <!-- </v-card> -->
-           
         </v-flex>
         <v-banner color="primary" dark><v-icon small>phone_iphone</v-icon> {{$t('apps.ios_download_link')}}</v-banner>
         <v-card-text>
@@ -341,11 +285,11 @@
       <snack-bar
         :show="snackbar.show"
         :color="snackbar.color"
-        :text="snackbar.text" 
+        :text="snackbar.text"
       >
       </snack-bar>
     </v-container>
-  </v-layout>    
+  </v-layout>
 </template>
 <script>
 import api from '@/api/apis'
@@ -364,7 +308,10 @@ export default {
     return {
       file: '',
       apps: {},
+      classification: [],
       appsApi: api.apps,
+      loading: true,
+      classApi: api.classification,
       uploadPercentage: 0,
       uploadInstallerDialog: false,
       uploadiOSInstallerDialog: false,
@@ -383,6 +330,23 @@ export default {
           text: this.$t('nav.apps_detail'),
           disabled: true
         }
+      ],
+      headers: [
+        {
+          sortable: false,
+          text: this.$t('apps.type'),
+          value: 'name'
+      },
+      {
+          sortable: false,
+          text: `${this.$t('apps.category')}`,
+          value: 'categories'
+      },
+      {
+          sortable: false,
+          text: this.$t('nav.labels'),
+          value: ''
+      }
       ]
     }
   },
@@ -390,12 +354,19 @@ export default {
     next(vm => {
       let id = to.params.appsId
       vm.getAppDetails(id)
+      vm.getAppClassDetails(id)
     })
   },
   methods: {
-    getAppDetails(id) {
-      this.$http.get(`${this.appsApi}${id }/`).then((response) => {
+    async getAppDetails(id) {
+      await this.$http.get(`${this.appsApi}${id }/`).then((response) => {
         this.apps = response
+        this.loading = false
+      })
+    },
+    async getAppClassDetails(id) {
+     await this.$http.get(`${this.classApi}/${id }/`).then((response) => {
+        this.classification = response
       })
     },
     toggle(id, value, mode){

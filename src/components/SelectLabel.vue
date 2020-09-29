@@ -1,8 +1,7 @@
 <template>
   <v-layout>
-    <ValidationProvider :name="$t('nav.labels')" style="width:748px;" :rules="`${req ? 'required' : ''}`" >
+    <ValidationProvider :name="$t('nav.labels')" style="width:748px;" :rules="`${req ? 'required' : ''}`" v-if="mode==='one'">
       <v-select
-        v-if="mode==='one'"
         :error-messages="errors"
         slot-scope="{ errors }"
         item-value="id"
@@ -17,35 +16,64 @@
         prepend-icon="label"
         placeholder=" ">
       </v-select>
-      <v-select v-else
-        :error-messages="errors"
-        slot-scope= {errors}
-        item-value="id"
-        item-text="name"
-        :items="labels"
-        v-model="mylabel"
-        :disabled="!disabled"
-        :label="elLabel"
-        outlined
-        dense
-        attach
-        chips
-        multiple
-        prepend-icon="label"
-        placeholder=" ">
-        <template v-slot:selection="{ attrs, item, select, selected }">
-          <v-chip
-            small chip
-            v-bind="attrs"
-            :input-value="selected"
-            close
-            @click="select"
-            @click:close="remove(item)"
-            >{{ item ? item.name : 0 }}
-          </v-chip>
-        </template>
-      </v-select>
     </ValidationProvider>
+    <v-flex v-else>
+      <strong>Selected {{ $t('nav.labels') }}*</strong>
+      <v-col>
+        <v-expansion-panels>
+          <v-expansion-panel :disabled="labels.length == 0">
+            <v-expansion-panel-header>
+              <small>Selected Items: {{selected.length}}</small><br/>
+              <span
+                v-if="labels.length == 0 && !loading"
+                class="error--text">{{ $t('system_notes.select_type') }}<br/>
+              </span>
+              <span
+                v-if="loading"
+                class="error--text"><v-progress-circular indeterminate color="info" dense></v-progress-circular><br/>
+              </span>
+              <span
+                v-if="selected.length == 0 && labels.length > 0"
+                class="error--text">{{$t('errors.required')}}: {{  $t('nav.labels') }}
+              </span>
+            </v-expansion-panel-header>
+            <v-row class="ma-1">
+              <span v-for="label in selected" :key="label.id">
+                <v-chip
+                  small chip
+                  close
+                  class="ma-1"
+                  @click:close="remove(label)"
+                  color="info"
+                  outlined>{{label.name}}
+                </v-chip>
+              </span>
+            </v-row>
+            <v-expansion-panel-content>
+              <v-data-table
+                v-model="selected"
+                :headers="headers"
+                :items="labels"
+                :loading="loading"
+                :items-per-page="20"
+                :single-select="false"
+                hide-default-footer
+                item-key="id"
+                show-select
+                class="elevation-1 mt-1">
+              </v-data-table>
+              <v-pagination
+                v-if="labels.length > 0"
+                v-model="page"
+                :length="countPage"
+                :total-visible="7"
+                small>
+              </v-pagination>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </v-col>
+    </v-flex>
   </v-layout>
 </template>
 <script>
@@ -60,7 +88,10 @@ export default {
       default: 'select'
     },
     labelFilter: {
-      default: ''
+      default: false
+    },
+    websiteFilter: {
+      default: false
     },
     req: {
       default: false
@@ -70,9 +101,6 @@ export default {
     },
     mode: {
       default: 'one'
-    },
-    disabled: {
-      default: true
     }
   },
   data() {
@@ -80,6 +108,20 @@ export default {
       labels: [],
       mylabel: this.label,
       elLabel: this.$t('nav.labels'),
+      loading: false,
+      selected: [],
+      limit: 20,
+      offset: 0,
+      countPage: 0,
+      count: 0,
+      page: 1,
+      search: '',
+      headers: [
+        {
+          sortable: false,
+          text: this.$t('nav.labels'),
+          value: 'name'
+        }]
     }
   },
   watch: {
@@ -89,13 +131,33 @@ export default {
     mylabel(newObj) {
       if (newObj !== undefined) {
         this.$emit('label-select-one', newObj)
-        this.$emit('label-select-multiple', this.mylabel, this.index)
       }
     },
     labelFilter(newObj) {
       this.labels = []
-      // this.mylabel = ''
-      this.getFilteredLabels(newObj)
+      this.selected = []
+      if (newObj != '') {
+        this.loading = true
+        this.getFilteredLabels(newObj)
+      }
+    },
+    selected(newObj) {
+      if (newObj != []) {
+        this.$emit('label-select-multiple', newObj)
+      }
+    },
+    page(newObj) {
+      if (newObj !== this.newObj) {
+        this.newObj = newObj
+        let offset = parseInt(this.limit) * (parseInt(newObj) - 1)
+        this.offset = offset
+        this.getFilteredLabels(this.labelFilter)
+      }
+      this.changePage = true
+    },
+    limit() {
+      this.loading = true
+      this.getPage()
     }
   },
   created() {
@@ -103,26 +165,33 @@ export default {
       this.elLabel = `${this.$t('nav.labels')}*`
     }
     if (this.type == 'set') {
-      this.getFilteredLabels(this.labelFilter)
+      if (this.labelFilter) {
+        this.getFilteredLabels(this.labelFilter, 'created')
+      }
     }
-    
   },
   methods: {
     remove (item) {
-      this.mylabel.splice(this.mylabel.indexOf(item), 1)
-      this.mylabel = [...this.mylabel]
+      let index = this.selected.findIndex(element => element.id === item.id)
+      this.selected.splice(index, 1)
     },
-    getFilteredLabels(labelFilter='') {
-      this.$http.get(`${api.labels}?limit=400&offset=0&${labelFilter}`).then(response => {
+    async getFilteredLabels(labelFilter='', mode='') {
+      this.loading = true
+      await this.$http.get(`${api.labels}?limit=${this.limit}&offset=${this.offset}&types=${labelFilter}&active=true`).then(response => {
         this.labels = response.results
-        if (this.default) {
-          this.label = this.default
+        this.count = response.count
+        this.getPage()
+        if (mode == 'created') {
+          let _this = this
+          setTimeout(function() {
+            _this.selected = _this.label
+          }, 100)
         }
-        let _this = this
-        setTimeout(function() {
-          _this.mylabel = _this.label
-        }, 100)
+        this.loading = false
       })
+    },
+    getPage() {
+      this.countPage = Math.ceil(this.count / this.limit)
     }
   }
 }

@@ -8,7 +8,7 @@
           <v-icon>refresh</v-icon>&nbsp;
           {{$t('actions.refresh')}}
         </v-btn>
-      </v-layout> 
+      </v-layout>
       <v-data-table
         :headers="headers"
         :hide-default-footer="true"
@@ -51,7 +51,7 @@
             <td v-html="item.memo" width="40%" style="word-break:break-all;" v-if="item.memo"></td>
             <td v-else>-</td>
             <td class="justify-center">
-              <v-btn icon @click="goToArticles(item.created_at)" v-if="item.status == 1"> 
+              <v-btn icon @click="goToArticles(item.created_at)" v-if="item.status == 1">
                 <v-icon small color="blue" class="icon__flip">reply_all</v-icon>
               </v-btn>
               <span v-else class="ml-2">-</span>
@@ -74,10 +74,10 @@
     <snack-bar
       :show="snackbar.show"
       :color="snackbar.color"
-      :text="snackbar.text" 
+      :text="snackbar.text"
     >
     </snack-bar>
-  </v-layout>    
+  </v-layout>
 </template>
 <script>
 import api from '@/api/apis'

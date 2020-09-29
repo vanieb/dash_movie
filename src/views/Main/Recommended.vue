@@ -48,23 +48,21 @@
           {{type.name}}
         </v-tab>
       </v-tabs>
+      <v-layout justify-center v-if="loading" >
+        <v-progress-circular indeterminate color="blue"></v-progress-circular>
+      </v-layout>
       <v-data-table
-        v-if="showTab"
+        v-else-if="showTab"
         :headers="filteredQuerySet.length > 0 ? headers : []"
         :hide-default-footer="true"
         :items="filteredQuerySet">
         <template v-slot:body="{ items }">
-          <td v-if="items.length <= 0" colspan="2">
-            <v-layout justify-center align-center>
-              {{$t('pagination.no_record')}}
-            </v-layout>
-          </td>
           <draggable
-            v-else
+            v-if="items.length"
             v-model="filteredQuerySet"
             :tag="'tbody'"
             :disabled="!mode">
-            <tr v-for="(item, index) in filteredQuerySet" :key="item.id" >
+            <tr v-for="(item, index) in filteredQuerySet" :key="item.id">
               <td width="5%" class="px-0" v-if="mode"><strong class="primary--text">{{index + 1}}</strong>
                 <v-btn icon v-if="mode">
                   <v-icon :color="iconColor">sort</v-icon>
@@ -75,7 +73,12 @@
               <td>{{ item.website.name }}</td>
             </tr>
           </draggable>
-          
+          <td colspan="2" v-else>
+            <v-layout justify-center align-center>
+              <span v-if="!loading">{{$t('pagination.no_record')}}</span>
+              <span v-else><v-progress-circular indeterminate color="blue"></v-progress-circular></span>
+            </v-layout>
+          </td>
         </template>
       </v-data-table>
       <v-layout v-else justify-center align-center>
@@ -85,10 +88,10 @@
       <snack-bar
         :show="snackbar.show"
         :color="snackbar.color"
-        :text="snackbar.text" 
+        :text="snackbar.text"
       >
       </snack-bar>
-    </v-container>    
+    </v-container>
   </v-layout>
 </template>
 <script>
@@ -109,12 +112,13 @@ export default {
       selected_tab: '',
       mode: false,
       app_types: '',
+      loading: false,
       querySet: [],
       query: {website: 1},
       filteredQuerySet: [],
       typesApi: api.types,
       appsApi: api.apps,
-      recommendedApi: `${api.websites}update_rank`,
+      recommendedApi: `${api.apps}rankings/sort-orders/`,
       showTab: true,
       snackbar: {
         color: '',
@@ -142,7 +146,9 @@ export default {
   },
   watch: {
     selected_tab(newObj) {
+      this.loading = true
       this.getApps(newObj)
+      this.showTab = true
     },
     websites(newObj) {
       this.query.website = newObj
@@ -158,8 +164,9 @@ export default {
     }
   },
   methods: {
-    getAppTypes() {
-      this.$http.get(`${this.typesApi}?limit=400&offset=0&website=${this.query.website}&is_active=true`).then(response => {
+    async getAppTypes() {
+      this.loading = true
+      await this.$http.get(`${this.typesApi}?limit=400&offset=0&website=${this.query.website}&is_active=true`).then(response => {
         this.app_types = response.results
         if (this.app_types.length == 0 ) {
           this.selected_tab = ''
@@ -171,27 +178,24 @@ export default {
         }
       })
     },
-    getApps(type) {
-      this.type = this.app_types[type].id
-      this.$http.get(`${this.appsApi}?ordering=recommended_rank&is_recommended=true&app_type=${this.type}&website=${this.query.website}`).then(response => {
+    async getApps(type) {
+      this.type = this.app_types[type].code
+      this.typeId = this.app_types[type].id
+      await this.$http.get(`${this.appsApi}rankings/?ordering=recommended&is_recommended=true&types=${this.type}&website=${this.query.website}`).then(response => {
         this.filteredQuerySet = response.results
         .sort((a, b) => {
           return a['recommended_rank'] - b['recommended_rank']
         })
         this.mode = false
+        this.loading = false
       })
     },
     submitRank() {
       let rank = {}
       this.filteredQuerySet.map((p, index) => {
-        rank[p.id] = index + 1
+        rank[p.apptype_details.id] = index + 1
       })
-      let sortResult = Object({
-        recommend: true,
-        rank: rank
-      })
-      this.$http.put(`${this.recommendedApi}/${this.type}/`, sortResult).then(() => {
-        this.getApps(this.type)
+      this.$http.post(`${this.recommendedApi}?field=recommended_rank`, rank).then(() => {
         this.snackbar = {
           color: 'success',
           show: true,

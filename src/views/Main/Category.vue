@@ -35,34 +35,36 @@
                           placeholder=" "
                           required
                           slot-scope="{ errors }"
-                        v-model="category.name"
+                          v-model="category.name"
                         ></v-text-field>
                       </validation-provider>
-                  </v-flex>
-                  <v-flex xs12>
-                    <div width="452px;">
-                      <types
-                        v-if="isUpdate"
-                        elementType="modal"
-                        :typeFilter="`website=${query.website}`"
-                        :mode="'one'"
-                        type="set"
-                        req="true"
-                        :types="category.type_category_id"
-                        @type-select-one="typeSetOne">
-                      </types>
-                      <types
-                        v-else
-                        :typeFilter="`website=${query.website}`"
-                        elementType="modal"
-                        type="set"
-                        req="true"
-                        :key="reload"
-                        :mode="'multiple'"
-                        :types="category.type_category_id"
-                        @type-select-multiple="typeSetMultiple">
-                      </types>
-                    </div>
+                    </v-flex>
+                    <!-- <v-flex xs12 >
+                      <validation-provider rules="required|max:50" :name="$t('common.code')">
+                        <v-text-field
+                          :counter="50"
+                          :error-messages="errors"
+                          :label="`${$t('common.code')}*`"
+                          placeholder=" "
+                          required
+                          slot-scope="{ errors }"
+                          v-model="category.code"
+                        ></v-text-field>
+                      </validation-provider>
+                    </v-flex> -->
+                    <v-flex xs12>
+                      <div width="452px;">
+                        <types
+                          :typeFilter="query.website"
+                          elementType="modal"
+                          type="set"
+                          req="true"
+                          :key="reload"
+                          :mode="'multiple'"
+                          :types="category.types"
+                          @type-select-multiple="typeSetMultiple">
+                        </types>
+                      </div>
                     </v-flex>
                     <v-flex xs12>
                       <validation-provider rules="max:50" :name="$t('common.remarks')">
@@ -125,10 +127,10 @@
             </div>
             <div style="width:155px;" class="mr-2">
               <types
-                :typeFilter="`website=${query.website}`"
+                :typeFilter="query.website"
                 :mode="'one'"
                 type="'filter'"
-                :types="query.type_category"
+                :types="query.types"
                 @type-select-one="typeSelectOne">
               </types>
             </div>
@@ -202,18 +204,19 @@
         <tbody>
           <tr v-for="item in querySet" :key="item.id">
             <td>{{ item.name }}</td>
-            <td class="align-center justify-start layout">
+            <td class="align-center justify-start">
               <v-switch value v-model="item.is_active"
-                @change="toggleStatus(item.id, item.is_active, item.type_category.id)">
+                @change="toggleStatus(item.id, item.is_active)">
               </v-switch>
             </td>
-            <td>{{ item.type_category.name }}</td>
-            <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
-            <td>{{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
+            <td>{{ item.code }}</td>
+            <td><span v-for="item in item.types " :key="item.id">{{ item.name }}<br/></span></td>
+            <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}} / <br/>
+            {{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td>{{ item.memo || '-'}}</td>
             <td class="align-center justify-center">
-              <v-btn class="mr-2" icon @click="updateCategory(item)">
-                <v-icon>edit</v-icon>
+              <v-btn class="mr-1" icon @click="updateCategory(item)">
+                <v-icon small>edit</v-icon>
               </v-btn>
               <v-menu offset-y>
                 <template v-slot:activator="{ on }">
@@ -248,10 +251,10 @@
     <snack-bar
       :show="snackbar.show"
       :color="snackbar.color"
-      :text="snackbar.text" 
+      :text="snackbar.text"
     >
     </snack-bar>
-  </v-layout>    
+  </v-layout>
 </template>
 <script>
 import api from '@/api/apis'
@@ -291,14 +294,18 @@ export default {
       website: 1,
       submitting: false,
       date_menu: false,
+      data: {
+        types: false
+      },
       category: {
         name: '',
-        type_category_id: '',
+        types: '',
+        // code: '',
         memo: ''
       },
       statusOptions: [
         { text: this.$t('status.enabled'),
-          value: true}, 
+          value: true},
         { text: this.$t('status.disabled'),
           value: false}],
       snackbar: {
@@ -320,19 +327,21 @@ export default {
         },
         {
           sortable: false,
-          text: this.$t('nav.types'),
-          value: 'type',
+          text: this.$t('common.code'),
+          value: 'code',
           width: '10%'
         },
         {
           sortable: false,
-          text: this.$t('common.created_at'),
-          value: 'created_at'
+          text: this.$t('nav.types'),
+          value: 'types',
+          width: '10%'
         },
         {
           sortable: false,
-          text: this.$t('common.updated_at'),
-          value: 'updated_at'
+          text: `${this.$t('common.created_at')} / ${this.$t('common.updated_at')}`,
+          value: 'created_at',
+          width: '20%'
         },
         {
           sortable: false,
@@ -341,7 +350,8 @@ export default {
         },
         {
           sortable: false,
-          text: this.$t('common.action')
+          text: this.$t('common.action'),
+          width: '8%'
         }
       ]
     }
@@ -364,7 +374,7 @@ export default {
       this.search()
     },
     type(newObj) {
-      this.query.type_category = newObj
+      this.query.types = newObj
       this.search()
     },
     created_at(newObj) {
@@ -420,9 +430,8 @@ export default {
       }
       this.website = this.$route.query.website || ''
       this.is_active = this.$route.query.is_active==true || this.$route.query.is_active==false ? this.$route.query.is_active : ''
-      this.type = this.$route.query.type_category || ''
+      this.type = this.$route.query.types || ''
       this.query = Object.assign({}, this.$route.query)
-
     },
     queryData(queryset) {
       this.loading = false
@@ -431,10 +440,9 @@ export default {
     queryParam(query) {
       this.query = Object.assign(this.query, query)
     },
-    toggleStatus(id, is_active, type_category_id){
+    toggleStatus(id, is_active){
       this.$http.put(this.categoriesApi + id + '/', {
-        is_active: is_active,
-        type_category_id: type_category_id
+        is_active: is_active
       }).then((response) => {
         let status_text = response.is_active ? this.$t('status.enabled') : this.$t('status.disabled')
         this.snackbar = {
@@ -443,7 +451,6 @@ export default {
           text: `[${this.$t('common.status')}]: ${status_text}`
         }
         this.$refs.pulling.rebase()
-        this.query.website = response.type_category.website.id
       }, error => {
         this.snackbar = {
           color: 'error',
@@ -463,14 +470,28 @@ export default {
       this.submit()
     },
     typeSelectOne(val) {
-      this.query.type_category = val
+      this.query.types = val
       this.submit()
     },
-    typeSetOne(val) {
-      this.category.type_category_id = val
-    },
     typeSetMultiple(val) {
-      this.category.type_category_id = val
+      if (val && val[0].name) {
+        let newVal = []
+        this.category.types.forEach(item => {
+          newVal.push(item.id)
+        })
+        // changed Removed
+        if (this.data.types != newVal.join(',')) {
+          this.types_removed_some = true
+          this.category.types_removed = newVal.join(',')
+        // unchanged
+        } else {
+          this.types_changed = false
+        }
+      // Changed - Added
+      } else {
+        this.types_changed = true
+      }
+      this.category.types = val
     },
     search:
       debounce(function() {
@@ -495,7 +516,15 @@ export default {
         id: item.id,
         name: item.name,
         memo: item.memo,
-        type_category_id: item.type_category
+        // code: item.code,
+        types: item.types
+      })
+      let val = []
+      this.category.types.forEach(item => {
+        if (item) {
+          val.push(item.id)
+        }
+        this.data[item] = val.join(',')
       })
       this.name = item.name
       this.showForm = true
@@ -514,46 +543,56 @@ export default {
     async saveCategory() {
       const isValid = await this.$refs.form.validate()
       if (isValid) {
-        let categoryResult = Object({
-          name: this.category.name,
-          memo: this.category.memo,
-          type_category_id: this.isUpdate ? (this.category.type_category_id && this.category.type_category_id.id ? this.category.type_category_id.id : this.category.type_category_id)
-          : this.category.type_category_id.join(',')
-        })
+        let categoryResult = new window.FormData()
+        categoryResult.set('name', this.category.name)
+        // categoryResult.set('code', this.category.code)
+        if (this.category.memo || this.category.memo == '') {
+          categoryResult.set('memo', this.category.memo)
+        }
+        if (this.types_removed_some && !this.types_changed) {
+          categoryResult.set('types', this.category.types_removed)
+        } else if (this.types_changed) {
+          categoryResult.set('types', this.category.types)
+        }
+        this.types_changed = false
+        this.types_removed_some = false
         if (this.category.id) {
-        this.$http.put(`${this.categoriesApi}${this.category.id}/`, categoryResult).then(() => {
-          this.snackbar = {
-            color: 'success',
-            show: true,
-            text: `${this.$t('actions.update')}-${this.$t('nav.category')}: ${this.$t('status.success')}`
-          }
-          this.$refs.pulling.rebase()
-          this.reload=true
-          this.close()
-        }, error => {
-          this.snackbar = {
-            color: 'red',
-            show: true,
-            text: error
-          }
-        })
-      } else {
-        this.$http.post(this.categoriesApi, categoryResult).then(() => {
-          this.snackbar = {
-            color: 'success',
-            show: true,
-            text: `${this.$t('actions.add')}-${this.$t('nav.category')}: ${this.$t('status.success')}`
-          }
-          this.$refs.pulling.rebase()
-          this.close()
-        }, error => {
-          this.snackbar = {
-            color: 'red',
-            show: true,
-            text: error
-          }
-          this.$refs.form.reset()
-        })
+          this.$http.put(`${this.categoriesApi}${this.category.id}/`, categoryResult).then(() => {
+            this.snackbar = {
+              color: 'success',
+              show: true,
+              text: `${this.$t('actions.update')}-${this.$t('nav.category')}: ${this.$t('status.success')}`
+            }
+            this.$refs.pulling.rebase()
+            this.website = this.query.website
+            this.reload=true
+            this.close()
+          }, error => {
+            this.snackbar = {
+              color: 'red',
+              show: true,
+              text: error
+            }
+          })
+        } else {
+          categoryResult.set('website', this.query.website)
+          this.$http.post(this.categoriesApi, categoryResult).then(() => {
+            this.snackbar = {
+              color: 'success',
+              show: true,
+              text: `${this.$t('actions.add')}-${this.$t('nav.category')}: ${this.$t('status.success')}`
+            }
+            this.website = this.query.website
+            this.$refs.pulling.rebase()
+            this.close()
+          }, error => {
+            this.snackbar = {
+              color: 'red',
+              show: true,
+              text: error
+            }
+            this.$refs.form.reset()
+          })
         }
       }
       this.snackbar.show=false
@@ -561,8 +600,9 @@ export default {
     close() {
       this.category.id = ''
       this.category.name = ''
+      // this.category.code = ''
       this.category.memo=''
-      this.category.type_category_id = []
+      this.category.types = []
       this.name = ''
       this.submitting = false
       this.$refs.form.reset()
@@ -573,6 +613,6 @@ export default {
 </script>
 <style scope lang="scss">
   .v-date-picker-title__date {
-    font-size: 20px !important; 
+    font-size: 20px !important;
   }
 </style>

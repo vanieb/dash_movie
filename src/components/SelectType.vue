@@ -4,16 +4,17 @@
         v-if="mode==='one'"
         :error-messages="errors"
         slot-scope="{ errors }"
-        item-value="id"
+        item-value="code"
         item-text="name"
         :items="app_types"
         v-model="mytypes"
         :disabled="!disabled"
-        :hide-details="req === true ? true : false"
+        :hide-details="req ? false : true"
         :label="elLabel"
         :outlined="elementType != 'modal' ? true : false"
         dense
         clearable
+        :menu-props="{'maxHeight': '304px', 'z-index': '1100'}"
         :prepend-icon="type === 'set' && elementType !== 'modal' ? 'new_releases' : '' "
         placeholder=" ">
       </v-select>
@@ -25,15 +26,17 @@
         :items="app_types"
         v-model="mytypes"
         :value="mytypes.id"
-        :disabled="!disabled"
+        :disabled="!disabled || loading"
         :label="elLabel"
         :outlined="elementType != 'modal' ? true : false"
         dense
-        :menu-props="{ top: false, offsetY: true }"
+        :menu-props="{'maxHeight': '150px', 'z-index': '1100'}"
         attach
         chips
         clearable
         multiple
+        :loading="loading"
+        loader-height="5"
         :prepend-icon="type === 'set' && elementType !== 'modal' ? 'new_releases' : '' "
         placeholder=" ">
         <template v-slot:selection="{ attrs, item, select, selected }">
@@ -85,7 +88,8 @@ export default {
       app_types: [],
       mytypes: this.types,
       elLabel: this.$t('apps.type'),
-      rules: ''
+      rules: '',
+      loading: true
     }
   },
   watch: {
@@ -104,20 +108,27 @@ export default {
     if (this.req) {
       this.elLabel = `${this.$t('apps.type')}*`
     }
-    this.getFilteredAppTypes(this.typeFilter)
+    if (this.typeFilter) {
+      this.getFilteredAppTypes(this.typeFilter)
+    }
   },
   methods: {
     remove (item) {
-      this.mytypes.splice(this.mytypes.indexOf(item), 1)
-      this.mytypes = [...this.mytypes]
+      let index = this.mytypes.findIndex(element => element.id === item.id)
+      this.mytypes.splice(index, 1)
     },
-    getFilteredAppTypes(typeFilter='') {
-      this.$http.get(`${api.types}?limit=400&offset=0&${typeFilter}`).then(response => {
+   getFilteredAppTypes(typeFilter='') {
+      this.$http.get(`${api.types}?limit=400&offset=0&website=${typeFilter}`).then(response => {
         this.app_types = response.results
+        this.loading = true
         let _this = this
+        if (this.req && this.type == 'filter') {
+          this.mytypes = this.app_types[0].code
+        }
         setTimeout(function() {
           _this.mytypes = _this.types
         }, 100)
+        this.loading = false
       })
     }
   }
