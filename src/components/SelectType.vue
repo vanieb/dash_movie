@@ -14,7 +14,7 @@
         :outlined="elementType != 'modal' ? true : false"
         dense
         clearable
-        :menu-props="{'maxHeight': '175px', 'z-index': '1100'}"
+        :menu-props="{'maxHeight': '304px', 'z-index': '1100'}"
         :prepend-icon="type === 'set' && elementType !== 'modal' ? 'new_releases' : '' "
         placeholder=" ">
       </v-select>
