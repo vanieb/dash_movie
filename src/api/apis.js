@@ -28,5 +28,6 @@ export default {
   categories: `${websites}categories/`,
   labels: `${websites}labels/`,
   import_logs: `${host}articles/v1/import/`,
-  staff: `${host}accounts/v1/staff/`
+  staff: `${host}accounts/v1/staff/`,
+  members: `${host}accounts/v1/members/`
 }

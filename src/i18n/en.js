@@ -89,6 +89,7 @@ export default {
     add_staff: 'Add Staff',
     edit_staff: 'Edit Staff',
     staff_details: 'Staff Details',
+    members: 'Members',
     settings: 'Settings',
     articles: 'Articles',
     article_management: 'Article Management',

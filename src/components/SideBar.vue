@@ -171,7 +171,8 @@
           text: this.$t('nav.users'),
           model: true,
           children: [
-            { icon: 'people', text: this.$t('nav.staff'), path: '/staff' }
+            { icon: 'person', text: this.$t('nav.members'), path: '/members' },
+            { icon: 'supervised_user_circle', text: this.$t('nav.staff'), path: '/staff' }
           ]
         }]
     }},

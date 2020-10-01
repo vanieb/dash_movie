@@ -89,6 +89,7 @@ export default {
     add_staff: '添加员工',
     edit_staff: '编辑员工',
     staff_details: '员工详细信息',
+    members: '会员',
     settings: '设定值',
     articles: '文章',
     article_management: '物品管理',
