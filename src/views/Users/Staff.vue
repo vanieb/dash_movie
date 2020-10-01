@@ -178,7 +178,7 @@ export default {
       }
       if (isValid) {
         if (this.staff.id) {
-        this.$http.put(`${api.staff}${this.staff.id}/`, staffResult).then(() => {
+        this.$http.put(`${this.staffApi}${this.staff.id}/`, staffResult).then(() => {
           this.$refs.pulling.rebase()
           this.snackbar = {
             color: 'success',
@@ -194,7 +194,7 @@ export default {
           }
         })
       } else {
-        this.$http.post(api.staff, staffResult).then(() => {
+        this.$http.post(this.staffApi, staffResult).then(() => {
           this.snackbar = {
             color: 'success',
             show: true,
@@ -225,7 +225,7 @@ export default {
       this.showForm = true
     },
     deleteStaff(id) {
-      this.$http.delete(api.staff + id + '/').then(() => {
+      this.$http.delete(`${this.staffApi}${id}/`).then(() => {
         this.snackbar = {
           color: 'success',
           show: true,
@@ -236,7 +236,7 @@ export default {
     },
     toggleStatus(id, status, username) {
       this.toggleLoading = true
-      this.$http.put(api.staff + id + '/', {
+      this.$http.put(`${this.staffApi}${id}/`, {
         username: username,
         status: status ? 1 : 0
       }).then((response) => {

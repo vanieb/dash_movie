@@ -287,7 +287,7 @@ export default new Router({
         require(['./views/Users/Members.vue'], resolve)
       },
       meta: {
-        icon: 'people',
+        icon: 'person',
         auth: true,
         title: i18n.t('nav.members')
       }
@@ -299,7 +299,7 @@ export default new Router({
         require(['./views/Users/Staff.vue'], resolve)
       },
       meta: {
-        icon: 'people',
+        icon: 'supervised_user_circle',
         auth: true,
         title: i18n.t('nav.staff')
       }

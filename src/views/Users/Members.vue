@@ -23,7 +23,7 @@
                       :label="`${$t('login.username')}*`"
                       placeholder=" "
                       slot-scope="{ errors }"
-                      v-model="staff.username"
+                      v-model="member.username"
                     ></v-text-field>
                   </validation-provider>
                 </v-flex>
@@ -37,7 +37,7 @@
                       required
                       type="password"
                       slot-scope="{ errors }"
-                      v-model="staff.password"
+                      v-model="member.password"
                     ></v-text-field>
                   </validation-provider>
                   <validation-provider rules="max:15" :name="$t('login.password')" v-else>
@@ -48,7 +48,7 @@
                       placeholder=" "
                       type="password"
                       slot-scope="{ errors }"
-                      v-model="staff.password"
+                      v-model="member.password"
                     ></v-text-field>
                   </validation-provider>
                 </v-flex>
@@ -62,7 +62,7 @@
                       placeholder=" "
                       rows="1"
                       slot-scope="{ errors }"
-                      v-model="staff.memo"
+                      v-model="member.memo"
                     ></v-textarea>
                   </validation-provider>
                 </v-flex>
@@ -81,7 +81,7 @@
               <v-btn
                 color="blue darken-1"
                 :loading="submitting"
-                @click="saveStaff"
+                @click="saveMember"
               >{{ $t('actions.save') }}</v-btn>
             </v-card-actions>
             </v-card>
@@ -111,13 +111,13 @@
             <td>{{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td>{{ item.memo || '-'}}</td>
             <td class="align-center justify-center px-0">
-              <v-icon class="mr-2" small @click="updateStaff(item)">edit</v-icon>
+              <v-icon class="mr-2" small @click="updateMember(item)">edit</v-icon>
               <v-menu offset-y>
                 <template v-slot:activator="{ on }">
                   <v-icon color="red" small v-on="on">delete</v-icon>
                 </template>
                 <v-list dark>
-                  <v-list-item @click="deleteStaff(item.id, true, $event)">
+                  <v-list-item @click="deleteMember(item.id, true, $event)">
                     <v-list-item-title>
                       <v-icon class="mr-2" color="orange">warning</v-icon>
                       {{ $t('system_msg.confirm_delete') }}
@@ -163,12 +163,12 @@ export default {
     Pagination,
     SnackBar
   },
-  name: 'Staff',
+  name: 'Members',
   data() {
     return {
       submitting: false,
       username: '',
-      staff: {
+      member: {
         id: '',
         username: '',
         password: '',
@@ -224,7 +224,7 @@ export default {
   },
   computed: {
     cardTitle() {
-      return this.isUpdate ? `${this.$t('actions.update')} - ${this.username}` : `${this.$t('actions.add')} - ${this.$t('nav.staff')}`
+      return this.isUpdate ? `${this.$t('actions.update')} - ${this.username}` : `${this.$t('actions.add')} - ${this.$t('nav.members')}`
     },
     cardIcon() {
       return this.isUpdate ? 'edit' : 'person_add'
@@ -239,27 +239,27 @@ export default {
     })
   },
   methods: {
-    async saveStaff() {
+    async saveMember() {
       const isValid = await this.$refs.form.validate()
-      let staffResult = Object({
-        username: this.staff.username,
-        email: this.staff.email,
-        memo: this.staff.memo,
+      let memberResult = Object({
+        username: this.member.username,
+        email: this.member.email,
+        memo: this.member.memo,
       })
-      if (this.staff.password) {
-        staffResult = Object({
-          ...staffResult,
-          password: this.staff.password
+      if (this.member.password) {
+        memberResult = Object({
+          ...memberResult,
+          password: this.member.password
         })
       }
       if (isValid) {
-        if (this.staff.id) {
-        this.$http.put(`${api.staff}${this.staff.id}/`, staffResult).then(() => {
+        if (this.member.id) {
+        this.$http.put(`${this.memberApi}${this.member.id}/`, memberResult).then(() => {
           this.$refs.pulling.rebase()
           this.snackbar = {
             color: 'success',
             show: true,
-            text: `${this.$t('actions.update')} - ${this.$t('nav.staff')}: ${this.$t('status.success')}`
+            text: `${this.$t('actions.update')} - ${this.$t('nav.members')}: ${this.$t('status.success')}`
           }
           this.close()
         }, error => {
@@ -270,11 +270,11 @@ export default {
           }
         })
       } else {
-        this.$http.post(api.staff, staffResult).then(() => {
+        this.$http.post(this.memberApi, memberResult).then(() => {
           this.snackbar = {
             color: 'success',
             show: true,
-            text: `${this.$t('actions.add')} - ${this.$t('nav.staff')}: ${this.$t('status.success')}`
+            text: `${this.$t('actions.add')} - ${this.$t('nav.members')}: ${this.$t('status.success')}`
           }
           this.$refs.pulling.rebase()
           this.close()
@@ -290,18 +290,18 @@ export default {
       }
       this.snackbar.show=false
     },
-    updateStaff(item) {
-      Object.assign(this.staff, {
+    updateMember(item) {
+      Object.assign(this.member, {
         id: item.id,
         username: item.user.username,
         password: item.password,
         memo: item.memo
       })
-      this.username = this.staff.username
+      this.username = this.member.username
       this.showForm = true
     },
-    deleteStaff(id) {
-      this.$http.delete(api.staff + id + '/').then(() => {
+    deleteMember(id) {
+      this.$http.delete(`${this.memberApi}${id}/`).then(() => {
         this.snackbar = {
           color: 'success',
           show: true,
@@ -312,7 +312,7 @@ export default {
     },
     toggleStatus(id, status, username) {
       this.toggleLoading = true
-      this.$http.put(api.staff + id + '/', {
+      this.$http.put(`${this.memberApi}${id}/`, {
         username: username,
         status: status ? 1 : 0
       }).then((response) => {
@@ -332,10 +332,10 @@ export default {
       this.snackbar.show = false
     },
     close() {
-      this.staff.id = ''
-      this.staff.username = ''
-      this.staff.password=''
-      this.staff.memo = ''
+      this.member.id = ''
+      this.member.username = ''
+      this.member.password=''
+      this.member.memo = ''
       this.username = ''
       this.submitting = false
       this.$refs.form.reset()
