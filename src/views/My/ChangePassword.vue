@@ -16,6 +16,7 @@
                     required
                     outlined
                     clearable
+                    dense
                     :disabled="isAdmin"
                     :append-icon="show.old_password ? 'mdi-eye' : 'mdi-eye-off'"
                     :type="show.old_password ? 'text' : 'password'"
@@ -36,6 +37,7 @@
                     required
                     outlined
                     clearable
+                    dense
                     :disabled="isAdmin"
                     :append-icon="show.new_password ? 'mdi-eye' : 'mdi-eye-off'"
                     :type="show.new_password ? 'text' : 'password'"
@@ -53,6 +55,7 @@
                     placeholder=" "
                     required
                     outlined
+                    dense
                     :disabled="isAdmin"
                     clearable
                     :append-icon="show.confirm_password ? 'mdi-eye' : 'mdi-eye-off'"
@@ -76,7 +79,8 @@
               @click="clear"
             >{{ $t('actions.clear') }}</v-btn>
             <v-btn
-              color="blue darken-1"
+              color="primary"
+              dark
               :loading="loading"
               :disabled="isAdmin"
               @click="changePassword()"
