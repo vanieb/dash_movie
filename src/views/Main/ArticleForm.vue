@@ -166,11 +166,11 @@
       <snack-bar
         :show="snackbar.show"
         :color="snackbar.color"
-        :text="snackbar.text" 
+        :text="snackbar.text"
       >
       </snack-bar>
     </v-container>
-  </v-layout>    
+  </v-layout>
 </template>
 <script>
 import tinymce from '../../components/tinymce'
@@ -192,6 +192,7 @@ export default {
   data() {
     return {
       id: '',
+      website_removed_some: false,
       updateImages: true,
       showTinyMce: true,
       showWebsites: true,
@@ -226,9 +227,7 @@ export default {
       selectMultiple: ['websites'],
       nonRequired: ['content', 'subject', 'keywords', 'description'],
       data: {
-        app_type: false,
-        category: false,
-        labels: ''
+        websites: ''
       },
       headers: [
         {
@@ -365,7 +364,7 @@ export default {
         this.showImage = true
       }
       fileRead.readAsDataURL(e.target.files[0])
-      
+
       this.article.icon = e.target.files[0]
       this.change_icon = true
     },
@@ -375,11 +374,11 @@ export default {
     websiteSelectMultiple(val) {
       if (val && val[0].name) {
         let newVal = []
-        this.article.website.forEach(item => {
+        this.article.websites.forEach(item => {
           newVal.push(item.id)
         })
         // changed Removed
-        if (this.data.website != newVal.join(',')) {
+        if (this.data.websites != newVal.join(',')) {
           this.website_removed_some = true
           this.article.website_removed = newVal.join(',')
         // unchanged
@@ -390,7 +389,7 @@ export default {
       } else {
         this.website_changed = true
       }
-      this.article.website = val
+      this.article.websites = val
     },
     async saveArticle() {
       this.snackbar.show = false
@@ -398,17 +397,17 @@ export default {
       if (isValid) {
         let formData = new window.FormData()
         // Select Fields (Multiple) are added if value changed
-        if (this.website_changed) {
-          formData.set('websites', this.article.website)
-        } else if (this.website_removed_some) {
+        if (this.website_removed_some) {
           formData.set('websites', this.article.website_removed)
+        } else if (this.website_changed) {
+          formData.set('websites', this.article.websites)
         }
         // Select Fields (One) old values are sent if value did not change
         // this.selectOne.forEach(item => {
         //   if ((this.data[item] != this.article[item][0]) && !this.article[item].id) {
         //     formData.set(`${item}_id`, this.article[item])
         //   }
-        // })        
+        // })
         if (this.change_icon) {
           formData.set('icon', this.article.icon)
         }
@@ -437,7 +436,7 @@ export default {
             this.snackbar = {
               color: 'success',
               show: true,
-              text: `${this.$t('actions.create')} - ${this.$t('nav.article')}: ${this.$t('status.success')}`
+              text: `${this.$t('actions.add')} - ${this.$t('nav.article')}: ${this.$t('status.success')}`
             }
             this.$router.push(`/articles/${response.slug}`)
           }, error => {

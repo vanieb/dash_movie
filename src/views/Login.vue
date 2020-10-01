@@ -56,7 +56,7 @@
     <snack-bar
       :show="snackbar.show"
       :color="snackbar.color"
-      :text="snackbar.text" 
+      :text="snackbar.text"
     >
     </snack-bar>
   </v-layout>
@@ -124,7 +124,7 @@ export default {
 </script>
 <style scoped lang="scss">
 .form-title {
-  background-color:#64B5F6; 
+  background-color:#64B5F6;
   color:white;
   height:50px;
   padding: 10px 12px 10px

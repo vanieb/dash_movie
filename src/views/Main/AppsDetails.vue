@@ -1,6 +1,11 @@
 <template>
   <v-layout wrap>
-    <v-container>
+    <v-container v-if="loading">
+      <v-layout justify-center align-center >
+        <v-progress-circular indeterminate color="blue"></v-progress-circular>
+      </v-layout>
+    </v-container>
+    <v-container v-else>
       <v-layout>
         <v-layout justify-start>
           <v-breadcrumbs :items="bread_crumbs" style="padding:12px;">
@@ -22,7 +27,7 @@
           <v-btn
             color="primary"
             dark
-            :to="`/apps/${apps.id}/edit`"
+            :to="`/apps/${apps.slug}/edit`"
             >
             <v-icon class="mr-3">edit</v-icon> &nbsp;{{ $t('actions.update') }}
           </v-btn>
@@ -66,6 +71,9 @@
             <v-row class="mb-1">
               <small><v-icon left dense>event</v-icon>{{apps.created_at | moment("YYYY-MM-DD HH:mm:ss") }}</small>
             </v-row>
+            <v-row class="mb-1">
+              <small><v-icon left dense>person</v-icon>{{apps.created_by}}</small>
+            </v-row>
             <!-- Will be added after likes and comments feature implementation -->
             <!-- <v-row>
               <v-chip small class="ma-1" outlined color="primary lighten-1"><v-icon left small>thumb_up</v-icon>6</v-chip>
@@ -76,63 +84,26 @@
             <v-icon color="warning" left>web</v-icon>{{$t('apps.website')}}:
             <v-chip class="ma-1" color="orange" outlined v-if="apps.website" small>{{apps.website.name}}</v-chip>
             <span v-else> {{ $t('system_msg.no_data') }}</span>
-            <v-row>
-              <v-chip
-                v-if="apps.is_active"
-                class="ma-1"
-                color="green"
-                text-color="white"
-                style="height:20px; !important font-size:11px;">
-                {{$t('status.enabled')}}
-              </v-chip>
-              <v-chip
-                v-else
-                class="ma-1"
-                color="gray"
-                style="height:20px;
-                !important font-size:11px;">
-                {{$t('status.disabled')}}
-              </v-chip>
-            </v-row>
-            <v-row v-if="apps.is_rank">
-              <v-chip
-                class="ma-1"
-                color="error"
-                text-color="white"
-                small>
-                <v-icon small left>format_list_numbered</v-icon>
-                {{$t('nav.leaderboard')}}
-              </v-chip>
-            </v-row>
-            <v-row v-if="apps.is_recommended">
-              
-              <v-chip
-                class="ma-1"
-                color="error"
-                text-color="white"
-                small>
-                <v-icon small left>star_outline</v-icon>
-                {{$t('nav.recommended')}}
-              </v-chip>
-            </v-row>
           </v-col>
           <v-spacer></v-spacer>
         </v-row>
         <v-layout>
           <v-card-title>{{$t('apps.classification')}}</v-card-title>
         </v-layout>
-        <v-simple-table >
+        <v-simple-table v-if="classification">
           <thead>
             <tr>
               <th width="20%">{{$t('apps.type')}}</th>
               <th width="30%">{{$t('nav.category')}}</th>
               <th width="30%">{{$t('nav.labels')}}</th>
+              <th width="10%">{{$t('common.status')}}</th>
+              <th width="30%">{{$t('nav.leaderboard')}}/{{$t('nav.recommended')}}</th>
             </tr>
           </thead>
-          <tbody>
-            <tr v-for="item in apps.types" :key="item.id" >
+          <tbody >
+            <tr v-for="item in classification" :key="item.id" >
               <td>{{item.name}}</td>
-              <td v-if="item.categories">
+              <td v-if="item.categories.length > 0">
                 <span v-for="category in item.categories" :key="category.id">
                   <v-chip color="success" small outlined class="ma-1">{{category.name}}</v-chip>
                 </span>
@@ -144,9 +115,52 @@
                 </span>
               </td>
               <td v-else>-</td>
+              <td>
+                <span v-if="item.apptype_details" >
+                  <v-chip
+                    v-if="item.apptype_details.is_active"
+                    class="ma-1"
+                    color="green"
+                    text-color="white"
+                    style="height:20px; !important font-size:11px;">
+                    {{$t('status.enabled')}}
+                  </v-chip>
+                  <v-chip
+                    v-else
+                    class="ma-1"
+                    color="gray"
+                    style="height:20px;
+                    !important font-size:11px;">
+                    {{$t('status.disabled')}}
+                  </v-chip>
+                </span>
+                </td>
+                <td class="text-center">
+                  <span v-if="item.apptype_details">
+                  <v-chip v-if="item.apptype_details.is_rank"
+                    class="ma-1"
+                    color="error"
+                    text-color="white"
+                    small>
+                    <v-icon small left>format_list_numbered</v-icon>
+                    {{$t('nav.leaderboard')}}
+                  </v-chip>
+                  <span v-if="!item.apptype_details.is_recommended && !item.apptype_details.is_rank">-</span>
+                  <v-chip v-if="item.apptype_details.is_recommended"
+                    class="ma-1"
+                    color="error"
+                    text-color="white"
+                    small>
+                    <v-icon small left>star_outline</v-icon>
+                    {{$t('nav.recommended')}}
+                  </v-chip>
+                </span>
+              </td>
             </tr>
           </tbody>
+
         </v-simple-table>
+        <v-layout v-else justify-center align-center><small >{{$t('pagination.no_record')}}</small></v-layout>
         <v-layout>
           <v-card-title>{{$t('apps.download_link')}}</v-card-title>
         </v-layout>
@@ -202,7 +216,7 @@
                           :error-messages="errors"
                           required
                           slot-scope="{ errors }"
-                          v-model="file">    
+                          v-model="file">
                         </v-file-input>
                       </validation-provider>
                       <v-progress-linear
@@ -271,11 +285,11 @@
       <snack-bar
         :show="snackbar.show"
         :color="snackbar.color"
-        :text="snackbar.text" 
+        :text="snackbar.text"
       >
       </snack-bar>
     </v-container>
-  </v-layout>    
+  </v-layout>
 </template>
 <script>
 import api from '@/api/apis'
@@ -294,7 +308,10 @@ export default {
     return {
       file: '',
       apps: {},
+      classification: [],
       appsApi: api.apps,
+      loading: true,
+      classApi: api.classification,
       uploadPercentage: 0,
       uploadInstallerDialog: false,
       uploadiOSInstallerDialog: false,
@@ -337,16 +354,19 @@ export default {
     next(vm => {
       let id = to.params.appsId
       vm.getAppDetails(id)
+      vm.getAppClassDetails(id)
     })
   },
   methods: {
-    getAppDetails(id) {
-      this.$http.get(`${this.appsApi}${id }/`).then((response) => {
+    async getAppDetails(id) {
+      await this.$http.get(`${this.appsApi}${id }/`).then((response) => {
         this.apps = response
-        this.apps.types.forEach(type => {
-          type.categories = this.apps.categories.filter(category => category.type_category.id == type.id)
-          type.labels = this.apps.labels.filter(label => label.type_label.id==type.id)
-        })
+        this.loading = false
+      })
+    },
+    async getAppClassDetails(id) {
+     await this.$http.get(`${this.classApi}/${id }/`).then((response) => {
+        this.classification = response
       })
     },
     toggle(id, value, mode){

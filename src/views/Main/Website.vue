@@ -36,7 +36,7 @@
       @query-data="queryData"
     >
     </pagination>
-  </v-layout>    
+  </v-layout>
 </template>
 <script>
 import api from '@/api/apis'
@@ -54,7 +54,7 @@ export default {
       websiteApi: api.websites,
       statusOptions: [
         { text: this.$t('status.enabled'),
-          value: 1}, 
+          value: 1},
         { text: this.$t('status.disabled'),
           value: 2}],
       headers: [

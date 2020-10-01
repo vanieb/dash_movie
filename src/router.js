@@ -72,6 +72,18 @@ export default new Router({
       }
     },
     {
+      path: '/app_settings',
+      name: 'AppSettings',
+      component: function(resolve) {
+        require(['./views/Main/AppSettings.vue'], resolve)
+      },
+      meta: {
+        icon: 'apps',
+        auth: true,
+        title: i18n.t('nav.apps')
+      }
+    },
+    {
         path: '/apps/add',
         name: 'Add Apps',
         component: function (resolve) {

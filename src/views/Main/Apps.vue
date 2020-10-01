@@ -2,32 +2,32 @@
   <v-layout wrap>
     <v-container>
       <v-layout>
-        <div d-inline-block>
+        <!-- <div d-inline-block>
           <v-layout justify-start>
             <v-btn
               color="primary"
               dark to="/apps/add">
               <v-icon class="mr-3">library_add</v-icon> &nbsp;{{ $t('actions.add') }}
             </v-btn>
-          </v-layout> 
-        </div>
+          </v-layout>
+        </div> -->
         <v-layout justify-end>
           <!-- Installer Upload -->
-          <v-dialog v-model="uploadInstallerDialog" persistent max-width="600">
+          <!-- <v-dialog v-model="uploadInstallerDialog" persistent max-width="600">
             <template v-slot:activator="{ on }">
-               <v-btn
-                  color="primary"
-                  dark
-                  class="mr-3"
-                  v-on="on">
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                      <v-icon v-on="on">cloud_upload</v-icon>
-                    </template>
-                    <span>{{$t('system_notes.upload_installer_memo')}}</span>
-                  </v-tooltip>
-                </v-btn>
-              </template>
+              <v-btn
+                color="primary"
+                dark
+                class="mr-3"
+                v-on="on">
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-icon v-on="on">cloud_upload</v-icon>
+                  </template>
+                  <span>{{$t('system_notes.upload_installer_memo')}}</span>
+                </v-tooltip>
+              </v-btn>
+            </template>
             <v-card :loading="uploadLoading">
               <validation-observer ref="form">
                 <v-card-title>
@@ -44,6 +44,7 @@
                     :mode="'multiple'"
                     :website="setWebsite"
                     req="true"
+                    :action="'add'"
                     @website-select-multiple="websiteSetMultiple">
                   </website>
                   <v-spacer></v-spacer>
@@ -57,7 +58,7 @@
                       placeholder=" "
                       slot-scope="{ errors }"
                       required
-                      v-model="file">    
+                      v-model="file">
                     </v-file-input>
                   </validation-provider>
                   <v-progress-linear
@@ -80,22 +81,21 @@
                     >{{ uploadLoading ? $t('actions.cancel') : $t('actions.close') }}
                   </v-btn>
                   <v-btn
-                    color="blue darken-1"
+                    color="primary"
+                    dark
                     :disabled="uploadLoading"
                     @click="uploadFile('upload')">{{ $t('actions.submit') }}
                   </v-btn>
                 </v-card-actions>
               </validation-observer>
             </v-card>
-          </v-dialog>
+          </v-dialog> -->
           <!-- Create Multiple Apps -->
-          <v-dialog v-model="createAppDialog" persistent max-width="350">
+          <!-- <v-dialog v-model="createAppDialog" persistent max-width="350">
             <template v-slot:activator="{ on }">
-
               <v-btn
                 color="primary"
-                dark 
-                
+                dark
                 class="mr-3"
                 v-on="on">
                 <v-tooltip bottom>
@@ -128,7 +128,7 @@
                       required
                       slot-scope="{ errors }"
                       accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                      v-model="importFile">    
+                      v-model="importFile">
                     </v-file-input>
                   </validation-provider>
                 </v-card-text>
@@ -139,14 +139,15 @@
                     @click="closeImport()">{{ $t('actions.close') }}
                   </v-btn>
                   <v-btn
-                    color="blue darken-1"
+                    color="primary"
+                    dark
                     :loading="importLoading"
                     @click="importCsv()">{{ $t('actions.submit') }}
                   </v-btn>
                 </v-card-actions>
               </validation-observer>
             </v-card>
-          </v-dialog>
+          </v-dialog> -->
           <!-- Export Apps -->
           <v-btn
             color="primary"
@@ -163,98 +164,29 @@
           </v-btn>
         </v-layout>
       </v-layout>
+      <v-layout justify-start class="mt-3">
+        <div style="width:200px !important;" class="mr-2 mb-2">
+          <website
+            type="filter"
+            :mode="'one'"
+            req="true"
+            :website="query.website"
+            @website-select-one="websiteSelectOne">
+          </website>
+        </div>
+      </v-layout>
       <v-card>
-        <v-col cols="12" md="12" class="mt-2" style="padding: 20px 20px 10px 20px !important;">
-          <v-row>
-            <div style="width:155px !important;" class="mr-2">
-              <website
-                type="filter"
-                :mode="'one'"
-                :website="query.website"
-                @website-select-one="websiteSelectOne">
-              </website>
-            </div>
-            <div style="width:155px !important;" class="mr-2">
-             <types
+        <v-col cols="12" md="12" class="" style="padding: 10px 20px 10px 20px !important;">
+          <v-row class="mt-2">
+            <div style="width:200px !important;" class="mr-2">
+              <types
                 :mode="'one'"
                 type="filter"
-                :typeFilter="`website=${query.website}`"
-                :types="query.app_type"
+                :typeFilter="typeFilter"
+                :types="query.types"
                 @type-select-one="typeSelectOne">
               </types>
             </div>
-            <div style="width:155px;" class="mr-2">
-              <v-select
-                item-name="text"
-                item-value="value"
-                :items="statusOptions"
-                :label="`${$t('common.status')}`"
-                v-model="is_active"
-                hide-details="true"
-                placeholder=" "
-                outlined
-                clearable
-                dense>
-                <template slot="selection" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-                <template slot="item" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-              </v-select>
-            </div>
-            <div style="width:155px;" class="mr-2">
-              <v-select
-                item-name="text"
-                item-value="value"
-                :items="statusOptions"
-                :label="`${$t('nav.leaderboard')}-${$t('common.status')}`"
-                v-model="is_rank"
-                hide-details="true"
-                placeholder=" "
-                outlined
-                clearable
-                dense>
-                <template slot="selection" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-                <template slot="item" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-              </v-select>
-            </div>
-            <div style="width:155px;" class="mr-2">
-              <v-select
-                item-name="text"
-                item-value="value"
-                :items="statusOptions"
-                :label="`${$t('nav.recommended')}-${$t('common.status')}`"
-                v-model="is_recommended"
-                hide-details="true"
-                placeholder=" "
-                outlined
-                clearable
-                dense>
-                <template slot="selection" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-                <template slot="item" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-              </v-select>
-            </div>
-            <v-layout class="justify-end">
-              <v-btn
-                color="primary"
-                dark
-                :loading="loading"
-                @click="clearAll"
-              >
-                <v-icon>clear_all</v-icon>{{ $t('actions.clear') }}
-              </v-btn>
-            </v-layout>
-          </v-row>
-          <v-row>
             <div style="width:200px;" class="mr-2">
               <v-text-field
                 @input="search"
@@ -302,6 +234,16 @@
                 </v-date-picker>
               </v-menu>
             </div>
+            <v-layout class="justify-end">
+              <v-btn
+                color="primary"
+                dark
+                :loading="loading"
+                @click="clearAll"
+              >
+                <v-icon>clear_all</v-icon>{{ $t('actions.clear') }}
+              </v-btn>
+            </v-layout>
           </v-row>
         </v-col>
       </v-card>
@@ -316,7 +258,7 @@
         <tbody>
           <tr v-for="item in querySet" :key="item.id">
             <td width="5%">
-              <v-btn class="mr-2" icon color="info" :to="`/apps/${item.id}`">
+              <v-btn class="mr-2" icon color="info" :to="`/apps/${item.slug}`">
                 <v-icon>touch_app</v-icon>
               </v-btn>
             </td>
@@ -324,25 +266,10 @@
             <td class="align-center justify-center" width="10%" >
               <span>{{item.website ? item.website.name : '-' }}<br/></span>
             </td>
-            <td class="align-center justify-start">
-              <v-switch value v-model="item.is_active"
-                @change="toggle(item.id, item.is_active, 'is_active')">
-              </v-switch>
-            </td>
-            <td class="align-center justify-start">
-              <v-switch value v-model="item.is_rank"
-                @change="toggle(item.id, item.is_rank, 'is_rank')">
-              </v-switch>
-            </td>
-            <td class="align-center justify-start">
-              <v-switch value v-model="item.is_recommended"
-                @change="toggle(item.id, item.is_recommended, 'is_recommended' )">
-              </v-switch>
-            </td>
             <td width="30%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td width="30%" class="align-center justify-center">
               <v-layout>
-              <v-btn class="mr-2" icon :to="`/apps/${item.id}/edit`">
+              <v-btn class="mr-2" icon :to="`/apps/${item.slug}/edit`">
                 <v-icon small >edit</v-icon>
               </v-btn>
               <v-menu offset-y>
@@ -350,7 +277,7 @@
                   <v-icon color="red" small v-on="on" icon>delete</v-icon>
                 </template>
                 <v-list dark>
-                  <v-list-item @click="deleteApp(item.id, true, $event)">
+                  <v-list-item @click="deleteApp(item.slug, true, $event)">
                     <v-list-item-title>
                       <v-icon class="mr-2" color="orange">warning</v-icon>
                       {{ $t('system_msg.confirm_delete') }}
@@ -359,11 +286,8 @@
                   </v-list-item>
                 </v-list>
               </v-menu>
-              <!-- <v-btn class="mr-2" icon :to="`/apps/${item.id}/edit`">
-                <v-icon color="red" small>delete</v-icon>
-              </v-btn> -->
               </v-layout>
-              
+
             </td>
           </tr>
         </tbody>
@@ -395,7 +319,7 @@ import $ from '../../utils/util'
 import Pagination from '@/components/Pagination'
 import SnackBar from '@/components/SnackBar'
 import { debounce } from 'lodash'
-import { ValidationObserver, ValidationProvider } from 'vee-validate'
+// import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import Website from '../../components/SelectWebsite.vue'
 import Types from '../../components/SelectType.vue'
 import axios from 'axios'
@@ -406,8 +330,8 @@ export default {
   components: {
     Pagination,
     SnackBar,
-    ValidationObserver,
-    ValidationProvider,
+    // ValidationObserver,
+    // ValidationProvider,
     Website,
     Types
   },
@@ -420,15 +344,13 @@ export default {
       query: {
         website: 1
       },
+      typeFilter: '',
       querySet: [],
       export_query: [],
-      is_active: '',
-      is_rank: '',
-      is_recommended: '',
       today: date.max_today,
       created_at: ['', ''],
       website: 1,
-      appsApi: api.apps,
+      appsApi: `${api.apps}`,
       exportApi: `${api.apps}export/`,
       importApi: `${api.apps}import/`,
       loading: true,
@@ -460,7 +382,8 @@ export default {
         {
           sortable: false,
           text: this.$t('common.name'),
-          value: 'name'
+          value: 'name',
+          width: '40%'
         },
         {
           sortable: false,
@@ -469,30 +392,14 @@ export default {
         },
         {
           sortable: false,
-          text: this.$t('common.status'),
-          value: 'status',
-          width: '10%'
-        },
-        {
-          sortable: false,
-          text: this.$t('nav.leaderboard'),
-          value: 'is_rank',
-          width: '10%'
-        },
-        {
-          sortable: false,
-          text: this.$t('nav.recommended'),
-          value: 'is_recommended',
-          width: '10%'
-        },
-        {
-          sortable: false,
           text: this.$t('common.created_at'),
-          value: 'created_at'
+          value: 'created_at',
+          width: '20%'
         },
         {
           sortable: false,
-          text: this.$t('common.action')
+          text: this.$t('common.action'),
+          width: '10%'
         }
       ]
     }
@@ -506,20 +413,8 @@ export default {
       },
       deep: true
     },
-    is_active(newObj) {
-      this.query.is_active = newObj
-      this.$refs.pulling.submit()
-    },
-    is_rank(newObj) {
-      this.query.is_rank = newObj
-      this.$refs.pulling.submit()
-    },
-    is_recommended(newObj) {
-      this.query.is_recommended = newObj
-      this.$refs.pulling.submit()
-    },
     type(newObj) {
-      this.query.app_type = newObj
+      this.query.types = newObj
       this.search()
     },
     website(newObj) {
@@ -575,10 +470,7 @@ export default {
         this.created_at = [undefined, undefined]
       }
       this.website = this.$route.query.website || ''
-      this.is_active = this.$route.query.is_active==true || this.$route.query.is_active==false ? this.$route.query.is_active : ''
-      this.is_rank = this.$route.query.is_rank==true || this.$route.query.is_rank==false ? this.$route.query.is_rank : ''
-      this.is_recommended = this.$route.query.is_recommended==true || this.$route.query.is_recommended==false ? this.$route.query.is_recommended : ''
-      this.type = this.$route.query.app_type || ''
+      this.type = this.$route.query.types || ''
       this.query = Object.assign({}, this.$route.query)
     },
     queryData(queryset) {
@@ -612,8 +504,8 @@ export default {
             const formData = new window.FormData()
             formData.set('app_file', this.file)
             formData.set('website', this.setWebsite)
-            await axios.post(api.upload, 
-              formData, 
+            await axios.post(api.upload,
+              formData,
               { headers: {'Content-Type': 'multipart/form-data'},
               onUploadProgress: function( progressEvent ) {
                 this.uploadPercentage = parseInt( Math.round( ( progressEvent.loaded / progressEvent.total ) * 100 ))
@@ -635,7 +527,7 @@ export default {
               this.uploadLoading = false
               return
             }).catch(function(){
-              
+
             })
           }
         }
@@ -665,51 +557,13 @@ export default {
       }
     },
     typeSelectOne(val) {
-      this.query.app_type = val
-      this.submit()
+      if (val) {
+        this.query.types = val
+        this.submit()
+      }
     },
     websiteSetMultiple(val) {
       this.setWebsite = val
-    },
-    toggle(id, value, mode){
-      let website_query = this.query.website
-      this.snackbar.show = false
-      let toggleResult
-      let action_title
-      if (mode == 'is_active') {
-        toggleResult = {
-          is_active: value
-        }
-        action_title = this.$t('common.status')
-      } else if (mode == 'is_rank') {
-        toggleResult = {
-          is_rank: value
-        }
-        action_title = this.$t('nav.leaderboard')
-      } else {
-        toggleResult = {
-          is_recommended: value
-        }
-        action_title = this.$t('nav.recommended')
-      }
-      this.$http.put(this.appsApi + id + '/', toggleResult).then((response) => {
-        let action_text = response[mode] ? this.$t('status.enabled') : this.$t('status.disabled')
-        this.snackbar = {
-          color: 'success',
-          show: true,
-          text: `[${action_title}]: ${action_text}`
-        }
-      }, error => {
-        this.snackbar = {
-          color: 'error',
-          show: true,
-          text: `${this.$t('system_msg.error')}: ${error}`
-        }
-        this.$refs.pulling.rebase()
-        this.query.website = website_query
-        this.submit()
-      })
-      this.snackbar.show = false
     },
     submit() {
       if (!$.compareQuery(this.query, this.$route.query)) {
@@ -718,7 +572,7 @@ export default {
     },
     websiteSelectOne(val) {
       this.query.website = val
-      this.typeFilter = `website=${this.query.website}`
+      this.typeFilter = this.query.website
       this.submit()
     },
     search:
@@ -728,7 +582,6 @@ export default {
     700),
     clearAll() {
       this.created_at = ['','']
-      this.is_active = ''
       this.query = {}
       this.query.website = 1
       this.$nextTick(() => {
@@ -753,7 +606,7 @@ export default {
       this.$refs.importForm.reset()
     },
     deleteApp(id) {
-      this.$http.delete(this.appsApi + id + '/').then(() => {
+      this.$http.delete(api.apps + id + '/').then(() => {
         this.snackbar = {
           color: 'success',
           show: true,

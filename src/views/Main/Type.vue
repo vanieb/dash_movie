@@ -39,10 +39,23 @@
                     ></v-text-field>
                   </validation-provider>
                 </v-flex>
+                <!-- <v-flex xs12 >
+                  <validation-provider rules="required|max:15" :name="$t('common.code')">
+                    <v-text-field
+                      :counter="15"
+                      :error-messages="errors"
+                      :label="`${$t('common.code')}*`"
+                      placeholder=" "
+                      required
+                      slot-scope="{ errors }"
+                      v-model="type.code"
+                    ></v-text-field>
+                  </validation-provider>
+                </v-flex> -->
                 <v-flex xs12>
                   <div width="452px;">
                     <website
-                      :key="websiteKey" 
+                      :key="websiteKey"
                       elementType="modal"
                       type="set"
                       req="true"
@@ -66,7 +79,6 @@
                   </validation-provider>
                 </v-flex>
               </v-layout>
-
               <small color="red">*{{ $t('errors.required') }}</small>
             </v-card-text>
               <!-- BUTTONS -->
@@ -186,12 +198,13 @@
                 @change="toggleStatus(item.id, item.is_active, item.website.id)">
               </v-switch>
             </td>
-            <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
-            <td>{{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
-            <td>{{ item.memo || '-'}}</td>
+            <td>{{ item.code }}</td>
+            <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}} / <br/> {{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
+            <td>{{ item.website.name || '-'}}</td>
+            <td width="40%">{{ item.memo || '-'}}</td>
             <td class="align-center justify-center">
-              <v-btn class="mr-2" icon @click="updateType(item)">
-                <v-icon>edit</v-icon>
+              <v-btn class="mr-1" icon @click="updateType(item)">
+                <v-icon small>edit</v-icon>
               </v-btn>
               <v-menu offset-y>
                 <template v-slot:activator="{ on }">
@@ -270,6 +283,7 @@ export default {
       type: {
         name: '',
         website: '',
+        // code: '',
         memo: ''
       },
       statusOptions: [
@@ -296,18 +310,24 @@ export default {
         },
         {
           sortable: false,
-          text: this.$t('common.created_at'),
+          text: this.$t('common.code'),
+          value: 'code'
+        },
+        {
+          sortable: false,
+          text: `${this.$t('common.created_at')} / ${this.$t('common.updated_at')}`,
           value: 'created_at'
         },
         {
           sortable: false,
-          text: this.$t('common.updated_at'),
-          value: 'updated_at'
+          text: this.$t('apps.website'),
+          value: 'website'
         },
         {
           sortable: false,
           text: this.$t('common.remarks'),
-          value: 'memo'
+          value: 'memo',
+          width:"40%"
         },
         {
           sortable: false,
@@ -452,6 +472,7 @@ export default {
         id: item.id,
         name: item.name,
         memo: item.memo,
+        // code: item.code,
         website_id: item.website.id
       })
       this.name = item.name
@@ -473,7 +494,8 @@ export default {
       this.websiteKey = true
       let typeResult = Object({
         name: this.type.name,
-        website_id: this.query.website,
+        website_id: this.type.website_id,
+        // code: this.type.code,
         memo: this.type.memo,
       })
       if (isValid) {
@@ -520,9 +542,10 @@ export default {
       this.websiteKey = false
       this.type.id = ''
       this.type.name = ''
-      this.type.memo=''
+      this.type.memo =''
+      // this.type.code = ''
       this.name = ''
-      this.type.website_id = '' 
+      this.type.website_id = ''
       this.submitting = false
       this.$refs.form.reset()
       this.showForm = false

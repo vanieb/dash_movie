@@ -71,10 +71,10 @@
     <snack-bar
       :show="snackbar.show"
       :color="snackbar.color"
-      :text="snackbar.text" 
+      :text="snackbar.text"
     >
     </snack-bar>
-  </v-layout>    
+  </v-layout>
 </template>
 <script>
 import api from '@/api/apis'
@@ -238,7 +238,7 @@ export default {
       this.toggleLoading = true
       this.$http.put(api.staff + id + '/', {
         username: username,
-        status: status ? 1 : 0 
+        status: status ? 1 : 0
       }).then((response) => {
         let status_text = response.status ? this.$t('status.enabled') : this.$t('status.disabled')
         this.snackbar = {

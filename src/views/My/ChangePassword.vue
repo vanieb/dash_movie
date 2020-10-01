@@ -93,10 +93,10 @@
     <snack-bar
       :show="snackbar.show"
       :color="snackbar.color"
-      :text="snackbar.text" 
+      :text="snackbar.text"
     >
     </snack-bar>
-  </v-layout>    
+  </v-layout>
 </template>
 <script>
 import api from '@/api/apis'

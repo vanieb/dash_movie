@@ -54,7 +54,7 @@
     <snack-bar
       :show="snackbar.show"
       :color="snackbar.color"
-      :text="snackbar.text" 
+      :text="snackbar.text"
     >
     </snack-bar>
   </v-container>
@@ -107,9 +107,9 @@ export default {
         show: false,
       },
       items: [
-        {value: 20}, 
-        {value: 50}, 
-        {value: 100}, 
+        {value: 20},
+        {value: 50},
+        {value: 100},
         {value: 200}],
       count: 0,
       limit: 20,
@@ -198,7 +198,7 @@ export default {
     },
     rebase() {
       this.next = this.buildUrl(
-        this.api, `&offset=${this.offset}&limit=${this.limit}`)
+        this.api, `offset=${this.offset}&limit=${this.limit}`)
       this.myQueryset = []
       this.pull()
     },
@@ -231,7 +231,7 @@ export default {
       const additionalQuery = Object.keys(this.persistentQuery).map(key => {
         return `${key}=${this.persistentQuery[key]}`
       }).join('&')
-      const url = `${api}${defaultQuery ? `?${defaultQuery}` : ''}&${additionalQuery}`
+      const url = `${api}${defaultQuery ? `?${defaultQuery}` : ''}${additionalQuery}`
       const params = []
       const query = this.$route.query
 

@@ -1,6 +1,6 @@
 <template>
   <div wrap v-if="showNav">
-    <v-app-bar 
+    <v-app-bar
       app
       clipped-left
       color="blue lighten-3"
@@ -133,6 +133,7 @@
             text: this.$t('nav.apps_management'),
             children: [
               { icon: 'apps', text: this.$t('nav.apps'), path: '/apps?website=1'},
+              { icon: 'settings', text: `${this.$t('nav.apps')} ${this.$t('nav.settings')}` , path: '/app_settings?website=1&types=1'},
               // app application
               { icon: 'new_releases', text: this.$t('nav.types'), path: '/types?website=1'},
               { icon: 'category', text: this.$t('nav.category'), path: '/category?website=1'},

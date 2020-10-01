@@ -45,16 +45,18 @@
                 <v-spacer></v-spacer>
               </v-row>
               <v-row>
-                <v-textarea
-                  style="width:670px;"
-                  prepend-icon="notes"
-                  outlined
-                  v-model="website.memo"
-                  rows="2"
-                  placeholder=" "
-                  :label="`${$t('common.remarks')}`" 
-                  dense>
-                </v-textarea>
+                <validation-provider style="width:740px;" rules="max:50" :name="$t('common.remarks')" >
+                  <v-textarea
+                    prepend-icon="notes"
+                    outlined
+                    :counter="50"
+                    v-model="website.memo"
+                    rows="2"
+                    placeholder=" "
+                    :label="`${$t('common.remarks')}`"
+                    dense>
+                  </v-textarea>
+                </validation-provider>
                 <v-spacer style="min-width: 232px !important; "></v-spacer>
               </v-row>
             </v-col>
@@ -104,11 +106,11 @@
       <snack-bar
         :show="snackbar.show"
         :color="snackbar.color"
-        :text="snackbar.text" 
+        :text="snackbar.text"
       >
       </snack-bar>
     </v-container>
-  </v-layout>    
+  </v-layout>
 </template>
 <script>
 import api from '@/api/apis'
@@ -194,7 +196,7 @@ export default {
         this.showImage = true
       }
       fileRead.readAsDataURL(e.target.files[0])
-      
+
       this.website.icon = e.target.files[0]
       this.change_icon = true
     },
@@ -202,7 +204,7 @@ export default {
       this.snackbar.show = false
       const isValid = await this.$refs.form.validate()
       if (isValid) {
-        let formData = new window.FormData()  
+        let formData = new window.FormData()
         if (this.change_icon) {
           formData.set('icon', this.website.icon)
         }
