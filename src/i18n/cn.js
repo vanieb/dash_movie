@@ -86,6 +86,7 @@ export default {
     recommended: '推荐',
     users: '使用者',
     staff: '员工',
+    members: '会员',
     settings: '设定值',
     articles: '文章',
     article_management: '物品管理',

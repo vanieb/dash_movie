@@ -281,6 +281,18 @@ export default new Router({
       }
     },
     {
+      path: '/members',
+      name: 'Members',
+      component: function(resolve) {
+        require(['./views/Users/Members.vue'], resolve)
+      },
+      meta: {
+        icon: 'people',
+        auth: true,
+        title: i18n.t('nav.members')
+      }
+    },
+    {
       path: '/staff',
       name: 'Staff',
       component: function(resolve) {

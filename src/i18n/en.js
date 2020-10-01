@@ -86,6 +86,7 @@ export default {
     recommended: 'Recommended',
     users: 'Users',
     staff: 'Staff',
+    members: 'Members',
     settings: 'Settings',
     articles: 'Articles',
     article_management: 'Article Management',
