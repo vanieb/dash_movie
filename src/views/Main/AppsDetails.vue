@@ -72,7 +72,7 @@
               <small><v-icon left dense>event</v-icon>{{apps.created_at | moment("YYYY-MM-DD HH:mm:ss") }}</small>
             </v-row>
             <v-row class="mb-1">
-              <small><v-icon left dense>person</v-icon>{{apps.created_by}}</small>
+              <small><v-icon left dense>person</v-icon>{{apps.created_by || '-'}}</small>
             </v-row>
             <!-- Will be added after likes and comments feature implementation -->
             <!-- <v-row>
@@ -407,7 +407,7 @@ export default {
         } else{
           formData.set('ios_app_file', this.file)
         }
-        await axios.put(`${api.apps}${this.apps.id}/`,
+        await axios.put(`${this.appsApi}${this.apps.id}/`,
           formData,
           { headers: {'Content-Type': 'multipart/form-data'},
           onUploadProgress: function( progressEvent ) {

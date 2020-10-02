@@ -350,9 +350,10 @@ export default {
       today: date.max_today,
       created_at: ['', ''],
       website: 1,
-      appsApi: `${api.apps}`,
+      appsApi: api.apps,
       exportApi: `${api.apps}export/`,
       importApi: `${api.apps}import/`,
+      uploadApi: api.upload,
       loading: true,
       uploadLoading: false,
       importLoading: false,
@@ -488,7 +489,7 @@ export default {
       let continueUpload = true
       if (isValid) {
         if (this.file.name.split('.').pop() !== 'zip') {
-          await this.$http.get(`${api.upload}?website=${this.website}&filename=${this.file.name}`).then(response => {
+          await this.$http.get(`${this.uploadApi}?website=${this.website}&filename=${this.file.name}`).then(response => {
             this.count = response.length !== 0 ? response.length : false
             if (this.count) {
               continueUpload = window.confirm(this.$t('system_msg.confirm_upload',{ count: this.count}))
@@ -504,7 +505,7 @@ export default {
             const formData = new window.FormData()
             formData.set('app_file', this.file)
             formData.set('website', this.setWebsite)
-            await axios.post(api.upload,
+            await axios.post(this.uploadApi,
               formData,
               { headers: {'Content-Type': 'multipart/form-data'},
               onUploadProgress: function( progressEvent ) {
@@ -606,7 +607,7 @@ export default {
       this.$refs.importForm.reset()
     },
     deleteApp(id) {
-      this.$http.delete(api.apps + id + '/').then(() => {
+      this.$http.delete(`${this.appsApi}${id}/`).then(() => {
         this.snackbar = {
           color: 'success',
           show: true,
