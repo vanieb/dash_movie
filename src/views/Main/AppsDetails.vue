@@ -379,7 +379,7 @@ export default {
         }
         action_title = this.$t('apps.use_download_link')
       }
-      this.$http.put(this.appsApi + id + '/', toggleResult).then((response) => {
+      this.$http.put(`${this.appsApi}${id}/`, toggleResult).then((response) => {
         let action_text = response[mode] ? this.$t('status.enabled') : this.$t('status.disabled')
         this.snackbar = {
           color: 'success',

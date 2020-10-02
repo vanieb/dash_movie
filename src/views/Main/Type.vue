@@ -416,7 +416,7 @@ export default {
       this.query = Object.assign(this.query, query)
     },
     toggleStatus(id, is_active, website_id){
-      this.$http.put(this.typesApi + id + '/', {
+      this.$http.put(`${this.typesApi}${id}/`, {
         is_active: is_active,
         website_id: website_id
       }).then((response) => {
@@ -480,7 +480,7 @@ export default {
     },
     deleteType(id) {
       this.snackbar.show=false
-      this.$http.delete(this.typesApi + id + '/').then(() => {
+      this.$http.delete(`${this.typesApi}${id}/`).then(() => {
         this.snackbar = {
           color: 'success',
           show: true,

@@ -533,7 +533,7 @@ export default {
         }
         action_title = this.$t('nav.popular_articles')
       }
-      this.$http.put(this.articleApi + id + '/', toggleResult).then((response) => {
+      this.$http.put(`${this.articleApi}${id}/`, toggleResult).then((response) => {
         let action_text = response[mode] ? this.$t('status.enabled') : this.$t('status.disabled')
         this.snackbar = {
           color: 'success',
@@ -597,7 +597,7 @@ export default {
       this.$refs.form.reset()
     },
     deleteArticle(id) {
-      this.$http.delete(this.articleApi + id + '/').then(() => {
+      this.$http.delete(`${this.articleApi}${id}/`).then(() => {
         this.snackbar = {
           color: 'success',
           show: true,
