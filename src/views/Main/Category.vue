@@ -441,7 +441,7 @@ export default {
       this.query = Object.assign(this.query, query)
     },
     toggleStatus(id, is_active){
-      this.$http.put(this.categoriesApi + id + '/', {
+      this.$http.put(`${this.categoriesApi}${id}/`, {
         is_active: is_active
       }).then((response) => {
         let status_text = response.is_active ? this.$t('status.enabled') : this.$t('status.disabled')
@@ -531,7 +531,7 @@ export default {
     },
     deleteCategory(id) {
       this.snackbar.show=false
-      this.$http.delete(this.categoriesApi + id + '/').then(() => {
+      this.$http.delete(`${this.categoriesApi}${id}/`).then(() => {
         this.snackbar = {
           color: 'success',
           show: true,

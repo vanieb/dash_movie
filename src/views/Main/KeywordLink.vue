@@ -351,7 +351,7 @@ export default {
     },
     deleteKeyword(id) {
       this.snackbar.show=false
-      this.$http.delete(this.keywordsApi + id + '/').then(() => {
+      this.$http.delete(`${this.keywordsApi}${id}/`).then(() => {
         this.snackbar = {
           color: 'success',
           show: true,
