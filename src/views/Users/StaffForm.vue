@@ -85,7 +85,7 @@
           </v-card-text>
           <!-- BUTTONS -->
           <v-layout justify-start>
-            <v-btn 
+            <v-btn
               color="primary"
               dark
               :loading="submitting"
@@ -100,10 +100,10 @@
     <snack-bar
       :show="snackbar.show"
       :color="snackbar.color"
-      :text="snackbar.text" 
+      :text="snackbar.text"
     >
     </snack-bar>
-  </v-layout>    
+  </v-layout>
 </template>
 <script>
 import api from '@/api/apis'
@@ -141,7 +141,7 @@ export default {
           to: '/staff'
         },
         {
-          text: this.$t('nav.staff_details'),
+          text: this.$route.meta.title,
           disabled: true
         }
       ]
@@ -182,7 +182,7 @@ export default {
       }
       if (isValid) {
         if (this.staff.id) {
-        this.$http.put(`${api.staff}${this.staff.id}/`, staffResult).then((response) => {
+        this.$http.put(`${this.staffApi}${this.staff.id}/`, staffResult).then((response) => {
           this.snackbar = {
             color: 'success',
             show: true,
@@ -197,7 +197,7 @@ export default {
           }
         })
       } else {
-        this.$http.post(api.staff, staffResult).then((response) => {
+        this.$http.post(this.staffApi, staffResult).then((response) => {
           this.snackbar = {
             color: 'success',
             show: true,

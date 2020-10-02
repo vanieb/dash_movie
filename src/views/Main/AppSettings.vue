@@ -492,7 +492,7 @@ export default {
       this.dateRangeText = ''
     },
     deleteApp(id) {
-      this.$http.delete(api.apps + id + '/').then(() => {
+      this.$http.delete(`${this.appsApi}${id}/`).then(() => {
         this.snackbar = {
           color: 'success',
           show: true,

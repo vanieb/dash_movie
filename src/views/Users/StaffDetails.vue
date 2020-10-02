@@ -32,7 +32,7 @@
       <v-container>
         <v-row>
           <v-col cols="12" md="2">
-            <v-avatar color="indigo" size="80" class="profile ml-10"> 
+            <v-avatar color="indigo" size="80" class="profile ml-10">
               <v-icon dark size="60">mdi-account-circle</v-icon>
             </v-avatar>
           </v-col>
@@ -69,10 +69,10 @@
     <snack-bar
       :show="snackbar.show"
       :color="snackbar.color"
-      :text="snackbar.text" 
+      :text="snackbar.text"
     >
     </snack-bar>
-  </v-layout>    
+  </v-layout>
 </template>
 <script>
 import api from '@/api/apis'
@@ -151,7 +151,7 @@ export default {
       }
       if (isValid) {
         if (this.staff.id) {
-        this.$http.put(`${api.staff}${this.staff.id}/`, staffResult).then((response) => {
+        this.$http.put(`${this.staffApi}${this.staff.id}/`, staffResult).then((response) => {
           this.snackbar = {
             color: 'success',
             show: true,
@@ -166,7 +166,7 @@ export default {
           }
         })
       } else {
-        this.$http.post(api.staff, staffResult).then((response) => {
+        this.$http.post(this.staffApi, staffResult).then((response) => {
           this.snackbar = {
             color: 'success',
             show: true,
