@@ -5,6 +5,7 @@ export default {
   },
   common: {
     name: 'Name',
+    display_name: 'Display Name',
     status: 'Status',
     created_at: 'Created On',
     updated_at: 'Updated On',
@@ -97,6 +98,7 @@ export default {
     edit_article: 'Edit Article',
     add_article: 'Add Article',
     keyword_link: 'Keyword Link',
+    friendship_link: 'Friendship Link',
     popular_articles: 'Popular Articles',
     logs: 'Logs',
     import_logs: 'Import Logs'
