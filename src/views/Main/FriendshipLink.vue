@@ -221,7 +221,7 @@
     </v-container>
     <pagination
       :queryset="querySet"
-      :api="friendshipApi"
+      :api="friendshipLinkApi"
       :query="query"
       ref="pulling"
       @query-data="queryData"
@@ -264,7 +264,7 @@ export default {
       is_active: '',
       today: date.max_today,
       created_at: ['', ''],
-      friendshipApi: api.friendship,
+      friendshipLinkApi: api.friendship_link,
       loading: true,
       submitting: false,
       date_menu: false,
@@ -424,7 +424,7 @@ export default {
       this.friendship_link.website = val
     },
     toggleStatus(slug, is_active){
-      this.$http.put(`${this.friendshipApi}${slug}/`, {
+      this.$http.put(`${this.friendshipLinkApi}${slug}/`, {
         is_active: is_active
       }).then((response) => {
         let status_text = response.is_active ? this.$t('status.enabled') : this.$t('status.disabled')
@@ -455,7 +455,7 @@ export default {
     },
     deleteFriendshipLink(slug) {
       this.snackbar.show=false
-      this.$http.delete(`${this.friendshipApi}${slug}/`).then(() => {
+      this.$http.delete(`${this.friendshipLinkApi}${slug}/`).then(() => {
         this.snackbar = {
           color: 'success',
           show: true,
@@ -484,7 +484,7 @@ export default {
       // this.website_removed_some = false
       if (isValid) {
         if (this.friendship_link.slug) {
-        this.$http.put(`${this.friendshipApi}${this.friendship_link.slug}/`, friendshipLinkResult).then(() => {
+        this.$http.put(`${this.friendshipLinkApi}${this.friendship_link.slug}/`, friendshipLinkResult).then(() => {
           this.snackbar = {
             color: 'success',
             show: true,
@@ -500,7 +500,7 @@ export default {
           }
         })
       } else {
-        this.$http.post(this.friendshipApi, friendshipLinkResult).then(() => {
+        this.$http.post(this.friendshipLinkApi, friendshipLinkResult).then(() => {
           this.snackbar = {
             color: 'success',
             show: true,
