@@ -24,6 +24,7 @@ export default {
   webapps:  `${websites}apps/`,
   articles: `${host}articles/v1/`,
   keywords: `${host}articles/v1/keywords/`,
+  friendship: `${websites}friendship-links/`,
   types: `${websites}types/`,
   categories: `${websites}categories/`,
   labels: `${websites}labels/`,

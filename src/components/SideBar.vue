@@ -157,6 +157,7 @@
           text: this.$t('nav.settings'),
           model: true,
           children: [
+            { icon: 'compare_arrows', text: this.$t('nav.friendship_link'), path: '/friendship_link'},
             { icon: 'web', text: this.$t('nav.websites'), path: '/websites'}]
           }, {
           icon: 'mdi-chevron-up',

@@ -5,6 +5,7 @@ export default {
   },
   common: {
     name: '名称',
+    display_name: '显示名称',
     status: '状态',
     created_at: '创建于',
     updated_at: '更新于',
@@ -97,6 +98,7 @@ export default {
     edit_article: '编辑文章',
     add_article: '添加文章',
     keyword_link: '关键字链接',
+    friendship_link: '友情链接',
     popular_articles: '热门文章',
     logs: '日志',
     import_logs: '导入日志'

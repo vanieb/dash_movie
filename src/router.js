@@ -197,6 +197,18 @@ export default new Router({
       }
     },
     {
+      path: '/friendship_link',
+      name: 'FriendshipLink',
+      component: function(resolve) {
+        require(['./views/Main/FriendshipLink.vue'], resolve)
+      },
+      meta: {
+        icon: 'compare_arrows',
+        auth: true,
+        title: i18n.t('nav.friendship_link')
+      }
+    },
+    {
       path: '/label',
       name: 'Label',
       component: function(resolve) {
