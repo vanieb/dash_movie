@@ -185,7 +185,7 @@
         <tbody>
           <tr v-for="item in querySet" :key="item.id">
             <td>{{ item.name }}</td>
-            <td>{{ item.website || "-" }}</td>
+            <td>{{ item.website ? item.website.name : "-" }}</td>
             <td class="align-center justify-start">
               <v-switch value v-model="item.is_active"
                 @change="toggleStatus(item.slug, item.is_active)">
