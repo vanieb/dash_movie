@@ -159,8 +159,10 @@ export default {
     },
     showPermissions() {
       for (let list in this.permissions) {
-        if (this.permissions[list].checked) {
-          return true
+        for (let index in this.permissions[list].permissions) {
+          if (this.permissions[list].permissions[index].checked) {
+           return true
+          }
         }
       }
       return false

@@ -249,7 +249,7 @@ export default {
           sortable: false,
           text: this.$t('common.action'),
           width: '8%',
-          align: this.hideActionHeader
+          align: this.$root.permissions.includes('change_article_keywords_link') || this.$root.permissions.includes('delete_article_keywords_link') ? 'left' : ' d-none'
         }
       ]
     }
@@ -303,9 +303,6 @@ export default {
     },
     isUpdate() {
       return this.name.length > 0
-    },
-    hideActionHeader() {
-      return this.$root.permissions.includes('change_article_keywords_link') || this.$root.permissions.includes('delete_article_keywords_link') ? 'left' : ' d-none'
     }
   },
   methods: {

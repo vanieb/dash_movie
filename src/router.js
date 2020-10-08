@@ -361,7 +361,7 @@ export default new Router({
       },
       meta: {
         auth: true,
-        title: i18n.t('nav.error')
+        title: i18n.t('system_msg.error')
       }
     },
   ]

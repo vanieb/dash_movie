@@ -83,8 +83,8 @@
               </v-flex>
             </v-layout>
           </v-card-text>
-          <v-banner color="primary" dark>{{$t('staff.permissions')}}</v-banner>
-          <v-layout class="ma-2" justify-end >
+          <v-banner color="primary" dark v-if="$root.permissions.includes('change_staff_permission')">{{$t('staff.permissions')}}</v-banner>
+          <v-layout class="ma-2" justify-end v-if="$root.permissions.includes('change_staff_permission')">
             <v-chip class="ma-1" :color="selectAllColor" @click="selectPermission('all')">
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
@@ -122,7 +122,7 @@
               </v-tooltip>
             </v-chip>
           </v-layout>
-          <v-container>
+          <v-container v-show="$root.permissions.includes('change_staff_permission')">
             <template v-for="(list, index) in permissions">
               <v-checkbox
                 :label="`${list.name} - ${list.code}`"

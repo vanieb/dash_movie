@@ -404,7 +404,7 @@ export default {
           sortable: false,
           text: this.$t('common.action'),
           width: '10%',
-          align: this.hideActionHeader
+          align: this.$root.permissions.includes('change_app') || this.$root.permissions.includes('delete_app') ? 'left' : ' d-none'
         }
       ]
     }
@@ -465,9 +465,6 @@ export default {
       // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       this.href = `${this.exportApi}?token=${VueCookie.get('access_token')}&website=${this.query.website}`
       return this.querySet.length
-    },
-    hideActionHeader() {
-      return this.$root.permissions.includes('change_app') || this.$root.permissions.includes('delete_app') ? 'left' : ' d-none'
     }
   },
   methods: {

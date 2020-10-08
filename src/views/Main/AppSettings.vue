@@ -300,21 +300,21 @@ export default {
           sortable: false,
           text: this.$t('common.status'),
           value: 'status',
-          align: this.hideAppStatusHeader,
+          align: this.$root.permissions.includes('change_app_status') ? 'left' : ' d-none',
           width: '10%'
         },
         {
           sortable: false,
           text: this.$t('nav.leaderboard'),
           value: 'is_rank',
-          align: this.hideLeaderboardAppStatusHeader,
+          align: this.$root.permissions.includes('change_app_leaderboard_status') ? 'left' : ' d-none',
           width: '10%'
         },
         {
           sortable: false,
           text: this.$t('nav.recommended'),
           value: 'is_recommended',
-          align: this.hideRecommendedAppStatusHeader,
+          align: this.$root.permissions.includes('change_app_recommended_status') ? 'left' : ' d-none',
           width: '10%'
         },
         {
@@ -325,7 +325,7 @@ export default {
         {
           sortable: false,
           text: this.$t('common.action'),
-          align: this.hideActionHeader
+          align: this.$root.permissions.includes('change_app') || this.$root.permissions.includes('delete_app') ? 'left' : ' d-none'
         }
       ]
     }
@@ -398,18 +398,6 @@ export default {
       // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       this.href = `${this.exportApi}?token=${VueCookie.get('access_token')}&website=${this.query.website}`
       return this.querySet.length
-    },
-    hideAppStatusHeader() {
-      return this.$root.permissions.includes('change_app_status') ? 'left' : ' d-none'
-    },
-    hideLeaderboardAppStatusHeader() {
-      return this.$root.permissions.includes('change_app_leaderboard_status') ? 'left' : ' d-none'
-    },
-    hideRecommendedAppStatusHeader() {
-      return this.$root.permissions.includes('change_app_recommended_status') ? 'left' : ' d-none'
-    },
-    hideActionHeader() {
-      return this.$root.permissions.includes('change_app') || this.$root.permissions.includes('delete_app') ? 'left' : ' d-none'
     }
   },
   methods: {

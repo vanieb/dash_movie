@@ -126,7 +126,7 @@ export default {
           text: this.$t('common.status'),
           value: 'status',
           width: '10%',
-          align: this.hideStatusHeader
+          align: this.$root.permissions.includes('change_staff') ? 'center' : ' d-none'
         },
         {
           sortable: false,
@@ -143,7 +143,7 @@ export default {
         {
           sortable: false,
           text: this.$t('common.action'),
-          align: this.hideActionHeader
+          align: this.$root.permissions.includes('change_staff') || this.$root.permissions.includes('delete_staff') ? 'left' : ' d-none'
         }
       ]
     }
@@ -152,14 +152,6 @@ export default {
     this.$nextTick(() => {
       this.$refs.pulling.rebase()
     })
-  },
-  computed: {
-    hideActionHeader() {
-      return this.$root.permissions.includes('change_staff') || this.$root.permissions.includes('delete_staff') ? 'left' : ' d-none'
-    },
-    hideStatusHeader() {
-      return this.$root.permissions.includes('change_staff') ? 'center' : ' d-none'
-    }
   },
   methods: {
     async saveStaff() {
