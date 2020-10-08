@@ -81,7 +81,7 @@
                   </v-subheader>
                 </v-col>
               </v-row>
-              <v-list-item-action>
+              <v-list-item-action v-if="child.icon">
                 <v-icon>{{ child.icon }}</v-icon>
               </v-list-item-action>
               <v-list-item-content>
@@ -97,7 +97,7 @@
             link
             :to="item.path"
           >
-            <v-list-item-action v-if="child.icon">
+            <v-list-item-action>
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-item-action>
             <v-list-item-content>
