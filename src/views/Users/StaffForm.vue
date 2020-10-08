@@ -248,7 +248,7 @@ export default {
     selectAllPermissions (list) {
       this.permissions[list].checked = this.permissions[list].checked ? true : false
       for (let index in this.permissions[list].permissions) {
-        this.permissions[list].permissions[index].checked = this.permissions[list].permissions[index].checked ? false : true
+        this.permissions[list].permissions[index].checked = this.permissions[list].checked ? true : false
       }
     },
     excludePermission (exclude='') {
