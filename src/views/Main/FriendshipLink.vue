@@ -448,7 +448,7 @@ export default {
         slug: item.slug,
         name: item.name,
         link: item.link,
-        website: item.website
+        website: item.website.id
       })
       this.name = item.name
       this.showForm = true
@@ -488,7 +488,7 @@ export default {
           this.snackbar = {
             color: 'success',
             show: true,
-            text: `${this.$t('actions.update')}-${this.$t('nav.frienship_link')}: ${this.$t('status.success')}`
+            text: `${this.$t('actions.update')}-${this.$t('nav.friendship_link')}: ${this.$t('status.success')}`
           }
           this.$refs.pulling.rebase()
           this.close()
