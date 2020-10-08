@@ -23,46 +23,62 @@
             color="primary"
             dark
             :to="`/staff/${staff.id}/edit`"
+            v-if="$root.permissions.includes('change_staff')"
             >
             <v-icon class="mr-3">edit</v-icon> &nbsp;{{ $t('actions.update') }}
           </v-btn>
         </v-layout>
       </v-layout>
       <v-card>
-      <v-container>
-        <v-row>
-          <v-col cols="12" md="2">
-            <v-avatar color="indigo" size="80" class="profile ml-10">
-              <v-icon dark size="60">mdi-account-circle</v-icon>
-            </v-avatar>
-          </v-col>
-          <v-col cols="12" md="3">
-            <v-row class="mb-2">
-              <span class="title"><strong>{{staff.user.username}}</strong></span>
-            </v-row>
-            <v-row>
-              <v-icon class="mr-2 m-b-sm" color="error">person_add</v-icon>{{staff.created_by }}
-            </v-row>
-            <v-row>
-              <v-icon class="mr-2 m-b-xs" color="green">event</v-icon> {{staff.created_at | moment("YYYY-MM-DD HH:mm:ss") }}
-            </v-row>
-          </v-col>
-          <v-col cols="12" md="7">
-            <span v-if="staff.status===1">
-              <v-icon color="success" class="mr-2">check_box</v-icon>
-              <v-chip class="ma-1" color="success" small>{{$t('status.enabled')}}</v-chip>
-              <br/>
-            </span>
-            <span v-else>
-              <v-icon color="gray" class="mr-2">indeterminate_check_box</v-icon>
-              <v-chip class="ma-1" color="gray" small>{{$t('status.disabled')}}</v-chip>
-              <br/>
-            </span>
-              <v-icon color="gray" class="ml-0 mr-2 m-b-sm">notes</v-icon>
-              {{staff.memo || "-"}}
-          </v-col>
-        </v-row>
-      </v-container>
+        <v-container>
+          <v-row>
+            <v-col cols="12" md="2">
+              <v-avatar color="indigo" size="80" class="profile ml-10">
+                <v-icon dark size="60">mdi-account-circle</v-icon>
+              </v-avatar>
+            </v-col>
+            <v-col cols="12" md="3">
+              <v-row class="mb-2">
+                <span class="title"><strong>{{staff.user.username}}</strong></span>
+              </v-row>
+              <v-row>
+                <v-icon class="mr-2 m-b-sm" color="error">person_add</v-icon>{{staff.created_by }}
+              </v-row>
+              <v-row>
+                <v-icon class="mr-2 m-b-xs" color="green">event</v-icon> {{staff.created_at | moment("YYYY-MM-DD HH:mm:ss") }}
+              </v-row>
+            </v-col>
+            <v-col cols="12" md="7">
+              <span v-if="staff.status===1">
+                <v-icon color="success" class="mr-2">check_box</v-icon>
+                <v-chip class="ma-1" color="success" small>{{$t('status.enabled')}}</v-chip>
+                <br/>
+              </span>
+              <span v-else>
+                <v-icon color="gray" class="mr-2">indeterminate_check_box</v-icon>
+                <v-chip class="ma-1" color="gray" small>{{$t('status.disabled')}}</v-chip>
+                <br/>
+              </span>
+                <v-icon color="gray" class="ml-0 mr-2 m-b-sm">notes</v-icon>
+                {{staff.memo || "-"}}
+            </v-col>
+          </v-row>
+          <v-banner color="primary" dark>{{$t('staff.permissions')}}</v-banner>
+          <ul v-for="permission in permissions" :key="permission.id">
+            <v-card-title
+              class="strong"
+              v-if="permission.name"
+              :key="permission.id"
+              v-text="permission.name"
+            ></v-card-title>
+              <ul v-for="item in permission.permissions" :key="item.id" >
+              <li class="ml-6">
+                <span>{{item.name}}</span> -
+                <strong class="grey--text">{{item.description}}</strong>
+              </li>
+            </ul>
+          </ul>
+        </v-container>
       </v-card>
     </v-container>
     <!-- SNACKBAR -->
@@ -98,6 +114,7 @@ export default {
         password: '',
         memo: ''
       },
+      permissions: [],
       staffApi: api.staff,
       snackbar: {
         color: '',
@@ -126,6 +143,7 @@ export default {
       let staffId = to.params.staffId
       if (staffId) {
         vm.getStaffDetails(staffId)
+        vm.getStaffPermissions(staffId)
       }
     })
   },
@@ -136,6 +154,11 @@ export default {
         this.staff = response
       })
       this.loading = false
+    },
+    getStaffPermissions(id) {
+      this.$http.get(`${this.staffApi}permissions/${id}/?opt_expand=permissions`).then((response) => {
+        this.permissions = response.permissions
+      })
     },
     async saveStaff() {
       const isValid = await this.$refs.form.validate()
