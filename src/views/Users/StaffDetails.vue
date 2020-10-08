@@ -67,12 +67,12 @@
           <ul v-for="permission in permissions" :key="permission.id">
             <v-card-title
               class="strong"
-              v-if="permission.name"
+              v-if="permission.checked"
               :key="permission.id"
               v-text="permission.name"
             ></v-card-title>
               <ul v-for="item in permission.permissions" :key="item.id" >
-              <li class="ml-6">
+              <li class="ml-6" v-if="item.checked">
                 <span>{{item.name}}</span> -
                 <strong class="grey--text">{{item.description}}</strong>
               </li>
