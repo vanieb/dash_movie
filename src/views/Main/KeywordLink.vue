@@ -10,6 +10,7 @@
                 color="primary"
                 dark
                 v-on="on"
+                v-if="$root.includes('create_article_keywords_link')"
                 align-right>
                 <v-icon class="mr-3">add_box</v-icon> &nbsp;{{ $t('actions.add') }}
               </v-btn>
@@ -148,10 +149,10 @@
                 {{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}
             </td>
             <td class="align-center justify-center">
-              <v-btn class="mr-2" icon @click="updateKeyword(item)">
+              <v-btn class="mr-2" icon @click="updateKeyword(item)" v-if="$root.includes('change_article_keywords_link')">
                 <v-icon>edit</v-icon>
               </v-btn>
-              <v-menu offset-y>
+              <v-menu offset-y v-if="$root.includes('delete_article_keywords_link')">
                 <template v-slot:activator="{ on }">
                   <v-icon color="red" small v-on="on">delete</v-icon>
                 </template>
@@ -247,7 +248,8 @@ export default {
         {
           sortable: false,
           text: this.$t('common.action'),
-          width: '8%'
+          width: '8%',
+          align: this.$root.permissions.includes('change_article_keywords_link') && this.$root.permissions.includes('delete_article_keywords_link') ? 'left' : ' d-none'
         }
       ]
     }

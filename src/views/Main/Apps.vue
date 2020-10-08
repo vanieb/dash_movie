@@ -6,7 +6,8 @@
           <v-layout justify-start>
             <v-btn
               color="primary"
-              dark to="/apps/add">
+              dark to="/apps/add"
+              v-if="$root.permissions.includes('create_app')">
               <v-icon class="mr-3">library_add</v-icon> &nbsp;{{ $t('actions.add') }}
             </v-btn>
           </v-layout>
@@ -19,7 +20,8 @@
                 color="primary"
                 dark
                 class="mr-3"
-                v-on="on">
+                v-on="on"
+                v-if="$root.permissions.includes('create_app')">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon v-on="on">cloud_upload</v-icon>
@@ -97,7 +99,8 @@
                 color="primary"
                 dark
                 class="mr-3"
-                v-on="on">
+                v-on="on"
+                v-if="$root.permissions.includes('create_app')">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                   <v-icon v-on="on">dynamic_feed</v-icon>
@@ -267,12 +270,13 @@
               <span>{{item.website ? item.website.name : '-' }}<br/></span>
             </td>
             <td width="30%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
-            <td width="30%" class="align-center justify-center">
+            <td width="30%" class="align-center justify-center"
+              v-if="$root.permissions.includes('change_app') || $root.permissions.includes('delete_app')">
               <v-layout>
-              <v-btn class="mr-2" icon :to="`/apps/${item.slug}/edit`">
+              <v-btn class="mr-2" icon :to="`/apps/${item.slug}/edit`" v-if="$root.permissions.includes('change_app')">
                 <v-icon small >edit</v-icon>
               </v-btn>
-              <v-menu offset-y>
+              <v-menu offset-y v-if="$root.permissions.includes('delete_app')">
                 <template v-slot:activator="{ on }">
                   <v-icon color="red" small v-on="on" icon>delete</v-icon>
                 </template>
@@ -287,7 +291,6 @@
                 </v-list>
               </v-menu>
               </v-layout>
-
             </td>
           </tr>
         </tbody>
@@ -400,7 +403,8 @@ export default {
         {
           sortable: false,
           text: this.$t('common.action'),
-          width: '10%'
+          width: '10%',
+          align: this.$root.permissions.includes('change_app') && this.$root.permissions.includes('delete_app') ? 'left' : ' d-none'
         }
       ]
     }
@@ -444,6 +448,10 @@ export default {
       this.submit()
     })
     this.lang = $.getLanguage() == 'zh_CN' ? 'zh-cn' : ''
+    // console.log(this.$root.permissions.includes('change_app'))
+    // if (!this.$root.permissions.includes('change_app') && !this.$root.permissions.includes('delete_app')) {
+    //   this.headers.splice(4,1)
+    // }
   },
   computed: {
     isQueryEmpty() {

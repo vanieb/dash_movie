@@ -44,7 +44,8 @@ export default new Router({
       },
       meta: {
         icon: 'apps',
-        title: i18n.t('nav.apps')
+        title: i18n.t('nav.apps'),
+        permission: 'list_app'
       }
     },
     {
@@ -68,7 +69,8 @@ export default new Router({
       meta: {
         icon: 'apps',
         auth: true,
-        title: i18n.t('nav.apps')
+        title: i18n.t('nav.apps'),
+        permission: 'list_app'
       }
     },
     {
@@ -125,7 +127,8 @@ export default new Router({
       meta: {
         icon: 'description',
         auth: true,
-        title: i18n.t('nav.articles')
+        title: i18n.t('nav.articles'),
+        permission: 'list_article'
       }
     },
     {
@@ -137,6 +140,7 @@ export default new Router({
       meta: {
         auth: true,
         title: i18n.t('nav.add_article'),
+        permission: 'create_article'
       }
     },
     {
@@ -159,6 +163,7 @@ export default new Router({
       meta: {
         auth: true,
         title: i18n.t('nav.edit_article'),
+        permission: 'change_article'
       }
     },
     {
@@ -313,7 +318,8 @@ export default new Router({
       meta: {
         icon: 'supervised_user_circle',
         auth: true,
-        title: i18n.t('nav.staff')
+        title: i18n.t('nav.staff'),
+        permission: 'list_staff'
       }
     },
     {
@@ -325,6 +331,7 @@ export default new Router({
       meta: {
         auth: true,
         title: i18n.t('nav.add_staff'),
+        permission: 'create_staff'
       }
     },
     {
@@ -347,6 +354,17 @@ export default new Router({
       meta: {
         auth: true,
         title: i18n.t('nav.edit_staff'),
+        permission: 'change_staff'
+      }
+    },{
+      path: '/no_permission',
+      name: 'NoPermission',
+      component: function (resolve) {
+          require(['./views/NoPermission.vue'], resolve)
+      },
+      meta: {
+        auth: true,
+        title: i18n.t('nav.error')
       }
     },
   ]

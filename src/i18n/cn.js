@@ -47,7 +47,8 @@ export default {
     less_than: '应该小于 <',
     greater_than: '应该大于',
     server_error: '服务器错误',
-    switch_error: '没有安装程序上传到我们的服务器中。'
+    switch_error: '没有安装程序上传到我们的服务器中。',
+    no_access: '您无权访问此页面。'
   },
   system_notes: {
     upload_installer_memo: '此选项将允许您上传安装程序。 对于批量上传，请先压缩文件，然后再上传。',
@@ -58,7 +59,11 @@ export default {
     add_multiple_articles_memo: '此选项将允许您通过导入csv，xls或xlsx文件来创建多个文章。',
     subject_memo: '这些将用作文章索引页面中的关键字。',
     image_memo: '如果要在文章内容上添加图片，请在此处上传内容，然后将图片URL粘贴到文章内容编辑器对应的图片位置上。',
-    select_type: '请先选择类型。'
+    select_type: '请先选择类型。',
+    select_all_permissions: '选择所有许可',
+    deselect_all_permissions: '取消选择所有权限',
+    superadmin_def: '超级管理员拥有所有权限',
+    admin_def: '管理员具有除员工管理之外的所有权限'
   },
   system_msg: {
     confirm_delete: '单击以确认删除 ',
@@ -67,7 +72,8 @@ export default {
     no_data: '没有数据',
     date_error: '开始日期应设置在结束日期之前',
     confirm_upload: '该安装程序将被添加/更新到现有的{count}个现有应用程序中。 请确认。',
-    not_set: '没有设置'
+    not_set: '没有设置',
+    no_permission_set: '没有分配权限'
   },
   nav: {
     login: '登录',
@@ -149,7 +155,12 @@ export default {
     code: '码'
   },
   staff: {
-    login_status: '登录状态'
+    login_status: '登录状态',
+    permissions: '员工权限',
+    select_all: '全选',
+    deselect_all: '全部取消选择',
+    superadmin: '全部取消选择',
+    admin: '管理员'
   },
   pagination: {
     rows_per_page: '每页行数:',

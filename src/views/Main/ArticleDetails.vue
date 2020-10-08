@@ -23,6 +23,7 @@
             color="primary"
             dark
             :to="`/articles/${article.slug}/edit`"
+            v-if="$root.permissions.includes('change_article')"
             >
             <v-icon class="mr-3">edit</v-icon> &nbsp;{{ $t('actions.update') }}
           </v-btn>

@@ -17,7 +17,9 @@
                   color="primary"
                   dark
                   class="mr-3"
-                  v-on="on">
+                  v-on="on"
+                  v-if="$root.permissions.includes('create_article')"
+                  >
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
                       <v-icon v-on="on">cloud_upload</v-icon>
@@ -220,12 +222,12 @@
             <td class="align-center justify-center" width="10%">
               <span  v-for="website in item.websites" :key="website.id">{{website.name }}<br/></span>
             </td>
-            <td class="align-center justify-start">
+            <td class="align-center justify-start" >
               <v-switch value v-model="item.is_active"
                 @change="toggle(item.slug, item.is_active, 'is_active', item.title)">
               </v-switch>
             </td>
-            <td class="align-center justify-start">
+            <td class="align-center justify-start" v-if="$root.permissions.includes('change_article_popular_status')">
               <v-switch value v-model="item.is_popular"
                 @change="toggle(item.slug, item.is_popular, 'is_popular', item.title)">
               </v-switch>
@@ -233,10 +235,10 @@
             <td width="15%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td width="10%" class="align-center justify-center">
               <v-layout>
-                <v-btn class="mr-2" icon :to="`/articles/${item.slug}/edit`">
+                <v-btn class="mr-2" icon :to="`/articles/${item.slug}/edit`" v-if="$root.permissions.includes('change_article')">
                   <v-icon small >edit</v-icon>
                 </v-btn>
-                <v-menu offset-y>
+                <v-menu offset-y v-if="$root.permissions.includes('delete_article')">
                   <template v-slot:activator="{ on }">
                     <v-icon color="red" small v-on="on" icon>delete</v-icon>
                   </template>
@@ -356,6 +358,7 @@ export default {
           sortable: false,
           text: this.$t('nav.popular_articles'),
           value: 'is_popular',
+          align: this.$root.permissions.includes('change_article_popular_status') ? 'left' : ' d-none',
           width: '10%'
         },
         {
@@ -366,7 +369,8 @@ export default {
         },
         {
           sortable: false,
-          text: this.$t('common.action')
+          text: this.$t('common.action'),
+          align: this.$root.permissions.includes('change_article') && this.$root.permissions.includes('delete_article') ? 'left' : ' d-none'
         }
       ]
     }

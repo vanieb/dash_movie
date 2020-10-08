@@ -4,7 +4,8 @@
       <v-layout justify-start>
         <v-btn
           color="primary"
-          dark to="/staff/add">
+          dark to="/staff/add"
+          v-if="$root.permissions.includes('create_staff')">
           <v-icon class="mr-3">person_add</v-icon> &nbsp;{{ $t('actions.add') }}
         </v-btn>
       </v-layout>
@@ -26,7 +27,7 @@
                 <v-icon small>touch_app</v-icon>
               </v-btn>
               {{ item.user.username }}</td>
-            <td class="align-center justify-center layout px-0">
+            <td class="align-center justify-center layout px-0" v-if="$root.permissions.includes('change_staff')">
               <v-switch value v-model="item.status" dense
                 @change="toggleStatus(item.id, item.status, item.user.username)">
               </v-switch>
@@ -34,11 +35,11 @@
             <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}} / <br/>
             {{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td width="40%" style="word-break:break-all;">{{ item.memo || '-'}}</td>
-            <td class="align-center justify-center px-0">
-              <v-btn class="mr-2" icon small :to="`/staff/${item.id}/edit`">
+            <td class="align-center justify-center">
+              <v-btn class="mr-2" icon small :to="`/staff/${item.id}/edit`" v-if="$root.permissions.includes('change_staff')">
                 <v-icon small >edit</v-icon>
               </v-btn>
-              <v-menu offset-y>
+              <v-menu offset-y v-if="$root.permissions.includes('delete_staff')">
                 <template v-slot:activator="{ on }">
                   <v-icon color="red" small v-on="on">delete</v-icon>
                 </template>
@@ -125,7 +126,7 @@ export default {
           text: this.$t('common.status'),
           value: 'status',
           width: '10%',
-          align: 'center'
+          align: this.hideStatusHeader
         },
         {
           sortable: false,
@@ -141,26 +142,24 @@ export default {
         },
         {
           sortable: false,
-          text: this.$t('common.action')
+          text: this.$t('common.action'),
+          align: this.hideActionHeader
         }
       ]
-    }
-  },
-  computed: {
-    cardTitle() {
-      return this.isUpdate ? `${this.$t('actions.update')} - ${this.username}` : `${this.$t('actions.add')} - ${this.$t('nav.staff')}`
-    },
-    cardIcon() {
-      return this.isUpdate ? 'edit' : 'person_add'
-    },
-    isUpdate() {
-      return this.username.length > 0
     }
   },
   created() {
     this.$nextTick(() => {
       this.$refs.pulling.rebase()
     })
+  },
+  computed: {
+    hideActionHeader() {
+      return this.$root.permissions.includes('change_staff') || this.$root.permissions.includes('delete_staff') ? 'left' : ' d-none'
+    },
+    hideStatusHeader() {
+      return this.$root.permissions.includes('change_staff') ? 'center' : ' d-none'
+    }
   },
   methods: {
     async saveStaff() {

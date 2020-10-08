@@ -16,7 +16,8 @@ export default {
   name: 'App',
   data() {
     return {
-      username: ''
+      username: '',
+      permissions: []
     }
   },
   watch: {
@@ -38,12 +39,12 @@ export default {
   methods: {
     setUpRouterHooks() {
       this.$router.beforeEach((to, from, next) => {
-        this.routerLoading = true
         this.authErrors = []
-        next()
-      })
-      this.$router.afterEach(() => {
-        this.routerLoading = false
+        if (to.meta.permission && !this.permissions.includes(to.meta.permission)) {
+          this.$router.push('/no_permission')
+        } else {
+          next()
+        }
       })
     },
     setUpAuth() {
@@ -63,8 +64,11 @@ export default {
       }
       this.$http.get(api.my).then(response => {
         this.username = response.username
-        this.setUpAuth()
-        this.setUpRouterHooks()
+        this.getPermissions()
+      }, (error) => {
+        if (error.status === 404) {
+          this.$router.push('/login')
+        }
       })
     },
     refresh() {
@@ -81,6 +85,14 @@ export default {
         // use refresh_token to fetch new access_token
         window.document.cookie = 'refresh_token=' + data.refresh_token + ';path=/;expires=' + d.toGMTString()
         axios.defaults.headers.common['Authorization'] = 'Bearer ' + data.access_token
+      })
+    },
+    async getPermissions () {
+      await this.$http.get(api.userPermissions).then((response) => {
+        this.permissions = response
+        // permissions must be loaded before we can handle other data
+        this.setUpAuth()
+        this.setUpRouterHooks()
       })
     }
   }
