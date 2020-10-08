@@ -358,7 +358,7 @@ export default {
           sortable: false,
           text: this.$t('nav.popular_articles'),
           value: 'is_popular',
-          align: this.$root.permissions.includes('change_article_popular_status') ? 'left' : ' d-none',
+          align: this.hidePopularArticleHeader,
           width: '10%'
         },
         {
@@ -370,7 +370,7 @@ export default {
         {
           sortable: false,
           text: this.$t('common.action'),
-          align: this.$root.permissions.includes('change_article') && this.$root.permissions.includes('delete_article') ? 'left' : ' d-none'
+          align: this.hideActionHeader
         }
       ]
     }
@@ -431,6 +431,12 @@ export default {
       } else {
         return ''
       }
+    },
+    hideActionHeader() {
+      return this.$root.permissions.includes('change_article') || this.$root.permissions.includes('delete_article') ? 'left' : ' d-none'
+    },
+    hidePopularArticleHeader() {
+      return this.$root.permissions.includes('change_article_popular_status') ? 'left' : ' d-none'
     }
   },
   filters: {
