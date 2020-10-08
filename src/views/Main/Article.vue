@@ -222,7 +222,7 @@
             <td class="align-center justify-center" width="10%">
               <span  v-for="website in item.websites" :key="website.id">{{website.name }}<br/></span>
             </td>
-            <td class="align-center justify-start" >
+            <td class="align-center justify-start">
               <v-switch value v-model="item.is_active"
                 @change="toggle(item.slug, item.is_active, 'is_active', item.title)">
               </v-switch>

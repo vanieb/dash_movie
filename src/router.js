@@ -44,8 +44,7 @@ export default new Router({
       },
       meta: {
         icon: 'apps',
-        title: i18n.t('nav.apps'),
-        permission: 'list_app'
+        title: i18n.t('nav.apps')
       }
     },
     {
@@ -69,8 +68,7 @@ export default new Router({
       meta: {
         icon: 'apps',
         auth: true,
-        title: i18n.t('nav.apps'),
-        permission: 'list_app'
+        title: i18n.t('nav.apps')
       }
     },
     {
@@ -127,8 +125,7 @@ export default new Router({
       meta: {
         icon: 'description',
         auth: true,
-        title: i18n.t('nav.articles'),
-        permission: 'list_article'
+        title: i18n.t('nav.articles')
       }
     },
     {

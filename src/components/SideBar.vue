@@ -97,7 +97,7 @@
             link
             :to="item.path"
           >
-            <v-list-item-action>
+            <v-list-item-action v-if="child.icon">
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-item-action>
             <v-list-item-content>
