@@ -237,7 +237,7 @@
               <span v-else>-</span>
             </td>
             <td width="15%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
-            <td width="10%" class="align-center justify-center">
+            <td width="10%" class="align-center justify-center" v-if="$root.permissions.includes('change_article') || $root.permissions.includes('delete_article')">
               <v-layout>
                 <v-btn class="mr-2" icon :to="`/articles/${item.slug}/edit`" v-if="$root.permissions.includes('change_article')">
                   <v-icon small >edit</v-icon>
@@ -258,6 +258,7 @@
                 </v-menu>
               </v-layout>
             </td>
+            <td v-else>-</td>
           </tr>
         </tbody>
         </template>
@@ -372,8 +373,7 @@ export default {
         },
         {
           sortable: false,
-          text: this.$t('common.action'),
-          align: this.$root.permissions.includes('change_article') || this.$root.permissions.includes('delete_article') ? 'left' : ' d-none'
+          text: this.$t('common.action')
         }
       ]
     }
