@@ -45,7 +45,13 @@
                 <v-icon class="mr-2 m-b-sm" color="error">person_add</v-icon>{{staff.created_by }}
               </v-row>
               <v-row>
-                <v-icon class="mr-2 m-b-xs" color="green">event</v-icon> {{staff.created_at | moment("YYYY-MM-DD HH:mm:ss") }}
+                <v-icon class="mr-2 m-b-sm ml-8" color="success" small>event</v-icon><small >{{staff.created_at | moment("YYYY-MM-DD HH:mm:ss") }}</small>
+              </v-row>
+              <v-row>
+                <v-icon class="mr-2 m-b-sm" color="primary lighten-1">edit</v-icon>{{staff.updated_by }}
+              </v-row>
+              <v-row>
+                <v-icon class="mr-2 m-b-sm ml-8" color="success" small>event</v-icon><small >{{staff.updated_at | moment("YYYY-MM-DD HH:mm:ss") }}</small>
               </v-row>
             </v-col>
             <v-col cols="12" md="7">
@@ -56,7 +62,7 @@
               </span>
               <span v-else>
                 <v-icon color="gray" class="mr-2">indeterminate_check_box</v-icon>
-                <v-chip class="ma-1" color="gray" small>{{$t('status.disabled')}}</v-chip>
+                <v-chip class="ma-1" small>{{$t('status.disabled')}}</v-chip>
                 <br/>
               </span>
                 <v-icon color="gray" class="ml-0 mr-2 m-b-sm">notes</v-icon>

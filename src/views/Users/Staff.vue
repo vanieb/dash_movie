@@ -35,7 +35,7 @@
             <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}} / <br/>
             {{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td width="40%" style="word-break:break-all;">{{ item.memo || '-'}}</td>
-            <td class="align-center justify-center">
+            <td class="align-center justify-center" v-if="$root.permissions.includes('change_staff') || $root.permissions.includes('delete_staff')">
               <v-btn class="mr-2" icon small :to="`/staff/${item.id}/edit`" v-if="$root.permissions.includes('change_staff')">
                 <v-icon small >edit</v-icon>
               </v-btn>
@@ -142,8 +142,7 @@ export default {
         },
         {
           sortable: false,
-          text: this.$t('common.action'),
-          align: this.$root.permissions.includes('change_staff') || this.$root.permissions.includes('delete_staff') ? 'left' : ' d-none'
+          text: this.$t('common.action')
         }
       ]
     }

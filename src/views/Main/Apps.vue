@@ -292,6 +292,7 @@
               </v-menu>
               </v-layout>
             </td>
+            <td v-else>-</td>
           </tr>
         </tbody>
         </template>
@@ -403,8 +404,7 @@ export default {
         {
           sortable: false,
           text: this.$t('common.action'),
-          width: '10%',
-          align: this.$root.permissions.includes('change_app') || this.$root.permissions.includes('delete_app') ? 'left' : ' d-none'
+          width: '10%'
         }
       ]
     }

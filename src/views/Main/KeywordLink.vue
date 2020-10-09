@@ -148,7 +148,7 @@
             <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}} / <br/>
                 {{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}
             </td>
-            <td class="align-center justify-center">
+            <td class="align-center justify-center" v-if="$root.permissions.includes('change_article_keywords_link') || $root.permissions.includes('delete_article_keywords_link')">
               <v-btn class="mr-2" icon @click="updateKeyword(item)" v-if="$root.permissions.includes('change_article_keywords_link')">
                 <v-icon>edit</v-icon>
               </v-btn>
@@ -167,6 +167,7 @@
                 </v-list>
               </v-menu>
             </td>
+            <td v-else>-</td>
           </tr>
         </tbody>
         </template>
@@ -248,8 +249,7 @@ export default {
         {
           sortable: false,
           text: this.$t('common.action'),
-          width: '8%',
-          align: this.$root.permissions.includes('change_article_keywords_link') || this.$root.permissions.includes('delete_article_keywords_link') ? 'left' : ' d-none'
+          width: '8%'
         }
       ]
     }

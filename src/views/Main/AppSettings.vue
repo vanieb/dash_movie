@@ -192,7 +192,7 @@
               <span v-else>-</span>
             </td>
             <td width="30%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
-            <td width="30%" class="align-center justify-center">
+            <td width="30%" class="align-center justify-center" v-if="$root.permissions.includes('change_app') || $root.permissions.includes('delete_app')">
               <v-layout>
                 <v-btn class="mr-2" icon :to="`/apps/${item.slug}/edit`" v-if="$root.permissions.includes('change_app')">
                   <v-icon small >edit</v-icon>
@@ -213,6 +213,7 @@
                 </v-menu>
               </v-layout>
             </td>
+            <td v-else>-</td>
           </tr>
         </tbody>
         </template>
