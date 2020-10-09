@@ -21,7 +21,7 @@
                 dark
                 class="mr-3"
                 v-on="on"
-                v-if="$root.permissions.includes('create_app')">
+                v-show="$root.permissions.includes('create_app')">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon v-on="on">cloud_upload</v-icon>
@@ -100,7 +100,7 @@
                 dark
                 class="mr-3"
                 v-on="on"
-                v-if="$root.permissions.includes('create_app')">
+                v-show="$root.permissions.includes('create_app')">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                   <v-icon v-on="on">dynamic_feed</v-icon>

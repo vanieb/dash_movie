@@ -5,7 +5,9 @@
         <v-layout justify-start>
           <v-btn
             color="primary"
-            dark to="/articles/add">
+            dark to="/articles/add"
+            v-if="$root.permissions.includes('create_article')"
+            >
             <v-icon class="mr-3">post_add</v-icon> &nbsp;{{ $t('actions.add') }}
           </v-btn>
         </v-layout>
@@ -18,7 +20,7 @@
                   dark
                   class="mr-3"
                   v-on="on"
-                  v-if="$root.permissions.includes('create_article')"
+                  v-show="$root.permissions.includes('create_article')"
                   >
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
