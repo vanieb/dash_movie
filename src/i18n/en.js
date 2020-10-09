@@ -47,7 +47,8 @@ export default {
     less_than: 'should be <',
     greater_than: 'should be >',
     server_error: 'Server Error',
-    switch_error: 'No installer is uploaded in our server.'
+    switch_error: 'No installer is uploaded in our server.',
+    no_access: 'You have no access to this page.'
   },
   system_notes: {
     upload_installer_memo: 'This option will allow you to upload installers. For batch upload, compress your files and upload the .zip file. ',
@@ -58,7 +59,11 @@ export default {
     add_multiple_articles_memo: 'This option will allow you to create multiple articles by importing csv, xls, or xlsx file.',
     subject_memo: 'These will be used as keywords in the Article Index Page.',
     image_memo: 'If you want to add images on article content, upload the content here then paste the image URL in the article content editor.',
-    select_type: 'Please select type first.'
+    select_type: 'Please select type first.',
+    select_all_permissions: 'Select All Permissiions',
+    deselect_all_permissions: 'Deselect All Permissions',
+    superadmin_def: 'Superadmin has all the permissions.',
+    admin_def: 'Admin has all the permissions except staff management.'
   },
   system_msg: {
     confirm_delete: 'Click to confirm deletion of ',
@@ -67,7 +72,8 @@ export default {
     no_data: 'No data',
     date_error: 'Start Date should be selected first before the end date.',
     confirm_upload: 'This installer will be added/updated to the existing {count} applications. Please confirm.',
-    not_set: 'Not Set'
+    not_set: 'Not Set',
+    no_permission_set: 'No Assigned Permissions'
   },
   nav: {
     login: 'Login',
@@ -150,7 +156,12 @@ export default {
     code: 'Code'
   },
   staff: {
-    login_status: 'Login Status'
+    login_status: 'Login Status',
+    permissions: 'Staff Permissions',
+    select_all: 'Select All',
+    deselect_all: 'Deselect All',
+    superadmin: 'Superadmin',
+    admin: 'Admin'
   },
   pagination: {
     rows_per_page: 'Rows per page:',

@@ -137,6 +137,7 @@ export default new Router({
       meta: {
         auth: true,
         title: i18n.t('nav.add_article'),
+        permission: 'create_article'
       }
     },
     {
@@ -159,6 +160,7 @@ export default new Router({
       meta: {
         auth: true,
         title: i18n.t('nav.edit_article'),
+        permission: 'change_article'
       }
     },
     {
@@ -313,7 +315,8 @@ export default new Router({
       meta: {
         icon: 'supervised_user_circle',
         auth: true,
-        title: i18n.t('nav.staff')
+        title: i18n.t('nav.staff'),
+        permission: 'list_staff'
       }
     },
     {
@@ -325,6 +328,7 @@ export default new Router({
       meta: {
         auth: true,
         title: i18n.t('nav.add_staff'),
+        permission: 'create_staff'
       }
     },
     {
@@ -347,6 +351,17 @@ export default new Router({
       meta: {
         auth: true,
         title: i18n.t('nav.edit_staff'),
+        permission: 'change_staff'
+      }
+    },{
+      path: '/no_permission',
+      name: 'NoPermission',
+      component: function (resolve) {
+          require(['./views/NoPermission.vue'], resolve)
+      },
+      meta: {
+        auth: true,
+        title: i18n.t('system_msg.error')
       }
     },
   ]

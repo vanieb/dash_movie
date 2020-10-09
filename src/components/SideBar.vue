@@ -67,6 +67,7 @@
               v-for="(child, i) in item.children"
               :key="i"
               link
+              v-show="child.visible ? $root.permissions.includes(child.visible) : true"
               :to="child.path"
             >
               <v-row
@@ -127,7 +128,6 @@
       return {
         drawer: null,
         items: [
-          // member management
           { icon: 'mdi-chevron-up',
             'icon-alt': 'mdi-chevron-down',
             text: this.$t('nav.apps_management'),
@@ -172,8 +172,8 @@
           text: this.$t('nav.users'),
           model: true,
           children: [
-            { icon: 'person', text: this.$t('nav.members'), path: '/members' },
-            { icon: 'supervised_user_circle', text: this.$t('nav.staff'), path: '/staff' }
+            { icon: 'person', text: this.$t('nav.members'), path: '/members'},
+            { icon: 'supervised_user_circle', text: this.$t('nav.staff'), path: '/staff', visible: 'list_staff'}
           ]
         }]
     }},

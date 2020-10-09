@@ -64,20 +64,40 @@
             </v-col>
           </v-row>
           <v-banner color="primary" dark>{{$t('staff.permissions')}}</v-banner>
-          <ul v-for="permission in permissions" :key="permission.id">
+          <ul v-for="permission in permissions" :key="permission.id" v-show="showPermissions">
+            <!-- <div d-inline-block>
+              <v-checkbox
+                :label="`${permission.name} - ${permission.code}`"
+                v-model="permission.checked"
+                :key="permission.code"
+                disabled
+                hide-details=true>
+              </v-checkbox>
+              <span>{{ `${permission.name} - ${permission.code}`}}</span>
+            </div> -->
             <v-card-title
-              class="strong"
-              v-if="permission.name"
-              :key="permission.id"
+              v-if="permission.checked"
+              :key="permission.code"
               v-text="permission.name"
             ></v-card-title>
-              <ul v-for="item in permission.permissions" :key="item.id" >
-              <li class="ml-6">
+              <ul v-for="item in permission.permissions" :key="item.code" >
+                <li class="ml-6" v-if="item.checked">
+                <!-- <v-checkbox
+                  class="ml-6 mb-0"
+                  :label="`${item.name} - ${item.description} - ${item.code}`"
+                  v-model="item.checked"
+                  :key="item.code"
+                  disabled
+                  hide-details=true>
+                </v-checkbox> -->
                 <span>{{item.name}}</span> -
-                <strong class="grey--text">{{item.description}}</strong>
-              </li>
+                <strong class="grey--text">{{item.description}} - {{item.code}}</strong>
+                </li>
             </ul>
           </ul>
+          <v-layout v-show="!showPermissions" class="align-center justify-center ma-2">
+            <span class="grey--text" small>{{$t('system_msg.no_permission_set')}}</span>
+          </v-layout>
         </v-container>
       </v-card>
     </v-container>
@@ -136,6 +156,16 @@ export default {
   computed: {
     isUpdate() {
       return this.id ? true : false
+    },
+    showPermissions() {
+      for (let list in this.permissions) {
+        for (let index in this.permissions[list].permissions) {
+          if (this.permissions[list].permissions[index].checked) {
+           return true
+          }
+        }
+      }
+      return false
     }
   },
   beforeRouteEnter (to, from, next) {

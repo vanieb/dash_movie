@@ -28,6 +28,7 @@
             color="primary"
             dark
             :to="`/apps/${apps.slug}/edit`"
+            v-if="$root.permissions.includes('change_app')"
             >
             <v-icon class="mr-3">edit</v-icon> &nbsp;{{ $t('actions.update') }}
           </v-btn>

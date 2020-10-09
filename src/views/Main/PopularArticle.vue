@@ -18,7 +18,8 @@
             color="primary"
             dark
             @click="mode=true"
-            v-if="!mode && filteredQuerySet.length > 1">
+            v-if="!mode && filteredQuerySet.length > 1 &&
+            $root.permissions.includes('change_article_popular_sort_order')">
             <v-icon class="mr-3">sort</v-icon>
             {{ $t('actions.sort') }}
           </v-btn>

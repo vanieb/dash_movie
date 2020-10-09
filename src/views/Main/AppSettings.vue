@@ -164,17 +164,17 @@
             <td class="align-center justify-center" width="10%" >
               <span>{{item.website ? item.website.name : '-' }}<br/></span>
             </td>
-            <td class="align-center justify-start">
+            <td class="align-center justify-start" v-if="$root.permissions.includes('change_app_status')">
               <v-switch value v-model="item.is_active"
                 @change="toggle(item.apptype_details.id, item.is_active, 'is_active')">
               </v-switch>
             </td>
-            <td class="align-center justify-start">
+            <td class="align-center justify-start" v-if="$root.permissions.includes('change_app_leaderboard_status')">
               <v-switch value v-model="item.is_rank"
                 @change="toggle(item.apptype_details.id, item.is_rank, 'is_rank')">
               </v-switch>
             </td>
-            <td class="align-center justify-start">
+            <td class="align-center justify-start" v-if="$root.permissions.includes('change_app_recommended_status')">
               <v-switch value v-model="item.is_recommended"
                 @change="toggle(item.apptype_details.id, item.is_recommended, 'is_recommended' )">
               </v-switch>
@@ -182,10 +182,10 @@
             <td width="30%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td width="30%" class="align-center justify-center">
               <v-layout>
-                <v-btn class="mr-2" icon :to="`/apps/${item.slug}/edit`">
+                <v-btn class="mr-2" icon :to="`/apps/${item.slug}/edit`" v-if="$root.permissions.includes('change_app')">
                   <v-icon small >edit</v-icon>
                 </v-btn>
-                <v-menu offset-y>
+                <v-menu offset-y v-if="$root.permissions.includes('delete_app')">
                   <template v-slot:activator="{ on }">
                     <v-icon color="red" small v-on="on" icon>delete</v-icon>
                   </template>
@@ -300,18 +300,21 @@ export default {
           sortable: false,
           text: this.$t('common.status'),
           value: 'status',
+          align: this.$root.permissions.includes('change_app_status') ? 'left' : ' d-none',
           width: '10%'
         },
         {
           sortable: false,
           text: this.$t('nav.leaderboard'),
           value: 'is_rank',
+          align: this.$root.permissions.includes('change_app_leaderboard_status') ? 'left' : ' d-none',
           width: '10%'
         },
         {
           sortable: false,
           text: this.$t('nav.recommended'),
           value: 'is_recommended',
+          align: this.$root.permissions.includes('change_app_recommended_status') ? 'left' : ' d-none',
           width: '10%'
         },
         {
@@ -321,7 +324,8 @@ export default {
         },
         {
           sortable: false,
-          text: this.$t('common.action')
+          text: this.$t('common.action'),
+          align: this.$root.permissions.includes('change_app') || this.$root.permissions.includes('delete_app') ? 'left' : ' d-none'
         }
       ]
     }
