@@ -316,6 +316,7 @@ export default {
             text: `${this.$t('actions.update')} - ${this.$t('nav.staff')}: ${this.$t('status.success')}`
           }
           this.$router.push(`/staff/${response.id}`)
+          this.$root.getPermissions()
         }, error => {
           this.snackbar = {
             color: 'red',
