@@ -232,6 +232,10 @@
                 @change="toggle(item.slug, item.is_popular, 'is_popular', item.title)">
               </v-switch>
             </td>
+            <td class="align-center justify-start" v-else>
+              <v-chip v-if="item.is_popular = true" class="error" small>{{ $t('nav.popular_articles') }}</v-chip>
+              <span v-else>-</span>
+            </td>
             <td width="15%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td width="10%" class="align-center justify-center">
               <v-layout>
@@ -358,7 +362,6 @@ export default {
           sortable: false,
           text: this.$t('nav.popular_articles'),
           value: 'is_popular',
-          align: this.$root.permissions.includes('change_article_popular_status') ? 'left' : ' d-none',
           width: '10%'
         },
         {
