@@ -169,15 +169,27 @@
                 @change="toggle(item.apptype_details.id, item.is_active, 'is_active')">
               </v-switch>
             </td>
+            <td class="align-center justify-start" v-else>
+              <v-chip v-if="is_active = true" class="success" small>{{ $t('status.enabled') }}</v-chip>
+              <v-chip v-else small>{{ $t('status.disabled') }}</v-chip>
+            </td>
             <td class="align-center justify-start" v-if="$root.permissions.includes('change_app_leaderboard_status')">
               <v-switch value v-model="item.is_rank"
                 @change="toggle(item.apptype_details.id, item.is_rank, 'is_rank')">
               </v-switch>
             </td>
+            <td class="align-center justify-start" v-else>
+              <v-chip v-if="item.is_rank = true" class="error" small>{{ $t('nav.leaderboard') }}</v-chip>
+              <span v-else>-</span>
+            </td>
             <td class="align-center justify-start" v-if="$root.permissions.includes('change_app_recommended_status')">
               <v-switch value v-model="item.is_recommended"
                 @change="toggle(item.apptype_details.id, item.is_recommended, 'is_recommended' )">
               </v-switch>
+            </td>
+            <td class="align-center justify-start" v-else>
+              <v-chip v-if="item.is_recommended = true" class="error" small>{{ $t('nav.recommended') }}</v-chip>
+              <span v-else>-</span>
             </td>
             <td width="30%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td width="30%" class="align-center justify-center">
@@ -300,21 +312,18 @@ export default {
           sortable: false,
           text: this.$t('common.status'),
           value: 'status',
-          align: this.$root.permissions.includes('change_app_status') ? 'left' : ' d-none',
           width: '10%'
         },
         {
           sortable: false,
           text: this.$t('nav.leaderboard'),
           value: 'is_rank',
-          align: this.$root.permissions.includes('change_app_leaderboard_status') ? 'left' : ' d-none',
           width: '10%'
         },
         {
           sortable: false,
           text: this.$t('nav.recommended'),
           value: 'is_recommended',
-          align: this.$root.permissions.includes('change_app_recommended_status') ? 'left' : ' d-none',
           width: '10%'
         },
         {

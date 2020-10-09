@@ -27,7 +27,7 @@
                 <v-icon small>touch_app</v-icon>
               </v-btn>
               {{ item.user.username }}</td>
-            <td class="align-center justify-center layout px-0" v-if="$root.permissions.includes('change_staff')">
+            <td class="align-center justify-center layout px-0">
               <v-switch value v-model="item.status" dense
                 @change="toggleStatus(item.id, item.status, item.user.username)">
               </v-switch>
