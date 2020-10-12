@@ -368,11 +368,6 @@ export default {
       file: null,
       importFile: null,
       setWebsite: '',
-      statusOptions: [
-        { text: this.$t('status.enabled'),
-          value: true},
-        { text: this.$t('status.disabled'),
-          value: false}],
       snackbar: {
         color: '',
         text: '',

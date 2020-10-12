@@ -15,7 +15,14 @@
         <v-layout justify-end>
           <v-dialog v-model="showForm" persistent max-width="500">
             <template v-slot:activator="{ on }">
-              <v-btn color="primary" dark v-on="on" align-right><v-icon class="mr-3">add_box</v-icon> &nbsp;{{ $t('actions.add') }}</v-btn>
+              <v-btn
+                color="primary"
+                dark
+                v-on="on"
+                v-show="$root.permissions.includes('create_app_category')"
+                align-right>
+                <v-icon class="mr-3">add_box</v-icon> &nbsp;{{ $t('actions.add') }}
+              </v-btn>
             </template>
             <v-card>
               <validation-observer ref="form">
@@ -204,21 +211,25 @@
         <tbody>
           <tr v-for="item in querySet" :key="item.id">
             <td>{{ item.name }}</td>
-            <td class="align-center justify-start">
+            <td class="align-center justify-start" v-if="$root.permissions.includes('change_app_category_status')">
               <v-switch value v-model="item.is_active"
                 @change="toggleStatus(item.id, item.is_active)">
               </v-switch>
+            </td>
+            <td class="align-center justify-start" v-else>
+              <v-chip v-if="item.is_active == true" class="success" small>{{ $t('status.enabled') }}</v-chip>
+              <v-chip v-else small>{{ $t('status.disabled') }}</v-chip>
             </td>
             <td>{{ item.code }}</td>
             <td><span v-for="item in item.types " :key="item.id">{{ item.name }}<br/></span></td>
             <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}} / <br/>
             {{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td>{{ item.memo || '-'}}</td>
-            <td class="align-center justify-center">
-              <v-btn class="mr-1" icon @click="updateCategory(item)">
+            <td class="align-center justify-center" v-if="$root.permissions.includes('change_app_category_details') || $root.permissions.includes('delete_app_category')">
+              <v-btn class="mr-1" icon @click="updateCategory(item)" v-if="$root.permissions.includes('change_app_category_details')">
                 <v-icon small>edit</v-icon>
               </v-btn>
-              <v-menu offset-y>
+              <v-menu offset-y v-if="$root.permissions.includes('delete_app_category')">
                 <template v-slot:activator="{ on }">
                   <v-icon color="red" small v-on="on">delete</v-icon>
                 </template>
@@ -233,6 +244,7 @@
                 </v-list>
               </v-menu>
             </td>
+            <td v-else>-</td>
           </tr>
         </tbody>
         </template>
@@ -429,7 +441,7 @@ export default {
         this.created_at = [undefined, undefined]
       }
       this.website = this.$route.query.website || ''
-      this.is_active = this.$route.query.is_active==true || this.$route.query.is_active==false ? this.$route.query.is_active : ''
+      this.is_active = this.$route.query.is_active===true || this.$route.query.is_active===false || this.$route.query.is_active==='true' || this.$route.query.is_active==='false' ? JSON.parse(this.$route.query.is_active) : ''
       this.type = this.$route.query.types || ''
       this.query = Object.assign({}, this.$route.query)
     },

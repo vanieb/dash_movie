@@ -157,6 +157,8 @@ export default {
   },
   staff: {
     login_status: 'Login Status',
+    online: 'Online',
+    offline: 'Offline',
     permissions: 'Staff Permissions',
     select_all: 'Select All',
     deselect_all: 'Deselect All',
