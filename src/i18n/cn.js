@@ -156,6 +156,8 @@ export default {
   },
   staff: {
     login_status: '登录状态',
+    online: '线上',
+    offline: '离线',
     permissions: '员工权限',
     select_all: '全选',
     deselect_all: '全部取消选择',

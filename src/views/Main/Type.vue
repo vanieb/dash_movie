@@ -16,7 +16,13 @@
         <validation-observer ref="form">
           <v-dialog v-model="showForm" persistent max-width="500">
             <template v-slot:activator="{ on }">
-              <v-btn color="primary" dark v-on="on" align-right><v-icon class="mr-3">add_box</v-icon> &nbsp;{{ $t('actions.add') }}</v-btn>
+              <v-btn
+                color="primary"
+                dark
+                v-on="on"
+                v-show="$root.permissions.includes('create_app_type')"
+                align-right><v-icon class="mr-3">add_box</v-icon> &nbsp;{{ $t('actions.add') }}
+              </v-btn>
             </template>
             <v-card>
               <v-card-title class="headline">
@@ -39,19 +45,6 @@
                     ></v-text-field>
                   </validation-provider>
                 </v-flex>
-                <!-- <v-flex xs12 >
-                  <validation-provider rules="required|max:15" :name="$t('common.code')">
-                    <v-text-field
-                      :counter="15"
-                      :error-messages="errors"
-                      :label="`${$t('common.code')}*`"
-                      placeholder=" "
-                      required
-                      slot-scope="{ errors }"
-                      v-model="type.code"
-                    ></v-text-field>
-                  </validation-provider>
-                </v-flex> -->
                 <v-flex xs12>
                   <div width="452px;">
                     <website
@@ -193,20 +186,24 @@
         <tbody>
           <tr v-for="item in querySet" :key="item.id">
             <td>{{ item.name }}</td>
-            <td class="align-center justify-start layout">
+            <td class="align-center justify-start layout" v-if="$root.permissions.includes('change_app_type_status')">
               <v-switch value v-model="item.is_active"
                 @change="toggleStatus(item.id, item.is_active, item.website.id)">
               </v-switch>
+            </td>
+            <td class="align-center justify-start" v-else>
+              <v-chip v-if="item.is_active == true" class="success" small>{{ $t('status.enabled') }}</v-chip>
+              <v-chip v-else small>{{ $t('status.disabled') }}</v-chip>
             </td>
             <td>{{ item.code }}</td>
             <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}} / <br/> {{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
             <td>{{ item.website.name || '-'}}</td>
             <td width="40%">{{ item.memo || '-'}}</td>
-            <td class="align-center justify-center">
-              <v-btn class="mr-1" icon @click="updateType(item)">
+            <td class="align-center justify-center" v-if="$root.permissions.includes('change_app_type_details') || $root.permissions.includes('delete_app_type')">
+              <v-btn class="mr-1" icon @click="updateType(item)" v-if="$root.permissions.includes('change_app_type_details')">
                 <v-icon small>edit</v-icon>
               </v-btn>
-              <v-menu offset-y>
+              <v-menu offset-y v-if="$root.permissions.includes('delete_app_type')">
                 <template v-slot:activator="{ on }">
                   <v-icon color="red" small v-on="on">delete</v-icon>
                 </template>
@@ -221,6 +218,7 @@
                 </v-list>
               </v-menu>
             </td>
+            <td v-else>-</td>
           </tr>
         </tbody>
         </template>
@@ -405,7 +403,7 @@ export default {
         this.created_at = [undefined, undefined]
       }
       this.website = this.$route.query.website || ''
-      this.is_active = this.$route.query.is_active==true || this.$route.query.is_active==false ? this.$route.query.is_active : ''
+      this.is_active = this.$route.query.is_active===true || this.$route.query.is_active===false || this.$route.query.is_active==='true' || this.$route.query.is_active==='false' ? JSON.parse(this.$route.query.is_active) : ''
       this.query = Object.assign({}, this.$route.query)
     },
     queryData(queryset) {

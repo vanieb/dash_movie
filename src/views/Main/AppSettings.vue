@@ -170,7 +170,7 @@
               </v-switch>
             </td>
             <td class="align-center justify-start" v-else>
-              <v-chip v-if="is_active = true" class="success" small>{{ $t('status.enabled') }}</v-chip>
+              <v-chip v-if="is_active == true" class="success" small>{{ $t('status.enabled') }}</v-chip>
               <v-chip v-else small>{{ $t('status.disabled') }}</v-chip>
             </td>
             <td class="align-center justify-start" v-if="$root.permissions.includes('change_app_leaderboard_status')">
@@ -179,7 +179,7 @@
               </v-switch>
             </td>
             <td class="align-center justify-start" v-else>
-              <v-chip v-if="item.is_rank = true" class="error" small>{{ $t('nav.leaderboard') }}</v-chip>
+              <v-chip v-if="item.is_rank == true" class="error" small>{{ $t('nav.leaderboard') }}</v-chip>
               <span v-else>-</span>
             </td>
             <td class="align-center justify-start" v-if="$root.permissions.includes('change_app_recommended_status')">
@@ -188,7 +188,7 @@
               </v-switch>
             </td>
             <td class="align-center justify-start" v-else>
-              <v-chip v-if="item.is_recommended = true" class="error" small>{{ $t('nav.recommended') }}</v-chip>
+              <v-chip v-if="item.is_recommended == true" class="error" small>{{ $t('nav.recommended') }}</v-chip>
               <span v-else>-</span>
             </td>
             <td width="30%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
@@ -334,8 +334,7 @@ export default {
         },
         {
           sortable: false,
-          text: this.$t('common.action'),
-          align: this.$root.permissions.includes('change_app') || this.$root.permissions.includes('delete_app') ? 'left' : ' d-none'
+          text: this.$t('common.action')
         }
       ]
     }
@@ -418,9 +417,9 @@ export default {
         this.created_at = [undefined, undefined]
       }
       this.website = this.$route.query.website || ''
-      this.is_active = this.$route.query.is_active==true || this.$route.query.is_active==false ? this.$route.query.is_active : ''
-      this.is_rank = this.$route.query.is_rank==true || this.$route.query.is_rank==false ? this.$route.query.is_rank : ''
-      this.is_recommended = this.$route.query.is_recommended==true || this.$route.query.is_recommended==false ? this.$route.query.is_recommended : ''
+      this.is_active = this.$route.query.is_active===true || this.$route.query.is_active===false || this.$route.query.is_active==='true' || this.$route.query.is_active==='false' ? JSON.parse(this.$route.query.is_active) : ''
+      this.is_rank = this.$route.query.is_rank===true || this.$route.query.is_rank===false || this.$route.query.is_rank==='true' || this.$route.query.is_rank==='false' ? JSON.parse(this.$route.query.is_rank) : ''
+      this.is_recommended = this.$route.query.is_recommended===true || this.$route.query.is_recommended===false || this.$route.query.is_recommended==='true' || this.$route.query.is_recommended==='false' ? JSON.parse(this.$route.query.is_recommended) : ''
       this.type = this.$route.query.types || ''
       this.query = Object.assign({}, this.$route.query)
     },

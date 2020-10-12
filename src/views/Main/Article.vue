@@ -224,10 +224,14 @@
             <td class="align-center justify-center" width="10%">
               <span  v-for="website in item.websites" :key="website.id">{{website.name }}<br/></span>
             </td>
-            <td class="align-center justify-start">
+            <td class="align-center justify-start" v-if="$root.permissions.includes('change_article_status')">
               <v-switch value v-model="item.is_active"
                 @change="toggle(item.slug, item.is_active, 'is_active', item.title)">
               </v-switch>
+            </td>
+            <td class="align-center justify-start" v-else>
+              <v-chip v-if="item.is_active == true" class="success" small>{{ $t('status.enabled') }}</v-chip>
+              <v-chip v-else small>{{ $t('status.disabled') }}</v-chip>
             </td>
             <td class="align-center justify-start" v-if="$root.permissions.includes('change_article_popular_status')">
               <v-switch value v-model="item.is_popular"
@@ -239,9 +243,9 @@
               <span v-else>-</span>
             </td>
             <td width="15%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
-            <td width="10%" class="align-center justify-center" v-if="$root.permissions.includes('change_article') || $root.permissions.includes('delete_article')">
+            <td width="10%" class="align-center justify-center" v-if="$root.permissions.includes('change_article_details') || $root.permissions.includes('delete_article')">
               <v-layout>
-                <v-btn class="mr-2" icon :to="`/articles/${item.slug}/edit`" v-if="$root.permissions.includes('change_article')">
+                <v-btn class="mr-2" icon :to="`/articles/${item.slug}/edit`" v-if="$root.permissions.includes('change_article_details')">
                   <v-icon small >edit</v-icon>
                 </v-btn>
                 <v-menu offset-y v-if="$root.permissions.includes('delete_article')">
@@ -451,8 +455,8 @@ export default {
         this.created_at = [undefined, undefined]
       }
       this.website = this.$route.query.website || ''
-      this.active = this.$route.query.active==true || this.$route.query.active==false ? this.$route.query.active : ''
-      this.popular = this.$route.query.popular==true || this.$route.query.popular==false ? this.$route.query.popular : ''
+      this.active = this.$route.query.active===true || this.$route.query.active===false || this.$route.query.active==='true' || this.$route.query.active==='false' ? JSON.parse(this.$route.query.active) : ''
+      this.popular = this.$route.query.popular===true || this.$route.query.popular===false || this.$route.query.popular==='true' || this.$route.query.popular==='false' ? JSON.parse(this.$route.query.popular) : ''
       this.query = Object.assign({}, this.$route.query)
     },
     queryData(queryset) {

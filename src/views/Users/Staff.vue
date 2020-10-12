@@ -27,10 +27,14 @@
                 <v-icon small>touch_app</v-icon>
               </v-btn>
               {{ item.user.username }}</td>
-            <td class="align-center justify-center layout px-0">
+            <td class="align-center justify-center layout px-0" v-if="$root.permissions.includes('change_staff_status')">
               <v-switch value v-model="item.status" dense
                 @change="toggleStatus(item.id, item.status, item.user.username)">
               </v-switch>
+            </td>
+            <td class="align-center justify-start" v-else>
+              <v-chip v-if="item.status = true" class="success" small>{{ $t('status.enabled') }}</v-chip>
+              <v-chip v-else small>{{ $t('status.disabled') }}</v-chip>
             </td>
             <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}} / <br/>
             {{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>

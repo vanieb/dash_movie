@@ -20,6 +20,7 @@
                 color="primary"
                 dark
                 v-on="on"
+                v-show="$root.permissions.includes('create_website_friendshiplink')"
                 align-right>
                 <v-icon class="mr-3">add_box</v-icon> &nbsp;{{ $t('actions.add') }}
               </v-btn>
@@ -186,20 +187,24 @@
           <tr v-for="item in querySet" :key="item.id">
             <td>{{ item.name }}</td>
             <td>{{ item.website ? item.website.name : "-" }}</td>
-            <td class="align-center justify-start">
+            <td class="align-center justify-start" v-if="$root.permissions.includes('change_website_friendshiplink_status')">
               <v-switch value v-model="item.is_active"
                 @change="toggleStatus(item.slug, item.is_active)">
               </v-switch>
+            </td>
+            <td class="align-center justify-start" v-else>
+              <v-chip v-if="item.is_active == true" class="success" small>{{ $t('status.enabled') }}</v-chip>
+              <v-chip v-else small>{{ $t('status.disabled') }}</v-chip>
             </td>
             <td width="30%" style="word-break:break-all;">{{ item.link }}</td>
             <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}} / <br/>
                 {{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}
             </td>
-            <td class="align-center justify-center">
-              <v-btn class="mr-2" icon @click="updateFriendshipLink(item)">
+            <td class="align-center justify-center" v-if="$root.permissions.includes('change_website_friendshiplink_details') || $root.permissions.includes('delete_website_friendshiplink')">
+              <v-btn class="mr-2" icon @click="updateFriendshipLink(item)" v-if="$root.permissions.includes('change_website_friendshiplink_details')">
                 <v-icon>edit</v-icon>
               </v-btn>
-              <v-menu offset-y>
+              <v-menu offset-y v-if="$root.permissions.includes('delete_website_friendshiplink')">
                 <template v-slot:activator="{ on }">
                   <v-icon color="red" small v-on="on">delete</v-icon>
                 </template>
@@ -214,6 +219,7 @@
                 </v-list>
               </v-menu>
             </td>
+            <td v-else>-</td>
           </tr>
         </tbody>
         </template>
@@ -385,7 +391,7 @@ export default {
       } else {
         this.created_at = [undefined, undefined]
       }
-      this.is_active = this.$route.query.is_active==true || this.$route.query.is_active==false ? this.$route.query.is_active : ''
+      this.is_active = this.$route.query.is_active===true || this.$route.query.is_active===false || this.$route.query.is_active==='true' || this.$route.query.is_active==='false' ? JSON.parse(this.$route.query.is_active) : ''
       this.query = Object.assign({}, this.$route.query)
     },
     queryData(queryset) {
@@ -471,17 +477,6 @@ export default {
         link: this.friendship_link.link,
         website: this.friendship_link.website
       })
-      // let friendshipLinkResult = new window.FormData()
-      // friendshipLinkResult.set('name', this.friendship_link.name)
-      // friendshipLinkResult.set('link', this.friendship_link.link)
-
-      // if (this.website_removed_some && !this.website_changed) {
-      //     friendshipLinkResult.set('website', this.friendship_link.website_removed)
-      //   } else if (this.website_changed) {
-      //     friendshipLinkResult.set('website', this.friendship_link.websites)
-      //   }
-      // this.website_changed = false
-      // this.website_removed_some = false
       if (isValid) {
         if (this.friendship_link.slug) {
         this.$http.put(`${this.friendshipLinkApi}${this.friendship_link.slug}/`, friendshipLinkResult).then(() => {
