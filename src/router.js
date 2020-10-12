@@ -160,7 +160,7 @@ export default new Router({
       meta: {
         auth: true,
         title: i18n.t('nav.edit_article'),
-        permission: 'change_article'
+        permission: 'change_article_details'
       }
     },
     {
