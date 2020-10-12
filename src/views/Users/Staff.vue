@@ -33,7 +33,7 @@
               </v-switch>
             </td>
             <td class="align-center justify-start" v-else>
-              <v-chip v-if="item.status = true" class="success" small>{{ $t('status.enabled') }}</v-chip>
+              <v-chip v-if="item.status == true" class="success" small>{{ $t('status.enabled') }}</v-chip>
               <v-chip v-else small>{{ $t('status.disabled') }}</v-chip>
             </td>
             <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}} / <br/>
