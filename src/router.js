@@ -303,7 +303,8 @@ export default new Router({
       meta: {
         icon: 'person',
         auth: true,
-        title: i18n.t('nav.members')
+        title: i18n.t('nav.members'),
+        permission: 'list_member'
       }
     },
     {

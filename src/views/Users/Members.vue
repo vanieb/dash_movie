@@ -101,7 +101,7 @@
                 item-value="value"
                 :items="loginStatusOptions"
                 :label="`${$t('staff.login_status')}`"
-                v-model="is_logged_in"
+                v-model="login_status"
                 hide-details="true"
                 placeholder=" "
                 outlined
@@ -137,7 +137,7 @@
               <v-text-field
                 @input="search"
                 :label="`${$t('common.name')}`"
-                v-model="query.name"
+                v-model="query.username_q"
                 hide-details="true"
                 placeholder=" "
                 outlined
@@ -292,7 +292,7 @@ export default {
       today: date.max_today,
       loading: true,
       status: '',
-      is_logged_in: '',
+      login_status: '',
       memberApi: api.members,
       querySet: [],
       query: {},
@@ -360,8 +360,8 @@ export default {
       },
       deep: true
     },
-    is_logged_in(newObj) {
-      this.query.is_logged_in = newObj
+    login_status(newObj) {
+      this.query.login_status = newObj
       this.$refs.pulling.submit()
     },
     status(newObj) {
@@ -418,7 +418,7 @@ export default {
         this.created_at = [undefined, undefined]
       }
       this.status = this.$route.query.status===1 || this.$route.query.status===0 || this.$route.query.status==='1' || this.$route.query.status==='0' ? JSON.parse(this.$route.query.status) : ''
-      this.is_logged_in = this.$route.query.is_logged_in===true || this.$route.query.is_logged_in===false || this.$route.query.is_logged_in==='true' || this.$route.query.is_logged_in==='false' ? JSON.parse(this.$route.query.is_logged_in) : ''
+      this.login_status = this.$route.query.login_status===true || this.$route.query.login_status===false || this.$route.query.login_status==='true' || this.$route.query.login_status==='false' ? JSON.parse(this.$route.query.login_status) : ''
       this.query = Object.assign({}, this.$route.query)
     },
     async saveMember() {
