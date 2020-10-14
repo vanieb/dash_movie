@@ -2,7 +2,17 @@
   <v-layout wrap>
     <v-container>
       <v-layout>
-        <v-layout justify-start>
+         <v-layout justify-start>
+          <div style="width:200px !important;">
+          <website
+            type="filter"
+            :mode="'one'"
+            :website="query.website"
+            @website-select-one="websiteSelectOne">
+          </website>
+          </div>
+        </v-layout>
+        <v-layout justify-end>
         <validation-observer ref="form">
           <v-dialog v-model="showForm" persistent max-width="500">
             <template v-slot:activator="{ on }">
@@ -10,7 +20,7 @@
                 color="primary"
                 dark
                 v-on="on"
-                v-if="$root.permissions.includes('create_article_keywords_link')"
+                v-show="$root.permissions.includes('create_website_friendshiplink')"
                 align-right>
                 <v-icon class="mr-3">add_box</v-icon> &nbsp;{{ $t('actions.add') }}
               </v-btn>
@@ -24,16 +34,29 @@
             <v-card-text>
               <v-layout wrap>
                 <v-flex xs12 >
-                  <validation-provider rules="required" :name="$t('seo.keywords')">
+                  <validation-provider rules="required" :name="$t('common.display_name')">
                     <v-text-field
                       :error-messages="errors"
-                      :label="`${$t('seo.keywords')}*`"
+                      :label="`${$t('common.display_name')}*`"
                       placeholder=" "
                       required
                       slot-scope="{ errors }"
-                      v-model="keyword.keyword"
+                      v-model="friendship_link.name"
                     ></v-text-field>
                   </validation-provider>
+                </v-flex>
+                <v-flex xs12>
+                  <div width="452px;">
+                    <website
+                      :key="websiteKey"
+                      elementType="modal"
+                      type="select"
+                      req="true"
+                      :mode="'one'"
+                      :website="friendship_link.website"
+                      @website-select-one="websiteSetOne">
+                    </website>
+                  </div>
                 </v-flex>
                 <v-flex xs12>
                   <validation-provider rules="required" :name="$t('apps.link')">
@@ -43,7 +66,7 @@
                       placeholder=" "
                       rows="4"
                       slot-scope="{ errors }"
-                      v-model="keyword.link"
+                      v-model="friendship_link.link"
                     ></v-textarea>
                   </validation-provider>
                 </v-flex>
@@ -62,7 +85,7 @@
                 color="primary"
                 dark
                 :loading="submitting"
-                @click="saveKeyword"
+                @click="saveFriendshipLink"
               >{{ $t('actions.save') }}</v-btn>
             </v-card-actions>
             </v-card>
@@ -73,11 +96,30 @@
       <v-card>
         <v-col cols="12" md="12" class="mt-2" style="padding: 20px 20px 10px 20px !important;">
           <v-row>
+            <div style="width:155px;" class="mr-2">
+              <v-select
+                item-name="text"
+                item-value="value"
+                :items="statusOptions"
+                :label="`${$t('common.status')}`"
+                v-model="is_active"
+                hide-details="true"
+                placeholder=" "
+                outlined
+                dense>
+                <template slot="selection" slot-scope="data">
+                  <span class="ml-3">{{ data.item.text }}</span>
+                </template>
+                <template slot="item" slot-scope="data">
+                  <span class="ml-3">{{ data.item.text }}</span>
+                </template>
+              </v-select>
+            </div>
             <div style="width:200px;" class="mr-2">
               <v-text-field
                 @input="search"
-                :label="`${$t('seo.keywords')}`"
-                v-model="query.keyword_q"
+                :label="`${$t('common.display_name')}`"
+                v-model="query.name_q"
                 hide-details="true"
                 placeholder=" "
                 outlined
@@ -143,25 +185,35 @@
         <span v-if="!items">{{items}}</span>
         <tbody>
           <tr v-for="item in querySet" :key="item.id">
-            <td>{{ item.keyword }}</td>
-            <td>{{ item.link }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.website ? item.website.name : "-" }}</td>
+            <td class="align-center justify-start" v-if="$root.permissions.includes('change_website_friendshiplink_status')">
+              <v-switch value v-model="item.is_active"
+                @change="toggleStatus(item.slug, item.is_active)">
+              </v-switch>
+            </td>
+            <td class="align-center justify-start" v-else>
+              <v-chip v-if="item.is_active == true" class="success" small>{{ $t('status.enabled') }}</v-chip>
+              <v-chip v-else small>{{ $t('status.disabled') }}</v-chip>
+            </td>
+            <td width="30%" style="word-break:break-all;">{{ item.link }}</td>
             <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}} / <br/>
                 {{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}
             </td>
-            <td class="align-center justify-center" v-if="$root.permissions.includes('change_article_keywords_link') || $root.permissions.includes('delete_article_keywords_link')">
-              <v-btn class="mr-2" icon @click="updateKeyword(item)" v-if="$root.permissions.includes('change_article_keywords_link')">
+            <td class="align-center justify-center" v-if="$root.permissions.includes('change_website_friendshiplink_details') || $root.permissions.includes('delete_website_friendshiplink')">
+              <v-btn class="mr-2" icon @click="updateFriendshipLink(item)" v-if="$root.permissions.includes('change_website_friendshiplink_details')">
                 <v-icon>edit</v-icon>
               </v-btn>
-              <v-menu offset-y v-if="$root.permissions.includes('delete_article_keywords_link')">
+              <v-menu offset-y v-if="$root.permissions.includes('delete_website_friendshiplink')">
                 <template v-slot:activator="{ on }">
                   <v-icon color="red" small v-on="on">delete</v-icon>
                 </template>
                 <v-list dark>
-                  <v-list-item @click="deleteKeyword(item.id, true, $event)">
+                  <v-list-item @click="deleteFriendshipLink(item.slug, true, $event)">
                     <v-list-item-title>
                       <v-icon class="mr-2" color="orange">warning</v-icon>
                       {{ $t('system_msg.confirm_delete') }}
-                      <strong>{{ item.keyword }}</strong>
+                      <strong>{{ item.name }}</strong>
                     </v-list-item-title>
                   </v-list-item>
                 </v-list>
@@ -175,7 +227,7 @@
     </v-container>
     <pagination
       :queryset="querySet"
-      :api="keywordsApi"
+      :api="friendshipLinkApi"
       :query="query"
       ref="pulling"
       @query-data="queryData"
@@ -199,30 +251,41 @@ import Pagination from '@/components/Pagination'
 import SnackBar from '@/components/SnackBar'
 import { debounce } from 'lodash'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
+import Website from '../../components/SelectWebsite.vue'
 
 export default {
-  name: 'KeywordLink',
+  name: 'FriendshipLink',
   components: {
     Pagination,
     SnackBar,
     ValidationObserver,
-    ValidationProvider
+    ValidationProvider,
+    Website
   },
   data() {
     return {
       name: '',
       showForm: false,
       querySet: [],
+      is_active: '',
       today: date.max_today,
       created_at: ['', ''],
-      keywordsApi: api.keywords,
+      friendshipLinkApi: api.friendship_link,
       loading: true,
       submitting: false,
       date_menu: false,
-      keyword: {
-        keyword: '',
+      website: '',
+      websiteKey: '',
+      friendship_link: {
+        name: '',
+        website: '',
         link: ''
       },
+      statusOptions: [
+        { text: this.$t('status.enabled'),
+          value: true},
+        { text: this.$t('status.disabled'),
+          value: false}],
       snackbar: {
         color: '',
         text: '',
@@ -231,14 +294,26 @@ export default {
       headers: [
         {
           sortable: false,
-          text: this.$t('seo.keywords'),
+          text: this.$t('common.display_name'),
           value: 'keyword',
           width: '15%'
         },
         {
           sortable: false,
+          text: this.$t('apps.website'),
+          value: 'website'
+        },
+        {
+          sortable: false,
+          text: this.$t('common.status'),
+          value: 'status',
+          width: '10%'
+        },
+        {
+          sortable: false,
           text: this.$t('apps.link'),
           value: 'link',
+          width: '30%'
         },
         {
           sortable: false,
@@ -262,6 +337,10 @@ export default {
         this.$refs.pulling.rebase()
       },
       deep: true
+    },
+    is_active(newObj) {
+      this.query.is_active = newObj
+      this.$refs.pulling.submit()
     },
     created_at(newObj) {
       if (this.query.created_at_after > this.query.created_at_before){
@@ -299,7 +378,7 @@ export default {
       return this.isUpdate ? 'edit' : 'add_box'
     },
     cardTitle() {
-      return this.isUpdate ? `${this.$t('actions.update')} - ${this.name}` : `${this.$t('actions.add')} - ${this.$t('seo.keywords')}`
+      return this.isUpdate ? `${this.$t('actions.update')} - ${this.name}` : `${this.$t('actions.add')} - ${this.$t('nav.friendship_link')}`
     },
     isUpdate() {
       return this.name.length > 0
@@ -312,6 +391,7 @@ export default {
       } else {
         this.created_at = [undefined, undefined]
       }
+      this.is_active = this.$route.query.is_active===true || this.$route.query.is_active===false || this.$route.query.is_active==='true' || this.$route.query.is_active==='false' ? JSON.parse(this.$route.query.is_active) : ''
       this.query = Object.assign({}, this.$route.query)
     },
     queryData(queryset) {
@@ -342,18 +422,46 @@ export default {
       this.created_at  = ['', '']
       this.dateRangeText = ''
     },
-    updateKeyword(item) {
-      Object.assign(this.keyword, {
-        id: item.id,
-        keyword: item.keyword,
-        link: item.link
+    websiteSelectOne(val) {
+      this.query.website = val
+      this.submit()
+    },
+    websiteSetOne(val) {
+      this.friendship_link.website = val
+    },
+    toggleStatus(slug, is_active){
+      this.$http.put(`${this.friendshipLinkApi}${slug}/`, {
+        is_active: is_active
+      }).then((response) => {
+        let status_text = response.is_active ? this.$t('status.enabled') : this.$t('status.disabled')
+        this.snackbar = {
+          color: 'success',
+          show: true,
+          text: `[${this.$t('common.status')}]: ${status_text}`
+        }
+        this.$refs.pulling.rebase()
+      }, error => {
+        this.snackbar = {
+          color: 'error',
+          show: true,
+          text: `${this.$t('system_msg.error')}: ${error}`
+        }
       })
-      this.name = item.keyword
+      this.snackbar.show = false
+    },
+    updateFriendshipLink(item) {
+      Object.assign(this.friendship_link, {
+        slug: item.slug,
+        name: item.name,
+        link: item.link,
+        website: item.website.id
+      })
+      this.name = item.name
       this.showForm = true
     },
-    deleteKeyword(id) {
+    deleteFriendshipLink(slug) {
       this.snackbar.show=false
-      this.$http.delete(`${this.keywordsApi}${id}/`).then(() => {
+      this.$http.delete(`${this.friendshipLinkApi}${slug}/`).then(() => {
         this.snackbar = {
           color: 'success',
           show: true,
@@ -362,19 +470,20 @@ export default {
         this.$refs.pulling.rebase()
       })
     },
-    async saveKeyword() {
+    async saveFriendshipLink() {
       const isValid = await this.$refs.form.validate()
-      let keywordResult = Object({
-        keyword: this.keyword.keyword,
-        link: this.keyword.link,
+      let friendshipLinkResult = Object({
+        name: this.friendship_link.name,
+        link: this.friendship_link.link,
+        website: this.friendship_link.website
       })
       if (isValid) {
-        if (this.keyword.id) {
-        this.$http.put(`${this.keywordsApi}${this.keyword.id}/`, keywordResult).then(() => {
+        if (this.friendship_link.slug) {
+        this.$http.put(`${this.friendshipLinkApi}${this.friendship_link.slug}/`, friendshipLinkResult).then(() => {
           this.snackbar = {
             color: 'success',
             show: true,
-            text: `${this.$t('actions.update')}-${this.$t('seo.keywords')}: ${this.$t('status.success')}`
+            text: `${this.$t('actions.update')}-${this.$t('nav.friendship_link')}: ${this.$t('status.success')}`
           }
           this.$refs.pulling.rebase()
           this.close()
@@ -386,11 +495,11 @@ export default {
           }
         })
       } else {
-        this.$http.post(this.keywordsApi, keywordResult).then(() => {
+        this.$http.post(this.friendshipLinkApi, friendshipLinkResult).then(() => {
           this.snackbar = {
             color: 'success',
             show: true,
-            text: `${this.$t('actions.add')}-${this.$t('seo.keywords')}: ${this.$t('status.success')}`
+            text: `${this.$t('actions.add')}-${this.$t('nav.friendship_link')}: ${this.$t('status.success')}`
           }
           this.$refs.pulling.rebase()
           this.close()
@@ -407,9 +516,10 @@ export default {
       this.snackbar.show=false
     },
     close() {
-      this.keyword.id = ''
-      this.keyword.keyword = ''
-      this.keyword.link=''
+      this.friendship_link.slug = ''
+      this.friendship_link.name = ''
+      this.friendship_link.link=''
+      this.friendship_link.website = ''
       this.name = ''
       this.submitting = false
       this.$refs.form.reset()

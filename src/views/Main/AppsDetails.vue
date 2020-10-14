@@ -28,6 +28,7 @@
             color="primary"
             dark
             :to="`/apps/${apps.slug}/edit`"
+            v-if="$root.permissions.includes('change_app')"
             >
             <v-icon class="mr-3">edit</v-icon> &nbsp;{{ $t('actions.update') }}
           </v-btn>
@@ -72,7 +73,7 @@
               <small><v-icon left dense>event</v-icon>{{apps.created_at | moment("YYYY-MM-DD HH:mm:ss") }}</small>
             </v-row>
             <v-row class="mb-1">
-              <small><v-icon left dense>person</v-icon>{{apps.created_by}}</small>
+              <small><v-icon left dense>person</v-icon>{{apps.created_by || '-'}}</small>
             </v-row>
             <!-- Will be added after likes and comments feature implementation -->
             <!-- <v-row>
@@ -379,7 +380,7 @@ export default {
         }
         action_title = this.$t('apps.use_download_link')
       }
-      this.$http.put(this.appsApi + id + '/', toggleResult).then((response) => {
+      this.$http.put(`${this.appsApi}${id}/`, toggleResult).then((response) => {
         let action_text = response[mode] ? this.$t('status.enabled') : this.$t('status.disabled')
         this.snackbar = {
           color: 'success',
@@ -407,7 +408,7 @@ export default {
         } else{
           formData.set('ios_app_file', this.file)
         }
-        await axios.put(`${api.apps}${this.apps.id}/`,
+        await axios.put(`${this.appsApi}${this.apps.id}/`,
           formData,
           { headers: {'Content-Type': 'multipart/form-data'},
           onUploadProgress: function( progressEvent ) {

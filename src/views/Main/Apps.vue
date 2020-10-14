@@ -6,7 +6,8 @@
           <v-layout justify-start>
             <v-btn
               color="primary"
-              dark to="/apps/add">
+              dark to="/apps/add"
+              v-if="$root.permissions.includes('create_app')">
               <v-icon class="mr-3">library_add</v-icon> &nbsp;{{ $t('actions.add') }}
             </v-btn>
           </v-layout>
@@ -19,7 +20,8 @@
                 color="primary"
                 dark
                 class="mr-3"
-                v-on="on">
+                v-on="on"
+                v-show="$root.permissions.includes('create_app')">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon v-on="on">cloud_upload</v-icon>
@@ -97,7 +99,8 @@
                 color="primary"
                 dark
                 class="mr-3"
-                v-on="on">
+                v-on="on"
+                v-show="$root.permissions.includes('create_app')">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                   <v-icon v-on="on">dynamic_feed</v-icon>
@@ -267,12 +270,13 @@
               <span>{{item.website ? item.website.name : '-' }}<br/></span>
             </td>
             <td width="30%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
-            <td width="30%" class="align-center justify-center">
+            <td width="30%" class="align-center justify-center"
+              v-if="$root.permissions.includes('change_app') || $root.permissions.includes('delete_app')">
               <v-layout>
-              <v-btn class="mr-2" icon :to="`/apps/${item.slug}/edit`">
+              <v-btn class="mr-2" icon :to="`/apps/${item.slug}/edit`" v-if="$root.permissions.includes('change_app')">
                 <v-icon small >edit</v-icon>
               </v-btn>
-              <v-menu offset-y>
+              <v-menu offset-y v-if="$root.permissions.includes('delete_app')">
                 <template v-slot:activator="{ on }">
                   <v-icon color="red" small v-on="on" icon>delete</v-icon>
                 </template>
@@ -287,8 +291,8 @@
                 </v-list>
               </v-menu>
               </v-layout>
-
             </td>
+            <td v-else>-</td>
           </tr>
         </tbody>
         </template>
@@ -350,9 +354,10 @@ export default {
       today: date.max_today,
       created_at: ['', ''],
       website: 1,
-      appsApi: `${api.apps}`,
+      appsApi: api.apps,
       exportApi: `${api.apps}export/`,
       importApi: `${api.apps}import/`,
+      uploadApi: api.upload,
       loading: true,
       uploadLoading: false,
       importLoading: false,
@@ -363,11 +368,6 @@ export default {
       file: null,
       importFile: null,
       setWebsite: '',
-      statusOptions: [
-        { text: this.$t('status.enabled'),
-          value: true},
-        { text: this.$t('status.disabled'),
-          value: false}],
       snackbar: {
         color: '',
         text: '',
@@ -488,7 +488,7 @@ export default {
       let continueUpload = true
       if (isValid) {
         if (this.file.name.split('.').pop() !== 'zip') {
-          await this.$http.get(`${api.upload}?website=${this.website}&filename=${this.file.name}`).then(response => {
+          await this.$http.get(`${this.uploadApi}?website=${this.website}&filename=${this.file.name}`).then(response => {
             this.count = response.length !== 0 ? response.length : false
             if (this.count) {
               continueUpload = window.confirm(this.$t('system_msg.confirm_upload',{ count: this.count}))
@@ -504,7 +504,7 @@ export default {
             const formData = new window.FormData()
             formData.set('app_file', this.file)
             formData.set('website', this.setWebsite)
-            await axios.post(api.upload,
+            await axios.post(this.uploadApi,
               formData,
               { headers: {'Content-Type': 'multipart/form-data'},
               onUploadProgress: function( progressEvent ) {
@@ -606,7 +606,7 @@ export default {
       this.$refs.importForm.reset()
     },
     deleteApp(id) {
-      this.$http.delete(api.apps + id + '/').then(() => {
+      this.$http.delete(`${this.appsApi}${id}/`).then(() => {
         this.snackbar = {
           color: 'success',
           show: true,

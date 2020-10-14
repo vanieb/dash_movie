@@ -137,6 +137,7 @@ export default new Router({
       meta: {
         auth: true,
         title: i18n.t('nav.add_article'),
+        permission: 'create_article'
       }
     },
     {
@@ -159,6 +160,7 @@ export default new Router({
       meta: {
         auth: true,
         title: i18n.t('nav.edit_article'),
+        permission: 'change_article_details'
       }
     },
     {
@@ -194,6 +196,18 @@ export default new Router({
       meta: {
         auth: true,
         title: i18n.t('nav.edit_website'),
+      }
+    },
+    {
+      path: '/friendship_link',
+      name: 'FriendshipLink',
+      component: function(resolve) {
+        require(['./views/Main/FriendshipLink.vue'], resolve)
+      },
+      meta: {
+        icon: 'compare_arrows',
+        auth: true,
+        title: i18n.t('nav.friendship_link')
       }
     },
     {
@@ -281,16 +295,75 @@ export default new Router({
       }
     },
     {
+      path: '/members',
+      name: 'Members',
+      component: function(resolve) {
+        require(['./views/Users/Members.vue'], resolve)
+      },
+      meta: {
+        icon: 'person',
+        auth: true,
+        title: i18n.t('nav.members'),
+        permission: 'list_member'
+      }
+    },
+    {
       path: '/staff',
       name: 'Staff',
       component: function(resolve) {
         require(['./views/Users/Staff.vue'], resolve)
       },
       meta: {
-        icon: 'people',
+        icon: 'supervised_user_circle',
         auth: true,
-        title: i18n.t('nav.staff')
+        title: i18n.t('nav.staff'),
+        permission: 'list_staff'
       }
-    }
+    },
+    {
+      path: '/staff/add',
+      name: 'Add Staff',
+      component: function (resolve) {
+          require(['./views/Users/StaffForm.vue'], resolve)
+      },
+      meta: {
+        auth: true,
+        title: i18n.t('nav.add_staff'),
+        permission: 'create_staff'
+      }
+    },
+    {
+      path: '/staff/:staffId/',
+      name: 'Staff Details',
+      component: function (resolve) {
+          require(['./views/Users/StaffDetails.vue'], resolve)
+      },
+      meta: {
+        auth: true,
+        title: i18n.t('nav.staff_details'),
+      }
+    },
+    {
+      path: '/staff/:staffId/edit',
+      name: 'Edit Staff',
+      component: function (resolve) {
+          require(['./views/Users/StaffForm.vue'], resolve)
+      },
+      meta: {
+        auth: true,
+        title: i18n.t('nav.edit_staff'),
+        permission: 'change_staff'
+      }
+    },{
+      path: '/no_permission',
+      name: 'NoPermission',
+      component: function (resolve) {
+          require(['./views/NoPermission.vue'], resolve)
+      },
+      meta: {
+        auth: true,
+        title: i18n.t('system_msg.error')
+      }
+    },
   ]
 })

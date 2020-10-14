@@ -164,28 +164,40 @@
             <td class="align-center justify-center" width="10%" >
               <span>{{item.website ? item.website.name : '-' }}<br/></span>
             </td>
-            <td class="align-center justify-start">
+            <td class="align-center justify-start" v-if="$root.permissions.includes('change_app_status')">
               <v-switch value v-model="item.is_active"
                 @change="toggle(item.apptype_details.id, item.is_active, 'is_active')">
               </v-switch>
             </td>
-            <td class="align-center justify-start">
+            <td class="align-center justify-start" v-else>
+              <v-chip v-if="is_active == true" class="success" small>{{ $t('status.enabled') }}</v-chip>
+              <v-chip v-else small>{{ $t('status.disabled') }}</v-chip>
+            </td>
+            <td class="align-center justify-start" v-if="$root.permissions.includes('change_app_leaderboard_status')">
               <v-switch value v-model="item.is_rank"
                 @change="toggle(item.apptype_details.id, item.is_rank, 'is_rank')">
               </v-switch>
             </td>
-            <td class="align-center justify-start">
+            <td class="align-center justify-start" v-else>
+              <v-chip v-if="item.is_rank == true" class="error" small>{{ $t('nav.leaderboard') }}</v-chip>
+              <span v-else>-</span>
+            </td>
+            <td class="align-center justify-start" v-if="$root.permissions.includes('change_app_recommended_status')">
               <v-switch value v-model="item.is_recommended"
                 @change="toggle(item.apptype_details.id, item.is_recommended, 'is_recommended' )">
               </v-switch>
             </td>
+            <td class="align-center justify-start" v-else>
+              <v-chip v-if="item.is_recommended == true" class="error" small>{{ $t('nav.recommended') }}</v-chip>
+              <span v-else>-</span>
+            </td>
             <td width="30%">{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
-            <td width="30%" class="align-center justify-center">
+            <td width="30%" class="align-center justify-center" v-if="$root.permissions.includes('change_app') || $root.permissions.includes('delete_app')">
               <v-layout>
-                <v-btn class="mr-2" icon :to="`/apps/${item.slug}/edit`">
+                <v-btn class="mr-2" icon :to="`/apps/${item.slug}/edit`" v-if="$root.permissions.includes('change_app')">
                   <v-icon small >edit</v-icon>
                 </v-btn>
-                <v-menu offset-y>
+                <v-menu offset-y v-if="$root.permissions.includes('delete_app')">
                   <template v-slot:activator="{ on }">
                     <v-icon color="red" small v-on="on" icon>delete</v-icon>
                   </template>
@@ -201,6 +213,7 @@
                 </v-menu>
               </v-layout>
             </td>
+            <td v-else>-</td>
           </tr>
         </tbody>
         </template>
@@ -404,9 +417,9 @@ export default {
         this.created_at = [undefined, undefined]
       }
       this.website = this.$route.query.website || ''
-      this.is_active = this.$route.query.is_active==true || this.$route.query.is_active==false ? this.$route.query.is_active : ''
-      this.is_rank = this.$route.query.is_rank==true || this.$route.query.is_rank==false ? this.$route.query.is_rank : ''
-      this.is_recommended = this.$route.query.is_recommended==true || this.$route.query.is_recommended==false ? this.$route.query.is_recommended : ''
+      this.is_active = this.$route.query.is_active===true || this.$route.query.is_active===false || this.$route.query.is_active==='true' || this.$route.query.is_active==='false' ? JSON.parse(this.$route.query.is_active) : ''
+      this.is_rank = this.$route.query.is_rank===true || this.$route.query.is_rank===false || this.$route.query.is_rank==='true' || this.$route.query.is_rank==='false' ? JSON.parse(this.$route.query.is_rank) : ''
+      this.is_recommended = this.$route.query.is_recommended===true || this.$route.query.is_recommended===false || this.$route.query.is_recommended==='true' || this.$route.query.is_recommended==='false' ? JSON.parse(this.$route.query.is_recommended) : ''
       this.type = this.$route.query.types || ''
       this.query = Object.assign({}, this.$route.query)
     },
@@ -444,7 +457,7 @@ export default {
         toggleResult.set('is_recommended', value)
         action_title = this.$t('nav.recommended')
       }
-      this.$http.put(this.appsApi + id + '/', toggleResult).then((response) => {
+      this.$http.put(`${this.appsApi}${id}/`, toggleResult).then((response) => {
         let action_text = response[mode] ? this.$t('status.enabled') : this.$t('status.disabled')
         this.snackbar = {
           color: 'success',
@@ -492,7 +505,7 @@ export default {
       this.dateRangeText = ''
     },
     deleteApp(id) {
-      this.$http.delete(api.apps + id + '/').then(() => {
+      this.$http.delete(`${this.appsApi}${id}/`).then(() => {
         this.snackbar = {
           color: 'success',
           show: true,
