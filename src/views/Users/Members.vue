@@ -22,9 +22,9 @@
               <v-card-text>
                 <v-layout wrap>
                   <v-flex xs12 >
-                    <validation-provider rules="required|max:15" :name="$t('login.username')">
+                    <validation-provider rules="required|max:8" :name="$t('login.username')">
                       <v-text-field
-                        :counter="15"
+                        :counter="8"
                         :error-messages="errors"
                         :label="`${$t('login.username')}*`"
                         placeholder=" "
@@ -34,9 +34,9 @@
                     </validation-provider>
                   </v-flex>
                   <v-flex xs12>
-                    <validation-provider rules="required|max:15" :name="$t('login.password')" v-if="!isUpdate">
+                    <validation-provider rules="required|max:12" :name="$t('login.password')" v-if="!isUpdate">
                       <v-text-field
-                        :counter="15"
+                        :counter="12"
                         :error-messages="errors"
                         :label="`${$t('login.password')}*`"
                         placeholder=" "
@@ -46,9 +46,9 @@
                         v-model="member.password"
                       ></v-text-field>
                     </validation-provider>
-                    <validation-provider rules="max:15" :name="$t('login.password')" v-else>
+                    <validation-provider rules="max:12" :name="$t('login.password')" v-else>
                       <v-text-field
-                        :counter="15"
+                        :counter="12"
                         :error-messages="errors"
                         :label="`${$t('login.password')}`"
                         placeholder=" "
