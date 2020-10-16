@@ -48,7 +48,7 @@
                 <v-icon class="mr-2 m-b-sm ml-8" color="success" small>event</v-icon><small >{{staff.created_at | moment("YYYY-MM-DD HH:mm:ss") }}</small>
               </v-row>
               <v-row>
-                <v-icon class="mr-2 m-b-sm" color="primary lighten-1">edit</v-icon>{{staff.updated_by }}
+                <v-icon class="mr-2 m-b-sm">edit</v-icon>{{staff.updated_by }}
               </v-row>
               <v-row>
                 <v-icon class="mr-2 m-b-sm ml-8" color="success" small>event</v-icon><small >{{staff.updated_at | moment("YYYY-MM-DD HH:mm:ss") }}</small>
@@ -71,16 +71,6 @@
           </v-row>
           <v-banner color="primary" dark>{{$t('staff.permissions')}}</v-banner>
           <ul v-for="permission in permissions" :key="permission.id" v-show="showPermissions">
-            <!-- <div d-inline-block>
-              <v-checkbox
-                :label="`${permission.name} - ${permission.code}`"
-                v-model="permission.checked"
-                :key="permission.code"
-                disabled
-                hide-details=true>
-              </v-checkbox>
-              <span>{{ `${permission.name} - ${permission.code}`}}</span>
-            </div> -->
             <v-card-title
               v-if="permission.checked"
               :key="permission.code"
@@ -88,14 +78,6 @@
             ></v-card-title>
               <ul v-for="item in permission.permissions" :key="item.code" >
                 <li class="ml-6" v-if="item.checked">
-                <!-- <v-checkbox
-                  class="ml-6 mb-0"
-                  :label="`${item.name} - ${item.description} - ${item.code}`"
-                  v-model="item.checked"
-                  :key="item.code"
-                  disabled
-                  hide-details=true>
-                </v-checkbox> -->
                 <span>{{item.name}}</span> -
                 <strong class="grey--text">{{item.description}} - {{item.code}}</strong>
                 </li>
@@ -119,12 +101,9 @@
 <script>
 import api from '@/api/apis'
 import SnackBar from '@/components/SnackBar'
-// import { ValidationObserver, ValidationProvider } from 'vee-validate'
 
 export default {
   components: {
-    // ValidationObserver,
-    // ValidationProvider,
     SnackBar
   },
   name: 'Staff',
