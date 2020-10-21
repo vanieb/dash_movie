@@ -162,7 +162,8 @@ export default {
     select_all: '全选',
     deselect_all: '全部取消选择',
     superadmin: '全部取消选择',
-    admin: '管理员'
+    admin: '管理员',
+    custom_staff: '定制员工'
   },
   pagination: {
     rows_per_page: '每页行数:',

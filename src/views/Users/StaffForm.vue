@@ -125,20 +125,32 @@
           <v-container v-show="$root.permissions.includes('change_staff_permission')">
             <template v-for="(list, index) in permissions">
               <v-checkbox
-                :label="`${list.name} - ${list.code}`"
+                :label="`${list.name}`"
                 v-model="list.checked"
                 :key="list.code"
                 @click.native="selectAllPermissions(index)"
                 hide-details=true>
               </v-checkbox>
               <span v-for="permission in list.permissions" :key="permission.code">
-                <v-checkbox
-                  class="ml-6 mb-0"
-                  :label="`${permission.name} - ${permission.description} - ${permission.code}`"
-                  v-model="permission.checked"
-                  :key="permission.code"
-                  hide-details=true>
-                </v-checkbox>
+                <div v-if="permission.code == 'change_staff_permission' ">
+                  <v-checkbox
+                    v-show="$root.role==='superadmin' || !isUpdate"
+                    class="ml-6 mb-0"
+                    :label="`${permission.name} - ${permission.description} - ${permission.code}`"
+                    v-model="permission.checked"
+                    :key="permission.code"
+                    hide-details=true>
+                  </v-checkbox>
+                </div>
+                <div v-else>
+                  <v-checkbox
+                    class="ml-6 mb-0"
+                    :label="`${permission.name} - ${permission.description} - ${permission.code}`"
+                    v-model="permission.checked"
+                    :key="permission.code"
+                    hide-details=true>
+                  </v-checkbox>
+                </div>
               </span>
             </template>
           </v-container>
