@@ -122,7 +122,7 @@
               </v-tooltip>
             </v-chip>
           </v-layout>
-          <v-container v-show="$root.permissions.includes('change_staff_permission')">
+          <v-container v-show="$root.permissions.includes('change_staff_permission') && $root.role==='superadmin'">
             <template v-for="(list, index) in permissions">
               <v-checkbox
                 :label="`${list.name}`"
