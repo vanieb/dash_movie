@@ -163,7 +163,8 @@ export default {
     select_all: 'Select All',
     deselect_all: 'Deselect All',
     superadmin: 'Superadmin',
-    admin: 'Admin'
+    admin: 'Admin',
+    custom_staff: 'Custom Staff'
   },
   pagination: {
     rows_per_page: 'Rows per page:',
