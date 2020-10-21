@@ -83,8 +83,8 @@
               </v-flex>
             </v-layout>
           </v-card-text>
-          <v-banner color="primary" dark v-if="$root.permissions.includes('change_staff_permission')">{{$t('staff.permissions')}}</v-banner>
-          <v-layout class="ma-2" justify-end v-if="$root.permissions.includes('change_staff_permission')">
+          <v-banner color="primary" dark v-if="$root.permissions.includes('change_staff_permission') && $root.role==='superadmin'">{{$t('staff.permissions')}}</v-banner>
+          <v-layout class="ma-2" justify-end v-if="$root.permissions.includes('change_staff_permission') && $root.role==='superadmin'">
             <v-chip class="ma-1" :color="selectAllColor" @click="selectPermission('all')">
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
