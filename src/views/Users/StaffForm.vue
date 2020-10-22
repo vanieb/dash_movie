@@ -83,8 +83,8 @@
               </v-flex>
             </v-layout>
           </v-card-text>
-          <v-banner color="primary" dark v-if="$root.permissions.includes('change_staff_permission') && $root.role==='superadmin'">{{$t('staff.permissions')}}</v-banner>
-          <v-layout class="ma-2" justify-end v-if="$root.permissions.includes('change_staff_permission') && $root.role==='superadmin'">
+          <v-banner color="primary" dark v-if="changePermission">{{$t('staff.permissions')}}</v-banner>
+          <v-layout class="ma-2" justify-end v-if="changePermission">
             <v-chip class="ma-1" :color="selectAllColor" @click="selectPermission('all')">
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
@@ -93,7 +93,7 @@
                 </template>
                 <span>{{$t('system_notes.select_all_permissions')}}</span>
               </v-tooltip>
-              </v-chip>
+            </v-chip>
             <v-chip class="ma-1" :color="deselectAllColor" @click="selectPermission('deselect')">
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
@@ -122,7 +122,7 @@
               </v-tooltip>
             </v-chip>
           </v-layout>
-          <v-container v-show="$root.permissions.includes('change_staff_permission') && $root.role==='superadmin'">
+          <v-container v-show="changePermission">
             <template v-for="(list, index) in permissions">
               <v-checkbox
                 :label="`${list.name}`"
@@ -226,6 +226,13 @@ export default {
   computed: {
     isUpdate() {
       return this.id ? true : false
+    },
+    changePermission() {
+      if (this.$root.permissions.includes('change_staff_permission') && this.$root.username === this.staff.user.username && this.$root.role != 'superadmin') {
+        return false
+      } else {
+        return true
+      }
     }
   },
   beforeRouteEnter (to, from, next) {
