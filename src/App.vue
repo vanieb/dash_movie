@@ -64,6 +64,7 @@ export default {
       }
       this.$http.get(api.my).then(response => {
         this.username = response.username
+        this.role = response.role
         this.getPermissions()
       }, (error) => {
         if (error.status === 404) {

@@ -48,7 +48,7 @@
                 <v-icon class="mr-2 m-b-sm ml-8" color="success" small>event</v-icon><small >{{staff.created_at | moment("YYYY-MM-DD HH:mm:ss") }}</small>
               </v-row>
               <v-row>
-                <v-icon class="mr-2 m-b-sm">edit</v-icon>{{staff.updated_by }}
+                <v-icon class="mr-2 m-b-sm">edit</v-icon>{{staff.updated_by || '-'}}
               </v-row>
               <v-row>
                 <v-icon class="mr-2 m-b-sm ml-8" color="success" small>event</v-icon><small >{{staff.updated_at | moment("YYYY-MM-DD HH:mm:ss") }}</small>
@@ -65,8 +65,23 @@
                 <v-chip class="ma-1" small>{{$t('status.disabled')}}</v-chip>
                 <br/>
               </span>
-                <v-icon color="gray" class="ml-0 mr-2 m-b-sm">notes</v-icon>
-                {{staff.memo || "-"}}
+              <span v-if="staff.role==='admin'">
+                <v-icon color="orange" class="mr-2">person_pin</v-icon>
+                <v-chip class="ma-1" color="orange" small dark>{{$t('staff.admin')}}</v-chip>
+                <br/>
+              </span>
+              <span v-else-if="staff.role==='superadmin'">
+                <v-icon color="red" class="mr-2">person_pin</v-icon>
+                <v-chip class="ma-1" color="red" small dark>{{$t('staff.superadmin')}}</v-chip>
+                <br/>
+              </span>
+              <span v-if="staff.role==='custom_staff'">
+                <v-icon color="blue" class="mr-2">person_pin</v-icon>
+                <v-chip class="ma-1" color="blue" small dark>{{$t('staff.custom_staff')}}</v-chip>
+                <br/>
+              </span>
+              <v-icon color="gray" class="ml-0 mr-2 m-b-sm">notes</v-icon>
+              {{staff.memo || "-"}}
             </v-col>
           </v-row>
           <v-banner color="primary" dark>{{$t('staff.permissions')}}</v-banner>
