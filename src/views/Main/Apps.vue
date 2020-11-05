@@ -2,7 +2,7 @@
   <v-layout wrap>
     <v-container>
       <v-layout>
-        <!-- <div d-inline-block>
+        <div d-inline-block>
           <v-layout justify-start>
             <v-btn
               color="primary"
@@ -11,10 +11,10 @@
               <v-icon class="mr-3">library_add</v-icon> &nbsp;{{ $t('actions.add') }}
             </v-btn>
           </v-layout>
-        </div> -->
+        </div>
         <v-layout justify-end>
           <!-- Installer Upload -->
-          <!-- <v-dialog v-model="uploadInstallerDialog" persistent max-width="600">
+          <v-dialog v-model="uploadInstallerDialog" persistent max-width="600">
             <template v-slot:activator="{ on }">
               <v-btn
                 color="primary"
@@ -91,9 +91,9 @@
                 </v-card-actions>
               </validation-observer>
             </v-card>
-          </v-dialog> -->
+          </v-dialog>
           <!-- Create Multiple Apps -->
-          <!-- <v-dialog v-model="createAppDialog" persistent max-width="350">
+          <v-dialog v-model="createAppDialog" persistent max-width="350">
             <template v-slot:activator="{ on }">
               <v-btn
                 color="primary"
@@ -150,7 +150,7 @@
                 </v-card-actions>
               </validation-observer>
             </v-card>
-          </v-dialog> -->
+          </v-dialog>
           <!-- Export Apps -->
           <v-btn
             color="primary"
