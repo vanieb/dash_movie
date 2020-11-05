@@ -761,7 +761,7 @@ export default {
             }
           })
         } else {
-          formData.set('website_id', this.apps.website)
+          formData.set('website', this.apps.website)
           this.$http.post(this.appsApi, formData).then(response => {
             this.snackbar = {
               color: 'success',
