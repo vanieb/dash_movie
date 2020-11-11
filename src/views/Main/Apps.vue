@@ -323,7 +323,7 @@ import $ from '../../utils/util'
 import Pagination from '@/components/Pagination'
 import SnackBar from '@/components/SnackBar'
 import { debounce } from 'lodash'
-// import { ValidationObserver, ValidationProvider } from 'vee-validate'
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import Website from '../../components/SelectWebsite.vue'
 import Types from '../../components/SelectType.vue'
 import axios from 'axios'
@@ -334,8 +334,8 @@ export default {
   components: {
     Pagination,
     SnackBar,
-    // ValidationObserver,
-    // ValidationProvider,
+    ValidationObserver,
+    ValidationProvider,
     Website,
     Types
   },
