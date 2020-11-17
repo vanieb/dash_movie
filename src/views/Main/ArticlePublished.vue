@@ -2,16 +2,6 @@
   <v-layout wrap>
     <v-container>
       <v-layout>
-        <v-layout justify-start>
-          <v-btn
-            color="primary"
-            dark
-            to="/articles/add"
-            v-if="$root.permissions.includes('create_article')"
-          >
-            <v-icon class="mr-3">post_add</v-icon> &nbsp;{{ $t("actions.add") }}
-          </v-btn>
-        </v-layout>
         <v-layout justify-end>
           <!-- Doc Import -->
           <v-dialog v-model="importDocDialog" persistent max-width="600">
@@ -128,9 +118,29 @@
               <v-select
                 item-name="text"
                 item-value="value"
-                :items="articleStatusOptions"
-                :label="`${$t('articles.article')}-${$t('common.status')}`"
-                v-model="status"
+                :items="statusOptions"
+                :label="`${$t('common.status')}`"
+                v-model="active"
+                hide-details="true"
+                placeholder=" "
+                outlined
+                dense
+              >
+                <template slot="selection" slot-scope="data">
+                  <span class="ml-3">{{ data.item.text }}</span>
+                </template>
+                <template slot="item" slot-scope="data">
+                  <span class="ml-3">{{ data.item.text }}</span>
+                </template>
+              </v-select>
+            </div>
+            <div style="width:155px;" class="mr-2">
+              <v-select
+                item-name="text"
+                item-value="value"
+                :items="statusOptions"
+                :label="`${$t('nav.popular_articles')}`"
+                v-model="popular"
                 hide-details="true"
                 placeholder=" "
                 outlined
@@ -198,48 +208,6 @@
               </v-btn>
             </v-layout>
           </v-row>
-          <v-row class="mt-2" v-if="status=='approve'">
-            <div style="width:155px;" class="mr-2">
-              <v-select
-                item-name="text"
-                item-value="value"
-                :items="statusOptions"
-                :label="`${$t('common.status')}`"
-                v-model="active"
-                hide-details="true"
-                placeholder=" "
-                outlined
-                dense
-              >
-                <template slot="selection" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-                <template slot="item" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-              </v-select>
-            </div>
-            <div style="width:155px;" class="mr-2">
-              <v-select
-                item-name="text"
-                item-value="value"
-                :items="statusOptions"
-                :label="`${$t('nav.popular_articles')}`"
-                v-model="popular"
-                hide-details="true"
-                placeholder=" "
-                outlined
-                dense
-              >
-                <template slot="selection" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-                <template slot="item" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-              </v-select>
-            </div>
-          </v-row>
         </v-col>
       </v-card>
       <v-spacer></v-spacer>
@@ -268,16 +236,23 @@
                 v-if="item.websites.length == 1 && item.title.length > 20"
               >
                 {{ item.title | truncate(20, "...") }}
-                <br />
+              <br />
+              <v-icon left small color="success lighten-1">view_compact</v-icon>
+                <strong class="success--text">{{ $t("status.published") }}</strong>
                 <v-icon left small color="warning lighten-1">person</v-icon>
                 <span>{{ item.created_by }}</span> <br />
                 <v-icon left small color="warning lighten-1">event</v-icon>
                 <span>{{
                   item.created_at | moment("YYYY-MM-DD HH:mm:ss")
-                }}</span>
+                }}</span> <br />
+                <v-icon left small color="success">publish</v-icon>
+                {{ $t("status.published") }}
               </td>
               <td class="align-center" width="30%" v-else>
                 <strong>{{ item.title }}</strong>
+                <br />
+                <v-icon left small color="success lighten-1">view_compact</v-icon>
+                <strong class="success--text">{{ $t("status.published") }}</strong>
                 <br />
                 <v-icon left small color="warning lighten-1">person</v-icon>
                 <span>{{ item.created_by }}</span> <br />
@@ -290,34 +265,6 @@
                 <span v-for="website in item.websites" :key="website.id"
                   >{{ website.name }}<br
                 /></span>
-              </td>
-              <td>
-                <span
-                  color="success--text"
-                  v-if="item.status === 'approve'"
-                  >{{ $t("status.published") }}</span
-                >
-                <span
-                  class="error--text"
-                  small
-                  outlined
-                  v-else-if="item.status === 'decline'"
-                  >{{ $t("status.declined") }}</span
-                >
-                <span
-                  class="warning--text"
-                  small
-                  outlined
-                  v-else-if="item.status === 'decline'"
-                  >{{ $t("status.review") }}</span
-                >
-                <span
-                  class="grey--text"
-                  small
-                  outlined
-                  v-else
-                  >{{ $t("status.draft") }}</span
-                >
               </td>
               <td
                 class="align-center justify-start"
@@ -359,7 +306,7 @@
                 }}</v-chip>
                 <span v-else>-</span>
               </td>
-              <td width="8%">
+              <td width="15%" class="align-center justify-center">
                 {{ item.updated_by || "-" }} <br />
                 <span class="grey--text">{{
                   item.updated_at | moment("YYYY-MM-DD HH:mm:ss")
@@ -416,6 +363,7 @@
       ref="pulling"
       @query-data="queryData"
       @query-param="queryParam"
+      :persistent-query="{status: 'approve'}"
     >
     </pagination>
     <!-- SNACKBAR -->
@@ -459,7 +407,6 @@ export default {
       querySet: [],
       active: "",
       popular: "",
-      status: "",
       today: date.max_today,
       created_at: ["", ""],
       website: 1,
@@ -476,12 +423,6 @@ export default {
       statusOptions: [
         { text: this.$t("status.enabled"), value: true },
         { text: this.$t("status.disabled"), value: false },
-      ],
-      articleStatusOptions: [
-        { text: this.$t("status.review"), value: "review" },
-        { text: this.$t("status.draft"), value: "draft" },
-        { text: this.$t("status.published"), value: "approve" },
-        { text: this.$t("status.declined"), value: "declined" }
       ],
       snackbar: {
         color: "",
@@ -506,14 +447,8 @@ export default {
         },
         {
           sortable: false,
-          text: `${this.$t("articles.article")}-${this.$t("common.status")}`,
-          value: "status",
-          width: "10%",
-        },
-        {
-          sortable: false,
           text: this.$t("common.status"),
-          value: "is_active",
+          value: "status",
           width: "10%",
         },
         {
@@ -524,7 +459,7 @@ export default {
         },
         {
           sortable: false,
-          text: `${this.$t("common.updated_at")}`,
+          text: `${this.$t("common.update_details")}`,
           value: "updated_at",
           width: "15%",
         },
@@ -546,10 +481,6 @@ export default {
     },
     popular(newObj) {
       this.query.popular = newObj;
-      this.$refs.pulling.submit();
-    },
-    status(newObj) {
-      this.query.status = newObj;
       this.$refs.pulling.submit();
     },
     active(newObj) {
@@ -778,7 +709,6 @@ export default {
       this.created_at = ["", ""];
       this.active = "";
       this.popular = "";
-      this.status = "";
       this.query = {};
       this.query.website = 1;
       this.$nextTick(() => {

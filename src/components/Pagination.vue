@@ -231,7 +231,7 @@ export default {
       const additionalQuery = Object.keys(this.persistentQuery).map(key => {
         return `${key}=${this.persistentQuery[key]}`
       }).join('&')
-      const url = `${api}${defaultQuery ? `?${defaultQuery}` : ''}${additionalQuery}`
+      const url = `${api}${defaultQuery ? `?${defaultQuery}` : ''}&${additionalQuery}`
       const params = []
       const query = this.$route.query
 
