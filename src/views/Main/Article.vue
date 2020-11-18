@@ -198,7 +198,7 @@
               </v-btn>
             </v-layout>
           </v-row>
-          <v-row class="mt-2" v-if="status=='approve'">
+          <v-row class="mt-2" v-if="status == 'approved'">
             <div style="width:155px;" class="mr-2">
               <v-select
                 item-name="text"
@@ -269,9 +269,9 @@
               >
                 {{ item.title | truncate(20, "...") }}
                 <br />
-                <v-icon left small color="warning lighten-1">person</v-icon>
+                <v-icon left small color="indigo">person</v-icon>
                 <span>{{ item.created_by }}</span> <br />
-                <v-icon left small color="warning lighten-1">event</v-icon>
+                <v-icon left small color="indigo">event</v-icon>
                 <span>{{
                   item.created_at | moment("YYYY-MM-DD HH:mm:ss")
                 }}</span>
@@ -279,9 +279,9 @@
               <td class="align-center" width="30%" v-else>
                 <strong>{{ item.title }}</strong>
                 <br />
-                <v-icon left small color="warning lighten-1">person</v-icon>
+                <v-icon left small color="indigo">person</v-icon>
                 <span>{{ item.created_by }}</span> <br />
-                <v-icon left small color="warning lighten-1">event</v-icon>
+                <v-icon left small color="indigo">event</v-icon>
                 <span>{{
                   item.created_at | moment("YYYY-MM-DD HH:mm:ss")
                 }}</span>
@@ -292,32 +292,26 @@
                 /></span>
               </td>
               <td>
-                <span
-                  color="success--text"
-                  v-if="item.status === 'approve'"
-                  >{{ $t("status.published") }}</span
-                >
+                <span class="success--text" v-if="item.status === 'approved'">{{
+                  $t("status.published")
+                }}</span>
                 <span
                   class="error--text"
                   small
                   outlined
-                  v-else-if="item.status === 'decline'"
+                  v-else-if="item.status === 'cancelled'"
                   >{{ $t("status.declined") }}</span
                 >
                 <span
                   class="warning--text"
                   small
                   outlined
-                  v-else-if="item.status === 'decline'"
+                  v-else-if="item.status === 'review'"
                   >{{ $t("status.review") }}</span
                 >
-                <span
-                  class="grey--text"
-                  small
-                  outlined
-                  v-else
-                  >{{ $t("status.draft") }}</span
-                >
+                <span class="grey--text" small outlined v-else>{{
+                  $t("status.draft")
+                }}</span>
               </td>
               <td
                 class="align-center justify-start"
@@ -329,6 +323,7 @@
                   @change="
                     toggle(item.slug, item.is_active, 'is_active', item.title)
                   "
+                  :disabled="item.status !== 'approved'"
                 >
                 </v-switch>
               </td>
@@ -350,6 +345,7 @@
                   @change="
                     toggle(item.slug, item.is_popular, 'is_popular', item.title)
                   "
+                  :disabled="item.status !== 'approved'"
                 >
                 </v-switch>
               </td>
@@ -480,8 +476,8 @@ export default {
       articleStatusOptions: [
         { text: this.$t("status.review"), value: "review" },
         { text: this.$t("status.draft"), value: "draft" },
-        { text: this.$t("status.published"), value: "approve" },
-        { text: this.$t("status.declined"), value: "declined" }
+        { text: this.$t("status.published"), value: "approved" },
+        { text: this.$t("status.declined"), value: "cancelled" },
       ],
       snackbar: {
         color: "",
@@ -524,7 +520,7 @@ export default {
         },
         {
           sortable: false,
-          text: `${this.$t("common.updated_at")}`,
+          text: `${this.$t("common.update_details")}`,
           value: "updated_at",
           width: "15%",
         },

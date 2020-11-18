@@ -12,6 +12,7 @@ const websites = `${host}websites/v1/`
 const accounts = `${host}accounts/v1/`
 
 export default {
+  count: `${host}dashboard/header/counts/`,
   login: `${auth}login`,
   my: `${auth}my`,
   userPermissions: `${accounts}permissions/user/`,

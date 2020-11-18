@@ -48,7 +48,8 @@ export default {
     draft: "Draft",
     review: "Review",
     declined: "Declined",
-    published: "Published"
+    published: "Published",
+    approved: "Approved"
   },
   errors: {
     required: "Required",

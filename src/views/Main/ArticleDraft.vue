@@ -114,9 +114,9 @@
                 <v-icon left small color="grey lighten-1">view_compact</v-icon>
                 <strong class="grey--text">{{ $t("status.draft") }}</strong>
                 <br />
-                <v-icon left small color="warning lighten-1">person</v-icon>
+                <v-icon left small color="indigo">person</v-icon>
                 <span>{{ item.created_by }}</span> <br />
-                <v-icon left small color="warning lighten-1">event</v-icon>
+                <v-icon left small color="indigo">event</v-icon>
                 <span>{{
                   item.created_at | moment("YYYY-MM-DD HH:mm:ss")
                 }}</span>
@@ -127,9 +127,9 @@
                 <v-icon left small color="grey lighten-1">view_compact</v-icon>
                 <strong class="grey--text">{{ $t("status.draft") }}</strong>
                 <br />
-                <v-icon left small color="warning lighten-1">person</v-icon>
+                <v-icon left small color="indigo">person</v-icon>
                 <span>{{ item.created_by }}</span> <br />
-                <v-icon left small color="warning lighten-1">event</v-icon>
+                <v-icon left small color="indigo">event</v-icon>
                 <span>{{
                   item.created_at | moment("YYYY-MM-DD HH:mm:ss")
                 }}</span>
@@ -141,29 +141,25 @@
               </td>
               <td class="text-center">
                 <v-menu
-                    offset-y
-                    v-if="$root.permissions.includes('delete_article')"
-                  >
-                    <template v-slot:activator="{ on }">
-                      <v-chip v-on="on"
-                  class="success lighten-1 small"
+                  offset-y
+                  v-if="$root.permissions.includes('delete_article')"
                 >
-                  <v-icon dark left small>publish</v-icon>
-                  {{ $t("actions.publish") }}
-                </v-chip>
-                    </template>
-                    <v-list>
-                      <v-list-item
-                        @click="publishArticle(item, true, $event)"
-                      >
-                        <v-list-item-title>
-                          <v-icon class="mr-2" color="orange">warning</v-icon>
-                          {{ $t("system_msg.confirm_publish") }}
-                          <strong>{{ item.title }}</strong>
-                        </v-list-item-title>
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
+                  <template v-slot:activator="{ on }">
+                    <v-chip v-on="on" class="success lighten-1 small">
+                      <v-icon dark left small>publish</v-icon>
+                      {{ $t("actions.publish") }}
+                    </v-chip>
+                  </template>
+                  <v-list>
+                    <v-list-item @click="publishArticle(item, true, $event)">
+                      <v-list-item-title>
+                        <v-icon class="mr-2" color="orange">warning</v-icon>
+                        {{ $t("system_msg.confirm_publish") }}
+                        <strong>{{ item.title }}</strong>
+                      </v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
               </td>
               <td width="15%" class="align-center justify-center">
                 {{ item.updated_by || "-" }} <br />
@@ -221,7 +217,7 @@
       ref="pulling"
       @query-data="queryData"
       @query-param="queryParam"
-      :persistent-query="{status: 'draft'}"
+      :persistent-query="{ status: 'draft' }"
     >
     </pagination>
     <!-- SNACKBAR -->
@@ -307,7 +303,7 @@ export default {
         {
           sortable: false,
           text: this.$t("common.action"),
-          value: ""
+          value: "",
         },
       ],
     };
@@ -420,31 +416,34 @@ export default {
     },
     publishArticle(item) {
       let website_query = this.query.website;
-        this.snackbar.show = false;
-        let statusResult = {
-          status: 'approve',
-          is_active: true
-        };
-        this.$http.put(`${this.articleApi}${item.id}/`, statusResult).then(
-          () => {
-            this.snackbar = {
-              color: "success",
-              show: true,
-              text: `[${this.$t("articles.article")}]: ${this.$t("status.published")}`,
-            };
-            this.$router.push(`/articles_published?website=${website_query}`)
-          },
-          (error) => {
-            this.snackbar = {
-              color: "error",
-              show: true,
-              text: `${this.$t("system_msg.error")}: ${error}`,
-            };
-            this.$refs.pulling.rebase();
-            this.query.website = website_query;
-            this.submit();
-          }
-        );
+      this.snackbar.show = false;
+      let statusResult = {
+        status: "approved",
+        is_active: true,
+        title: item.title,
+      };
+      this.$http.put(`${this.articleApi}${item.slug}/`, statusResult).then(
+        () => {
+          this.snackbar = {
+            color: "success",
+            show: true,
+            text: `[${this.$t("articles.article")}]: ${this.$t(
+              "status.published"
+            )}`,
+          };
+          this.$router.push(`/articles_published?website=${website_query}`);
+        },
+        (error) => {
+          this.snackbar = {
+            color: "error",
+            show: true,
+            text: `${this.$t("system_msg.error")}: ${error}`,
+          };
+          this.$refs.pulling.rebase();
+          this.query.website = website_query;
+          this.submit();
+        }
+      );
     },
     deleteArticle(id) {
       this.snackbar.show = false;

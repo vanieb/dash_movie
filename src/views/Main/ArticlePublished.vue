@@ -239,9 +239,9 @@
               <br />
               <v-icon left small color="success lighten-1">view_compact</v-icon>
                 <strong class="success--text">{{ $t("status.published") }}</strong>
-                <v-icon left small color="warning lighten-1">person</v-icon>
+                <v-icon left small color="indigo">person</v-icon>
                 <span>{{ item.created_by }}</span> <br />
-                <v-icon left small color="warning lighten-1">event</v-icon>
+                <v-icon left small color="indigo">event</v-icon>
                 <span>{{
                   item.created_at | moment("YYYY-MM-DD HH:mm:ss")
                 }}</span> <br />
@@ -254,9 +254,9 @@
                 <v-icon left small color="success lighten-1">view_compact</v-icon>
                 <strong class="success--text">{{ $t("status.published") }}</strong>
                 <br />
-                <v-icon left small color="warning lighten-1">person</v-icon>
+                <v-icon left small color="indigo">person</v-icon>
                 <span>{{ item.created_by }}</span> <br />
-                <v-icon left small color="warning lighten-1">event</v-icon>
+                <v-icon left small color="indigo">event</v-icon>
                 <span>{{
                   item.created_at | moment("YYYY-MM-DD HH:mm:ss")
                 }}</span>
@@ -363,7 +363,7 @@
       ref="pulling"
       @query-data="queryData"
       @query-param="queryParam"
-      :persistent-query="{status: 'approve'}"
+      :persistent-query="{status: 'approved'}"
     >
     </pagination>
     <!-- SNACKBAR -->

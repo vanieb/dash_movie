@@ -17,10 +17,37 @@
       <v-spacer></v-spacer>
       <v-menu offset-y>
         <template v-slot:activator="{ on }">
-          <v-icon v-on="on">mdi-chevron-down</v-icon>&nbsp;&nbsp;&nbsp;
+          <v-icon v-on="on">mdi-chevron-down</v-icon>
           <span class="ml-2 mr-2">{{ username }}</span>
-          <v-icon>mdi-account-circle</v-icon>&nbsp;&nbsp;
-          <!-- <v-badge overlap color="red" :content="ongoing" class="mr-5" ><v-chip @click="goToBonusRequest()" light :disabled="ongoing=='0'">{{$t('nav.member_bonus_application')}}</v-chip></v-badge> -->
+          <v-icon>mdi-account-circle</v-icon>
+          <v-badge
+            overlap
+            color="red"
+            :content="article_review_count"
+            v-if="article_review_count !== '0'"
+            class="mr-5"
+            blink
+            ><v-chip
+              @click="redirect('articles')"
+              light
+              :disabled="article_review_count == '0'"
+              >{{ $t("nav.articles_review") }}</v-chip
+            ></v-badge
+          >
+          <v-badge
+            overlap
+            v-if="app_review_count !== 0"
+            color="red "
+            :content="app_review_count"
+            class="mr-5"
+            blink
+            ><v-chip
+              @click="redirect('apps')"
+              light
+              :disabled="app_review_count == '0'"
+              >{{ $t("nav.apps_review") }}</v-chip
+            ></v-badge
+          >
         </template>
         <v-list>
           <v-list-item link to="/change_password">
@@ -103,14 +130,6 @@
                       <v-icon>{{ subSubItem.icon }}</v-icon>
                     </v-list-item-icon>
                     <v-list-item-title>{{ subSubItem.text }}</v-list-item-title>
-                    <v-chip
-                      color="error"
-                      class=" justify-end"
-                      small
-                      left
-                      v-if="subSubItem.count"
-                      >6</v-chip
-                    >
                   </v-list-item>
                 </template>
               </v-list-group>
@@ -145,6 +164,8 @@ export default {
   },
   data() {
     return {
+      app_review_count: 0,
+      article_review_count: 0,
       drawer: null,
       items: [
         {
@@ -157,6 +178,28 @@ export default {
               icon: "apps",
               text: this.$t("nav.apps"),
               path: "/apps?website=1",
+              submenu: [
+                {
+                  text: this.$t("nav.apps_review"),
+                  path: "/apps_review",
+                  icon: "visibility",
+                },
+                {
+                  text: this.$t("nav.apps_draft"),
+                  path: "/apps_draft",
+                  icon: "edit",
+                },
+                {
+                  text: this.$t("nav.apps_published"),
+                  path: "/apps_published",
+                  icon: "publish",
+                },
+                {
+                  text: this.$t("nav.apps"),
+                  path: "/apps",
+                  icon: "apps",
+                },
+              ],
             },
             {
               icon: "settings",
@@ -200,19 +243,16 @@ export default {
             {
               icon: "description",
               text: this.$t("nav.articles"),
-              // path: "/articles",
               submenu: [
                 {
                   text: this.$t("nav.articles_review"),
                   path: "/articles_review",
                   icon: "visibility",
-                  count: true,
                 },
                 {
                   text: this.$t("nav.articles_draft"),
                   path: "/articles_draft",
                   icon: "edit",
-                  count: true,
                 },
                 {
                   text: this.$t("nav.articles_published"),
@@ -290,6 +330,10 @@ export default {
       ],
     };
   },
+  created() {
+    this.getCount();
+    setInterval(this.getCount, 5000);
+  },
   methods: {
     logout() {
       this.$http.post(api.logout).then(
@@ -299,6 +343,21 @@ export default {
           this.$cookie.delete("refresh_token");
           this.$cookie.delete("user_type");
           this.$cookie.delete("username");
+        },
+        (error) => {
+          this.loading = false;
+          this.errorMsg = error;
+        }
+      );
+    },
+    redirect(page) {
+      this.$router.push(`${page}_review?website=1`);
+    },
+    getCount() {
+      this.$http.get(api.count).then(
+        (response) => {
+          this.app_review_count = response.app_review_count;
+          this.article_review_count = response.article_review_count;
         },
         (error) => {
           this.loading = false;
