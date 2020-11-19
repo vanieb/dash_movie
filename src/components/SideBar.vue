@@ -24,7 +24,7 @@
             overlap
             color="red"
             :content="article_review_count"
-            v-if="article_review_count !== '0'"
+            v-if="article_review_count !== 0"
             class="mr-5"
             blink
             ><v-chip
@@ -52,13 +52,13 @@
         <v-list>
           <v-list-item link to="/change_password">
             <v-list-item-title>
-              <v-icon class="mr-2" color="grey">vpn_key</v-icon>
+              <v-icon left color="grey">vpn_key</v-icon>
               {{ $t("nav.change_password") }}
             </v-list-item-title>
           </v-list-item>
           <v-list-item @click="logout()">
             <v-list-item-title>
-              <v-icon class="mr-2" color="grey">power_settings_new</v-icon>
+              <v-icon left color="grey">power_settings_new</v-icon>
               {{ $t("actions.logout") }}
             </v-list-item-title>
           </v-list-item>

@@ -1,6 +1,11 @@
 <template>
   <v-layout>
-    <ValidationProvider :name="$t('nav.labels')" style="width:748px;" :rules="`${req ? 'required' : ''}`" v-if="mode==='one'">
+    <ValidationProvider
+      :name="$t('nav.labels')"
+      style="width:748px;"
+      :rules="`${req ? 'required' : ''}`"
+      v-if="mode === 'one'"
+    >
       <v-select
         :error-messages="errors"
         slot-scope="{ errors }"
@@ -14,38 +19,46 @@
         outlined
         dense
         prepend-icon="label"
-        placeholder=" ">
+        placeholder=" "
+      >
       </v-select>
     </ValidationProvider>
     <v-flex v-else>
-      <strong>Selected {{ $t('nav.labels') }}*</strong>
+      <strong>Selected {{ $t("nav.labels") }}*</strong>
       <v-col>
         <v-expansion-panels>
           <v-expansion-panel :disabled="labels.length == 0">
             <v-expansion-panel-header>
-              <small>Selected Items: {{selected.length}}</small><br/>
-              <span
-                v-if="labels.length == 0 && !loading"
-                class="error--text">{{ $t('system_notes.select_type') }}<br/>
+              <small>Selected Items: {{ selected.length }}</small
+              ><br />
+              <span v-if="labels.length == 0 && !loading" class="error--text"
+                >{{ $t("system_notes.select_type") }}<br />
               </span>
-              <span
-                v-if="loading"
-                class="error--text"><v-progress-circular indeterminate color="info" dense></v-progress-circular><br/>
+              <span v-if="loading" class="error--text"
+                ><v-progress-circular
+                  indeterminate
+                  color="info"
+                  dense
+                ></v-progress-circular
+                ><br />
               </span>
               <span
                 v-if="selected.length == 0 && labels.length > 0"
-                class="error--text">{{$t('errors.required')}}: {{  $t('nav.labels') }}
+                class="error--text"
+                >{{ $t("errors.required") }}: {{ $t("nav.labels") }}
               </span>
             </v-expansion-panel-header>
             <v-row class="ma-1">
               <span v-for="label in selected" :key="label.id">
                 <v-chip
-                  small chip
+                  small
+                  chip
                   close
                   class="ma-1"
                   @click:close="remove(label)"
                   color="info"
-                  outlined>{{label.name}}
+                  outlined
+                  >{{ label.name }}
                 </v-chip>
               </span>
             </v-row>
@@ -60,14 +73,16 @@
                 hide-default-footer
                 item-key="id"
                 show-select
-                class="elevation-1 mt-1">
+                class="elevation-1 mt-1"
+              >
               </v-data-table>
               <v-pagination
                 v-if="labels.length > 0"
                 v-model="page"
                 :length="countPage"
                 :total-visible="7"
-                small>
+                small
+              >
               </v-pagination>
             </v-expansion-panel-content>
           </v-expansion-panel>
@@ -77,37 +92,37 @@
   </v-layout>
 </template>
 <script>
-import { ValidationProvider } from "vee-validate"
-import api from '@/api/apis'
+import { ValidationProvider } from "vee-validate";
+import api from "@/api/apis";
 export default {
   components: {
-    ValidationProvider
+    ValidationProvider,
   },
   props: {
     type: {
-      default: 'select'
+      default: "select",
     },
     labelFilter: {
-      default: false
+      default: false,
     },
     websiteFilter: {
-      default: false
+      default: false,
     },
     req: {
-      default: false
+      default: false,
     },
     label: {
-      default: ''
+      default: "",
     },
     mode: {
-      default: 'one'
-    }
+      default: "one",
+    },
   },
   data() {
     return {
       labels: [],
       mylabel: this.label,
-      elLabel: this.$t('nav.labels'),
+      elLabel: this.$t("nav.labels"),
       loading: false,
       selected: [],
       limit: 20,
@@ -115,84 +130,89 @@ export default {
       countPage: 0,
       count: 0,
       page: 1,
-      search: '',
+      search: "",
       headers: [
         {
           sortable: false,
-          text: this.$t('nav.labels'),
-          value: 'name'
-        }]
-    }
+          text: this.$t("nav.labels"),
+          value: "name",
+        },
+      ],
+    };
   },
   watch: {
     label() {
-      this.mylabel = this.label
+      this.mylabel = this.label;
     },
     mylabel(newObj) {
       if (newObj !== undefined) {
-        this.$emit('label-select-one', newObj)
+        this.$emit("label-select-one", newObj);
       }
     },
     labelFilter(newObj) {
-      this.labels = []
-      this.selected = []
-      if (newObj != '') {
-        this.loading = true
-        this.getFilteredLabels(newObj)
+      this.labels = [];
+      this.selected = [];
+      if (newObj != "") {
+        this.loading = true;
+        this.getFilteredLabels(newObj);
       }
     },
     selected(newObj) {
       if (newObj != []) {
-        this.$emit('label-select-multiple', newObj)
+        this.$emit("label-select-multiple", newObj);
       }
     },
     page(newObj) {
       if (newObj !== this.newObj) {
-        this.newObj = newObj
-        let offset = parseInt(this.limit) * (parseInt(newObj) - 1)
-        this.offset = offset
-        this.getFilteredLabels(this.labelFilter)
+        this.newObj = newObj;
+        let offset = parseInt(this.limit) * (parseInt(newObj) - 1);
+        this.offset = offset;
+        this.getFilteredLabels(this.labelFilter);
       }
-      this.changePage = true
+      this.changePage = true;
     },
     limit() {
-      this.loading = true
-      this.getPage()
-    }
+      this.loading = true;
+      this.getPage();
+    },
   },
   created() {
     if (this.req) {
-      this.elLabel = `${this.$t('nav.labels')}*`
+      this.elLabel = `${this.$t("nav.labels")}*`;
     }
-    if (this.type == 'set') {
+    if (this.type == "set") {
       if (this.labelFilter) {
-        this.getFilteredLabels(this.labelFilter, 'created')
+        this.getFilteredLabels(this.labelFilter, "created");
       }
     }
   },
   methods: {
-    remove (item) {
-      let index = this.selected.findIndex(element => element.id === item.id)
-      this.selected.splice(index, 1)
+    remove(item) {
+      let index = this.selected.findIndex((element) => element.id === item.id);
+      this.selected.splice(index, 1);
     },
-    async getFilteredLabels(labelFilter='', mode='') {
-      this.loading = true
-      await this.$http.get(`${api.labels}?limit=${this.limit}&offset=${this.offset}&types=${labelFilter}&active=true`).then(response => {
-        this.labels = response.results
-        this.count = response.count
-        this.getPage()
-        if (mode == 'created') {
-          let _this = this
-          setTimeout(function() {
-            _this.selected = _this.label
-          }, 100)
-        }
-        this.loading = false
-      })
+    async getFilteredLabels(labelFilter = "", mode = "") {
+      this.loading = true;
+      await this.$http
+        .get(
+          `${api.labels}?limit=${this.limit}&offset=${this.offset}&types=${labelFilter}&active=true`
+        )
+        .then((response) => {
+          this.labels = response.results;
+          this.count = response.count;
+          this.getPage();
+          if (mode == "created") {
+            let _this = this;
+            setTimeout(function() {
+              _this.selected = _this.label;
+            }, 100);
+          }
+          this.loading = false;
+        });
     },
     getPage() {
-      this.countPage = Math.ceil(this.count / this.limit)
-    }
-  }
-}
+      this.countPage = Math.ceil(this.count / this.limit);
+    },
+  },
+};
 </script>
