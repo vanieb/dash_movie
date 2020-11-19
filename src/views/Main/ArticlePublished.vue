@@ -341,7 +341,7 @@
                         @click="deleteArticle(item.slug, true, $event)"
                       >
                         <v-list-item-title>
-                          <v-icon class="mr-2" color="orange">warning</v-icon>
+                          <v-icon left color="orange">warning</v-icon>
                           {{ $t("system_msg.confirm_delete") }}
                           <strong>{{ item.title }}</strong>
                         </v-list-item-title>
@@ -387,7 +387,7 @@ import { ValidationObserver, ValidationProvider } from "vee-validate";
 import Website from "../../components/SelectWebsite.vue";
 
 export default {
-  name: "Article",
+  name: "ArticlePublished",
   components: {
     Pagination,
     SnackBar,
