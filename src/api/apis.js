@@ -1,15 +1,15 @@
-'use strict'
+"use strict";
 
 // import env from '.env.development'
 // const env = process.env.NODE_ENV === 'development'
 //     ? config.dev.env
 //     : config.build.env
-const host =  process.env.VUE_APP_API_URL
+const host = process.env.VUE_APP_API_URL;
 
-const apps = `${host}apps/v1/`
-const auth = `${host}authentication/v1/`
-const websites = `${host}websites/v1/`
-const accounts = `${host}accounts/v1/`
+const apps = `${host}apps/v1/`;
+const auth = `${host}authentication/v1/`;
+const websites = `${host}websites/v1/`;
+const accounts = `${host}accounts/v1/`;
 
 export default {
   count: `${host}dashboard/header/counts/`,
@@ -25,7 +25,7 @@ export default {
   upload: `${apps}upload/`,
   download_link: `${apps}download/`,
   websites: `${websites}`,
-  webapps:  `${websites}apps/`,
+  webapps: `${websites}apps/`,
   articles: `${host}articles/v1/`,
   keywords: `${host}articles/v1/keywords/`,
   friendship_link: `${websites}friendship-links/`,
@@ -34,5 +34,5 @@ export default {
   labels: `${websites}labels/`,
   import_logs: `${host}articles/v1/import/`,
   staff: `${accounts}staff/`,
-  members: `${accounts}members/`
-}
+  members: `${accounts}members/`,
+};
