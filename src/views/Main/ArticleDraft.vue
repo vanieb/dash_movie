@@ -8,7 +8,7 @@
           to="/articles/add"
           v-if="$root.permissions.includes('create_article')"
         >
-          <v-icon class="mr-3">post_add</v-icon> &nbsp;{{ $t("actions.add") }}
+          <v-icon left>post_add</v-icon> &nbsp;{{ $t("actions.add") }}
         </v-btn>
       </v-layout>
       <v-card>
@@ -142,7 +142,7 @@
               <td class="text-center">
                 <v-menu
                   offset-y
-                  v-if="$root.permissions.includes('delete_article')"
+                  v-if="$root.permissions.includes('change_article_details')"
                 >
                   <template v-slot:activator="{ on }">
                     <v-chip v-on="on" class="success lighten-1 small">
@@ -153,7 +153,7 @@
                   <v-list>
                     <v-list-item @click="publishArticle(item, true, $event)">
                       <v-list-item-title>
-                        <v-icon class="mr-2" color="orange">warning</v-icon>
+                        <v-icon left color="orange">warning</v-icon>
                         {{ $t("system_msg.confirm_publish") }}
                         <strong>{{ item.title }}</strong>
                       </v-list-item-title>
@@ -195,7 +195,7 @@
                         @click="deleteArticle(item.slug, true, $event)"
                       >
                         <v-list-item-title>
-                          <v-icon class="mr-2" color="orange">warning</v-icon>
+                          <v-icon left color="orange">warning</v-icon>
                           {{ $t("system_msg.confirm_delete") }}
                           <strong>{{ item.title }}</strong>
                         </v-list-item-title>
@@ -239,7 +239,7 @@ import { debounce } from "lodash";
 import Website from "../../components/SelectWebsite.vue";
 
 export default {
-  name: "Article",
+  name: "ArticleDraft",
   components: {
     Pagination,
     SnackBar,
@@ -247,10 +247,6 @@ export default {
   },
   data() {
     return {
-      name: "",
-      href: "",
-      uploadPercentage: 0,
-      showForm: false,
       query: {
         website: 1,
       },
@@ -262,7 +258,6 @@ export default {
       website: 1,
       articleApi: api.articles,
       loading: true,
-      submitting: false,
       date_menu: false,
       confirmDialog: false,
       snackbar: {
