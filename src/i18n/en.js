@@ -15,6 +15,7 @@ export default {
     icon: "Icon",
     code: "Code",
     selected: "Selected",
+    update_details: "Update Details",
     identity: "Identity",
     fake_user: "Fake User",
     real_user: "Real User",
