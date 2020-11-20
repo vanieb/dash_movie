@@ -14,7 +14,10 @@ export default {
     file: '文件',
     icon: '图标',
     code: '码',
-    selected: '已选'
+    selected: '已选',
+    identity: '身份',
+    fake_user: '假用户',
+    real_user: '真实用户'
   },
   actions: {
     add: '添加',

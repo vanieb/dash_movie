@@ -14,7 +14,10 @@ export default {
     file: 'File',
     icon: 'Icon',
     code: 'Code',
-    selected: 'Selected'
+    selected: 'Selected',
+    identity: 'Identity',
+    fake_user: 'Fake User',
+    real_user: 'Real User'
   },
   actions: {
     add: 'Add',
