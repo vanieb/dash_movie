@@ -2,7 +2,7 @@
   <v-layout wrap>
     <v-container>
       <v-layout>
-        <div d-inline-block>
+        <!-- <div d-inline-block>
           <v-layout justify-start>
             <v-btn
               color="primary"
@@ -15,7 +15,7 @@
               }}
             </v-btn>
           </v-layout>
-        </div>
+        </div> -->
         <v-layout justify-end>
           <!-- Installer Upload -->
           <!-- <v-dialog v-model="uploadInstallerDialog" persistent max-width="600">
@@ -291,12 +291,31 @@
                   <v-icon>touch_app</v-icon>
                 </v-btn>
               </td>
-              <td class="align-center" width="20%">{{ item.name }}</td>
+              <td class="align-center" width="20%">
+                <strong>{{ item.name }}</strong>
+                <br />
+                <v-icon left small color="success lighten-1"
+                  >view_compact</v-icon
+                >
+                <strong class="success--text">{{
+                  $t("status.published")
+                }}</strong>
+                <br />
+                <v-icon left small color="indigo">person</v-icon>
+                <span>{{ item.created_by || "-" }}</span> <br />
+                <v-icon left small color="indigo">event</v-icon>
+                <span>{{
+                  item.created_at | moment("YYYY-MM-DD HH:mm:ss")
+                }}</span>
+              </td>
               <td class="align-center justify-center" width="10%">
                 <span>{{ item.website ? item.website.name : "-" }}<br /></span>
               </td>
-              <td width="30%">
-                {{ item.created_at | moment("YYYY-MM-DD HH:mm:ss") }}
+              <td width="15%" class="align-center justify-center">
+                {{ item.updated_by || "-" }} <br />
+                <span class="grey--text">{{
+                  item.updated_at | moment("YYYY-MM-DD HH:mm:ss")
+                }}</span>
               </td>
               <td
                 width="30%"
@@ -372,7 +391,7 @@ import axios from "axios";
 import VueCookie from "vue-cookie";
 
 export default {
-  name: "Apps",
+  name: "AppsPublished",
   components: {
     Pagination,
     SnackBar,
@@ -425,7 +444,7 @@ export default {
           sortable: false,
           text: this.$t("common.name"),
           value: "name",
-          width: "40%",
+          width: "50%",
         },
         {
           sortable: false,
@@ -434,8 +453,8 @@ export default {
         },
         {
           sortable: false,
-          text: this.$t("common.created_at"),
-          value: "created_at",
+          text: this.$t("common.update_details"),
+          value: "updated_at",
           width: "20%",
         },
         {
