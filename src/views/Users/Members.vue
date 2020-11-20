@@ -123,6 +123,26 @@
               <v-select
                 item-name="text"
                 item-value="value"
+                :items="memberStatusOptions"
+                :label="`${$t('nav.members')}-${$t('common.identity')}`"
+                v-model="is_fake_user"
+                hide-details="true"
+                placeholder=" "
+                outlined
+                dense
+              >
+                <template slot="selection" slot-scope="data">
+                  <span class="ml-3">{{ data.item.text }}</span>
+                </template>
+                <template slot="item" slot-scope="data">
+                  <span class="ml-3">{{ data.item.text }}</span>
+                </template>
+              </v-select>
+            </div>
+            <div style="width:155px;" class="mr-2">
+              <v-select
+                item-name="text"
+                item-value="value"
                 :items="loginStatusOptions"
                 :label="`${$t('staff.login_status')}`"
                 v-model="login_status"
@@ -230,9 +250,24 @@
                 >
                 <v-icon left small v-else>fiber_manual_record</v-icon>
               </td>
-              <td>{{ item.user.username }}</td>
+              <td>
+                <strong>{{ item.user.username }}</strong>
+                <br />
+                <v-chip
+                  class="success lighten-1"
+                  x-small
+                  dark
+                  v-if="!item.is_fake_user"
+                  ><v-icon x-small left>how_to_reg</v-icon
+                  >{{ $t("common.real_user") }}</v-chip
+                >
+                <v-chip class="error lighten-1" x-small dark v-else
+                  ><v-icon x-small left>highlight_off</v-icon
+                  >{{ $t("common.fake_user") }}</v-chip
+                >
+              </td>
               <td
-                class="align-center justify-center layout px-0"
+                class="align-center justify-center"
                 v-if="$root.permissions.includes('change_member_status')"
               >
                 <v-switch
@@ -342,6 +377,7 @@ export default {
       loading: true,
       status: "",
       login_status: "",
+      is_fake_user: "",
       memberApi: api.members,
       querySet: [],
       query: {},
@@ -354,6 +390,10 @@ export default {
       statusOptions: [
         { text: this.$t("status.enabled"), value: 1 },
         { text: this.$t("status.disabled"), value: 0 },
+      ],
+      memberStatusOptions: [
+        { text: this.$t("common.fake_user"), value: true },
+        { text: this.$t("common.real_user"), value: false },
       ],
       loginStatusOptions: [
         { text: this.$t("staff.online"), value: true },
@@ -409,6 +449,10 @@ export default {
     },
     login_status(newObj) {
       this.query.login_status = newObj;
+      this.$refs.pulling.submit();
+    },
+    is_fake_user(newObj) {
+      this.query.is_fake_user = newObj;
       this.$refs.pulling.submit();
     },
     status(newObj) {
@@ -489,6 +533,13 @@ export default {
         this.$route.query.login_status === "true" ||
         this.$route.query.login_status === "false"
           ? JSON.parse(this.$route.query.login_status)
+          : "";
+      this.is_fake_user =
+        this.$route.query.is_fake_user === true ||
+        this.$route.query.is_fake_user === false ||
+        this.$route.query.is_fake_user === "true" ||
+        this.$route.query.is_fake_user === "false"
+          ? JSON.parse(this.$route.query.is_fake_user)
           : "";
       this.query = Object.assign({}, this.$route.query);
     },
@@ -631,6 +682,8 @@ export default {
     clearAll() {
       this.created_at = ["", ""];
       this.status = "";
+      this.login_status = "";
+      this.is_fake_user = "";
       this.query = {};
       this.$nextTick(() => {
         this.$refs.pulling.submit();
