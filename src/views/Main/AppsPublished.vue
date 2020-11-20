@@ -293,9 +293,13 @@
               </td>
               <td class="align-center" width="20%">
                 <strong>{{ item.name }}</strong>
-                <br/>
-                <v-icon left small color="success lighten-1">view_compact</v-icon>
-                <strong class="success--text">{{ $t("status.published") }}</strong>
+                <br />
+                <v-icon left small color="success lighten-1"
+                  >view_compact</v-icon
+                >
+                <strong class="success--text">{{
+                  $t("status.published")
+                }}</strong>
                 <br />
                 <v-icon left small color="indigo">person</v-icon>
                 <span>{{ item.created_by || "-" }}</span> <br />
