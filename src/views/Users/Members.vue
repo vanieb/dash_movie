@@ -377,7 +377,10 @@ export default {
       loading: true,
       status: "",
       login_status: "",
+<<<<<<< HEAD
       is_fake_user: "",
+=======
+>>>>>>> 48d1af06a616b44a21849c58a196ef89c2d8b0ca
       memberApi: api.members,
       querySet: [],
       query: {},
@@ -391,10 +394,13 @@ export default {
         { text: this.$t("status.enabled"), value: 1 },
         { text: this.$t("status.disabled"), value: 0 },
       ],
+<<<<<<< HEAD
       memberStatusOptions: [
         { text: this.$t("common.fake_user"), value: true },
         { text: this.$t("common.real_user"), value: false },
       ],
+=======
+>>>>>>> 48d1af06a616b44a21849c58a196ef89c2d8b0ca
       loginStatusOptions: [
         { text: this.$t("staff.online"), value: true },
         { text: this.$t("staff.offline"), value: false },
@@ -450,10 +456,13 @@ export default {
     login_status(newObj) {
       this.query.login_status = newObj;
       this.$refs.pulling.submit();
+<<<<<<< HEAD
     },
     is_fake_user(newObj) {
       this.query.is_fake_user = newObj;
       this.$refs.pulling.submit();
+=======
+>>>>>>> 48d1af06a616b44a21849c58a196ef89c2d8b0ca
     },
     status(newObj) {
       this.query.status = newObj;
@@ -534,6 +543,7 @@ export default {
         this.$route.query.login_status === "false"
           ? JSON.parse(this.$route.query.login_status)
           : "";
+<<<<<<< HEAD
       this.is_fake_user =
         this.$route.query.is_fake_user === true ||
         this.$route.query.is_fake_user === false ||
@@ -541,6 +551,8 @@ export default {
         this.$route.query.is_fake_user === "false"
           ? JSON.parse(this.$route.query.is_fake_user)
           : "";
+=======
+>>>>>>> 48d1af06a616b44a21849c58a196ef89c2d8b0ca
       this.query = Object.assign({}, this.$route.query);
     },
     async saveMember() {
@@ -682,8 +694,11 @@ export default {
     clearAll() {
       this.created_at = ["", ""];
       this.status = "";
+<<<<<<< HEAD
       this.login_status = "";
       this.is_fake_user = "";
+=======
+>>>>>>> 48d1af06a616b44a21849c58a196ef89c2d8b0ca
       this.query = {};
       this.$nextTick(() => {
         this.$refs.pulling.submit();

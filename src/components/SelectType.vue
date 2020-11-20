@@ -1,136 +1,150 @@
 <template>
-    <ValidationProvider :name="$t('apps.type')" style="width:338px;" :rules="`${req ? 'required' : ''}`" >
-      <v-select
-        v-if="mode==='one'"
-        :error-messages="errors"
-        slot-scope="{ errors }"
-        item-value="code"
-        item-text="name"
-        :items="app_types"
-        v-model="mytypes"
-        :disabled="!disabled"
-        :hide-details="req ? false : true"
-        :label="elLabel"
-        :outlined="elementType != 'modal' ? true : false"
-        dense
-        clearable
-        :menu-props="{'maxHeight': '304px', 'z-index': '1100'}"
-        :prepend-icon="type === 'set' && elementType !== 'modal' ? 'new_releases' : '' "
-        placeholder=" ">
-      </v-select>
-      <v-select v-else
-        :error-messages="errors"
-        slot-scope= {errors}
-        item-value="id"
-        item-text="name"
-        :items="app_types"
-        v-model="mytypes"
-        :value="mytypes.id"
-        :disabled="!disabled || loading"
-        :label="elLabel"
-        :outlined="elementType != 'modal' ? true : false"
-        dense
-        :menu-props="{'maxHeight': '150px', 'z-index': '1100'}"
-        attach
-        chips
-        clearable
-        multiple
-        :loading="loading"
-        loader-height="5"
-        :prepend-icon="type === 'set' && elementType !== 'modal' ? 'new_releases' : '' "
-        placeholder=" ">
-        <template v-slot:selection="{ attrs, item, select, selected }">
-          <v-chip
-            small chip
-            v-bind="attrs"
-            :input-value="selected"
-            close
-            @click="select"
-            @click:close="remove(item)"
-            >{{ item.name }}
-          </v-chip>
-        </template>
-      </v-select>
-    </ValidationProvider>
+  <ValidationProvider
+    :name="$t('apps.type')"
+    style="width:338px;"
+    :rules="`${req ? 'required' : ''}`"
+  >
+    <v-select
+      v-if="mode === 'one'"
+      :error-messages="errors"
+      slot-scope="{ errors }"
+      item-value="code"
+      item-text="name"
+      :items="app_types"
+      v-model="mytypes"
+      :disabled="!disabled"
+      :hide-details="req ? false : true"
+      :label="elLabel"
+      :outlined="elementType != 'modal' ? true : false"
+      dense
+      clearable
+      :menu-props="{ maxHeight: '304px', 'z-index': '1100' }"
+      :prepend-icon="
+        type === 'set' && elementType !== 'modal' ? 'new_releases' : ''
+      "
+      placeholder=" "
+    >
+    </v-select>
+    <v-select
+      v-else
+      :error-messages="errors"
+      slot-scope="{ errors }"
+      item-value="id"
+      item-text="name"
+      :items="app_types"
+      v-model="mytypes"
+      :value="mytypes.id"
+      :disabled="!disabled || loading"
+      :label="elLabel"
+      :outlined="elementType != 'modal' ? true : false"
+      dense
+      :menu-props="{ maxHeight: '150px', 'z-index': '1100' }"
+      attach
+      chips
+      clearable
+      multiple
+      :loading="loading"
+      loader-height="5"
+      :prepend-icon="
+        type === 'set' && elementType !== 'modal' ? 'new_releases' : ''
+      "
+      placeholder=" "
+    >
+      <template v-slot:selection="{ attrs, item, select, selected }">
+        <v-chip
+          small
+          chip
+          v-bind="attrs"
+          :input-value="selected"
+          close
+          @click="select"
+          @click:close="remove(item)"
+          >{{ item.name }}
+        </v-chip>
+      </template>
+    </v-select>
+  </ValidationProvider>
 </template>
 <script>
-import { ValidationProvider } from "vee-validate"
-import api from '@/api/apis'
+import { ValidationProvider } from "vee-validate";
+import api from "@/api/apis";
 export default {
   components: {
-    ValidationProvider
+    ValidationProvider,
   },
   props: {
     type: {
-      default: 'select'
+      default: "select",
     },
     req: {
-      default: false
+      default: false,
     },
     types: {
-      default: ''
+      default: "",
     },
     mode: {
-      default: 'one'
+      default: "one",
     },
     disabled: {
-      default: true
+      default: true,
     },
     typeFilter: {
-      default: true
+      default: true,
     },
     elementType: {
-      default: ''
-    }
+      default: "",
+    },
   },
   data() {
     return {
       app_types: [],
       mytypes: this.types,
-      elLabel: this.$t('apps.type'),
-      rules: '',
-      loading: true
-    }
+      elLabel: this.$t("apps.type"),
+      rules: "",
+      loading: true,
+    };
   },
   watch: {
     types() {
-      this.mytypes = this.types
+      this.mytypes = this.types;
     },
     mytypes(newObj) {
-      this.$emit('type-select-one', newObj)
-      this.$emit('type-select-multiple', this.mytypes, this.index)
+      this.$emit("type-select-one", newObj);
+      this.$emit("type-select-multiple", this.mytypes, this.index);
     },
     typeFilter(newObj) {
-      this.getFilteredAppTypes(newObj)
-    }
+      this.getFilteredAppTypes(newObj);
+    },
   },
   created() {
     if (this.req) {
-      this.elLabel = `${this.$t('apps.type')}*`
+      this.elLabel = `${this.$t("apps.type")}*`;
     }
     if (this.typeFilter) {
-      this.getFilteredAppTypes(this.typeFilter)
+      this.getFilteredAppTypes(this.typeFilter);
     }
   },
   methods: {
-    remove (item) {
-      let index = this.mytypes.findIndex(element => element.id === item.id)
-      this.mytypes.splice(index, 1)
+    remove(item) {
+      let index = this.mytypes.findIndex((element) => element.id === item.id);
+      this.mytypes.splice(index, 1);
     },
-   getFilteredAppTypes(typeFilter='') {
-      this.$http.get(`${api.types}?limit=400&offset=0&website=${typeFilter}`).then(response => {
-        this.app_types = response.results
-        this.loading = true
-        let _this = this
-        if (this.req && this.type == 'filter') {
-          this.mytypes = this.app_types[0].code
-        }
-        setTimeout(function() {
-          _this.mytypes = _this.types
-        }, 100)
-        this.loading = false
-      })
-    }
-  }
-}
+    getFilteredAppTypes(typeFilter = "") {
+      this.$http
+        .get(`${api.types}?limit=400&offset=0&website=${typeFilter}`)
+        .then((response) => {
+          this.app_types = response.results;
+          this.loading = true;
+          let _this = this;
+          if (this.req && this.type == "filter") {
+            this.mytypes = this.app_types[0].code;
+          }
+          setTimeout(function() {
+            _this.mytypes = _this.types;
+          }, 100);
+          this.loading = false;
+        });
+    },
+  },
+};
 </script>
