@@ -81,17 +81,17 @@ export default new Router({
         title: i18n.t("nav.apps_draft"),
       },
     },
-    // {
-    //   path: "/apps_published",
-    //   name: "AppsPublished",
-    //   component: function(resolve) {
-    //     require(["./views/Main/AppsPublished.vue"], resolve);
-    //   },
-    //   meta: {
-    //     icon: "publish",
-    //     title: i18n.t("nav.apps_published"),
-    //   },
-    // },
+    {
+      path: "/apps_published",
+      name: "AppsPublished",
+      component: function(resolve) {
+        require(["./views/Main/AppsPublished.vue"], resolve);
+      },
+      meta: {
+        icon: "publish",
+        title: i18n.t("nav.apps_published"),
+      },
+    },
     {
       path: "/app_settings",
       name: "AppSettings",

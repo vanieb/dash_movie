@@ -2,7 +2,7 @@
   <v-layout wrap>
     <v-container>
       <v-layout>
-        <div d-inline-block>
+        <!-- <div d-inline-block>
           <v-layout justify-start>
             <v-btn
               color="primary"
@@ -15,7 +15,7 @@
               }}
             </v-btn>
           </v-layout>
-        </div>
+        </div> -->
         <v-layout justify-end>
           <!-- Installer Upload -->
           <!-- <v-dialog v-model="uploadInstallerDialog" persistent max-width="600">
@@ -372,7 +372,7 @@ import axios from "axios";
 import VueCookie from "vue-cookie";
 
 export default {
-  name: "Apps",
+  name: "AppsPublished",
   components: {
     Pagination,
     SnackBar,
