@@ -9,13 +9,15 @@ export default {
     status: "Status",
     created_at: "Created On",
     updated_at: "Updated On",
-    update_details: "Update Details",
     action: "Action",
     remarks: "Remarks",
     file: "File",
     icon: "Icon",
     code: "Code",
     selected: "Selected",
+    identity: "Identity",
+    fake_user: "Fake User",
+    real_user: "Real User",
   },
   actions: {
     add: "Add",
@@ -49,7 +51,7 @@ export default {
     review: "Review",
     declined: "Declined",
     published: "Published",
-    approved: "Approved"
+    approved: "Approved",
   },
   errors: {
     required: "Required",
