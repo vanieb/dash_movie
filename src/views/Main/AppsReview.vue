@@ -2,20 +2,73 @@
   <v-layout wrap>
     <v-container>
       <v-layout>
-        <div d-inline-block>
-          <v-layout justify-start>
-            <v-btn
-              color="primary"
-              dark
-              to="/apps/add"
-              v-if="$root.permissions.includes('create_app')"
-            >
-              <v-icon left>library_add</v-icon> &nbsp;{{
-                $t("actions.add")
-              }}
-            </v-btn>
-          </v-layout>
-        </div>
+        <validation-observer ref="form">
+          <v-dialog v-model="showUpdateStatusDialog" persistent max-width="600">
+            <v-card>
+              <v-card-title v-if="status === 'approved'">
+                <v-icon left color="success">check</v-icon>
+                {{ $t("actions.approve") }} - {{ $t("nav.apps") }}
+              </v-card-title>
+              <v-card-title v-else-if="status === 'cancelled'">
+                <v-icon left color="error">close</v-icon>
+                {{ $t("actions.decline") }} - {{ $t("nav.apps") }}
+              </v-card-title>
+              <v-card-title v-else>
+                <v-icon left color="grey">edit</v-icon>
+                {{ $t("actions.update") }} - {{ $t("common.remarks") }}
+              </v-card-title>
+              <v-card-text>
+                <div class="black--text">
+                  <strong>{{ dialog.title }}</strong>
+                </div>
+                <v-icon left small color="indigo">person</v-icon>
+                <span>{{ dialog.created_by }}</span> <br />
+                <v-icon left small color="indigo">event</v-icon>
+                <span>{{
+                  dialog.created_at | moment("YYYY-MM-DD HH:mm:ss")
+                }}</span>
+              </v-card-text>
+              <v-card-text>
+                <small v-if="status === 'cancelled'"
+                  >{{ $t("system_notes.decline_memo") }}
+                </small>
+                <validation-provider
+                  :rules="{
+                    max: 50,
+                    required: status === 'cancelled' ? true : false,
+                  }"
+                  :name="$t('common.remarks')"
+                >
+                  <v-textarea
+                    outlined
+                    :error-messages="errors"
+                    :label="
+                      status === 'approved'
+                        ? `${$t('common.remarks')}`
+                        : `${$t('common.remarks')}*`
+                    "
+                    slot-scope="{ errors }"
+                    v-model="memo"
+                    placeholder=""
+                    :counter="50"
+                  >
+                  </v-textarea>
+                </validation-provider>
+                <small v-if="status !== 'approved'" class="error--text"
+                  >* Required</small
+                >
+              </v-card-text>
+              <v-card-actions class="justify-end">
+                <v-btn color="grey lighten-1" @click="closeUpdateStatusDialog()"
+                  >{{ $t("actions.cancel") }}
+                </v-btn>
+                <v-btn color="primary" dark @click="updateStatus(dialog)">
+                  <span>{{ $t("actions.submit") }}</span>
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </validation-observer>
       </v-layout>
       <v-layout justify-start class="mt-3">
         <div style="width:200px !important;" class="mr-2 mb-2">
@@ -125,9 +178,11 @@
               </td>
               <td class="align-center" width="20%">
                 <strong>{{ item.name }}</strong>
-                <br/>
-                <v-icon left small color="grey lighten-1">view_compact</v-icon>
-                <strong class="grey--text">{{ $t("status.draft") }}</strong>
+                <br />
+                <v-icon left small color="warning lighten-1"
+                  >view_compact</v-icon
+                >
+                <strong class="warning--text">{{ $t("status.review") }}</strong>
                 <br />
                 <v-icon left small color="indigo">person</v-icon>
                 <span>{{ item.created_by }}</span> <br />
@@ -136,30 +191,25 @@
                   item.created_at | moment("YYYY-MM-DD HH:mm:ss")
                 }}</span>
               </td>
-              <td class="align-center text-center" width="10%">
+              <td class="text-center" width="10%">
                 <span>{{ item.website ? item.website.name : "-" }}<br /></span>
               </td>
               <td class="text-center">
-                <v-menu
-                  offset-y
-                  v-if="$root.permissions.includes('change_app')"
+                <v-chip
+                  @click="openStatusDialog(item, 'approved', item.memo)"
+                  class="success lighten-1 mb-1 small"
                 >
-                  <template v-slot:activator="{ on }">
-                    <v-chip v-on="on" class="success lighten-1 small">
-                      <v-icon dark left small>publish</v-icon>
-                      {{ $t("actions.publish") }}
-                    </v-chip>
-                  </template>
-                  <v-list>
-                    <v-list-item @click="publishApp(item, true, $event)">
-                      <v-list-item-title>
-                        <v-icon left color="orange">warning</v-icon>
-                        {{ $t("system_msg.confirm_publish") }}
-                        <strong>{{ item.name }}</strong>
-                      </v-list-item-title>
-                    </v-list-item>
-                  </v-list>
-                </v-menu>
+                  <v-icon dark left x-small dense>check</v-icon>
+                  {{ $t("actions.approve") }}
+                </v-chip>
+                <v-spacer></v-spacer>
+                <v-chip
+                  @click="openStatusDialog(item, 'cancelled', item.memo)"
+                  class="error"
+                >
+                  <v-icon dark left x-small>close</v-icon>
+                  {{ $t("actions.decline") }}
+                </v-chip>
               </td>
               <td width="15%" class="align-center justify-center">
                 {{ item.updated_by || "-" }} <br />
@@ -167,43 +217,20 @@
                   item.updated_at | moment("YYYY-MM-DD HH:mm:ss")
                 }}</span>
               </td>
-              <td
-                width="10%"
-                class="text-center"
-                v-if="
-                  $root.permissions.includes('change_app') ||
-                    $root.permissions.includes('delete_app')
-                "
-              >
-                <v-layout>
-                  <v-btn
-                    class="mr-2"
-                    icon
-                    :to="`/apps/${item.slug}/edit`"
-                    v-if="$root.permissions.includes('change_app')"
-                  >
-                    <v-icon small>edit</v-icon>
-                  </v-btn>
-                  <v-menu
-                    offset-y
-                    v-if="$root.permissions.includes('delete_app')"
-                  >
-                    <template v-slot:activator="{ on }">
-                      <v-icon color="red" small v-on="on" icon>delete</v-icon>
-                    </template>
-                    <v-list dark>
-                      <v-list-item @click="deleteApp(item.slug, true, $event)">
-                        <v-list-item-title>
-                          <v-icon left color="orange">warning</v-icon>
-                          {{ $t("system_msg.confirm_delete") }}
-                          <strong>{{ item.name }}</strong>
-                        </v-list-item-title>
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
-                </v-layout>
+              <td class="text-center" :key="item.id">
+                <v-chip
+                  class="primary lighten-1 mt-1"
+                  @click="openStatusDialog(item, 'memo', item.memo)"
+                  v-if="$root.permissions.includes('change_article_details')"
+                  dark
+                  small
+                >
+                  <v-icon x-small left>edit</v-icon>
+                  {{ $t("actions.update") }}
+                </v-chip>
+                <br />
+                {{ item.memo || "-" }}
               </td>
-              <td v-else>-</td>
             </tr>
           </tbody>
         </template>
@@ -216,7 +243,7 @@
       ref="pulling"
       @query-data="queryData"
       @query-param="queryParam"
-      :persistent-query="{ status: 'draft' }"
+      :persistent-query="{ status: 'review' }"
     >
     </pagination>
     <!-- SNACKBAR -->
@@ -235,14 +262,17 @@ import $ from "../../utils/util";
 import Pagination from "@/components/Pagination";
 import SnackBar from "@/components/SnackBar";
 import { debounce } from "lodash";
+import { ValidationObserver, ValidationProvider } from "vee-validate";
 import Website from "../../components/SelectWebsite.vue";
 import Types from "../../components/SelectType.vue";
 
 export default {
-  name: "AppsDraft",
+  name: "AppsReview",
   components: {
     Pagination,
     SnackBar,
+    ValidationObserver,
+    ValidationProvider,
     Website,
     Types,
   },
@@ -255,10 +285,14 @@ export default {
       querySet: [],
       today: date.max_today,
       created_at: ["", ""],
+      date_menu: false,
       website: 1,
       appsApi: api.apps,
       loading: true,
-      date_menu: false,
+      showUpdateStatusDialog: false,
+      dialog: {},
+      status: "",
+      memo: "",
       snackbar: {
         color: "",
         text: "",
@@ -280,13 +314,13 @@ export default {
           sortable: false,
           text: this.$t("nav.websites"),
           value: "website",
-          width: "10%",
           align: "center",
         },
         {
           sortable: false,
           text: this.$t("common.action"),
-          width: "15%",
+          value: "",
+          width: "20%",
           align: "center",
         },
         {
@@ -297,8 +331,10 @@ export default {
         },
         {
           sortable: false,
-          text: this.$t("common.action"),
-          width: "10%",
+          text: this.$t("common.remarks"),
+          value: "memo",
+          align: "center",
+          width: "20%",
         },
       ],
     };
@@ -357,7 +393,7 @@ export default {
       } else {
         return "";
       }
-    }
+    },
   },
   methods: {
     setQueryAll() {
@@ -382,6 +418,70 @@ export default {
     },
     queryParam(query) {
       this.query = Object.assign(this.query, query);
+    },
+    openStatusDialog(item, status = "", memo = "") {
+      this.dialog = item;
+      this.status = status;
+      this.memo = memo;
+      this.showUpdateStatusDialog = true;
+    },
+    async updateStatus(item) {
+      this.snackbar.show = false;
+      let website_query = this.query.website;
+      const isValid = await this.$refs.form.validate();
+      if (isValid) {
+        this.snackbar.show = false;
+        let statusResult;
+        if (this.status === "memo") {
+          statusResult = {
+            title: item.title,
+            memo: this.memo,
+          };
+        } else {
+          statusResult = {
+            status: this.status,
+            is_active: this.status == "approved" ? true : false,
+            title: item.title,
+            memo: this.memo,
+          };
+        }
+        this.$http.put(`${this.appsApi}${item.slug}/`, statusResult).then(
+          (response) => {
+            let action_text =
+              response.status === "approved"
+                ? this.$t("status.approved")
+                : this.$t("status.declined");
+            this.snackbar = {
+              color: "success",
+              show: true,
+              text:
+                this.status === "memo"
+                  ? `[${this.$t("actions.update")} ${this.$t(
+                      "common.remarks"
+                    )}]: ${this.$t("status.success")}`
+                  : `[${this.$t("nav.apps")}]: ${action_text}`,
+            };
+            this.closeUpdateStatusDialog();
+            if (this.status === "approved") {
+              this.$router.push("apps_published?website=1");
+            } else if (this.status === "cancelled") {
+              this.$router.push("apps?website=1");
+            } else {
+              this.$refs.pulling.rebase();
+            }
+          },
+          (error) => {
+            this.snackbar = {
+              color: "error",
+              show: true,
+              text: `${this.$t("system_msg.error")}: ${error}`,
+            };
+            this.$refs.pulling.rebase();
+            this.query.website = website_query;
+            this.submit();
+          }
+        );
+      }
     },
     typeSelectOne(val) {
       if (val) {
@@ -414,57 +514,10 @@ export default {
       this.created_at = ["", ""];
       this.dateRangeText = "";
     },
-    publishApp(item) {
-      let website_query = this.query.website;
-      this.snackbar.show = false;
-      let statusResult = {
-        status: "approved",
-        is_active: true,
-        title: item.title,
-      };
-      this.$http.put(`${this.appsApi}${item.slug}/`, statusResult).then(
-        () => {
-          this.snackbar = {
-            color: "success",
-            show: true,
-            text: `[${this.$t("nav.apps")}]: ${this.$t(
-              "status.published"
-            )}`,
-          };
-          this.$router.push(`/apps_published?website=${website_query}`);
-        },
-        (error) => {
-          this.snackbar = {
-            color: "error",
-            show: true,
-            text: `${this.$t("system_msg.error")}: ${error}`,
-          };
-          this.$refs.pulling.rebase();
-          this.query.website = website_query;
-          this.submit();
-        }
-      );
-    },
-    deleteApp(id) {
-      this.snackbar.show = false;
-      this.$http.delete(`${this.appsApi}${id}/`).then(
-        () => {
-          this.snackbar = {
-            color: "success",
-            show: true,
-            text: `${this.$t("actions.delete")}: ${this.$t("status.success")}`,
-          };
-          this.$refs.pulling.rebase();
-        },
-        (error) => {
-          this.snackbar = {
-            color: "red",
-            show: true,
-            text: `${this.$t("system_msg.error")}: ${error}`,
-          };
-        }
-      );
-      this.snackbar.show = false;
+    closeUpdateStatusDialog() {
+      this.dialog = {};
+      this.showUpdateStatusDialog = false;
+      this.$refs.form.reset();
     },
   },
 };

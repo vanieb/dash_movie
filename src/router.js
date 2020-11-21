@@ -71,6 +71,17 @@ export default new Router({
       },
     },
     {
+      path: "/apps_review",
+      name: "AppsReview",
+      component: function(resolve) {
+        require(["./views/Main/AppsReview.vue"], resolve);
+      },
+      meta: {
+        icon: "visibility",
+        title: i18n.t("nav.apps_review"),
+      },
+    },
+    {
       path: "/apps_draft",
       name: "AppsDraft",
       component: function(resolve) {
@@ -81,17 +92,17 @@ export default new Router({
         title: i18n.t("nav.apps_draft"),
       },
     },
-    {
-      path: "/apps_published",
-      name: "AppsPublished",
-      component: function(resolve) {
-        require(["./views/Main/AppsPublished.vue"], resolve);
-      },
-      meta: {
-        icon: "publish",
-        title: i18n.t("nav.apps_published"),
-      },
-    },
+    // {
+    //   path: "/apps_published",
+    //   name: "AppsPublished",
+    //   component: function(resolve) {
+    //     require(["./views/Main/AppsPublished.vue"], resolve);
+    //   },
+    //   meta: {
+    //     icon: "publish",
+    //     title: i18n.t("nav.apps_published"),
+    //   },
+    // },
     {
       path: "/app_settings",
       name: "AppSettings",
