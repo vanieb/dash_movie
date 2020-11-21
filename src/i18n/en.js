@@ -83,7 +83,7 @@ export default {
     deselect_all_permissions: "Deselect All Permissions",
     superadmin_def: "Superadmin has all the permissions.",
     admin_def: "Admin has all the permissions except staff management.",
-    decline_memo: "Note: Indicate the reason why this article is declined.",
+    decline_memo: "Note: Indicate the reason why this is declined.",
   },
   system_msg: {
     confirm_delete: "Click to confirm deletion of ",
@@ -153,7 +153,6 @@ export default {
     installer_size: "Installer Size",
     release_date: "Release Date",
     version: "Version",
-    icon: "Icon",
     type: "Type",
     website: "Website",
     category: "Category",
