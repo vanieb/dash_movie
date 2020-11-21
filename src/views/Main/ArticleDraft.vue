@@ -251,15 +251,12 @@ export default {
         website: 1,
       },
       querySet: [],
-      active: "",
-      popular: "",
       today: date.max_today,
       created_at: ["", ""],
       website: 1,
       articleApi: api.articles,
       loading: true,
       date_menu: false,
-      confirmDialog: false,
       snackbar: {
         color: "",
         text: "",
@@ -285,7 +282,6 @@ export default {
         {
           sortable: false,
           text: this.$t("common.action"),
-          value: "status",
           width: "10%",
           align: "center",
         },
