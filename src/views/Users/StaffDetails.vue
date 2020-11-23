@@ -76,21 +76,21 @@
                 <br />
               </span>
               <span v-if="staff.role === 'admin'">
-                <v-icon color="orange" left>person_pin</v-icon>
-                <v-chip class="ma-1" color="orange" small dark>{{
+                <v-icon color="warning" left>person_pin</v-icon>
+                <v-chip class="ma-1" color="warning" small dark>{{
                   $t("staff.admin")
                 }}</v-chip>
                 <br />
               </span>
               <span v-else-if="staff.role === 'superadmin'">
-                <v-icon color="red" left>person_pin</v-icon>
+                <v-icon color="error" left>person_pin</v-icon>
                 <v-chip class="ma-1" color="red" small dark>{{
                   $t("staff.superadmin")
                 }}</v-chip>
                 <br />
               </span>
               <span v-if="staff.role === 'custom_staff'">
-                <v-icon color="blue" left>person_pin</v-icon>
+                <v-icon color="info" left>person_pin</v-icon>
                 <v-chip class="ma-1" color="blue" small dark>{{
                   $t("staff.custom_staff")
                 }}</v-chip>

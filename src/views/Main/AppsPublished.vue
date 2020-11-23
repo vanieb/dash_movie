@@ -344,7 +344,7 @@
                     <v-list dark>
                       <v-list-item @click="deleteApp(item.slug, true, $event)">
                         <v-list-item-title>
-                          <v-icon left color="orange">warning</v-icon>
+                          <v-icon left color="warning">warning</v-icon>
                           {{ $t("system_msg.confirm_delete") }}
                           <strong>{{ item.name }}</strong>
                         </v-list-item-title>

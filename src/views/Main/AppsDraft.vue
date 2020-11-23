@@ -153,7 +153,7 @@
                   <v-list>
                     <v-list-item @click="publishApp(item, true, $event)">
                       <v-list-item-title>
-                        <v-icon left color="orange">warning</v-icon>
+                        <v-icon left color="warning">warning</v-icon>
                         {{ $t("system_msg.confirm_publish") }}
                         <strong>{{ item.name }}</strong>
                       </v-list-item-title>
@@ -189,12 +189,12 @@
                     v-if="$root.permissions.includes('delete_app')"
                   >
                     <template v-slot:activator="{ on }">
-                      <v-icon color="red" small v-on="on" icon>delete</v-icon>
+                      <v-icon color="error" small v-on="on" icon>delete</v-icon>
                     </template>
                     <v-list dark>
                       <v-list-item @click="deleteApp(item.slug, true, $event)">
                         <v-list-item-title>
-                          <v-icon left color="orange">warning</v-icon>
+                          <v-icon left color="warning">warning</v-icon>
                           {{ $t("system_msg.confirm_delete") }}
                           <strong>{{ item.name }}</strong>
                         </v-list-item-title>

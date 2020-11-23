@@ -183,7 +183,7 @@
               <v-row>
                 <v-icon left class="m-b-sm" small color="indigo">edit</v-icon
                 ><small
-                  >{{ article.created_by }} |
+                  >{{ article.updated_by }} |
                   {{
                     article.updated_at | moment("YYYY-MM-DD HH:mm:ss")
                   }}</small
@@ -197,10 +197,10 @@
             </v-col>
             <v-col>
               <v-row>
-                <v-icon color="orange" left>web</v-icon>
+                <v-icon color="warning" left>web</v-icon>
                 <v-chip
                   class="ma-1"
-                  color="orange"
+                  color="warning"
                   outlined
                   small
                   v-for="website in article.websites"
