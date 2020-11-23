@@ -53,6 +53,16 @@ axios.interceptors.response.use(
       return Promise.reject(handleError(response.data.msg));
     }
   },
+  (error) => {
+    if (error.response.status === 401) {
+      router.push({
+        path: "/login",
+        query: {
+          next: router.fullPath,
+        },
+      });
+    }
+  },
   () => {
     return Promise.reject(
       Vue.config.lang === "cn"
