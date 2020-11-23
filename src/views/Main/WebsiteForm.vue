@@ -83,8 +83,8 @@
                   </v-card-text>
                   <v-card-actions>
                     <v-layout justify-center>
-                      <v-btn color="blue" @click="$refs.inputUpload.click()">
-                        <v-icon color="white">cloud_upload</v-icon>
+                      <v-btn color="primary" @click="$refs.inputUpload.click()">
+                        <v-icon dark>cloud_upload</v-icon>
                       </v-btn>
                       <input
                         v-show="false"
