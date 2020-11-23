@@ -425,11 +425,24 @@
             </v-flex>
             <v-layout justify-start mt-3>
               <v-btn
+                color="grey"
+                dark
+                class="mr-2"
+                :loading="submitting"
+                v-if="apps.status !== 'approved'"
+                @click="saveApp('draft')"
+              >
+                <v-icon left small>edit</v-icon>
+                {{ $t("actions.save") }} {{ $t("status.draft") }}
+              </v-btn>
+              <v-btn
                 color="primary"
                 dark
                 :loading="submitting"
-                @click="saveApp"
-                >{{ $t("actions.save") }}</v-btn
+                @click="saveApp('approved')"
+              >
+                <v-icon left small>publish</v-icon>
+                {{ $t("actions.publish") }}</v-btn
               >
             </v-layout>
           </v-container>
@@ -666,21 +679,6 @@ export default {
       fileRead.readAsDataURL(e.target.files[0]);
       this.apps.icon = e.target.files[0];
       this.change_icon = true;
-      // let formData = new window.FormData()
-      // formData.set('icon', this.apps.icon)
-      // this.$http.put(`${this.appsApi}${this.apps.id}/`, formData).then(() => {
-      //   this.snackbar = {
-      //     color: 'success',
-      //     show: true,
-      //     text: `${this.$t('actions.update')} - ${this.$t('apps.icon')}: ${this.$t('status.success')}`
-      //   }
-      // }, error => {
-      //   this.snackbar = {
-      //     color: 'red',
-      //     show: true,
-      //     text: error
-      //   }
-      // })
     },
     changeBasicContent(val) {
       this.apps.basic_introduction = val;
@@ -867,7 +865,7 @@ export default {
       this.showLabels = true;
       this.showForm = true;
     },
-    async saveApp() {
+    async saveApp(status) {
       this.snackbar.show = false;
       const isValid = await this.$refs.form.validate();
       if (isValid) {
@@ -887,7 +885,7 @@ export default {
             this.apps[item] !== undefined ? this.apps[item] : ""
           );
         });
-        formData.set("status", "draft");
+        formData.set("status", status);
         if (this.isUpdate) {
           this.$http.put(`${this.appsApi}${this.apps.slug}/`, formData).then(
             (response) => {
@@ -923,7 +921,7 @@ export default {
             },
             (error) => {
               this.snackbar = {
-                color: "red",
+                color: "error",
                 show: true,
                 text: error,
               };
