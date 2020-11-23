@@ -22,9 +22,9 @@
           <v-icon>mdi-account-circle</v-icon>
           <v-badge
             overlap
-            color="red"
+            color="error"
             :content="article_review_count"
-            v-if="article_review_count !== 0"
+            v-if="article_review_count > 0"
             class="mr-5"
             blink
             ><v-chip
@@ -36,8 +36,8 @@
           >
           <v-badge
             overlap
-            v-if="app_review_count !== 0"
-            color="red "
+            v-show="app_review_count > 0"
+            color="error"
             :content="app_review_count"
             class="mr-5"
             blink
@@ -167,6 +167,7 @@ export default {
       app_review_count: 0,
       article_review_count: 0,
       drawer: null,
+      timer: "",
       items: [
         {
           icon: "mdi-chevron-up",
@@ -332,8 +333,16 @@ export default {
   },
   created() {
     this.getCount();
-    setInterval(this.getCount, 5000);
+    this.timer = setInterval(this.getCount, 10000);
   },
+  watch: {
+    app_review_count(newObj) {
+      this.app_review_count = newObj
+    },
+    article_review_count(newObj) {
+      this.article_review_count = newObj
+    }
+   },
   methods: {
     logout() {
       this.$http.post(api.logout).then(
@@ -343,6 +352,7 @@ export default {
           this.$cookie.delete("refresh_token");
           this.$cookie.delete("user_type");
           this.$cookie.delete("username");
+          clearInterval(this.timer)
         },
         (error) => {
           this.loading = false;
@@ -362,6 +372,7 @@ export default {
         (error) => {
           this.loading = false;
           this.errorMsg = error;
+          clearInterval(this.timer)
         }
       );
     },
