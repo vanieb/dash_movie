@@ -245,7 +245,7 @@
           <tbody>
             <tr v-for="item in querySet" :key="item.id">
               <td class="align-center text-center px-0">
-                <v-icon left small color="green" v-if="item.is_logged_in"
+                <v-icon left small color="success" v-if="item.is_logged_in"
                   >fiber_manual_record</v-icon
                 >
                 <v-icon left small v-else>fiber_manual_record</v-icon>
@@ -312,7 +312,7 @@
                   <v-list dark>
                     <v-list-item @click="deleteMember(item.id, true, $event)">
                       <v-list-item-title>
-                        <v-icon left color="orange">warning</v-icon>
+                        <v-icon left color="warning">warning</v-icon>
                         {{ $t("system_msg.confirm_delete") }}
                         <strong>{{ item.user.username }}</strong>
                       </v-list-item-title>

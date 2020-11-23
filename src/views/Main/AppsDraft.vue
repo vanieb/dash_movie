@@ -153,7 +153,7 @@
                   <v-list>
                     <v-list-item @click="publishApp(item, true, $event)">
                       <v-list-item-title>
-                        <v-icon left color="orange">warning</v-icon>
+                        <v-icon left color="warning">warning</v-icon>
                         {{ $t("system_msg.confirm_publish") }}
                         <strong>{{ item.name }}</strong>
                       </v-list-item-title>
@@ -168,6 +168,7 @@
                 }}</span>
               </td>
               <td
+                width="10%"
                 class="text-center"
                 v-if="
                   $root.permissions.includes('change_app') ||
@@ -188,12 +189,12 @@
                     v-if="$root.permissions.includes('delete_app')"
                   >
                     <template v-slot:activator="{ on }">
-                      <v-icon color="red" small v-on="on" icon>delete</v-icon>
+                      <v-icon color="error" small v-on="on" icon>delete</v-icon>
                     </template>
                     <v-list dark>
                       <v-list-item @click="deleteApp(item.slug, true, $event)">
                         <v-list-item-title>
-                          <v-icon left color="orange">warning</v-icon>
+                          <v-icon left color="warning">warning</v-icon>
                           {{ $t("system_msg.confirm_delete") }}
                           <strong>{{ item.name }}</strong>
                         </v-list-item-title>
@@ -445,6 +446,7 @@ export default {
       );
     },
     deleteApp(id) {
+      this.snackbar.show = false;
       this.$http.delete(`${this.appsApi}${id}/`).then(
         () => {
           this.snackbar = {

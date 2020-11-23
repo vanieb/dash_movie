@@ -23,16 +23,16 @@
               <v-chip
                 v-if="item.status == 0"
                 class="ma-1"
-                color="orange"
-                text-color="white"
+                color="warning"
+                dark
                 style="height:20px; !important font-size:11px;">
                 {{$t('status.ongoing')}}
               </v-chip>
               <v-chip
                 v-else-if="item.status == 1"
                 class="ma-1"
-                color="green"
-                text-color="white"
+                color="success"
+                dark
                 style="height:20px;
                 !important font-size:11px;">
                 {{$t('status.success')}}

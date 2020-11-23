@@ -341,7 +341,7 @@
                         @click="deleteArticle(item.slug, true, $event)"
                       >
                         <v-list-item-title>
-                          <v-icon left color="orange">warning</v-icon>
+                          <v-icon left color="warning">warning</v-icon>
                           {{ $t("system_msg.confirm_delete") }}
                           <strong>{{ item.title }}</strong>
                         </v-list-item-title>

@@ -7,11 +7,11 @@
             <v-card>
               <v-card-title v-if="status === 'approved'">
                 <v-icon left color="success">check</v-icon>
-                {{ $t("actions.approve") }} - {{ $t("articles.article") }}
+                {{ $t("actions.approve") }} - {{ $t("nav.apps") }}
               </v-card-title>
               <v-card-title v-else-if="status === 'cancelled'">
                 <v-icon left color="error">close</v-icon>
-                {{ $t("actions.decline") }} - {{ $t("articles.article") }}
+                {{ $t("actions.decline") }} - {{ $t("nav.apps") }}
               </v-card-title>
               <v-card-title v-else>
                 <v-icon left color="grey">edit</v-icon>
@@ -70,28 +70,41 @@
           </v-dialog>
         </validation-observer>
       </v-layout>
+      <v-layout justify-start class="mt-3">
+        <div style="width:200px !important;" class="mr-2 mb-2">
+          <website
+            type="filter"
+            :mode="'one'"
+            req="true"
+            :website="query.website"
+            @website-select-one="websiteSelectOne"
+          >
+          </website>
+        </div>
+      </v-layout>
       <v-card>
         <v-col
           cols="12"
           md="12"
-          class="mt-2"
-          style="padding: 20px 20px 10px 20px !important;"
+          class=""
+          style="padding: 10px 20px 10px 20px !important;"
         >
-          <v-row>
-            <div style="width:155px !important;" class="mr-2">
-              <website
-                type="filter"
+          <v-row class="mt-2">
+            <div style="width:200px !important;" class="mr-2">
+              <types
                 :mode="'one'"
-                :website="query.website"
-                @website-select-one="websiteSelectOne"
+                type="filter"
+                :typeFilter="typeFilter"
+                :types="query.types"
+                @type-select-one="typeSelectOne"
               >
-              </website>
+              </types>
             </div>
             <div style="width:200px;" class="mr-2">
               <v-text-field
                 @input="search"
-                :label="`${$t('articles.title')}`"
-                v-model="query.title_q"
+                :label="`${$t('common.name')}`"
+                v-model="query.name_q"
                 hide-details="true"
                 placeholder=" "
                 outlined
@@ -158,32 +171,13 @@
                   class="mr-2"
                   icon
                   color="info"
-                  :to="`/articles/${item.slug}`"
+                  :to="`/apps/${item.slug}`"
                 >
                   <v-icon>touch_app</v-icon>
                 </v-btn>
               </td>
-              <td
-                class="align-center"
-                width="30%"
-                v-if="item.title.length > 20"
-              >
-                <strong>{{ item.title | truncate(20, "...") }} </strong>
-                <br />
-                <v-icon left small color="warning lighten-1"
-                  >view_compact</v-icon
-                >
-                <strong class="warning--text">{{ $t("status.review") }}</strong>
-                <br />
-                <v-icon left small color="indigo">person</v-icon>
-                <span>{{ item.created_by }}</span> <br />
-                <v-icon left small color="indigo">event</v-icon>
-                <span>{{
-                  item.created_at | moment("YYYY-MM-DD HH:mm:ss")
-                }}</span>
-              </td>
-              <td class="align-center" width="30%" v-else>
-                <strong>{{ item.title }}</strong>
+              <td class="align-center" width="20%">
+                <strong>{{ item.name }}</strong>
                 <br />
                 <v-icon left small color="warning lighten-1"
                   >view_compact</v-icon
@@ -198,9 +192,7 @@
                 }}</span>
               </td>
               <td class="text-center" width="10%">
-                <span v-for="website in item.websites" :key="website.id"
-                  >{{ website.name }}<br
-                /></span>
+                <span>{{ item.website ? item.website.name : "-" }}<br /></span>
               </td>
               <td class="text-center">
                 <v-chip
@@ -246,7 +238,7 @@
     </v-container>
     <pagination
       :queryset="querySet"
-      :api="articleApi"
+      :api="appsApi"
       :query="query"
       ref="pulling"
       @query-data="queryData"
@@ -272,27 +264,30 @@ import SnackBar from "@/components/SnackBar";
 import { debounce } from "lodash";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 import Website from "../../components/SelectWebsite.vue";
+import Types from "../../components/SelectType.vue";
 
 export default {
-  name: "ArticleReview",
+  name: "AppsReview",
   components: {
     Pagination,
     SnackBar,
     ValidationObserver,
     ValidationProvider,
     Website,
+    Types,
   },
   data() {
     return {
       query: {
         website: 1,
       },
+      typeFilter: "",
       querySet: [],
       today: date.max_today,
       created_at: ["", ""],
       date_menu: false,
       website: 1,
-      articleApi: api.articles,
+      appsApi: api.apps,
       loading: true,
       showUpdateStatusDialog: false,
       dialog: {},
@@ -311,8 +306,9 @@ export default {
         },
         {
           sortable: false,
-          text: this.$t("articles.title"),
-          value: "title",
+          text: this.$t("common.name"),
+          value: "name",
+          width: "30%",
         },
         {
           sortable: false,
@@ -331,7 +327,7 @@ export default {
           sortable: false,
           text: this.$t("common.update_details"),
           value: "updated_at",
-          width: "5%",
+          width: "20%",
         },
         {
           sortable: false,
@@ -351,6 +347,10 @@ export default {
         this.$refs.pulling.rebase();
       },
       deep: true,
+    },
+    type(newObj) {
+      this.query.types = newObj;
+      this.search();
     },
     website(newObj) {
       this.query.website = newObj;
@@ -378,10 +378,8 @@ export default {
     this.setQueryAll();
     this.$nextTick(() => {
       this.$refs.pulling.rebase();
-      if (!this.query.created_at_before) {
-        this.query.website = 1;
-        this.submit();
-      }
+      this.query.website = 1;
+      this.submit();
     });
     this.lang = $.getLanguage() == "zh_CN" ? "zh-cn" : "";
   },
@@ -395,11 +393,6 @@ export default {
       } else {
         return "";
       }
-    },
-  },
-  filters: {
-    truncate: function(text, length, suffix) {
-      return text.substring(0, length) + suffix;
     },
   },
   methods: {
@@ -416,6 +409,7 @@ export default {
         this.created_at = [undefined, undefined];
       }
       this.website = this.$route.query.website || "";
+      this.type = this.$route.query.types || "";
       this.query = Object.assign({}, this.$route.query);
     },
     queryData(queryset) {
@@ -451,7 +445,7 @@ export default {
             memo: this.memo,
           };
         }
-        this.$http.put(`${this.articleApi}${item.slug}/`, statusResult).then(
+        this.$http.put(`${this.appsApi}${item.slug}/`, statusResult).then(
           (response) => {
             let action_text =
               response.status === "approved"
@@ -465,13 +459,13 @@ export default {
                   ? `[${this.$t("actions.update")} ${this.$t(
                       "common.remarks"
                     )}]: ${this.$t("status.success")}`
-                  : `[${this.$t("articles.article")}]: ${action_text}`,
+                  : `[${this.$t("nav.apps")}]: ${action_text}`,
             };
             this.closeUpdateStatusDialog();
             if (this.status === "approved") {
-              this.$router.push("articles_published?website=1");
+              this.$router.push("apps_published?website=1");
             } else if (this.status === "cancelled") {
-              this.$router.push("articles?website=1");
+              this.$router.push("apps?website=1");
             } else {
               this.$refs.pulling.rebase();
             }
@@ -489,6 +483,12 @@ export default {
         );
       }
     },
+    typeSelectOne(val) {
+      if (val) {
+        this.query.types = val;
+        this.submit();
+      }
+    },
     submit() {
       if (!$.compareQuery(this.query, this.$route.query)) {
         this.$refs.pulling.submit();
@@ -496,6 +496,7 @@ export default {
     },
     websiteSelectOne(val) {
       this.query.website = val;
+      this.typeFilter = this.query.website;
       this.submit();
     },
     search: debounce(function() {

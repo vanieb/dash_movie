@@ -153,7 +153,7 @@
                   <v-list>
                     <v-list-item @click="publishArticle(item, true, $event)">
                       <v-list-item-title>
-                        <v-icon left color="orange">warning</v-icon>
+                        <v-icon left color="warning">warning</v-icon>
                         {{ $t("system_msg.confirm_publish") }}
                         <strong>{{ item.title }}</strong>
                       </v-list-item-title>
@@ -195,7 +195,7 @@
                         @click="deleteArticle(item.slug, true, $event)"
                       >
                         <v-list-item-title>
-                          <v-icon left color="orange">warning</v-icon>
+                          <v-icon left color="warning">warning</v-icon>
                           {{ $t("system_msg.confirm_delete") }}
                           <strong>{{ item.title }}</strong>
                         </v-list-item-title>
@@ -251,15 +251,12 @@ export default {
         website: 1,
       },
       querySet: [],
-      active: "",
-      popular: "",
       today: date.max_today,
       created_at: ["", ""],
       website: 1,
       articleApi: api.articles,
       loading: true,
       date_menu: false,
-      confirmDialog: false,
       snackbar: {
         color: "",
         text: "",
@@ -285,7 +282,6 @@ export default {
         {
           sortable: false,
           text: this.$t("common.action"),
-          value: "status",
           width: "10%",
           align: "center",
         },
