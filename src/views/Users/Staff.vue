@@ -80,7 +80,7 @@
                   v-if="$root.permissions.includes('delete_staff')"
                 >
                   <template v-slot:activator="{ on }">
-                    <v-icon color="red" small v-on="on">delete</v-icon>
+                    <v-icon color="error" small v-on="on">delete</v-icon>
                   </template>
                   <v-list dark>
                     <v-list-item @click="deleteStaff(item.id, true, $event)">

@@ -118,11 +118,11 @@
                   <v-card-actions>
                     <v-layout justify-center>
                       <v-btn
-                        color="blue"
+                        color="primary"
                         small
                         @click="$refs.inputUpload.click()"
                       >
-                        <v-icon color="white">cloud_upload</v-icon>
+                        <v-icon dark>cloud_upload</v-icon>
                       </v-btn>
                       <input
                         v-show="false"
@@ -279,7 +279,7 @@
                     <v-icon
                       small
                       @click="deleteClass(classification.id)"
-                      color="red"
+                      color="error"
                       >delete</v-icon
                     >
                   </td>

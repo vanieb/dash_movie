@@ -224,8 +224,8 @@
                 <br />
               </v-row>
               <v-row v-if="article.is_popular">
-                <v-icon color="red" left>whatshot</v-icon>
-                <v-chip class="ma-1" color="red" dark small>{{
+                <v-icon color="error" left>whatshot</v-icon>
+                <v-chip class="ma-1" color="error" dark small>{{
                   $t("nav.popular_articles")
                 }}</v-chip>
                 <br />

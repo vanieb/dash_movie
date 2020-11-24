@@ -1,5 +1,72 @@
 <template>
   <v-layout wrap>
+    <validation-observer ref="form">
+          <v-dialog v-model="showUpdateStatusDialog" persistent max-width="600">
+            <v-card>
+              <v-card-title v-if="status === 'approved'">
+                <v-icon left color="success">check</v-icon>
+                {{ $t("actions.approve") }} - {{ $t("nav.apps") }}
+              </v-card-title>
+              <v-card-title v-else-if="status === 'publish'">
+                <v-icon left color="success">publish</v-icon>
+                {{ $t("actions.publish") }} - {{ $t("nav.apps") }}
+              </v-card-title>
+              <v-card-title v-else>
+                <v-icon left color="error">close</v-icon>
+                {{ $t("actions.decline") }} - {{ $t("nav.apps") }}
+              </v-card-title>
+              <v-card-text>
+                <div class="black--text">
+                  <strong>{{ dialog.title }}</strong>
+                </div>
+                <v-icon left small color="indigo">person</v-icon>
+                <span>{{ dialog.created_by }}</span> <br />
+                <v-icon left small color="indigo">event</v-icon>
+                <span>{{
+                  dialog.created_at | moment("YYYY-MM-DD HH:mm:ss")
+                }}</span>
+              </v-card-text>
+              <v-card-text v-if="status != 'publish'">
+                <small v-if="status === 'cancelled'"
+                  >{{ $t("system_notes.decline_memo") }}
+                </small>
+                <validation-provider
+                  :rules="{
+                    max: 50,
+                    required: status === 'cancelled' ? true : false,
+                  }"
+                  :name="$t('common.remarks')"
+                >
+                  <v-textarea
+                    outlined
+                    :error-messages="errors"
+                    :label="
+                      status === 'approved'
+                        ? `${$t('common.remarks')}`
+                        : `${$t('common.remarks')}*`
+                    "
+                    slot-scope="{ errors }"
+                    v-model="dialog.memo"
+                    placeholder=""
+                    :counter="50"
+                  >
+                  </v-textarea>
+                </validation-provider>
+                <small v-if="status !== 'approved'" class="error--text"
+                  >* Required</small
+                >
+              </v-card-text>
+              <v-card-actions class="justify-end">
+                <v-btn color="grey lighten-1" @click="closeUpdateStatusDialog()"
+                  >{{ $t("actions.cancel") }}
+                </v-btn>
+                <v-btn color="primary" dark @click="updateStatus(dialog)">
+                  <span>{{ $t("actions.submit") }}</span>
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </validation-observer>
     <v-container v-if="loading">
       <v-layout justify-center align-center>
         <v-progress-circular indeterminate color="blue"></v-progress-circular>
@@ -26,12 +93,61 @@
             :to="`/apps/${apps.slug}/edit`"
             v-if="$root.permissions.includes('change_app')"
           >
-            <v-icon class="mr-3">edit</v-icon> &nbsp;{{ $t("actions.update") }}
+            <v-icon left>edit</v-icon> &nbsp;{{ $t("actions.update") }}
           </v-btn>
         </v-layout>
       </v-layout>
       <v-card>
         <v-container>
+          <v-banner single-line>
+             <span class="title"
+              ><strong>{{ apps.name }}</strong></span
+            >
+            <template v-slot:actions>
+              <v-chip
+                class="success lighten-1"
+                dark
+                small
+                v-if="apps.status == 'review'"
+                @click="openStatusDialog(apps, 'approved')"
+              >
+                <v-icon left small>check</v-icon>
+                {{ $t("actions.approve") }}
+              </v-chip>
+              <v-chip
+                class="ml-1 error lighten-1"
+                dark
+                small
+                v-if="apps.status == 'review'"
+                @click="openStatusDialog(apps, 'cancelled')"
+              >
+                <v-icon left small>close</v-icon>
+                {{ $t("actions.decline") }}
+              </v-chip>
+              <v-chip
+                class="ml-2 success lighten-1"
+                dark
+                small
+                v-if="apps.status == 'draft'"
+                @click="openStatusDialog(apps, 'publish')"
+              >
+                <v-icon small left>publish</v-icon>
+                {{ $t("actions.publish") }}
+              </v-chip>
+              <span
+                class="success--text"
+                v-else-if="apps.status == 'approved'"
+              >
+                {{ $t("status.published") }}
+              </span>
+              <span
+                class="error--text"
+                v-else-if="apps.status == 'cancelled'"
+              >
+                {{ $t("status.declined") }}
+              </span>
+            </template>
+          </v-banner>
           <v-row>
             <v-col cols="12" md="2">
               <v-img
@@ -46,14 +162,15 @@
               </v-avatar>
               <v-layout justify-center mb5 v-if="!apps.icon">
                 <small
-                  >{{ $t("apps.icon") }}: {{ $t("system_msg.not_set") }}</small
+                  >{{ $t("common.icon") }}:
+                  {{ $t("system_msg.not_set") }}</small
                 >
               </v-layout>
               <v-layout justify-center mb5>
                 <v-rating
                   x-small
                   dense
-                  color="orange"
+                  color="warning"
                   v-model="apps.star"
                   disabled="true"
                   >{{ apps.star }}
@@ -73,7 +190,26 @@
                   {{ apps.size_mb }} MB</small
                 >
               </v-row>
-              <v-row class="mb-1">
+              <v-row>
+                <v-icon left class="m-b-sm" small color="indigo"
+                  >person_add</v-icon
+                ><small
+                  >{{ apps.created_by || "-" }} |
+                  {{
+                    apps.created_at | moment("YYYY-MM-DD HH:mm:ss")
+                  }}</small
+                >
+              </v-row>
+              <v-row>
+                <v-icon left class="m-b-sm" small color="indigo">edit</v-icon
+                ><small
+                  >{{ apps.updated_by || "-" }} |
+                  {{
+                    apps.updated_at | moment("YYYY-MM-DD HH:mm:ss")
+                  }}</small
+                >
+              </v-row>
+              <!-- <v-row class="mb-1">
                 <small
                   ><v-icon left dense>event</v-icon
                   >{{ apps.created_at | moment("YYYY-MM-DD HH:mm:ss") }}</small
@@ -84,7 +220,7 @@
                   ><v-icon left dense>person</v-icon
                   >{{ apps.created_by || "-" }}</small
                 >
-              </v-row>
+              </v-row> -->
               <!-- Will be added after likes and comments feature implementation -->
               <!-- <v-row>
               <v-chip small class="ma-1" outlined color="primary lighten-1"><v-icon left small>thumb_up</v-icon>6</v-chip>
@@ -95,13 +231,16 @@
               <v-icon color="warning" left>web</v-icon>{{ $t("apps.website") }}:
               <v-chip
                 class="ma-1"
-                color="orange"
+                color="warning"
                 outlined
                 v-if="apps.website"
                 small
                 >{{ apps.website.name }}</v-chip
               >
               <span v-else> {{ $t("system_msg.no_data") }}</span>
+              <br/>
+              <v-icon color="grey" left>notes</v-icon>{{ $t("common.remarks") }}:
+              <span>{{ apps.memo || '-' }}</span>
             </v-col>
             <v-spacer></v-spacer>
           </v-row>
@@ -131,7 +270,7 @@
                   </span>
                 </td>
                 <td v-else>-</td>
-                <td v-if="item.labels">
+                <td v-if="item.labels.length > 0">
                   <span v-for="label in item.labels" :key="label.id">
                     <v-chip color="info" small outlined class="ma-1">{{
                       label.name
@@ -144,8 +283,8 @@
                     <v-chip
                       v-if="item.apptype_details.is_active"
                       class="ma-1"
-                      color="green"
-                      text-color="white"
+                      color="success"
+                      dark
                       style="height:20px; !important font-size:11px;"
                     >
                       {{ $t("status.enabled") }}
@@ -153,7 +292,6 @@
                     <v-chip
                       v-else
                       class="ma-1"
-                      color="gray"
                       style="height:20px;
                     !important font-size:11px;"
                     >
@@ -167,7 +305,7 @@
                       v-if="item.apptype_details.is_rank"
                       class="ma-1"
                       color="error"
-                      text-color="white"
+                      dark
                       small
                     >
                       <v-icon small left>format_list_numbered</v-icon>
@@ -184,7 +322,7 @@
                       v-if="item.apptype_details.is_recommended"
                       class="ma-1"
                       color="error"
-                      text-color="white"
+                      dark
                       small
                     >
                       <v-icon small left>star_outline</v-icon>
@@ -208,7 +346,7 @@
               <span class="mr-2">{{ $t("apps.use_download_link") }} </span>
               <v-switch
                 class="ma-0"
-                color="white"
+                dark
                 v-model="apps.use_android_link"
                 :disabled="!apps.app_file || !apps.download_link"
                 @change="
@@ -386,6 +524,10 @@ export default {
   data() {
     return {
       file: "",
+      dialog: "",
+      memo: "",
+      status: "",
+      showUpdateStatusDialog: false,
       apps: {},
       classification: [],
       appsApi: api.apps,
@@ -438,8 +580,8 @@ export default {
     });
   },
   methods: {
-    async getAppDetails(id) {
-      await this.$http.get(`${this.appsApi}${id}/`).then((response) => {
+    async getAppDetails(slug) {
+      await this.$http.get(`${this.appsApi}${slug}/`).then((response) => {
         this.apps = response;
         this.loading = false;
       });
@@ -481,6 +623,55 @@ export default {
       );
       this.snackbar.show = false;
     },
+     openStatusDialog(item, status = "") {
+      this.dialog = item;
+      this.status = status;
+      this.showUpdateStatusDialog = true;
+    },
+    closeUpdateStatusDialog() {
+      this.dialog = {};
+      this.showUpdateStatusDialog = false;
+      this.$refs.form.reset();
+      this.getAppDetails(this.apps.slug);
+    },
+    async updateStatus(item) {
+      this.snackbar.show = false;
+      const isValid = await this.$refs.form.validate();
+      if (isValid) {
+        this.snackbar.show = false;
+        let statusResult = {
+          status: this.status === "publish" ? "approved" : this.status,
+          is_active: status == "cancelled" ? false : true,
+          title: item.title,
+          memo: item.memo,
+        };
+        this.$http.put(`${this.appsApi}${item.slug}/`, statusResult).then(
+          (response) => {
+            let action_text =
+              this.status === "cancelled"
+                ? this.$t("status.declined")
+                : this.status === "publish"
+                ? this.$t("status.published")
+                : this.$t("status.approved");
+            this.snackbar = {
+              color: "success",
+              show: true,
+              text: `[${this.$t("nav.apps")}]: ${action_text}`,
+            };
+            this.closeUpdateStatusDialog();
+            this.getAppDetails(response.slug);
+          },
+          (error) => {
+            this.snackbar = {
+              color: "error",
+              show: true,
+              text: `${this.$t("system_msg.error")}: ${error}`,
+            };
+            this.getAppDetails(this.apps.slug);
+          }
+        );
+      }
+    },
     async uploadFile(installerType) {
       this.snackbar.show = false;
       const isValid = await this.$refs.uploadFileform.validate();
@@ -518,7 +709,7 @@ export default {
             },
             (error) => {
               this.snackbar = {
-                color: "red",
+                color: "error",
                 show: true,
                 text: `${this.$t("system_msg.error")}: ${error}`,
               };

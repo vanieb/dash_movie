@@ -170,7 +170,7 @@
                   />
                 </template>
                 <template v-slot:item.action="{ item }">
-                  <v-icon small @click="deleteImage(item)" color="red"
+                  <v-icon small @click="deleteImage(item)" color="error"
                     >delete</v-icon
                   >
                 </template>

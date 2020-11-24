@@ -98,7 +98,7 @@
                       </validation-provider>
                     </v-flex>
                   </v-layout>
-                  <small color="red">*{{ $t("errors.required") }}</small>
+                  <small color="error">*{{ $t("errors.required") }}</small>
                 </v-card-text>
                 <!-- BUTTONS -->
                 <v-card-actions>
@@ -278,7 +278,7 @@
                   v-if="$root.permissions.includes('delete_app_category')"
                 >
                   <template v-slot:activator="{ on }">
-                    <v-icon color="red" small v-on="on">delete</v-icon>
+                    <v-icon color="error" small v-on="on">delete</v-icon>
                   </template>
                   <v-list dark>
                     <v-list-item @click="deleteCategory(item.id, true, $event)">
