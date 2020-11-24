@@ -215,6 +215,26 @@
               >
               </types>
             </div>
+            <div style="width:155px;" class="mr-2">
+              <v-select
+                item-name="text"
+                item-value="value"
+                :items="appStatusOptions"
+                :label="`${$t('nav.apps')}-${$t('common.status')}`"
+                v-model="status"
+                hide-details="true"
+                placeholder=" "
+                outlined
+                dense
+              >
+                <template slot="selection" slot-scope="data">
+                  <span class="ml-3">{{ data.item.text }}</span>
+                </template>
+                <template slot="item" slot-scope="data">
+                  <span class="ml-3">{{ data.item.text }}</span>
+                </template>
+              </v-select>
+            </div>
             <div style="width:200px;" class="mr-2">
               <v-text-field
                 @input="search"
@@ -291,12 +311,46 @@
                   <v-icon>touch_app</v-icon>
                 </v-btn>
               </td>
-              <td class="align-center" width="20%">{{ item.name }}</td>
+              <td class="align-center" width="20%">
+                <strong>{{ item.name }}</strong>
+                <br/>
+                <v-icon left small color="indigo">person</v-icon>
+                <span>{{ item.created_by || '-' }}</span> <br />
+                <v-icon left small color="indigo">event</v-icon>
+                <span>{{
+                  item.created_at | moment("YYYY-MM-DD HH:mm:ss")
+                }}</span>
+              </td>
               <td class="align-center justify-center" width="10%">
                 <span>{{ item.website ? item.website.name : "-" }}<br /></span>
               </td>
+              <td>
+                <span class="success--text" v-if="item.status === 'approved'">{{
+                  $t("status.published")
+                }}</span>
+                <span
+                  class="error--text"
+                  small
+                  outlined
+                  v-else-if="item.status === 'cancelled'"
+                  >{{ $t("status.declined") }}</span
+                >
+                <span
+                  class="warning--text"
+                  small
+                  outlined
+                  v-else-if="item.status === 'review'"
+                  >{{ $t("status.review") }}</span
+                >
+                <span class="grey--text" small outlined v-else>{{
+                  $t("status.draft")
+                }}</span>
+              </td>
               <td width="30%">
-                {{ item.created_at | moment("YYYY-MM-DD HH:mm:ss") }}
+                {{ item.updated_by || "-" }} <br />
+                <span class="grey--text">{{
+                  item.updated_at | moment("YYYY-MM-DD HH:mm:ss")
+                }}</span>
               </td>
               <td
                 width="30%"
@@ -391,6 +445,7 @@ export default {
         website: 1,
       },
       typeFilter: "",
+      status: "",
       querySet: [],
       export_query: [],
       today: date.max_today,
@@ -415,6 +470,12 @@ export default {
         text: "",
         show: false,
       },
+      appStatusOptions: [
+        { text: this.$t("status.review"), value: "review" },
+        { text: this.$t("status.draft"), value: "draft" },
+        { text: this.$t("status.published"), value: "approved" },
+        { text: this.$t("status.declined"), value: "cancelled" },
+      ],
       headers: [
         {
           sortable: false,
@@ -434,8 +495,14 @@ export default {
         },
         {
           sortable: false,
-          text: this.$t("common.created_at"),
-          value: "created_at",
+          text: `${this.$t("nav.apps")}-${this.$t("common.status")}`,
+          value: "status",
+          width: "10%",
+        },
+        {
+          sortable: false,
+          text: this.$t("common.update_details"),
+          value: "updated_at",
           width: "20%",
         },
         {
@@ -454,6 +521,10 @@ export default {
         this.$refs.pulling.rebase();
       },
       deep: true,
+    },
+    status(newObj) {
+      this.query.status = newObj;
+      this.$refs.pulling.submit();
     },
     type(newObj) {
       this.query.types = newObj;
@@ -656,6 +727,7 @@ export default {
     }, 700),
     clearAll() {
       this.created_at = ["", ""];
+      this.status = "";
       this.query = {};
       this.query.website = 1;
       this.$nextTick(() => {

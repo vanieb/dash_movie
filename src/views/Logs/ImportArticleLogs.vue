@@ -18,7 +18,16 @@
         <span v-if="!items">{{items}}</span>
         <tbody>
           <tr v-for="item in querySet" :key="item.id">
-            <td >{{ item.filename }}</td>
+            <td >
+              <strong>{{ item.filename }}</strong>
+                <br/>
+                <v-icon left small color="indigo">person</v-icon>
+                <span>{{ item.created_by || '-' }} | {{item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</span> <br />
+                <v-icon left small color="indigo">edit</v-icon>
+                <span>
+                  {{ item.updated_by || '-' }} | {{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")
+                }}</span>
+            </td>
             <td class="align-center justify-center px-0" >
               <v-chip
                 v-if="item.status == 0"
@@ -46,8 +55,8 @@
                 {{$t('status.canceled')}}
               </v-chip>
             </td>
-            <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
-            <td>{{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
+            <!-- <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss")}}</td>
+            <td>{{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss")}}</td> -->
             <td v-html="item.memo" width="40%" style="word-break:break-all;" v-if="item.memo"></td>
             <td v-else>-</td>
             <td class="justify-center">
@@ -107,35 +116,36 @@ export default {
           sortable: false,
           text: this.$t('common.file'),
           value: 'filename',
-          width: '20%'
+          width: '27%'
         },
         {
           sortable: false,
           text: this.$t('common.status'),
           value: 'status',
-          width: '7%'
+          width: '10%'
         },
-        {
-          sortable: false,
-          text: this.$t('common.created_at'),
-          value: 'created_at',
-          width: '12%'
-        },
-        {
-          sortable: false,
-          text: this.$t('common.updated_at'),
-          value: 'updated_at',
-          width: '12%'
-        },
+        // {
+        //   sortable: false,
+        //   text: this.$t('common.created_at'),
+        //   value: 'created_at',
+        //   width: '12%'
+        // },
+        // {
+        //   sortable: false,
+        //   text: this.$t('common.updated_at'),
+        //   value: 'updated_at',
+        //   width: '12%'
+        // },
         {
           sortable: false,
           text: this.$t('common.remarks'),
           value: 'memo',
-          width: '40%'
+          width: ''
         },
         {
           sortable: false,
-          text: this.$t('common.action')
+          text: this.$t('common.action'),
+          width: '10%'
         }
       ]
     }

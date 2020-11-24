@@ -171,9 +171,40 @@
                   <v-icon>touch_app</v-icon>
                 </v-btn>
               </td>
-              <td class="align-center" width="20%">{{ item.name }}</td>
+              <td class="align-center" width="20%">
+                <strong>{{ item.name }}</strong>
+                <br/>
+                <v-icon left small color="indigo">person</v-icon>
+                <span>{{ item.created_by || '-' }}</span> <br />
+                <v-icon left small color="indigo">event</v-icon>
+                <span>{{
+                  item.created_at | moment("YYYY-MM-DD HH:mm:ss")
+                }}</span>
+              </td>
               <td class="align-center justify-center" width="10%">
                 <span>{{ item.website ? item.website.name : "-" }}<br /></span>
+              </td>
+              <td>
+                <span class="success--text" v-if="item.status === 'approved'">{{
+                  $t("status.published")
+                }}</span>
+                <span
+                  class="error--text"
+                  small
+                  outlined
+                  v-else-if="item.status === 'cancelled'"
+                  >{{ $t("status.declined") }}</span
+                >
+                <span
+                  class="warning--text"
+                  small
+                  outlined
+                  v-else-if="item.status === 'review'"
+                  >{{ $t("status.review") }}</span
+                >
+                <span class="grey--text" small outlined v-else>{{
+                  $t("status.draft")
+                }}</span>
               </td>
               <td
                 class="align-center justify-start"
@@ -244,7 +275,10 @@
                 <span v-else>-</span>
               </td>
               <td width="30%">
-                {{ item.created_at | moment("YYYY-MM-DD HH:mm:ss") }}
+                {{ item.updated_by || "-" }} <br />
+                <span class="grey--text">{{
+                  item.updated_at | moment("YYYY-MM-DD HH:mm:ss")
+                }}</span>
               </td>
               <td
                 width="30%"
@@ -379,6 +413,12 @@ export default {
         },
         {
           sortable: false,
+          text: `${this.$t("nav.apps")}-${this.$t("common.status")}`,
+          value: "status",
+          width: "10%",
+        },
+        {
+          sortable: false,
           text: this.$t("common.status"),
           value: "status",
           width: "10%",
@@ -397,8 +437,8 @@ export default {
         },
         {
           sortable: false,
-          text: this.$t("common.created_at"),
-          value: "created_at",
+          text: this.$t("common.update_details"),
+          value: "updated_at",
         },
         {
           sortable: false,
