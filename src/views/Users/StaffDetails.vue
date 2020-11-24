@@ -84,7 +84,7 @@
               </span>
               <span v-else-if="staff.role === 'superadmin'">
                 <v-icon color="error" left>person_pin</v-icon>
-                <v-chip class="ma-1" color="red" small dark>{{
+                <v-chip class="ma-1" color="error" small dark>{{
                   $t("staff.superadmin")
                 }}</v-chip>
                 <br />

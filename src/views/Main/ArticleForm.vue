@@ -81,8 +81,8 @@
                   </v-card-text>
                   <v-card-actions>
                     <v-layout justify-center>
-                      <v-btn color="blue" @click="$refs.inputUpload.click()">
-                        <v-icon color="white">cloud_upload</v-icon>
+                      <v-btn color="primary" @click="$refs.inputUpload.click()">
+                        <v-icon dark>cloud_upload</v-icon>
                       </v-btn>
                       <input
                         v-show="false"
@@ -141,8 +141,8 @@
               <v-card-title
                 >{{ $t("articles.images") }}
                 <v-layout class="justify-end">
-                  <v-btn color="blue" @click="$refs.inputUploadImage.click()">
-                    <v-icon color="white">add_photo_alternate</v-icon>
+                  <v-btn color="primary" @click="$refs.inputUploadImage.click()">
+                    <v-icon dark>add_photo_alternate</v-icon>
                   </v-btn>
                   <input
                     v-show="false"
@@ -170,7 +170,7 @@
                   />
                 </template>
                 <template v-slot:item.action="{ item }">
-                  <v-icon small @click="deleteImage(item)" color="red"
+                  <v-icon small @click="deleteImage(item)" color="error"
                     >delete</v-icon
                   >
                 </template>

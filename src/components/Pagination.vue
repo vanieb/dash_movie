@@ -231,7 +231,7 @@ export default {
         },
         () => {
           this.snackbar = {
-            color: "red",
+            color: "error",
             show: true,
             text: this.$t("errors.server_error"),
           };

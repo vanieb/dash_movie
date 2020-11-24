@@ -81,7 +81,7 @@
                 </validation-provider>
               </v-flex>
             </v-layout>
-            <small color="red">*{{ $t("errors.required") }}</small>
+            <small color="error">*{{ $t("errors.required") }}</small>
           </v-card-text>
           <!-- BUTTONS -->
           <v-card-actions>
