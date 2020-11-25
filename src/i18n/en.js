@@ -132,6 +132,7 @@ export default {
     edit_article: "Edit Article",
     add_article: "Add Article",
     keyword_link: "Keyword Link",
+    global_settings: "Global Settings",
     friendship_link: "Friendship Link",
     popular_articles: "Popular Articles",
     logs: "Logs",
@@ -179,6 +180,10 @@ export default {
     title: "Title",
     content: "Content",
     images: "Images",
+  },
+  settings: {
+    parameter: 'Parameter',
+    parameter_value: 'Parameter Value'
   },
   website: {
     code: "Code",
