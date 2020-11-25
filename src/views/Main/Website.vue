@@ -52,10 +52,6 @@ export default {
       query: {},
       querySet: [],
       websiteApi: api.websites,
-      statusOptions: [
-        { text: this.$t("status.enabled"), value: 1 },
-        { text: this.$t("status.disabled"), value: 2 },
-      ],
       headers: [
         {
           sortable: false,
@@ -67,12 +63,6 @@ export default {
           text: this.$t("website.code"),
           value: "code",
         },
-        // {
-        //   sortable: false,
-        //   text: this.$t('common.status'),
-        //   value: 'status',
-        //   width: '10%'
-        // },
         {
           sortable: false,
           text: this.$t("common.created_at"),

@@ -244,6 +244,18 @@ export default new Router({
       },
     },
     {
+      path: "/global_settings",
+      name: "GlobalSettings",
+      component: function(resolve) {
+        require(["./views/Main/GlobalSettings.vue"], resolve);
+      },
+      meta: {
+        icon: "build",
+        auth: true,
+        title: i18n.t("nav.global_settings"),
+      },
+    },
+    {
       path: "/websites",
       name: "Websites",
       component: function(resolve) {

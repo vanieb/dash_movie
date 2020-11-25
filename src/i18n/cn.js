@@ -179,6 +179,10 @@ export default {
     content: "正文",
     images: "图片",
   },
+  settings: {
+    parameter: '参数',
+    parameter_value: '参数值'
+  },
   website: {
     code: "码",
   },

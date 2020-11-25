@@ -286,6 +286,11 @@ export default {
           model: false,
           children: [
             {
+              icon: "build",
+              text: this.$t("nav.global_settings"),
+              path: "/global_settings",
+            },
+            {
               icon: "compare_arrows",
               text: this.$t("nav.friendship_link"),
               path: "/friendship_link",
