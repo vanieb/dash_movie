@@ -24,7 +24,7 @@ export default {
   classification: `${apps}classification`,
   upload: `${apps}upload/`,
   download_link: `${apps}download/`,
-  global_settings:  `${host}global-preferences/v1/`,
+  global_settings:  `${host}configsetting/v1/`,
   websites: `${websites}`,
   webapps: `${websites}apps/`,
   articles: `${host}articles/v1/`,
