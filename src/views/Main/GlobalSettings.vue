@@ -57,12 +57,12 @@
                   dense
                   v-model="preference.value"
                   v-else-if="preference.config_type === 3"
-                  :color="preference.value ? 'teal' : 'red'"
+                  :color="preference.value ? 'primary' : 'red'"
                   @change="handleChangeEvent(preference, index)"
                 >
                   <template v-slot:label>
                     <span
-                      :class="preference.value ? 'teal--text' : 'error--text'"
+                      :class="preference.value ? 'primary--text' : 'error--text'"
                       >{{
                         preference.value
                           ? $t("status.enabled")
@@ -71,6 +71,7 @@
                     >
                   </template>
                 </v-checkbox>
+
                 <span v-else>
                   <span v-if="preference.value.length > 100">{{
                     preference.value | truncate(120, "...")
@@ -85,7 +86,7 @@
                   class="mr-2"
                   small
                   @click="openModal(index, preference)"
-                  v-if="preference.config_type === 1"
+                  v-if="preference.config_type !== 3"
                   >edit</v-icon
                 >
                 <span v-else>-</span>
@@ -110,10 +111,10 @@
             </v-card-text>
             <v-card-text>
               <div v-if="modal.config_type === 2" class="upload-qr-container">
-                <v-banner color="teal lighten-1" dark>
+                <v-banner class="primary" dark>
                   {{ $t("actions.upload") }} - {{ $t("common.image") }}
                   <template v-slot:actions>
-                    <v-btn icon color="teal lighten-1" @click="clearImage()">
+                    <v-btn icon class="primary" @click="clearImage()">
                       <v-icon color="white">close</v-icon>
                     </v-btn>
                   </template>
@@ -131,7 +132,7 @@
                   <v-card-actions>
                     <v-layout justify-center>
                       <v-btn
-                        color="teal lighten-1"
+                        class="primary"
                         dark
                         @click="$refs.imageUpload.click()"
                       >
@@ -189,29 +190,28 @@
                 </div>
                 <div v-else>
                   <v-textarea
-                    color="teal"
+                    class="form-control"
                     placeholder=" "
                     :label="$t('settings.parameter_value')"
                     outlined
                     v-model.trim="modal.value"
                     rows="8"
                     spellcheck="false"
-                    class="form-control"
                     ref="modalContent"
                     v-if="modal.config_type === 6"
                   ></v-textarea>
                   <validation-provider
                     rules="max:250"
-                    :name="$t('nav.announcement')"
+                    :name="$t('settings.parameter_value')"
                     v-else
                   >
                     <v-text-field
-                      color="teal"
-                      :counter="250"
+                      :counter="modal.config_type == 4 ? false : 250"
                       :error-messages="errors"
                       slot-scope="{ errors }"
                       v-model.trim="modal.value"
                       spellcheck="false"
+                      :type="modal.config_type == 4 ? 'number' : '' "
                       placeholder=" "
                       :label="$t('settings.parameter_value')"
                       ref="modalContent"
@@ -228,7 +228,7 @@
                 }}
               </v-btn>
               <v-btn
-                color="teal lighten-1"
+                class="primary"
                 dark
                 :disabled="modal.loading"
                 @click="updatePreference(modal)"
@@ -398,7 +398,7 @@ export default {
       config_type,
     }) {
       let result = {
-        display_name,
+        // display_name,
         value: "",
       };
       this.snackbar.show = false;
@@ -436,7 +436,6 @@ export default {
         } else {
           result.value = value;
         }
-
         this.modal.loading = true;
 
         this.$http
