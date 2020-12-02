@@ -118,7 +118,7 @@ workflows:
                 - master
       - deploy_notification:
           env: staging
-          url: https://admin.hga66886.com
+          url: https://admin.1144378.com
           requires:
             - push_docker_image
           filters:
