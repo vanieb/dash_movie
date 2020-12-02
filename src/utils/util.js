@@ -77,4 +77,16 @@ export default class $ {
   static scrollToTop() {
     window.scrollTo(0, 0)
   }
+
+  static isJsonString(str) {
+    try {
+      var o = JSON.parse(str)
+      if (o && typeof o === 'object') {
+        return o
+      }
+    } catch (e) {
+      return false
+    }
+  }
+
 }

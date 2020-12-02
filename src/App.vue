@@ -7,100 +7,120 @@
   </v-app>
 </template>
 <script>
-import SideBar from './components/SideBar';
-import $ from './utils/util'
-import api from '@/api/apis'
-import axios from 'axios'
+import SideBar from "./components/SideBar";
+import $ from "./utils/util";
+import api from "@/api/apis";
+import axios from "axios";
 
 export default {
-  name: 'App',
+  name: "App",
   data() {
     return {
-      username: '',
-      permissions: []
-    }
+      username: "",
+      permissions: [],
+    };
   },
   watch: {
     username(newObj) {
-      window.document.cookie = `username=${newObj}`
-    }
+      window.document.cookie = `username=${newObj}`;
+    },
   },
   components: {
-    SideBar
+    SideBar,
   },
   computed: {
     showNav() {
-      return this.$route.name !== 'login'
-    }
+      return this.$route.name !== "login";
+    },
   },
   created() {
-    this.getMy()
+    this.getMy();
   },
   methods: {
     setUpRouterHooks() {
       this.$router.beforeEach((to, from, next) => {
-        this.authErrors = []
-        if (to.meta.permission && !this.permissions.includes(to.meta.permission)) {
-          this.$router.push('/no_permission')
+        this.authErrors = [];
+        if (
+          to.meta.permission &&
+          !this.permissions.includes(to.meta.permission)
+        ) {
+          this.$router.push("/no_permission");
         } else {
-          next()
+          next();
         }
-      })
+      });
     },
     setUpAuth() {
-      let refreshTokenInterval
+      let refreshTokenInterval;
       // refresh access token every 5 mins
-      $.setIndicator(() => {
-        refreshTokenInterval = window.setInterval(() => {
-          this.refresh()
-        }, 300000)
-      }, () => {
-        window.clearInterval(refreshTokenInterval)
-      })
+      $.setIndicator(
+        () => {
+          refreshTokenInterval = window.setInterval(() => {
+            this.refresh();
+          }, 300000);
+        },
+        () => {
+          window.clearInterval(refreshTokenInterval);
+        }
+      );
     },
     getMy() {
-      if (!this.$cookie.get('access_token')) {
-        return
+      if (!this.$cookie.get("access_token")) {
+        return;
       }
-      this.$http.get(api.my).then(response => {
-        this.username = response.username
-        this.role = response.role
-        this.getPermissions()
-      }, (error) => {
-        if (error.status === 404) {
-          this.$router.push('/login')
+      this.$http.get(api.my).then(
+        (response) => {
+          this.username = response.username;
+          this.role = response.role;
+          this.getPermissions();
+        },
+        (error) => {
+          if (error.status === 404) {
+            this.$router.push("/login");
+          }
         }
-      })
+      );
     },
     refresh() {
-      let refreshToken = this.$cookie.get('refresh_token')
+      let refreshToken = this.$cookie.get("refresh_token");
       if (!refreshToken) {
-        return
+        return;
       }
-      this.$http.post(api.refresh_token, {
-        refresh_token: this.$cookie.get('refresh_token')
-      }).then(data => {
-        let d = new Date(data.expires_in)
-        // use access_token to access APIs
-        window.document.cookie = 'access_token=' + data.access_token + ';path=/;expires=' + d.toGMTString()
-        // use refresh_token to fetch new access_token
-        window.document.cookie = 'refresh_token=' + data.refresh_token + ';path=/;expires=' + d.toGMTString()
-        axios.defaults.headers.common['Authorization'] = 'Bearer ' + data.access_token
-      })
+      this.$http
+        .post(api.refresh_token, {
+          refresh_token: this.$cookie.get("refresh_token"),
+        })
+        .then((data) => {
+          let d = new Date(data.expires_in);
+          // use access_token to access APIs
+          window.document.cookie =
+            "access_token=" +
+            data.access_token +
+            ";path=/;expires=" +
+            d.toGMTString();
+          // use refresh_token to fetch new access_token
+          window.document.cookie =
+            "refresh_token=" +
+            data.refresh_token +
+            ";path=/;expires=" +
+            d.toGMTString();
+          axios.defaults.headers.common["Authorization"] =
+            "Bearer " + data.access_token;
+        });
     },
-    async getPermissions () {
+    async getPermissions() {
       await this.$http.get(api.userPermissions).then((response) => {
-        this.permissions = response
+        this.permissions = response;
         // permissions must be loaded before we can handle other data
-        this.setUpAuth()
-        this.setUpRouterHooks()
-      })
-    }
-  }
+        this.setUpAuth();
+        this.setUpRouterHooks();
+      });
+    },
+  },
 };
 </script>
 <style>
 #keep .v-navigation-drawer__border {
-  display: none
+  display: none;
 }
 </style>
