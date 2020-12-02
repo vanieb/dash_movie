@@ -181,7 +181,7 @@ export default {
     async getApps(type) {
       this.type = this.app_types[type].code
       this.typeId = this.app_types[type].id
-      await this.$http.get(`${this.appsApi}rankings/?ordering=recommended&is_recommended=true&types=${this.type}&website=${this.query.website}`).then(response => {
+      await this.$http.get(`${this.appsApi}rankings/?ordering=recommended_rank&is_recommended=true&types=${this.type}&website=${this.query.website}`).then(response => {
         this.filteredQuerySet = response.results
         .sort((a, b) => {
           return a['recommended_rank'] - b['recommended_rank']
