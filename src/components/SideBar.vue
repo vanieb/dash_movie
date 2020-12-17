@@ -180,21 +180,21 @@ export default {
               text: this.$t("nav.apps"),
               path: "/apps?website=1",
               submenu: [
-                {
-                  text: this.$t("nav.apps_review"),
-                  path: "/apps_review",
-                  icon: "visibility",
-                },
-                {
-                  text: this.$t("nav.apps_draft"),
-                  path: "/apps_draft",
-                  icon: "edit",
-                },
-                {
-                  text: this.$t("nav.apps_published"),
-                  path: "/apps_published",
-                  icon: "publish",
-                },
+                // {
+                //   text: this.$t("nav.apps_review"),
+                //   path: "/apps_review",
+                //   icon: "visibility",
+                // },
+                // {
+                //   text: this.$t("nav.apps_draft"),
+                //   path: "/apps_draft",
+                //   icon: "edit",
+                // },
+                // {
+                //   text: this.$t("nav.apps_published"),
+                //   path: "/apps_published",
+                //   icon: "publish",
+                // },
                 {
                   text: this.$t("nav.apps"),
                   path: "/apps",
@@ -245,21 +245,21 @@ export default {
               icon: "description",
               text: this.$t("nav.articles"),
               submenu: [
-                {
-                  text: this.$t("nav.articles_review"),
-                  path: "/articles_review",
-                  icon: "visibility",
-                },
-                {
-                  text: this.$t("nav.articles_draft"),
-                  path: "/articles_draft",
-                  icon: "edit",
-                },
-                {
-                  text: this.$t("nav.articles_published"),
-                  path: "/articles_published",
-                  icon: "publish",
-                },
+                // {
+                //   text: this.$t("nav.articles_review"),
+                //   path: "/articles_review",
+                //   icon: "visibility",
+                // },
+                // {
+                //   text: this.$t("nav.articles_draft"),
+                //   path: "/articles_draft",
+                //   icon: "edit",
+                // },
+                // {
+                //   text: this.$t("nav.articles_published"),
+                //   path: "/articles_published",
+                //   icon: "publish",
+                // },
                 {
                   text: this.$t("nav.articles"),
                   path: "/articles",
