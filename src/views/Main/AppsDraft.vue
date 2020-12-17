@@ -1,8 +1,24 @@
 <template>
   <v-layout wrap>
     <v-container>
+      <v-layout>
+        <div d-inline-block>
+          <v-layout justify-start>
+            <v-btn
+              color="primary"
+              dark
+              to="/apps/add"
+              v-if="$root.permissions.includes('create_app')"
+            >
+              <v-icon left>library_add</v-icon> &nbsp;{{
+                $t("actions.add")
+              }}
+            </v-btn>
+          </v-layout>
+        </div>
+      </v-layout>
       <v-layout justify-start class="mt-3">
-        <div style="width:200px !important;" class="mr-2">
+        <div style="width:200px !important;" class="mr-2 mb-2">
           <website
             type="filter"
             :mode="'one'"
@@ -12,94 +28,30 @@
           >
           </website>
         </div>
-        <div style="width:200px !important;" class="mr-2">
-          <types
-            :mode="'one'"
-            type="filter"
-            req="true"
-            :typeFilter="typeFilter"
-            :types="query.types"
-            @type-select-one="typeSelectOne"
-          >
-          </types>
-        </div>
       </v-layout>
       <v-card>
         <v-col
           cols="12"
           md="12"
           class=""
-          style="padding: 20px 20px 10px 20px !important;"
+          style="padding: 10px 20px 10px 20px !important;"
         >
-          <v-row>
-            <div style="width:155px;" class="mr-2">
-              <v-select
-                item-name="text"
-                item-value="value"
-                :items="statusOptions"
-                :label="`${$t('common.status')}`"
-                v-model="is_active"
-                hide-details="true"
-                placeholder=" "
-                outlined
-                clearable
-                dense
+          <v-row class="mt-2">
+            <div style="width:200px !important;" class="mr-2">
+              <types
+                :mode="'one'"
+                type="filter"
+                :typeFilter="typeFilter"
+                :types="query.types"
+                @type-select-one="typeSelectOne"
               >
-                <template slot="selection" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-                <template slot="item" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-              </v-select>
-            </div>
-            <div style="width:155px;" class="mr-2">
-              <v-select
-                item-name="text"
-                item-value="value"
-                :items="statusOptions"
-                :label="`${$t('nav.leaderboard')}-${$t('common.status')}`"
-                v-model="is_rank"
-                hide-details="true"
-                placeholder=" "
-                outlined
-                clearable
-                dense
-              >
-                <template slot="selection" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-                <template slot="item" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-              </v-select>
-            </div>
-            <div style="width:155px;" class="mr-2">
-              <v-select
-                item-name="text"
-                item-value="value"
-                :items="statusOptions"
-                :label="`${$t('nav.recommended')}-${$t('common.status')}`"
-                v-model="is_recommended"
-                hide-details="true"
-                placeholder=" "
-                outlined
-                clearable
-                dense
-              >
-                <template slot="selection" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-                <template slot="item" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-              </v-select>
+              </types>
             </div>
             <div style="width:200px;" class="mr-2">
               <v-text-field
                 @input="search"
                 :label="`${$t('common.name')}`"
-                v-model="query.app_q"
+                v-model="query.name_q"
                 hide-details="true"
                 placeholder=" "
                 outlined
@@ -174,115 +126,50 @@
               <td class="align-center" width="20%">
                 <strong>{{ item.name }}</strong>
                 <br/>
+                <v-icon left small color="grey lighten-1">view_compact</v-icon>
+                <strong class="grey--text">{{ $t("status.draft") }}</strong>
+                <br />
                 <v-icon left small color="indigo">person</v-icon>
-                <span>{{ item.created_by || '-' }}</span> <br />
+                <span>{{ item.created_by }}</span> <br />
                 <v-icon left small color="indigo">event</v-icon>
                 <span>{{
                   item.created_at | moment("YYYY-MM-DD HH:mm:ss")
                 }}</span>
               </td>
-              <td class="align-center justify-center" width="10%">
+              <td class="align-center text-center" width="10%">
                 <span>{{ item.website ? item.website.name : "-" }}<br /></span>
               </td>
-              <td>
-                <span class="success--text" v-if="item.status === 'approved'">{{
-                  $t("status.published")
-                }}</span>
-                <span
-                  class="error--text"
-                  small
-                  outlined
-                  v-else-if="item.status === 'cancelled'"
-                  >{{ $t("status.declined") }}</span
+              <td class="text-center">
+                <v-menu
+                  offset-y
+                  v-if="$root.permissions.includes('change_app')"
                 >
-                <span
-                  class="warning--text"
-                  small
-                  outlined
-                  v-else-if="item.status === 'review'"
-                  >{{ $t("status.review") }}</span
-                >
-                <span class="grey--text" small outlined v-else>{{
-                  $t("status.draft")
-                }}</span>
+                  <template v-slot:activator="{ on }">
+                    <v-chip v-on="on" class="success lighten-1 small">
+                      <v-icon dark left small>publish</v-icon>
+                      {{ $t("actions.publish") }}
+                    </v-chip>
+                  </template>
+                  <v-list>
+                    <v-list-item @click="publishApp(item, true, $event)">
+                      <v-list-item-title>
+                        <v-icon left color="warning">warning</v-icon>
+                        {{ $t("system_msg.confirm_publish") }}
+                        <strong>{{ item.name }}</strong>
+                      </v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
               </td>
-              <td
-                class="align-center justify-start"
-                v-if="$root.permissions.includes('change_app_status')"
-              >
-                <v-switch
-                  value
-                  v-model="item.is_active"
-                  @change="
-                    toggle(item.apptype_details.id, item.is_active, 'is_active')
-                  "
-                >
-                </v-switch>
-              </td>
-              <td class="align-center justify-start" v-else>
-                <v-chip v-if="is_active == true" class="success" small>{{
-                  $t("status.enabled")
-                }}</v-chip>
-                <v-chip v-else small>{{ $t("status.disabled") }}</v-chip>
-              </td>
-              <td
-                class="align-center justify-start"
-                v-if="
-                  $root.permissions.includes('change_app_leaderboard_status')
-                "
-              >
-                <v-switch
-                  value
-                  v-model="item.is_rank"
-                  @change="
-                    toggle(item.apptype_details.id, item.is_rank, 'is_rank')
-                  "
-                >
-                </v-switch>
-              </td>
-              <td class="align-center justify-start" v-else>
-                <v-chip v-if="item.is_rank == true" class="error" small>{{
-                  $t("nav.leaderboard")
-                }}</v-chip>
-                <span v-else>-</span>
-              </td>
-              <td
-                class="align-center justify-start"
-                v-if="
-                  $root.permissions.includes('change_app_recommended_status')
-                "
-              >
-                <v-switch
-                  value
-                  v-model="item.is_recommended"
-                  @change="
-                    toggle(
-                      item.apptype_details.id,
-                      item.is_recommended,
-                      'is_recommended'
-                    )
-                  "
-                >
-                </v-switch>
-              </td>
-              <td class="align-center justify-start" v-else>
-                <v-chip
-                  v-if="item.is_recommended == true"
-                  class="error"
-                  small
-                  >{{ $t("nav.recommended") }}</v-chip
-                >
-                <span v-else>-</span>
-              </td>
-              <td width="30%">
+              <td width="15%" class="align-center justify-center">
                 {{ item.updated_by || "-" }} <br />
                 <span class="grey--text">{{
                   item.updated_at | moment("YYYY-MM-DD HH:mm:ss")
                 }}</span>
               </td>
               <td
-                width="30%"
-                class="align-center justify-center"
+                width="10%"
+                class="text-center"
                 v-if="
                   $root.permissions.includes('change_app') ||
                     $root.permissions.includes('delete_app')
@@ -329,6 +216,7 @@
       ref="pulling"
       @query-data="queryData"
       @query-param="queryParam"
+      :persistent-query="{ status: 'draft' }"
     >
     </pagination>
     <!-- SNACKBAR -->
@@ -349,10 +237,9 @@ import SnackBar from "@/components/SnackBar";
 import { debounce } from "lodash";
 import Website from "../../components/SelectWebsite.vue";
 import Types from "../../components/SelectType.vue";
-import VueCookie from "vue-cookie";
 
 export default {
-  name: "Apps",
+  name: "AppsDraft",
   components: {
     Pagination,
     SnackBar,
@@ -361,35 +248,17 @@ export default {
   },
   data() {
     return {
-      name: "",
-      href: "",
-      uploadPercentage: 0,
-      showForm: false,
       query: {
         website: 1,
       },
       typeFilter: "",
       querySet: [],
-      export_query: [],
-      is_active: "",
-      is_rank: "",
-      is_recommended: "",
       today: date.max_today,
       created_at: ["", ""],
       website: 1,
-      appsApi: `${api.apps}rankings/`,
-      exportApi: `${api.apps}export/`,
-      importApi: `${api.apps}import/`,
+      appsApi: api.apps,
       loading: true,
-      submitting: false,
       date_menu: false,
-      file: null,
-      importFile: null,
-      setWebsite: "",
-      statusOptions: [
-        { text: this.$t("status.enabled"), value: true },
-        { text: this.$t("status.disabled"), value: false },
-      ],
       snackbar: {
         color: "",
         text: "",
@@ -405,44 +274,31 @@ export default {
           sortable: false,
           text: this.$t("common.name"),
           value: "name",
+          width: "30%",
         },
         {
           sortable: false,
           text: this.$t("nav.websites"),
           value: "website",
+          width: "10%",
+          align: "center",
         },
         {
           sortable: false,
-          text: `${this.$t("nav.apps")}-${this.$t("common.status")}`,
-          value: "status",
-          width: "10%",
-        },
-        {
-          sortable: false,
-          text: this.$t("common.status"),
-          value: "status",
-          width: "10%",
-        },
-        {
-          sortable: false,
-          text: this.$t("nav.leaderboard"),
-          value: "is_rank",
-          width: "10%",
-        },
-        {
-          sortable: false,
-          text: this.$t("nav.recommended"),
-          value: "is_recommended",
-          width: "10%",
+          text: this.$t("common.action"),
+          width: "15%",
+          align: "center",
         },
         {
           sortable: false,
           text: this.$t("common.update_details"),
           value: "updated_at",
+          width: "20%",
         },
         {
           sortable: false,
           text: this.$t("common.action"),
+          width: "10%",
         },
       ],
     };
@@ -455,18 +311,6 @@ export default {
         this.$refs.pulling.rebase();
       },
       deep: true,
-    },
-    is_active(newObj) {
-      this.query.is_active = newObj;
-      this.$refs.pulling.submit();
-    },
-    is_rank(newObj) {
-      this.query.is_rank = newObj;
-      this.$refs.pulling.submit();
-    },
-    is_recommended(newObj) {
-      this.query.is_recommended = newObj;
-      this.$refs.pulling.submit();
     },
     type(newObj) {
       this.query.types = newObj;
@@ -513,15 +357,7 @@ export default {
       } else {
         return "";
       }
-    },
-    getReport() {
-      // this.$refs.pulling.getExportQuery()
-      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-      this.href = `${this.exportApi}?token=${VueCookie.get(
-        "access_token"
-      )}&website=${this.query.website}`;
-      return this.querySet.length;
-    },
+    }
   },
   methods: {
     setQueryAll() {
@@ -537,27 +373,6 @@ export default {
         this.created_at = [undefined, undefined];
       }
       this.website = this.$route.query.website || "";
-      this.is_active =
-        this.$route.query.is_active === true ||
-        this.$route.query.is_active === false ||
-        this.$route.query.is_active === "true" ||
-        this.$route.query.is_active === "false"
-          ? JSON.parse(this.$route.query.is_active)
-          : "";
-      this.is_rank =
-        this.$route.query.is_rank === true ||
-        this.$route.query.is_rank === false ||
-        this.$route.query.is_rank === "true" ||
-        this.$route.query.is_rank === "false"
-          ? JSON.parse(this.$route.query.is_rank)
-          : "";
-      this.is_recommended =
-        this.$route.query.is_recommended === true ||
-        this.$route.query.is_recommended === false ||
-        this.$route.query.is_recommended === "true" ||
-        this.$route.query.is_recommended === "false"
-          ? JSON.parse(this.$route.query.is_recommended)
-          : "";
       this.type = this.$route.query.types || "";
       this.query = Object.assign({}, this.$route.query);
     },
@@ -568,56 +383,11 @@ export default {
     queryParam(query) {
       this.query = Object.assign(this.query, query);
     },
-    // exportQuery(expor) {
-    //   this.export_query = expor
-    // },
     typeSelectOne(val) {
       if (val) {
         this.query.types = val;
         this.submit();
       }
-    },
-    websiteSetMultiple(val) {
-      this.setWebsite = val;
-    },
-    toggle(id, value, mode) {
-      let website_query = this.query.website;
-      this.snackbar.show = false;
-      let toggleResult = new window.FormData();
-      let action_title;
-      if (mode == "is_active") {
-        toggleResult.set("is_active", value);
-        action_title = this.$t("common.status");
-      } else if (mode == "is_rank") {
-        toggleResult.set("is_rank", value);
-        action_title = this.$t("nav.leaderboard");
-      } else {
-        toggleResult.set("is_recommended", value);
-        action_title = this.$t("nav.recommended");
-      }
-      this.$http.put(`${this.appsApi}${id}/`, toggleResult).then(
-        (response) => {
-          let action_text = response[mode]
-            ? this.$t("status.enabled")
-            : this.$t("status.disabled");
-          this.snackbar = {
-            color: "success",
-            show: true,
-            text: `[${action_title}]: ${action_text}`,
-          };
-        },
-        (error) => {
-          this.snackbar = {
-            color: "error",
-            show: true,
-            text: `${this.$t("system_msg.error")}: ${error}`,
-          };
-          this.$refs.pulling.rebase();
-          this.query.website = website_query;
-          this.submit();
-        }
-      );
-      this.snackbar.show = false;
     },
     submit() {
       if (!$.compareQuery(this.query, this.$route.query)) {
@@ -636,7 +406,6 @@ export default {
       this.created_at = ["", ""];
       this.query = {};
       this.query.website = 1;
-      this.query.types = this.$route.query.types;
       this.$nextTick(() => {
         this.$refs.pulling.submit();
       });
@@ -645,7 +414,39 @@ export default {
       this.created_at = ["", ""];
       this.dateRangeText = "";
     },
+    publishApp(item) {
+      let website_query = this.query.website;
+      this.snackbar.show = false;
+      let statusResult = {
+        status: "approved",
+        is_active: true,
+        title: item.title,
+      };
+      this.$http.put(`${this.appsApi}${item.slug}/`, statusResult).then(
+        () => {
+          this.snackbar = {
+            color: "success",
+            show: true,
+            text: `[${this.$t("nav.apps")}]: ${this.$t(
+              "status.published"
+            )}`,
+          };
+          this.$router.push(`/apps_published?website=${website_query}`);
+        },
+        (error) => {
+          this.snackbar = {
+            color: "error",
+            show: true,
+            text: `${this.$t("system_msg.error")}: ${error}`,
+          };
+          this.$refs.pulling.rebase();
+          this.query.website = website_query;
+          this.submit();
+        }
+      );
+    },
     deleteApp(id) {
+      this.snackbar.show = false;
       this.$http.delete(`${this.appsApi}${id}/`).then(
         () => {
           this.snackbar = {
