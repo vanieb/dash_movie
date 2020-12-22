@@ -196,6 +196,9 @@
               </td>
               <td class="text-center">
                 <v-chip
+                  v-if="
+                    $root.permissions.includes('change_app_status_approved')
+                  "
                   @click="openStatusDialog(item, 'approved', item.memo)"
                   class="success lighten-1 mb-1 small"
                 >
@@ -204,12 +207,16 @@
                 </v-chip>
                 <v-spacer></v-spacer>
                 <v-chip
+                  v-if="
+                    $root.permissions.includes('change_app_status_declined')
+                  "
                   @click="openStatusDialog(item, 'cancelled', item.memo)"
                   class="error"
                 >
                   <v-icon dark left x-small>close</v-icon>
                   {{ $t("actions.decline") }}
                 </v-chip>
+                <span v-else>-</span>
               </td>
               <td width="15%" class="align-center justify-center">
                 {{ item.updated_by || "-" }} <br />
