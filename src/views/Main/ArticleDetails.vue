@@ -100,12 +100,20 @@
             <span class="title"
               ><strong>{{ article.title }}</strong></span
             >
-            <template v-slot:actions>
+            <template
+              v-slot:actions
+              v-if="
+                $root.permissions.includes('change_article_submission_status')
+              "
+            >
               <v-chip
                 class="success lighten-1"
                 dark
                 small
-                v-if="article.status == 'review'"
+                v-if="
+                  article.status == 'review' &&
+                    $root.permissions.includes('change_article_status_approved')
+                "
                 @click="openStatusDialog(article, 'approved')"
               >
                 <v-icon left small>check</v-icon>
@@ -115,7 +123,10 @@
                 class="ml-1 error lighten-1"
                 dark
                 small
-                v-if="article.status == 'review'"
+                v-if="
+                  article.status == 'review' &&
+                    $root.permissions.includes('change_article_status_declined')
+                "
                 @click="openStatusDialog(article, 'cancelled')"
               >
                 <v-icon left small>close</v-icon>

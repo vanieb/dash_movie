@@ -10,9 +10,7 @@
               to="/apps/add"
               v-if="$root.permissions.includes('create_app')"
             >
-              <v-icon left>library_add</v-icon> &nbsp;{{
-                $t("actions.add")
-              }}
+              <v-icon left>library_add</v-icon> &nbsp;{{ $t("actions.add") }}
             </v-btn>
           </v-layout>
         </div>
@@ -125,7 +123,7 @@
               </td>
               <td class="align-center" width="20%">
                 <strong>{{ item.name }}</strong>
-                <br/>
+                <br />
                 <v-icon left small color="grey lighten-1">view_compact</v-icon>
                 <strong class="grey--text">{{ $t("status.draft") }}</strong>
                 <br />
@@ -142,7 +140,9 @@
               <td class="text-center">
                 <v-menu
                   offset-y
-                  v-if="$root.permissions.includes('change_app')"
+                  v-if="
+                    $root.permissions.includes('change_app_submission_status')
+                  "
                 >
                   <template v-slot:activator="{ on }">
                     <v-chip v-on="on" class="success lighten-1 small">
@@ -357,7 +357,7 @@ export default {
       } else {
         return "";
       }
-    }
+    },
   },
   methods: {
     setQueryAll() {
@@ -427,9 +427,7 @@ export default {
           this.snackbar = {
             color: "success",
             show: true,
-            text: `[${this.$t("nav.apps")}]: ${this.$t(
-              "status.published"
-            )}`,
+            text: `[${this.$t("nav.apps")}]: ${this.$t("status.published")}`,
           };
           this.$router.push(`/apps_published?website=${website_query}`);
         },

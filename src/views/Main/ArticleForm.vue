@@ -481,7 +481,7 @@ export default {
         formData.set("is_active", status === "approved" ? true : false);
         formData.set(
           "is_popular",
-          status === "approved" ? this.article.is_popular : false
+          status === "approved" ? true : false
         );
         formData.set("status", status);
         if (this.isUpdate) {

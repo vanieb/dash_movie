@@ -142,7 +142,11 @@
               <td class="text-center">
                 <v-menu
                   offset-y
-                  v-if="$root.permissions.includes('change_article_details')"
+                  v-if="
+                    $root.permissions.includes(
+                      'change_article_submission_status'
+                    )
+                  "
                 >
                   <template v-slot:activator="{ on }">
                     <v-chip v-on="on" class="success lighten-1 small">

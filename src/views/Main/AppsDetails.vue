@@ -1,72 +1,70 @@
 <template>
   <v-layout wrap>
     <validation-observer ref="form">
-          <v-dialog v-model="showUpdateStatusDialog" persistent max-width="600">
-            <v-card>
-              <v-card-title v-if="status === 'approved'">
-                <v-icon left color="success">check</v-icon>
-                {{ $t("actions.approve") }} - {{ $t("nav.apps") }}
-              </v-card-title>
-              <v-card-title v-else-if="status === 'publish'">
-                <v-icon left color="success">publish</v-icon>
-                {{ $t("actions.publish") }} - {{ $t("nav.apps") }}
-              </v-card-title>
-              <v-card-title v-else>
-                <v-icon left color="error">close</v-icon>
-                {{ $t("actions.decline") }} - {{ $t("nav.apps") }}
-              </v-card-title>
-              <v-card-text>
-                <div class="black--text">
-                  <strong>{{ dialog.title }}</strong>
-                </div>
-                <v-icon left small color="indigo">person</v-icon>
-                <span>{{ dialog.created_by }}</span> <br />
-                <v-icon left small color="indigo">event</v-icon>
-                <span>{{
-                  dialog.created_at | moment("YYYY-MM-DD HH:mm:ss")
-                }}</span>
-              </v-card-text>
-              <v-card-text v-if="status != 'publish'">
-                <small v-if="status === 'cancelled'"
-                  >{{ $t("system_notes.decline_memo") }}
-                </small>
-                <validation-provider
-                  :rules="{
-                    max: 50,
-                    required: status === 'cancelled' ? true : false,
-                  }"
-                  :name="$t('common.remarks')"
-                >
-                  <v-textarea
-                    outlined
-                    :error-messages="errors"
-                    :label="
-                      status === 'approved'
-                        ? `${$t('common.remarks')}`
-                        : `${$t('common.remarks')}*`
-                    "
-                    slot-scope="{ errors }"
-                    v-model="dialog.memo"
-                    placeholder=""
-                    :counter="50"
-                  >
-                  </v-textarea>
-                </validation-provider>
-                <small v-if="status !== 'approved'" class="error--text"
-                  >* Required</small
-                >
-              </v-card-text>
-              <v-card-actions class="justify-end">
-                <v-btn color="grey lighten-1" @click="closeUpdateStatusDialog()"
-                  >{{ $t("actions.cancel") }}
-                </v-btn>
-                <v-btn color="primary" dark @click="updateStatus(dialog)">
-                  <span>{{ $t("actions.submit") }}</span>
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </validation-observer>
+      <v-dialog v-model="showUpdateStatusDialog" persistent max-width="600">
+        <v-card>
+          <v-card-title v-if="status === 'approved'">
+            <v-icon left color="success">check</v-icon>
+            {{ $t("actions.approve") }} - {{ $t("nav.apps") }}
+          </v-card-title>
+          <v-card-title v-else-if="status === 'publish'">
+            <v-icon left color="success">publish</v-icon>
+            {{ $t("actions.publish") }} - {{ $t("nav.apps") }}
+          </v-card-title>
+          <v-card-title v-else>
+            <v-icon left color="error">close</v-icon>
+            {{ $t("actions.decline") }} - {{ $t("nav.apps") }}
+          </v-card-title>
+          <v-card-text>
+            <div class="black--text">
+              <strong>{{ dialog.title }}</strong>
+            </div>
+            <v-icon left small color="indigo">person</v-icon>
+            <span>{{ dialog.created_by }}</span> <br />
+            <v-icon left small color="indigo">event</v-icon>
+            <span>{{ dialog.created_at | moment("YYYY-MM-DD HH:mm:ss") }}</span>
+          </v-card-text>
+          <v-card-text v-if="status != 'publish'">
+            <small v-if="status === 'cancelled'"
+              >{{ $t("system_notes.decline_memo") }}
+            </small>
+            <validation-provider
+              :rules="{
+                max: 50,
+                required: status === 'cancelled' ? true : false,
+              }"
+              :name="$t('common.remarks')"
+            >
+              <v-textarea
+                outlined
+                :error-messages="errors"
+                :label="
+                  status === 'approved'
+                    ? `${$t('common.remarks')}`
+                    : `${$t('common.remarks')}*`
+                "
+                slot-scope="{ errors }"
+                v-model="dialog.memo"
+                placeholder=""
+                :counter="50"
+              >
+              </v-textarea>
+            </validation-provider>
+            <small v-if="status !== 'approved'" class="error--text"
+              >* Required</small
+            >
+          </v-card-text>
+          <v-card-actions class="justify-end">
+            <v-btn color="grey lighten-1" @click="closeUpdateStatusDialog()"
+              >{{ $t("actions.cancel") }}
+            </v-btn>
+            <v-btn color="primary" dark @click="updateStatus(dialog)">
+              <span>{{ $t("actions.submit") }}</span>
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </validation-observer>
     <v-container v-if="loading">
       <v-layout justify-center align-center>
         <v-progress-circular indeterminate color="blue"></v-progress-circular>
@@ -100,15 +98,21 @@
       <v-card>
         <v-container>
           <v-banner single-line>
-             <span class="title"
+            <span class="title"
               ><strong>{{ apps.name }}</strong></span
             >
-            <template v-slot:actions>
+            <template
+              v-slot:actions
+              v-if="$root.permissions.includes('change_app_submission_status')"
+            >
               <v-chip
                 class="success lighten-1"
                 dark
                 small
-                v-if="apps.status == 'review'"
+                v-if="
+                  apps.status == 'review' &&
+                    $root.permissions.includes('change_app_status_approved')
+                "
                 @click="openStatusDialog(apps, 'approved')"
               >
                 <v-icon left small>check</v-icon>
@@ -118,7 +122,10 @@
                 class="ml-1 error lighten-1"
                 dark
                 small
-                v-if="apps.status == 'review'"
+                v-if="
+                  apps.status == 'review' &&
+                    $root.permissions.includes('change_app_status_declined')
+                "
                 @click="openStatusDialog(apps, 'cancelled')"
               >
                 <v-icon left small>close</v-icon>
@@ -134,16 +141,10 @@
                 <v-icon small left>publish</v-icon>
                 {{ $t("actions.publish") }}
               </v-chip>
-              <span
-                class="success--text"
-                v-else-if="apps.status == 'approved'"
-              >
+              <span class="success--text" v-else-if="apps.status == 'approved'">
                 {{ $t("status.published") }}
               </span>
-              <span
-                class="error--text"
-                v-else-if="apps.status == 'cancelled'"
-              >
+              <span class="error--text" v-else-if="apps.status == 'cancelled'">
                 {{ $t("status.declined") }}
               </span>
             </template>
@@ -195,18 +196,14 @@
                   >person_add</v-icon
                 ><small
                   >{{ apps.created_by || "-" }} |
-                  {{
-                    apps.created_at | moment("YYYY-MM-DD HH:mm:ss")
-                  }}</small
+                  {{ apps.created_at | moment("YYYY-MM-DD HH:mm:ss") }}</small
                 >
               </v-row>
               <v-row>
                 <v-icon left class="m-b-sm" small color="indigo">edit</v-icon
                 ><small
                   >{{ apps.updated_by || "-" }} |
-                  {{
-                    apps.updated_at | moment("YYYY-MM-DD HH:mm:ss")
-                  }}</small
+                  {{ apps.updated_at | moment("YYYY-MM-DD HH:mm:ss") }}</small
                 >
               </v-row>
               <!-- <v-row class="mb-1">
@@ -238,9 +235,10 @@
                 >{{ apps.website.name }}</v-chip
               >
               <span v-else> {{ $t("system_msg.no_data") }}</span>
-              <br/>
-              <v-icon color="grey" left>notes</v-icon>{{ $t("common.remarks") }}:
-              <span>{{ apps.memo || '-' }}</span>
+              <br />
+              <v-icon color="grey" left>notes</v-icon
+              >{{ $t("common.remarks") }}:
+              <span>{{ apps.memo || "-" }}</span>
             </v-col>
             <v-spacer></v-spacer>
           </v-row>
@@ -623,7 +621,7 @@ export default {
       );
       this.snackbar.show = false;
     },
-     openStatusDialog(item, status = "") {
+    openStatusDialog(item, status = "") {
       this.dialog = item;
       this.status = status;
       this.showUpdateStatusDialog = true;
