@@ -62,7 +62,9 @@
                 >
                   <template v-slot:label>
                     <span
-                      :class="preference.value ? 'primary--text' : 'error--text'"
+                      :class="
+                        preference.value ? 'primary--text' : 'error--text'
+                      "
                       >{{
                         preference.value
                           ? $t("status.enabled")
@@ -211,7 +213,7 @@
                       slot-scope="{ errors }"
                       v-model.trim="modal.value"
                       spellcheck="false"
-                      :type="modal.config_type == 4 ? 'number' : '' "
+                      :type="modal.config_type == 4 ? 'number' : ''"
                       placeholder=" "
                       :label="$t('settings.parameter_value')"
                       ref="modalContent"
@@ -251,7 +253,7 @@
 <script>
 import api from "@/api/apis";
 import SnackBar from "@/components/SnackBar";
-import $ from "@/utils/util";
+// import $ from "@/utils/util";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 
 /*
@@ -349,15 +351,15 @@ export default {
           value: e.value === "True" || e.value === "true",
         });
       }
-      if ($.isJsonString(e.value)) {
-        Object.assign(e, {
-          value: JSON.parse(e.value),
-        });
-        e.value.forEach((element) => {
-          element.value =
-            element.config_type === 2 ? parseInt(element.value) : element.value;
-        });
-      }
+      // if ($.isJsonString(e.value)) {
+      //   Object.assign(e, {
+      //     value: JSON.parse(e.value),
+      //   });
+      //   e.value.forEach((element) => {
+      //     element.value =
+      //       element.config_type === 2 ? parseInt(element.value) : element.value;
+      //   });
+      // }
     },
     openModal(
       index,
