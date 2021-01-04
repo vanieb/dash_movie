@@ -141,7 +141,10 @@
               <v-card-title
                 >{{ $t("articles.images") }}
                 <v-layout class="justify-end">
-                  <v-btn color="primary" @click="$refs.inputUploadImage.click()">
+                  <v-btn
+                    color="primary"
+                    @click="$refs.inputUploadImage.click()"
+                  >
                     <v-icon dark>add_photo_alternate</v-icon>
                   </v-btn>
                   <input
@@ -201,10 +204,19 @@
                 color="primary"
                 dark
                 :loading="submitting"
+                v-if="
+                  $root.permissions.includes('change_article_status_approved')
+                "
                 @click="saveArticle('approved')"
               >
-                <v-icon left small>publish</v-icon>
-                {{ $t("actions.publish") }}</v-btn
+                <v-icon left small v-if="article.status !== 'approved'"
+                  >publish</v-icon
+                >
+                {{
+                  article.status === "approved"
+                    ? $t("actions.save")
+                    : $t("actions.publish")
+                }}</v-btn
               >
             </v-layout>
           </v-container>
@@ -479,10 +491,10 @@ export default {
           );
         });
         formData.set("is_active", status === "approved" ? true : false);
-        formData.set(
-          "is_popular",
-          status === "approved" ? true : false
-        );
+        // formData.set(
+        //   "is_popular",
+        //   status === "approved" ? true : false
+        // );
         formData.set("status", status);
         if (this.isUpdate) {
           this.$http

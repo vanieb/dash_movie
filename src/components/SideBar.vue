@@ -366,7 +366,7 @@ export default {
       );
     },
     redirect(page) {
-      this.$router.push(`${page}_review?website=1`);
+      this.$router.push({path: `/${page}_review?website=1`});
     },
     getCount() {
       this.$http.get(api.count).then(
