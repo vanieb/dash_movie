@@ -440,9 +440,16 @@
                 dark
                 :loading="submitting"
                 @click="saveApp('approved')"
+                v-if="$root.permissions.includes('change_app_status_approved')"
               >
-                <v-icon left small>publish</v-icon>
-                {{ $t("actions.publish") }}</v-btn
+                <v-icon left small v-if="app.status !== 'approved'"
+                  >publish</v-icon
+                >
+                {{
+                  app.status === "approved"
+                    ? $t("actions.save")
+                    : $t("actions.publish")
+                }}</v-btn
               >
             </v-layout>
           </v-container>

@@ -7,6 +7,10 @@
             <v-icon left color="success">check</v-icon>
             {{ $t("actions.approve") }} - {{ $t("nav.apps") }}
           </v-card-title>
+          <v-card-title v-else-if="status === 'review'">
+            <v-icon left color="warning">visibility</v-icon>
+            {{ $t("status.review") }} - {{ $t("nav.apps") }}
+          </v-card-title>
           <v-card-title v-else-if="status === 'publish'">
             <v-icon left color="success">publish</v-icon>
             {{ $t("actions.publish") }} - {{ $t("nav.apps") }}
@@ -24,7 +28,7 @@
             <v-icon left small color="indigo">event</v-icon>
             <span>{{ dialog.created_at | moment("YYYY-MM-DD HH:mm:ss") }}</span>
           </v-card-text>
-          <v-card-text v-if="status != 'publish'">
+          <v-card-text v-if="status != 'publish' && status != 'review'">
             <small v-if="status === 'cancelled'"
               >{{ $t("system_notes.decline_memo") }}
             </small>
@@ -103,14 +107,18 @@
             >
             <template
               v-slot:actions
-              v-if="$root.permissions.includes('change_app_submission_status')"
+              v-if="
+                $root.permissions.includes('change_app_submission_status') ||
+                  $root.permissions.includes('change_app_status_approved') ||
+                  $root.permissions.includes('change_app_status_declined')
+              "
             >
               <v-chip
                 class="success lighten-1"
                 dark
                 small
                 v-if="
-                  apps.status == 'review' &&
+                  apps.status === 'review' &&
                     $root.permissions.includes('change_app_status_approved')
                 "
                 @click="openStatusDialog(apps, 'approved')"
@@ -123,7 +131,7 @@
                 dark
                 small
                 v-if="
-                  apps.status == 'review' &&
+                  apps.status === 'review' &&
                     $root.permissions.includes('change_app_status_declined')
                 "
                 @click="openStatusDialog(apps, 'cancelled')"
@@ -132,10 +140,26 @@
                 {{ $t("actions.decline") }}
               </v-chip>
               <v-chip
+                class="warning lighten-1"
+                dark
+                small
+                v-if="
+                  apps.status == 'draft' &&
+                    $root.permissions.includes('change_app_submission_status')
+                "
+                @click="openStatusDialog(apps, 'review')"
+              >
+                <v-icon small left>visibility</v-icon>
+                {{ $t("status.review") }}
+              </v-chip>
+              <v-chip
                 class="ml-2 success lighten-1"
                 dark
                 small
-                v-if="apps.status == 'draft'"
+                v-if="
+                  apps.status == 'draft' &&
+                    $root.permissions.includes('change_app_status_approved')
+                "
                 @click="openStatusDialog(apps, 'publish')"
               >
                 <v-icon small left>publish</v-icon>
@@ -639,7 +663,8 @@ export default {
         this.snackbar.show = false;
         let statusResult = {
           status: this.status === "publish" ? "approved" : this.status,
-          is_active: status == "cancelled" ? false : true,
+          is_active:
+            status == "cancelled" || this.status == "review" ? false : true,
           title: item.title,
           memo: item.memo,
         };
@@ -648,6 +673,8 @@ export default {
             let action_text =
               this.status === "cancelled"
                 ? this.$t("status.declined")
+                : this.status === "review"
+                ? this.$t("status.review")
                 : this.status === "publish"
                 ? this.$t("status.published")
                 : this.$t("status.approved");
