@@ -9,6 +9,10 @@
                 <v-icon left color="success">check</v-icon>
                 {{ $t("actions.approve") }} - {{ $t("articles.article") }}
               </v-card-title>
+              <v-card-title v-else-if="status === 'review'">
+                <v-icon left color="warning">visibility</v-icon>
+                {{ $t("status.review") }} - {{ $t("articles.article") }}
+              </v-card-title>
               <v-card-title v-else-if="status === 'publish'">
                 <v-icon left color="success">publish</v-icon>
                 {{ $t("actions.publish") }} - {{ $t("articles.article") }}
@@ -28,7 +32,7 @@
                   dialog.created_at | moment("YYYY-MM-DD HH:mm:ss")
                 }}</span>
               </v-card-text>
-              <v-card-text v-if="status != 'publish'">
+              <v-card-text v-if="status != 'publish' && status != 'review'">
                 <small v-if="status === 'cancelled'"
                   >{{ $t("system_notes.decline_memo") }}
                 </small>
@@ -103,7 +107,13 @@
             <template
               v-slot:actions
               v-if="
-                $root.permissions.includes('change_article_submission_status')
+                $root.permissions.includes(
+                  'change_article_submission_status'
+                ) ||
+                  $root.permissions.includes(
+                    'change_article_status_approved'
+                  ) ||
+                  $root.permissions.includes('change_article_status_declined')
               "
             >
               <v-chip
@@ -124,7 +134,7 @@
                 dark
                 small
                 v-if="
-                  article.status == 'review' &&
+                  article.status === 'review' &&
                     $root.permissions.includes('change_article_status_declined')
                 "
                 @click="openStatusDialog(article, 'cancelled')"
@@ -132,20 +142,37 @@
                 <v-icon left small>close</v-icon>
                 {{ $t("actions.decline") }}
               </v-chip>
+              <!-- DRAFT -->
               <v-chip
-                class="ml-2 success lighten-1"
+                class="warning lighten-1"
                 dark
                 small
-                v-if="article.status == 'draft'"
+                v-if="
+                  article.status === 'draft' &&
+                    $root.permissions.includes(
+                      'change_article_submission_status'
+                    )
+                "
+                @click="openStatusDialog(article, 'review')"
+              >
+                <v-icon small left>visibility</v-icon>
+                {{ $t("status.review") }}
+              </v-chip>
+              <v-chip
+                class="success lighten-1"
+                dark
+                small
+                v-if="
+                  article.status === 'draft' &&
+                    $root.permissions.includes('change_article_status_approved')
+                "
                 @click="openStatusDialog(article, 'publish')"
               >
                 <v-icon small left>publish</v-icon>
                 {{ $t("actions.publish") }}
               </v-chip>
-              <span
-                class="success--text"
-                v-else-if="article.status == 'approved'"
-              >
+              <!-- NO Permission -->
+              <span class="success--text" v-if="article.status == 'approved'">
                 {{ $t("status.published") }}
               </span>
               <span
@@ -349,7 +376,10 @@ export default {
         this.snackbar.show = false;
         let statusResult = {
           status: this.status === "publish" ? "approved" : this.status,
-          is_active: status == "cancelled" ? false : true,
+          is_active:
+            this.status == "cancelled" || this.status == "review"
+              ? false
+              : true,
           title: item.title,
           memo: item.memo,
         };
@@ -358,6 +388,8 @@ export default {
             let action_text =
               this.status === "cancelled"
                 ? this.$t("status.declined")
+                : this.status === "review"
+                ? this.$t("status.review")
                 : this.status === "publish"
                 ? this.$t("status.published")
                 : this.$t("status.approved");
