@@ -24,7 +24,7 @@
             overlap
             color="error"
             :content="article_review_count"
-            v-if="article_review_count > 0"
+            v-show="article_review_count > 0"
             class="mr-5"
             blink
             ><v-chip

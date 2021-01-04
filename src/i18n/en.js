@@ -96,6 +96,7 @@ export default {
     not_set: "Not Set",
     no_permission_set: "No Assigned Permissions",
     confirm_publish: "Click to confirm the publishing: ",
+    confirm_review: "Click to confirm sending article for review: ",
   },
   nav: {
     login: "Login",
