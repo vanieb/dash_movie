@@ -95,6 +95,7 @@ export default {
     not_set: "没有设置",
     no_permission_set: "没有分配权限",
     confirm_publish: "单击以确认发布：",
+    confirm_review: '单击以确认将文章发送给审阅：'
   },
   nav: {
     login: "登录",
@@ -131,6 +132,7 @@ export default {
     edit_article: "编辑文章",
     add_article: "添加文章",
     keyword_link: "关键字链接",
+    global_settings: "全局设置",
     friendship_link: "友情链接",
     popular_articles: "热门文章",
     logs: "日志",
