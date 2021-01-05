@@ -183,8 +183,8 @@ export default {
     images: "Images",
   },
   settings: {
-    parameter: 'Parameter',
-    parameter_value: 'Parameter Value'
+    parameter: "Parameter",
+    parameter_value: "Parameter Value",
   },
   website: {
     code: "Code",
