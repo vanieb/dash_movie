@@ -162,6 +162,9 @@
                 class="success lighten-1"
                 dark
                 small
+                :disabled="
+                  !article.keywords || article.keywords === 'undefined'
+                "
                 v-if="
                   article.status === 'draft' &&
                     $root.permissions.includes('change_article_status_approved')
@@ -171,6 +174,7 @@
                 <v-icon small left>publish</v-icon>
                 {{ $t("actions.publish") }}
               </v-chip>
+
               <!-- NO Permission -->
               <span class="success--text" v-if="article.status == 'approved'">
                 {{ $t("status.published") }}
@@ -182,6 +186,13 @@
                 {{ $t("status.declined") }}
               </span>
             </template>
+            <v-layout>
+              <small
+                class="error--text"
+                v-if="!article.keywords || article.keywords == 'undefined'"
+                >{{ $t("seo.keywords") }}: {{ $t("system_msg.not_set") }}</small
+              >
+            </v-layout>
           </v-banner>
           <v-row>
             <v-col cols="12" md="2">
@@ -221,7 +232,7 @@
               <v-row>
                 <v-icon left class="m-b-sm" small color="indigo">edit</v-icon
                 ><small
-                  >{{ article.updated_by }} |
+                  >{{ article.updated_by  || '-'}} |
                   {{
                     article.updated_at | moment("YYYY-MM-DD HH:mm:ss")
                   }}</small
