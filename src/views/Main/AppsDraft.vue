@@ -138,28 +138,56 @@
                 <span>{{ item.website ? item.website.name : "-" }}<br /></span>
               </td>
               <td class="text-center">
-                <v-menu
-                  offset-y
-                  v-if="
-                    $root.permissions.includes('change_app_submission_status')
-                  "
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-chip v-on="on" class="success lighten-1 small">
-                      <v-icon dark left small>publish</v-icon>
-                      {{ $t("actions.publish") }}
-                    </v-chip>
-                  </template>
-                  <v-list>
-                    <v-list-item @click="publishApp(item, true, $event)">
-                      <v-list-item-title>
-                        <v-icon left color="warning">warning</v-icon>
-                        {{ $t("system_msg.confirm_publish") }}
-                        <strong>{{ item.name }}</strong>
-                      </v-list-item-title>
-                    </v-list-item>
-                  </v-list>
-                </v-menu>
+                <v-row class="justify-center">
+                  <v-menu
+                    offset-y
+                    v-if="
+                      $root.permissions.includes('change_app_submission_status')
+                    "
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-chip v-on="on" class="warning lighten-1 small mr-1">
+                        <v-icon dark left small>visibility</v-icon>
+                        {{ $t("status.review") }}
+                      </v-chip>
+                    </template>
+                    <v-list>
+                      <v-list-item
+                        @click="changeAppStatus(item, 'review', true, $event)"
+                      >
+                        <v-list-item-title>
+                          <v-icon left color="warning">warning</v-icon>
+                          {{ $t("system_msg.confirm_review") }}
+                          <strong>{{ item.name }}</strong>
+                        </v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                  <v-menu
+                    offset-y
+                    v-if="
+                      $root.permissions.includes('change_app_status_approved')
+                    "
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-chip v-on="on" class="success lighten-1 small">
+                        <v-icon dark left small>publish</v-icon>
+                        {{ $t("actions.publish") }}
+                      </v-chip>
+                    </template>
+                    <v-list>
+                      <v-list-item
+                        @click="changeAppStatus(item, 'approved', true, $event)"
+                      >
+                        <v-list-item-title>
+                          <v-icon left color="warning">warning</v-icon>
+                          {{ $t("system_msg.confirm_publish") }}
+                          <strong>{{ item.name }}</strong>
+                        </v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </v-row>
               </td>
               <td width="15%" class="align-center justify-center">
                 {{ item.updated_by || "-" }} <br />
@@ -286,7 +314,7 @@ export default {
         {
           sortable: false,
           text: this.$t("common.action"),
-          width: "15%",
+          width: "20%",
           align: "center",
         },
         {
@@ -414,22 +442,29 @@ export default {
       this.created_at = ["", ""];
       this.dateRangeText = "";
     },
-    publishApp(item) {
+    changeAppStatus(item, status) {
       let website_query = this.query.website;
       this.snackbar.show = false;
       let statusResult = {
-        status: "approved",
-        is_active: true,
+        status: status,
+        is_active: status == "review" ? false : true,
         title: item.title,
       };
+      let successText =
+        status === "review"
+          ? this.$t("status.review")
+          : this.$t("status.published");
+
+      let routerAddress =
+        status === "review" ? "/apps_review" : "/apps_published";
       this.$http.put(`${this.appsApi}${item.slug}/`, statusResult).then(
         () => {
           this.snackbar = {
             color: "success",
             show: true,
-            text: `[${this.$t("nav.apps")}]: ${this.$t("status.published")}`,
+            text: `[${this.$t("nav.apps")}]: ${successText}`,
           };
-          this.$router.push(`/apps_published?website=${website_query}`);
+          this.$router.push(`${routerAddress}?website=${website_query}`);
         },
         (error) => {
           this.snackbar = {
