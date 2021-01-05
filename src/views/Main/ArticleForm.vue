@@ -99,25 +99,37 @@
             <v-spacer></v-spacer>
             <v-banner color="primary" dark>{{ $t("seo.seo_data") }}</v-banner>
             <v-flex>
-              <v-card-title>{{ $t("seo.subject") }}</v-card-title>
-              <v-card-text>
+              <v-card-title>{{ $t("seo.keywords") }}*</v-card-title>
+              <v-card-text class="no-p-b">
+                <validation-provider
+                  rules="required"
+                  :name="$t('seo.keywords')"
+                >
+                  <v-textarea
+                    outlined
+                    v-model="article.keywords"
+                    rows="2"
+                    :error-messages="errors"
+                    slot-scope="{ errors }"
+                  ></v-textarea>
+                </validation-provider>
+              </v-card-text>
+              <v-card-title class="no-p-b">{{
+                $t("seo.subject")
+              }}</v-card-title>
+              <v-card-text class="no-p-b">
                 <small>{{ $t("system_notes.subject_memo") }}</small>
                 <v-textarea
                   outlined
                   v-model="article.subject"
                   rows="2"
+                  hide-details
                 ></v-textarea>
               </v-card-text>
-              <v-card-title>{{ $t("seo.keywords") }}</v-card-title>
-              <v-card-text>
-                <v-textarea
-                  outlined
-                  v-model="article.keywords"
-                  rows="2"
-                ></v-textarea>
-              </v-card-text>
-              <v-card-title>{{ $t("seo.description") }}</v-card-title>
-              <v-card-text>
+              <v-card-title class="no-p-b">{{
+                $t("seo.description")
+              }}</v-card-title>
+              <v-card-text class="no-p-b">
                 <v-textarea outlined v-model="article.description"></v-textarea>
               </v-card-text>
             </v-flex>
@@ -286,7 +298,7 @@ export default {
       uploadLoading: false,
       // selectOne: ['app_type', 'category'],
       selectMultiple: ["websites"],
-      nonRequired: ["content", "subject", "keywords", "description"],
+      nonRequired: ["content", "subject", "description"],
       data: {
         websites: "",
       },
@@ -484,6 +496,7 @@ export default {
         }
         // String Fields
         formData.set("title", this.article.title);
+        formData.set("keywords", this.article.keywords);
         this.nonRequired.forEach((item) => {
           formData.set(
             item,
@@ -546,3 +559,8 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.no-p-b {
+  padding-bottom: 0px !important ;
+}
+</style>
