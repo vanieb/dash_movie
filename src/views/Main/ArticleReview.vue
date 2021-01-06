@@ -205,15 +205,29 @@
               <td class="text-center">
                 <v-chip
                   v-if="
-                    $root.permissions.includes('change_article_status_approved')
+                    $root.permissions.includes('change_article_details') &&
+                      (!item.keywords || item.keywords === 'undefined')
+                  "
+                  :to="`/articles/${item.slug}/edit`"
+                  class="info mr-2"
+                >
+                  <v-icon dark left x-small>edit</v-icon>
+                  {{ $t("actions.update") }}
+                </v-chip>
+                <v-chip
+                  v-if="
+                    $root.permissions.includes(
+                      'change_article_status_approved'
+                    ) &&
+                      item.keywords && item.keywords !== 'undefined'
                   "
                   @click="openStatusDialog(item, 'approved', item.memo)"
-                  class="success lighten-1 mb-1 small"
+                  class="success lighten-1 mr-2 "
                 >
                   <v-icon dark left x-small dense>check</v-icon>
                   {{ $t("actions.approve") }}
                 </v-chip>
-                <v-spacer></v-spacer>
+                <!-- <v-spacer></v-spacer> -->
                 <v-chip
                   v-if="
                     $root.permissions.includes('change_article_status_declined')
@@ -225,6 +239,13 @@
                   {{ $t("actions.decline") }}
                 </v-chip>
                 <span v-else>-</span>
+                <br />
+                <small
+                  v-if="!item.keywords || item.keywords === 'undefined'"
+                  class="error--text"
+                  >{{ $t("seo.keywords") }}:
+                  {{ $t("system_msg.not_set") }}</small
+                >
               </td>
               <td width="15%" class="align-center justify-center">
                 {{ item.updated_by || "-" }} <br />
