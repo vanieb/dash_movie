@@ -21,7 +21,7 @@
       <validation-observer ref="form">
         <v-card>
           <v-container mt5>
-            <small>*{{ $t("errors.required") }}</small>
+            <small class="error--text">*{{ $t("errors.required") }}</small>
             <v-row class="ml-1 mr-8">
               <v-col cols="12" md="9">
                 <v-row>
@@ -67,7 +67,7 @@
               <v-spacer></v-spacer>
               <v-col cols="12" md="3">
                 <v-banner color="primary" dark>
-                  {{ $t("actions.upload") }} - {{ $t("common.icon") }}
+                  {{ $t("actions.upload") }} - {{ isUpdate ? `${$t("common.icon")}*` : $t("common.icon") }}
                 </v-banner>
                 <v-card>
                   <v-card-text>
@@ -114,9 +114,7 @@
                   ></v-textarea>
                 </validation-provider>
               </v-card-text>
-              <v-card-title class="no-p-b">{{
-                $t("seo.subject")
-              }}</v-card-title>
+              <v-card-title class="no-p-b">{{ $t("seo.subject")}}</v-card-title>
               <v-card-text class="no-p-b">
                 <small>{{ $t("system_notes.subject_memo") }}</small>
                 <v-textarea
@@ -126,18 +124,26 @@
                   hide-details
                 ></v-textarea>
               </v-card-text>
-              <v-card-title class="no-p-b">{{
-                $t("seo.description")
+              <v-card-title class="no-p-b">{{ isUpdate ?
+                `${$t("seo.description")}*` : $t("seo.description")
               }}</v-card-title>
               <v-card-text class="no-p-b">
-                <v-textarea outlined v-model="article.description"></v-textarea>
+                <validation-provider
+                  :rules="`${isUpdate ? 'required' : ''}`"
+                  :name="$t('seo.description')"
+                >
+                <v-textarea outlined v-model="article.description" :error-messages="errors"
+                    slot-scope="{ errors }"></v-textarea>
+                </validation-provider>
               </v-card-text>
             </v-flex>
             <v-banner color="primary" dark
               >{{ $t("nav.articles") }} - {{ $t("articles.content") }}</v-banner
             >
             <v-flex>
-              <v-card-title>{{ $t("articles.content") }}</v-card-title>
+              <v-card-title>{{ isUpdate ?
+                `${$t("articles.content")}*` :
+                 $t("articles.content") }}</v-card-title>
               <v-card-text>
                 <tinymce
                   v-if="showTinyMce"
@@ -207,10 +213,10 @@
                 class="mr-2"
                 :loading="submitting"
                 v-if="article.status !== 'approved'"
-                @click="saveArticle('draft')"
+                @click="saveArticle(article.status)"
               >
                 <v-icon left small>edit</v-icon>
-                {{ $t("actions.save") }} {{ $t("status.draft") }}
+                {{ $t("actions.save") }} {{ !isUpdate ? $t("status.draft") : '' }}
               </v-btn>
               <v-btn
                 color="primary"
@@ -298,7 +304,7 @@ export default {
       uploadLoading: false,
       // selectOne: ['app_type', 'category'],
       selectMultiple: ["websites"],
-      nonRequired: ["content", "subject", "description"],
+      nonRequired: ["content", "subject", "description", "keywords"],
       data: {
         websites: "",
       },
@@ -496,7 +502,8 @@ export default {
         }
         // String Fields
         formData.set("title", this.article.title);
-        formData.set("keywords", this.article.keywords);
+        // formData.set("keywords", this.article.keywords);
+        // formData.set("description", this.article.keywords);
         this.nonRequired.forEach((item) => {
           formData.set(
             item,
@@ -508,7 +515,7 @@ export default {
         //   "is_popular",
         //   status === "approved" ? true : false
         // );
-        formData.set("status", status);
+        formData.set("status", status ? status : 'draft' );
         if (this.isUpdate) {
           this.$http
             .put(`${this.articleApi}${this.article.slug}/`, formData)
@@ -518,7 +525,7 @@ export default {
                   color: "success",
                   show: true,
                   text: `${this.$t("actions.update")} - ${this.$t(
-                    "nav.article"
+                    "nav.articles"
                   )}: ${this.$t("status.success")}`,
                 };
                 this.$router.push(`/articles/${response.slug}`);
@@ -538,7 +545,7 @@ export default {
                 color: "success",
                 show: true,
                 text: `${this.$t("actions.add")} - ${this.$t(
-                  "nav.article"
+                  "nav.articles"
                 )}: ${this.$t("status.success")}`,
               };
               this.$router.push(`/articles/${response.slug}`);

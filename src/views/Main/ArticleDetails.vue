@@ -122,7 +122,10 @@
                 small
                 v-if="
                   article.status == 'review' &&
-                    $root.permissions.includes('change_article_status_approved')
+                    $root.permissions.includes(
+                      'change_article_status_approved'
+                    ) &&
+                    article.keywords && article.keywords !== 'undefined'
                 "
                 @click="openStatusDialog(article, 'approved')"
               >
@@ -232,7 +235,7 @@
               <v-row>
                 <v-icon left class="m-b-sm" small color="indigo">edit</v-icon
                 ><small
-                  >{{ article.updated_by  || '-'}} |
+                  >{{ article.updated_by || "-" }} |
                   {{
                     article.updated_at | moment("YYYY-MM-DD HH:mm:ss")
                   }}</small
