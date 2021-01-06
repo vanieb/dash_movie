@@ -95,7 +95,7 @@ export default {
     not_set: "没有设置",
     no_permission_set: "没有分配权限",
     confirm_publish: "单击以确认发布：",
-    confirm_review: '单击以确认将文章发送给审阅：'
+    confirm_review: "单击以确认将文章发送给审阅：",
   },
   nav: {
     login: "登录",
@@ -182,8 +182,8 @@ export default {
     images: "图片",
   },
   settings: {
-    parameter: '参数',
-    parameter_value: '参数值'
+    parameter: "参数",
+    parameter_value: "参数值",
   },
   website: {
     code: "码",

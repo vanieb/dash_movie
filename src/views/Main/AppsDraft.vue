@@ -170,7 +170,20 @@
                     "
                   >
                     <template v-slot:activator="{ on }">
-                      <v-chip v-on="on" class="success lighten-1 small">
+                      <small
+                        v-if="!item.keywords || item.keywords === 'undefined'"
+                        class="error--text"
+                        >{{ $t("seo.keywords") }}:
+
+                        {{ $t("system_msg.not_set") }}</small
+                      >
+                      <v-chip
+                        v-on="on"
+                        class="success lighten-1 small"
+                        :disabled="
+                          !item.keywords || item.keywords === 'undefined'
+                        "
+                      >
                         <v-icon dark left small>publish</v-icon>
                         {{ $t("actions.publish") }}
                       </v-chip>

@@ -121,6 +121,7 @@
                   apps.status === 'review' &&
                     $root.permissions.includes('change_app_status_approved')
                 "
+                :disabled="!apps.keywords || apps.keywords === 'undefined'"
                 @click="openStatusDialog(apps, 'approved')"
               >
                 <v-icon left small>check</v-icon>
@@ -172,6 +173,13 @@
                 {{ $t("status.declined") }}
               </span>
             </template>
+            <v-layout>
+              <small
+                class="error--text"
+                v-if="!apps.keywords || apps.keywords == 'undefined'"
+                >{{ $t("seo.keywords") }}: {{ $t("system_msg.not_set") }}</small
+              >
+            </v-layout>
           </v-banner>
           <v-row>
             <v-col cols="12" md="2">

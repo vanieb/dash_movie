@@ -368,16 +368,26 @@
             </v-flex>
             <v-banner color="primary" dark>{{ $t("seo.seo_data") }}</v-banner>
             <v-flex>
-              <v-card-title>{{ $t("seo.keywords") }}</v-card-title>
+              <v-card-title>{{ $t("seo.keywords") }}*</v-card-title>
               <v-card-text>
-                <v-textarea outlined v-model="apps.keywords">Hello</v-textarea>
+                <validation-provider
+                  rules="required"
+                  :name="$t('seo.keywords')"
+                >
+                  <v-textarea
+                    outlined
+                    v-model="apps.keywords"
+                    :error-messages="errors"
+                    slot-scope="{ errors }"
+                  ></v-textarea>
+                </validation-provider>
               </v-card-text>
             </v-flex>
             <v-flex>
               <v-card-title>{{ $t("seo.basic_introduction") }}</v-card-title>
               <v-card-text>
                 <v-textarea outlined v-model="apps.basic_introduction"
-                  >Hello</v-textarea
+                  ></v-textarea
                 >
               </v-card-text>
             </v-flex>
@@ -544,7 +554,6 @@ export default {
         "basic_introduction",
         "features",
         "introduction",
-        "keywords",
         "editors_comment",
         "ios_download_link",
         "download_link",
@@ -806,6 +815,7 @@ export default {
         } else {
           formData.set("type", this.class_type[0].id);
         }
+
         this.$http.put(`${this.classApi}/${this.apps.slug}/`, formData).then(
           (response) => {
             this.getAppClassDetails(response.id);
@@ -885,7 +895,7 @@ export default {
         formData.set("star", this.apps.star);
         formData.set("version", this.apps.version);
         formData.set("use_android_link", this.apps.use_android_link);
-
+        formData.set("keywords", this.apps.keywords);
         this.nonRequired.forEach((item) => {
           formData.set(
             item,
