@@ -518,7 +518,7 @@ export default {
                   color: "success",
                   show: true,
                   text: `${this.$t("actions.update")} - ${this.$t(
-                    "nav.article"
+                    "nav.articles"
                   )}: ${this.$t("status.success")}`,
                 };
                 this.$router.push(`/articles/${response.slug}`);
@@ -538,7 +538,7 @@ export default {
                 color: "success",
                 show: true,
                 text: `${this.$t("actions.add")} - ${this.$t(
-                  "nav.article"
+                  "nav.articles"
                 )}: ${this.$t("status.success")}`,
               };
               this.$router.push(`/articles/${response.slug}`);
