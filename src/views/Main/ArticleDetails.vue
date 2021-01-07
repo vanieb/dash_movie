@@ -156,6 +156,7 @@
                       'change_article_submission_status'
                     )
                 "
+                :disabled="!complete"
                 @click="openStatusDialog(article, 'review')"
               >
                 <v-icon small left>visibility</v-icon>
@@ -165,9 +166,7 @@
                 class="success lighten-1"
                 dark
                 small
-                :disabled="
-                  !article.keywords || article.keywords === 'undefined'
-                "
+                :disabled="!complete"
                 v-if="
                   article.status === 'draft' &&
                     $root.permissions.includes('change_article_status_approved')
@@ -190,11 +189,9 @@
               </span>
             </template>
             <v-layout>
-              <small
-                class="error--text"
-                v-if="!complete"
-                >{{ $t("errors.incomplete_details") }}</small
-              >
+              <small class="error--text" v-if="!complete">{{
+                $t("errors.incomplete_details")
+              }}</small>
             </v-layout>
           </v-banner>
           <v-row>
@@ -286,22 +283,22 @@
           </v-row>
           <v-banner color="primary" dark>{{ $t("seo.seo_data") }}</v-banner>
           <v-flex>
-            <v-card-title>{{ $t("seo.subject") }}</v-card-title>
-            <v-card-text>{{
-              article.subject || $t("system_msg.no_data")
-            }}</v-card-text>
-          </v-flex>
-          <v-flex>
             <v-card-title>{{ $t("seo.keywords") }}</v-card-title>
             <v-card-text>{{
               article.keywords || $t("system_msg.no_data")
             }}</v-card-text>
           </v-flex>
           <v-flex>
+            <v-card-title>{{ $t("seo.subject") }}</v-card-title>
+            <v-card-text>{{
+              article.subject || $t("system_msg.no_data")
+            }}</v-card-text>
+          </v-flex>
+          <v-flex>
             <v-card-title>{{ $t("seo.description") }}</v-card-title>
-            <v-card-text
-              v-html="article.description || $t('system_msg.no_data')"
-            ></v-card-text>
+            <v-card-text>{{
+              article.description || $t("system_msg.no_data")
+            }}</v-card-text>
           </v-flex>
           <v-flex>
             <v-banner color="primary" dark>{{
@@ -368,7 +365,12 @@ export default {
   },
   computed: {
     complete() {
-      return this.article.keywords && this.article.description && this.article.content && this.article.icon
+      return (
+        this.article.keywords &&
+        this.article.description &&
+        this.article.content &&
+        this.article.icon
+      );
     }
   },
   methods: {
