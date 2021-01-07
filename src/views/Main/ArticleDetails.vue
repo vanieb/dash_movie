@@ -371,7 +371,7 @@ export default {
         this.article.content &&
         this.article.icon
       );
-    }
+    },
   },
   methods: {
     getArticleDetails(id) {

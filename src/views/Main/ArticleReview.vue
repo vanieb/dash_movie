@@ -205,13 +205,13 @@
               <td class="text-center">
                 <v-chip
                   v-if="
-                    $root.permissions.includes('change_article_details')
-                    && !(
-                      item.keywords &&
-                      item.description &&
-                      item.content &&
-                      item.icon
-                    )
+                    $root.permissions.includes('change_article_details') &&
+                      !(
+                        item.keywords &&
+                        item.description &&
+                        item.content &&
+                        item.icon
+                      )
                   "
                   :to="`/articles/${item.slug}/edit`"
                   class="info mr-2"
@@ -224,12 +224,10 @@
                     $root.permissions.includes(
                       'change_article_status_approved'
                     ) &&
-                      (
-                        item.keywords &&
+                      item.keywords &&
                         item.description &&
                         item.content &&
                         item.icon
-                      )
                   "
                   @click="openStatusDialog(item, 'approved', item.memo)"
                   class="success lighten-1 mr-2 "
