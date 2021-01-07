@@ -510,7 +510,6 @@ export default {
             this.article[item] !== undefined ? this.article[item] : ""
           );
         });
-        formData.set("is_active", status === "approved" ? true : false);
         // formData.set(
         //   "is_popular",
         //   status === "approved" ? true : false
