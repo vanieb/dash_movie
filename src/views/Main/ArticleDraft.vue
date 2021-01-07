@@ -150,7 +150,18 @@
                     "
                   >
                     <template v-slot:activator="{ on }">
-                      <v-chip v-on="on" class="warning lighten-1 small mr-1">
+                      <v-chip
+                        v-on="on"
+                        class="warning lighten-1 small mr-1"
+                        :disabled="
+                          !(
+                            item.keywords &&
+                            item.description &&
+                            item.content &&
+                            item.icon
+                          )
+                        "
+                      >
                         <v-icon dark left small>visibility</v-icon>
                         {{ $t("status.review") }}
                       </v-chip>
@@ -179,16 +190,27 @@
                   >
                     <template v-slot:activator="{ on }">
                       <small
-                        v-if="!item.keywords || item.keywords === 'undefined'"
+                        v-if="
+                          !(
+                            item.keywords &&
+                            item.description &&
+                            item.content &&
+                            item.icon
+                          )
+                        "
                         class="error--text"
-                        >{{ $t("seo.keywords") }}:
-                        {{ $t("system_msg.not_set") }}</small
+                        >{{ $t("errors.incomplete_details") }}</small
                       >
                       <v-chip
                         v-on="on"
                         class="success lighten-1 small"
                         :disabled="
-                          !item.keywords || item.keywords === 'undefined'
+                          !(
+                            item.keywords &&
+                            item.description &&
+                            item.content &&
+                            item.icon
+                          )
                         "
                       >
                         <v-icon dark left small>publish</v-icon>

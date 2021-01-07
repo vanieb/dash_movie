@@ -300,9 +300,7 @@ export default {
       article: {
         images: [],
       },
-      uploadInstallerDialog: false,
       uploadLoading: false,
-      // selectOne: ['app_type', 'category'],
       selectMultiple: ["websites"],
       nonRequired: ["content", "subject", "description", "keywords"],
       data: {
@@ -361,9 +359,6 @@ export default {
           this.selectMultiple.forEach((item) => {
             this.pushIDs(item, "Multiple");
           });
-          // this.selectOne.forEach(item => {
-          //   this.pushIDs(item, 'one')
-          // })
         },
         (error) => {
           this.snackbar = {
@@ -491,29 +486,17 @@ export default {
         } else if (this.website_changed) {
           formData.set("websites", this.article.websites);
         }
-        // Select Fields (One) old values are sent if value did not change
-        // this.selectOne.forEach(item => {
-        //   if ((this.data[item] != this.article[item][0]) && !this.article[item].id) {
-        //     formData.set(`${item}_id`, this.article[item])
-        //   }
-        // })
         if (this.change_icon) {
           formData.set("icon", this.article.icon);
         }
         // String Fields
         formData.set("title", this.article.title);
-        // formData.set("keywords", this.article.keywords);
-        // formData.set("description", this.article.keywords);
         this.nonRequired.forEach((item) => {
           formData.set(
             item,
             this.article[item] !== undefined ? this.article[item] : ""
           );
         });
-        // formData.set(
-        //   "is_popular",
-        //   status === "approved" ? true : false
-        // );
         formData.set("status", status ? status : 'draft' );
         if (this.isUpdate) {
           this.$http

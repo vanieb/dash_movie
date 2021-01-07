@@ -206,7 +206,12 @@
                 <v-chip
                   v-if="
                     $root.permissions.includes('change_article_details') &&
-                      (!item.keywords || item.keywords === 'undefined')
+                      !(
+                        item.keywords &&
+                        item.description &&
+                        item.content &&
+                        item.icon
+                      )
                   "
                   :to="`/articles/${item.slug}/edit`"
                   class="info mr-2"
@@ -219,7 +224,10 @@
                     $root.permissions.includes(
                       'change_article_status_approved'
                     ) &&
-                      item.keywords && item.keywords !== 'undefined'
+                      item.keywords &&
+                        item.description &&
+                        item.content &&
+                        item.icon
                   "
                   @click="openStatusDialog(item, 'approved', item.memo)"
                   class="success lighten-1 mr-2 "
@@ -227,7 +235,6 @@
                   <v-icon dark left x-small dense>check</v-icon>
                   {{ $t("actions.approve") }}
                 </v-chip>
-                <!-- <v-spacer></v-spacer> -->
                 <v-chip
                   v-if="
                     $root.permissions.includes('change_article_status_declined')
@@ -241,10 +248,16 @@
                 <span v-else>-</span>
                 <br />
                 <small
-                  v-if="!item.keywords || item.keywords === 'undefined'"
+                  v-if="
+                    !(
+                      item.keywords &&
+                      item.description &&
+                      item.content &&
+                      item.icon
+                    )
+                  "
                   class="error--text"
-                  >{{ $t("seo.keywords") }}:
-                  {{ $t("system_msg.not_set") }}</small
+                  >{{ $t("errors.incomplete_details") }}</small
                 >
               </td>
               <td width="15%" class="align-center justify-center">
@@ -352,7 +365,7 @@ export default {
           sortable: false,
           text: this.$t("common.action"),
           value: "",
-          width: "20%",
+          width: "30%",
           align: "center",
         },
         {
