@@ -105,7 +105,8 @@
               <v-spacer></v-spacer>
               <v-col cols="12" md="3">
                 <v-banner color="primary" dark dense>
-                  {{ $t("actions.upload") }} - {{ $t("common.icon") }}
+                  {{ $t("actions.upload") }} -
+                  {{ isUpdate ? `${$t("common.icon")}*` : $t("common.icon") }}
                 </v-banner>
                 <v-card>
                   <v-img
@@ -138,7 +139,11 @@
             </v-row>
             <v-spacer></v-spacer>
             <v-layout v-show="isUpdate">
-              <v-card-title>{{ $t("apps.classification") }}</v-card-title>
+              <v-card-title>{{
+                isUpdate
+                  ? `${$t("apps.classification")}*`
+                  : $t("apps.classification")
+              }}</v-card-title>
               <v-layout justify-end>
                 <validation-observer ref="classForm">
                   <v-btn
@@ -384,18 +389,34 @@
               </v-card-text>
             </v-flex>
             <v-flex>
-              <v-card-title>{{ $t("seo.basic_introduction") }}</v-card-title>
+              <v-card-title>{{
+                isUpdate
+                  ? `${$t("seo.basic_introduction")}*`
+                  : $t("seo.basic_introduction")
+              }}</v-card-title>
               <v-card-text>
-                <v-textarea outlined v-model="apps.basic_introduction"
-                  ></v-textarea
+                <validation-provider
+                  :rules="`${isUpdate ? 'required' : ''}`"
+                  :name="$t('seo.basic_introduction')"
                 >
+                  <v-textarea
+                    outlined
+                    v-model="apps.basic_introduction"
+                    :error-messages="errors"
+                    slot-scope="{ errors }"
+                  ></v-textarea>
+                </validation-provider>
               </v-card-text>
             </v-flex>
             <v-banner color="primary" dark>{{
               $t("apps.other_details")
             }}</v-banner>
             <v-flex>
-              <v-card-title>{{ $t("apps.introduction") }}</v-card-title>
+              <v-card-title>{{
+                isUpdate
+                  ? `${$t("apps.introduction")}*`
+                  : $t("apps.introduction")
+              }}</v-card-title>
               <v-card-text>
                 <tinymce
                   v-if="showTinyMce"
@@ -408,7 +429,9 @@
               </v-card-text>
             </v-flex>
             <v-flex>
-              <v-card-title>{{ $t("apps.features") }}</v-card-title
+              <v-card-title>{{
+                isUpdate ? `${$t("apps.features")}*` : $t("apps.features")
+              }}</v-card-title
               ><v-card-text>
                 <tinymce
                   v-if="showTinyMce"
@@ -452,11 +475,11 @@
                 @click="saveApp('approved')"
                 v-if="$root.permissions.includes('change_app_status_approved')"
               >
-                <v-icon left small v-if="app.status !== 'approved'"
+                <v-icon left small v-if="apps.status !== 'approved'"
                   >publish</v-icon
                 >
                 {{
-                  app.status === "approved"
+                  apps.status === "approved"
                     ? $t("actions.save")
                     : $t("actions.publish")
                 }}</v-btn
@@ -770,7 +793,6 @@ export default {
       }
     },
     close() {
-      // this.$router.go(this.$router.currentRoute)
       this.showForm = false;
       this.isUpdateClass = false;
       this.app_classification = {};

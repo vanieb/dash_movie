@@ -205,29 +205,7 @@
               <td class="text-center">
                 <v-chip
                   v-if="
-                    $root.permissions.includes('change_article_details') &&
-                      !(
-                        item.keywords &&
-                        item.description &&
-                        item.content &&
-                        item.icon
-                      )
-                  "
-                  :to="`/articles/${item.slug}/edit`"
-                  class="info mr-2"
-                >
-                  <v-icon dark left x-small>edit</v-icon>
-                  {{ $t("actions.update") }}
-                </v-chip>
-                <v-chip
-                  v-if="
-                    $root.permissions.includes(
-                      'change_article_status_approved'
-                    ) &&
-                      item.keywords &&
-                        item.description &&
-                        item.content &&
-                        item.icon
+                    $root.permissions.includes('change_article_status_approved')
                   "
                   @click="openStatusDialog(item, 'approved', item.memo)"
                   class="success lighten-1 mr-2 "
@@ -246,19 +224,6 @@
                   {{ $t("actions.decline") }}
                 </v-chip>
                 <span v-else>-</span>
-                <br />
-                <small
-                  v-if="
-                    !(
-                      item.keywords &&
-                      item.description &&
-                      item.content &&
-                      item.icon
-                    )
-                  "
-                  class="error--text"
-                  >{{ $t("errors.incomplete_details") }}</small
-                >
               </td>
               <td width="15%" class="align-center justify-center">
                 {{ item.updated_by || "-" }} <br />

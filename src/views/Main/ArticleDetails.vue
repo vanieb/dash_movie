@@ -124,8 +124,7 @@
                   article.status == 'review' &&
                     $root.permissions.includes(
                       'change_article_status_approved'
-                    ) &&
-                    complete
+                    )
                 "
                 @click="openStatusDialog(article, 'approved')"
               >
@@ -156,7 +155,6 @@
                       'change_article_submission_status'
                     )
                 "
-                :disabled="!complete"
                 @click="openStatusDialog(article, 'review')"
               >
                 <v-icon small left>visibility</v-icon>
@@ -166,7 +164,6 @@
                 class="success lighten-1"
                 dark
                 small
-                :disabled="!complete"
                 v-if="
                   article.status === 'draft' &&
                     $root.permissions.includes('change_article_status_approved')
@@ -176,7 +173,6 @@
                 <v-icon small left>publish</v-icon>
                 {{ $t("actions.publish") }}
               </v-chip>
-
               <!-- NO Permission -->
               <span class="success--text" v-if="article.status == 'approved'">
                 {{ $t("status.published") }}
@@ -188,11 +184,6 @@
                 {{ $t("status.declined") }}
               </span>
             </template>
-            <v-layout>
-              <small class="error--text" v-if="!complete">{{
-                $t("errors.incomplete_details")
-              }}</small>
-            </v-layout>
           </v-banner>
           <v-row>
             <v-col cols="12" md="2">
@@ -362,16 +353,6 @@ export default {
       let id = to.params.articleId;
       vm.getArticleDetails(id);
     });
-  },
-  computed: {
-    complete() {
-      return (
-        this.article.keywords &&
-        this.article.description &&
-        this.article.content &&
-        this.article.icon
-      );
-    },
   },
   methods: {
     getArticleDetails(id) {

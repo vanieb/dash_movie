@@ -67,7 +67,8 @@
               <v-spacer></v-spacer>
               <v-col cols="12" md="3">
                 <v-banner color="primary" dark>
-                  {{ $t("actions.upload") }} - {{ isUpdate ? `${$t("common.icon")}*` : $t("common.icon") }}
+                  {{ $t("actions.upload") }} -
+                  {{ isUpdate ? `${$t("common.icon")}*` : $t("common.icon") }}
                 </v-banner>
                 <v-card>
                   <v-card-text>
@@ -114,7 +115,9 @@
                   ></v-textarea>
                 </validation-provider>
               </v-card-text>
-              <v-card-title class="no-p-b">{{ $t("seo.subject")}}</v-card-title>
+              <v-card-title class="no-p-b">{{
+                $t("seo.subject")
+              }}</v-card-title>
               <v-card-text class="no-p-b">
                 <small>{{ $t("system_notes.subject_memo") }}</small>
                 <v-textarea
@@ -124,16 +127,20 @@
                   hide-details
                 ></v-textarea>
               </v-card-text>
-              <v-card-title class="no-p-b">{{ isUpdate ?
-                `${$t("seo.description")}*` : $t("seo.description")
+              <v-card-title class="no-p-b">{{
+                isUpdate ? `${$t("seo.description")}*` : $t("seo.description")
               }}</v-card-title>
               <v-card-text class="no-p-b">
                 <validation-provider
                   :rules="`${isUpdate ? 'required' : ''}`"
                   :name="$t('seo.description')"
                 >
-                <v-textarea outlined v-model="article.description" :error-messages="errors"
-                    slot-scope="{ errors }"></v-textarea>
+                  <v-textarea
+                    outlined
+                    v-model="article.description"
+                    :error-messages="errors"
+                    slot-scope="{ errors }"
+                  ></v-textarea>
                 </validation-provider>
               </v-card-text>
             </v-flex>
@@ -141,9 +148,9 @@
               >{{ $t("nav.articles") }} - {{ $t("articles.content") }}</v-banner
             >
             <v-flex>
-              <v-card-title>{{ isUpdate ?
-                `${$t("articles.content")}*` :
-                 $t("articles.content") }}</v-card-title>
+              <v-card-title>{{
+                isUpdate ? `${$t("articles.content")}*` : $t("articles.content")
+              }}</v-card-title>
               <v-card-text>
                 <tinymce
                   v-if="showTinyMce"
@@ -216,7 +223,8 @@
                 @click="saveArticle(article.status)"
               >
                 <v-icon left small>edit</v-icon>
-                {{ $t("actions.save") }} {{ !isUpdate ? $t("status.draft") : '' }}
+                {{ $t("actions.save") }}
+                {{ !isUpdate ? $t("status.draft") : "" }}
               </v-btn>
               <v-btn
                 color="primary"
@@ -497,7 +505,7 @@ export default {
             this.article[item] !== undefined ? this.article[item] : ""
           );
         });
-        formData.set("status", status ? status : 'draft' );
+        formData.set("status", status ? status : "draft");
         if (this.isUpdate) {
           this.$http
             .put(`${this.articleApi}${this.article.slug}/`, formData)
