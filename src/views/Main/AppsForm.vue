@@ -793,7 +793,6 @@ export default {
       }
     },
     close() {
-      // this.$router.go(this.$router.currentRoute)
       this.showForm = false;
       this.isUpdateClass = false;
       this.app_classification = {};
