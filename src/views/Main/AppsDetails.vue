@@ -671,8 +671,6 @@ export default {
         this.snackbar.show = false;
         let statusResult = {
           status: this.status === "publish" ? "approved" : this.status,
-          is_active:
-            status == "cancelled" || this.status == "review" ? false : true,
           title: item.title,
           memo: item.memo,
         };

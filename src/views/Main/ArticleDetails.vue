@@ -125,7 +125,7 @@
                     $root.permissions.includes(
                       'change_article_status_approved'
                     ) &&
-                    article.keywords && article.keywords !== 'undefined'
+                    complete
                 "
                 @click="openStatusDialog(article, 'approved')"
               >
@@ -192,8 +192,8 @@
             <v-layout>
               <small
                 class="error--text"
-                v-if="!article.keywords || article.keywords == 'undefined'"
-                >{{ $t("seo.keywords") }}: {{ $t("system_msg.not_set") }}</small
+                v-if="!complete"
+                >{{ $t("errors.incomplete_details") }}</small
               >
             </v-layout>
           </v-banner>
@@ -366,6 +366,11 @@ export default {
       vm.getArticleDetails(id);
     });
   },
+  computed: {
+    complete() {
+      return this.article.keywords && this.article.description && this.article.content && this.article.icon
+    }
+  },
   methods: {
     getArticleDetails(id) {
       this.$http.get(`${this.articleApi}${id}/`).then((response) => {
@@ -390,10 +395,6 @@ export default {
         this.snackbar.show = false;
         let statusResult = {
           status: this.status === "publish" ? "approved" : this.status,
-          is_active:
-            this.status == "cancelled" || this.status == "review"
-              ? false
-              : true,
           title: item.title,
           memo: item.memo,
         };

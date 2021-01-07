@@ -61,6 +61,7 @@ export default {
     server_error: "Server Error",
     switch_error: "No installer is uploaded in our server.",
     no_access: "You have no access to this page.",
+    incomplete_details: "Incomplete Details: Complete the required fields to approve or publish this."
   },
   system_notes: {
     upload_installer_memo:

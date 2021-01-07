@@ -61,6 +61,7 @@ export default {
     server_error: "服务器错误",
     switch_error: "没有安装程序上传到我们的服务器中。",
     no_access: "您无权访问此页面。",
+    incomplete_details: "不完整的详细信息：完成必填字段以批准或发布。"
   },
   system_notes: {
     upload_installer_memo:
