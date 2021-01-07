@@ -236,23 +236,32 @@
                 v-if="item.websites.length == 1 && item.title.length > 20"
               >
                 {{ item.title | truncate(20, "...") }}
-              <br />
-              <v-icon left small color="success lighten-1">view_compact</v-icon>
-                <strong class="success--text">{{ $t("status.published") }}</strong>
+                <br />
+                <v-icon left small color="success lighten-1"
+                  >view_compact</v-icon
+                >
+                <strong class="success--text">{{
+                  $t("status.published")
+                }}</strong>
                 <v-icon left small color="indigo">person</v-icon>
                 <span>{{ item.created_by }}</span> <br />
                 <v-icon left small color="indigo">event</v-icon>
                 <span>{{
                   item.created_at | moment("YYYY-MM-DD HH:mm:ss")
-                }}</span> <br />
+                }}</span>
+                <br />
                 <v-icon left small color="success">publish</v-icon>
                 {{ $t("status.published") }}
               </td>
               <td class="align-center" width="30%" v-else>
                 <strong>{{ item.title }}</strong>
                 <br />
-                <v-icon left small color="success lighten-1">view_compact</v-icon>
-                <strong class="success--text">{{ $t("status.published") }}</strong>
+                <v-icon left small color="success lighten-1"
+                  >view_compact</v-icon
+                >
+                <strong class="success--text">{{
+                  $t("status.published")
+                }}</strong>
                 <br />
                 <v-icon left small color="indigo">person</v-icon>
                 <span>{{ item.created_by }}</span> <br />
@@ -363,7 +372,7 @@
       ref="pulling"
       @query-data="queryData"
       @query-param="queryParam"
-      :persistent-query="{status: 'approved'}"
+      :persistent-query="{ status: 'approved' }"
     >
     </pagination>
     <!-- SNACKBAR -->

@@ -399,12 +399,12 @@
                   :rules="`${isUpdate ? 'required' : ''}`"
                   :name="$t('seo.basic_introduction')"
                 >
-                <v-textarea
-                  outlined
-                  v-model="apps.basic_introduction"
-                  :error-messages="errors"
-                  slot-scope="{ errors }"
-                ></v-textarea>
+                  <v-textarea
+                    outlined
+                    v-model="apps.basic_introduction"
+                    :error-messages="errors"
+                    slot-scope="{ errors }"
+                  ></v-textarea>
                 </validation-provider>
               </v-card-text>
             </v-flex>
