@@ -447,12 +447,11 @@ export default {
         } else {
           statusResult = {
             status: this.status,
-            is_active: this.status == "approved" ? true : false,
             title: item.title,
             memo: this.memo,
           };
         }
-        this.$http.put(`${this.appsApi}${item.slug}/`, statusResult).then(
+        this.$http.put(`${this.appsApi}status/${item.slug}/`, statusResult).then(
           (response) => {
             let action_text =
               response.status === "approved"

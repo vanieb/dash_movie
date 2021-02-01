@@ -460,7 +460,6 @@ export default {
       this.snackbar.show = false;
       let statusResult = {
         status: status,
-        is_active: status == "review" ? false : true,
         title: item.title,
       };
       let successText =
@@ -470,7 +469,7 @@ export default {
 
       let routerAddress =
         status === "review" ? "/apps_review" : "/apps_published";
-      this.$http.put(`${this.appsApi}${item.slug}/`, statusResult).then(
+      this.$http.put(`${this.appsApi}status/${item.slug}/`, statusResult).then(
         () => {
           this.snackbar = {
             color: "success",

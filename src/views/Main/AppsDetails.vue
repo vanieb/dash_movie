@@ -674,7 +674,7 @@ export default {
           title: item.title,
           memo: item.memo,
         };
-        this.$http.put(`${this.appsApi}${item.slug}/`, statusResult).then(
+        this.$http.put(`${this.appsApi}status/${item.slug}/`, statusResult).then(
           (response) => {
             let action_text =
               this.status === "cancelled"
