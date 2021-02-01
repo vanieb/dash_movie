@@ -485,28 +485,28 @@ export default {
     },
     async saveArticle(status) {
       this.snackbar.show = false;
-      if (!this.article.content) {
-        this.snackbar = {
-          color: "red",
-          show: true,
-          text: `${this.$t("errors.required")}: ${this.$t(
-            "articles.article"
-          )} ${this.$t("articles.content")}`,
-        };
-        return;
-      }
-      if (!this.article.icon) {
-        this.snackbar = {
-          color: "red",
-          show: true,
-          text: `${this.$t("errors.required")}: ${this.$t(
-            "articles.article"
-          )} ${this.$t("common.icon")}`,
-        };
-        return;
-      }
       const isValid = await this.$refs.form.validate();
       if (isValid) {
+        if (!this.article.content) {
+          this.snackbar = {
+            color: "red",
+            show: true,
+            text: `${this.$t("errors.required")}: ${this.$t(
+              "articles.article"
+            )} ${this.$t("articles.content")}`,
+          };
+          return;
+        }
+        if (!this.article.icon) {
+          this.snackbar = {
+            color: "red",
+            show: true,
+            text: `${this.$t("errors.required")}: ${this.$t(
+              "articles.article"
+            )} ${this.$t("common.icon")}`,
+          };
+          return;
+        }
         let formData = new window.FormData();
         // Select Fields (Multiple) are added if value changed
         if (this.website_removed_some) {
