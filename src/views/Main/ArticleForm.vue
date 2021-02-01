@@ -68,7 +68,7 @@
               <v-col cols="12" md="3">
                 <v-banner color="primary" dark>
                   {{ $t("actions.upload") }} -
-                  {{ isUpdate ? `${$t("common.icon")}*` : $t("common.icon") }}
+                  {{ `${$t("common.icon")}*` }}
                 </v-banner>
                 <v-card>
                   <v-card-text>
@@ -128,11 +128,11 @@
                 ></v-textarea>
               </v-card-text>
               <v-card-title class="no-p-b">{{
-                isUpdate ? `${$t("seo.description")}*` : $t("seo.description")
+                `${$t("seo.description")}*`
               }}</v-card-title>
               <v-card-text class="no-p-b">
                 <validation-provider
-                  :rules="`${isUpdate ? 'required' : ''}`"
+                  rules="required"
                   :name="$t('seo.description')"
                 >
                   <v-textarea
@@ -485,6 +485,26 @@ export default {
     },
     async saveArticle(status) {
       this.snackbar.show = false;
+      if (!this.article.content) {
+        this.snackbar = {
+          color: "red",
+          show: true,
+          text: `${this.$t("errors.required")}: ${this.$t(
+            "articles.article"
+          )} ${this.$t("articles.content")}`,
+        };
+        return;
+      }
+      if (!this.article.icon) {
+        this.snackbar = {
+          color: "red",
+          show: true,
+          text: `${this.$t("errors.required")}: ${this.$t(
+            "articles.article"
+          )} ${this.$t("common.icon")}`,
+        };
+        return;
+      }
       const isValid = await this.$refs.form.validate();
       if (isValid) {
         let formData = new window.FormData();
