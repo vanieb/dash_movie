@@ -452,7 +452,6 @@ export default {
         } else {
           statusResult = {
             status: this.status,
-            is_active: this.status == "approved" ? true : false,
             title: item.title,
             memo: this.memo,
           };
