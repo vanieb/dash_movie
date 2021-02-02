@@ -252,16 +252,6 @@
           <span v-if="!items">{{ items }}</span>
           <tbody>
             <tr v-for="item in querySet" :key="item.id">
-              <td width="5%">
-                <v-btn
-                  class="mr-2"
-                  icon
-                  color="info"
-                  :to="`/articles/${item.slug}`"
-                >
-                  <v-icon>touch_app</v-icon>
-                </v-btn>
-              </td>
               <td
                 class="align-center"
                 width="30%"
@@ -361,45 +351,6 @@
                   item.updated_at | moment("YYYY-MM-DD HH:mm:ss")
                 }}</span>
               </td>
-              <td
-                width="10%"
-                class="align-center justify-center"
-                v-if="
-                  $root.permissions.includes('change_article_details') ||
-                    $root.permissions.includes('delete_article')
-                "
-              >
-                <v-layout>
-                  <v-btn
-                    class="mr-2"
-                    icon
-                    :to="`/articles/${item.slug}/edit`"
-                    v-if="$root.permissions.includes('change_article_details')"
-                  >
-                    <v-icon small>edit</v-icon>
-                  </v-btn>
-                  <v-menu
-                    offset-y
-                    v-if="$root.permissions.includes('delete_article')"
-                  >
-                    <template v-slot:activator="{ on }">
-                      <v-icon color="error" small v-on="on" icon>delete</v-icon>
-                    </template>
-                    <v-list dark>
-                      <v-list-item
-                        @click="deleteArticle(item.slug, true, $event)"
-                      >
-                        <v-list-item-title>
-                          <v-icon left color="warning">warning</v-icon>
-                          {{ $t("system_msg.confirm_delete") }}
-                          <strong>{{ item.title }}</strong>
-                        </v-list-item-title>
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
-                </v-layout>
-              </td>
-              <td v-else>-</td>
             </tr>
           </tbody>
         </template>
@@ -487,11 +438,6 @@ export default {
       headers: [
         {
           sortable: false,
-          text: "",
-          value: "",
-        },
-        {
-          sortable: false,
           text: this.$t("articles.title"),
           value: "title",
         },
@@ -523,10 +469,6 @@ export default {
           text: `${this.$t("common.update_details")}`,
           value: "updated_at",
           width: "15%",
-        },
-        {
-          sortable: false,
-          text: this.$t("common.action"),
         },
       ],
     };
@@ -634,7 +576,13 @@ export default {
     },
     queryData(queryset) {
       this.loading = false;
-      this.querySet = queryset;
+      this.querySet = queryset.filter(
+        (element) =>
+          !(
+            element.status === "draft" &&
+            element.created_by !== this.$root.username
+          )
+      );
     },
     queryParam(query) {
       this.query = Object.assign(this.query, query);
