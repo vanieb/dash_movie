@@ -576,13 +576,7 @@ export default {
     },
     queryData(queryset) {
       this.loading = false;
-      this.querySet = queryset.filter(
-        (element) =>
-          !(
-            element.status === "draft" &&
-            element.created_by !== this.$root.username
-          )
-      );
+      this.querySet = queryset
     },
     queryParam(query) {
       this.query = Object.assign(this.query, query);
