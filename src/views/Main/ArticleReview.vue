@@ -456,7 +456,7 @@ export default {
             memo: this.memo,
           };
         }
-        this.$http.put(`${this.articleApi}${item.slug}/`, statusResult).then(
+        this.$http.put(`${this.articleApi}status/${item.slug}/`, statusResult).then(
           (response) => {
             let action_text =
               response.status === "approved"
