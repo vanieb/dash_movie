@@ -456,42 +456,81 @@ export default {
             memo: this.memo,
           };
         }
-        this.$http.put(`${this.articleApi}${item.slug}/`, statusResult).then(
-          (response) => {
-            let action_text =
-              response.status === "approved"
-                ? this.$t("status.approved")
-                : this.$t("status.declined");
-            this.snackbar = {
-              color: "success",
-              show: true,
-              text:
-                this.status === "memo"
-                  ? `[${this.$t("actions.update")} ${this.$t(
-                      "common.remarks"
-                    )}]: ${this.$t("status.success")}`
-                  : `[${this.$t("articles.article")}]: ${action_text}`,
-            };
-            this.closeUpdateStatusDialog();
-            if (this.status === "approved") {
-              this.$router.push("articles_published?website=1");
-            } else if (this.status === "cancelled") {
-              this.$router.push("articles?website=1");
-            } else {
+        if (this.status === "cancelled") {
+          this.$http
+            .patch(`${this.articleApi}${item.slug}/`, statusResult)
+            .then(
+              (response) => {
+                let action_text =
+                  response.status === "approved"
+                    ? this.$t("status.approved")
+                    : this.$t("status.declined");
+                this.snackbar = {
+                  color: "success",
+                  show: true,
+                  text:
+                    this.status === "memo"
+                      ? `[${this.$t("actions.update")} ${this.$t(
+                          "common.remarks"
+                        )}]: ${this.$t("status.success")}`
+                      : `[${this.$t("articles.article")}]: ${action_text}`,
+                };
+                this.closeUpdateStatusDialog();
+                if (this.status === "cancelled") {
+                  let route = `articles?website=1&title_q=${response.title}`;
+                  this.$router.push(route);
+                } else {
+                  this.$refs.pulling.rebase();
+                }
+              },
+              (error) => {
+                this.snackbar = {
+                  color: "error",
+                  show: true,
+                  text: `${this.$t("system_msg.error")}: ${error}`,
+                };
+                this.$refs.pulling.rebase();
+                this.query.website = website_query;
+                this.submit();
+              }
+            );
+        } else {
+          this.$http.put(`${this.articleApi}${item.slug}/`, statusResult).then(
+            (response) => {
+              let action_text =
+                response.status === "approved"
+                  ? this.$t("status.approved")
+                  : this.$t("status.declined");
+              this.snackbar = {
+                color: "success",
+                show: true,
+                text:
+                  this.status === "memo"
+                    ? `[${this.$t("actions.update")} ${this.$t(
+                        "common.remarks"
+                      )}]: ${this.$t("status.success")}`
+                    : `[${this.$t("articles.article")}]: ${action_text}`,
+              };
+              this.closeUpdateStatusDialog();
+              if (this.status === "approved") {
+                let route = `articles_published?website=1&title_q=${response.title}`;
+                this.$router.push(route);
+              } else {
+                this.$refs.pulling.rebase();
+              }
+            },
+            (error) => {
+              this.snackbar = {
+                color: "error",
+                show: true,
+                text: `${this.$t("system_msg.error")}: ${error}`,
+              };
               this.$refs.pulling.rebase();
+              this.query.website = website_query;
+              this.submit();
             }
-          },
-          (error) => {
-            this.snackbar = {
-              color: "error",
-              show: true,
-              text: `${this.$t("system_msg.error")}: ${error}`,
-            };
-            this.$refs.pulling.rebase();
-            this.query.website = website_query;
-            this.submit();
-          }
-        );
+          );
+        }
       }
     },
     submit() {

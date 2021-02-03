@@ -122,9 +122,7 @@
                 small
                 v-if="
                   article.status == 'review' &&
-                    $root.permissions.includes(
-                      'change_article_status_approved'
-                    )
+                    $root.permissions.includes('change_article_status_approved')
                 "
                 @click="openStatusDialog(article, 'approved')"
               >
@@ -381,33 +379,65 @@ export default {
           title: item.title,
           memo: item.memo,
         };
-        this.$http.put(`${this.articleApi}${item.slug}/`, statusResult).then(
-          (response) => {
-            let action_text =
-              this.status === "cancelled"
-                ? this.$t("status.declined")
-                : this.status === "review"
-                ? this.$t("status.review")
-                : this.status === "publish"
-                ? this.$t("status.published")
-                : this.$t("status.approved");
-            this.snackbar = {
-              color: "success",
-              show: true,
-              text: `[${this.$t("articles.article")}]: ${action_text}`,
-            };
-            this.closeUpdateStatusDialog();
-            this.getArticleDetails(response.slug);
-          },
-          (error) => {
-            this.snackbar = {
-              color: "error",
-              show: true,
-              text: `${this.$t("system_msg.error")}: ${error}`,
-            };
-            this.getArticleDetails(this.article.slug);
-          }
-        );
+        if (this.status === "cancelled") {
+          this.$http
+            .patch(`${this.articleApi}${item.slug}/`, statusResult)
+            .then(
+              (response) => {
+                let action_text =
+                  this.status === "cancelled"
+                    ? this.$t("status.declined")
+                    : this.status === "review"
+                    ? this.$t("status.review")
+                    : this.status === "publish"
+                    ? this.$t("status.published")
+                    : this.$t("status.approved");
+                this.snackbar = {
+                  color: "success",
+                  show: true,
+                  text: `[${this.$t("articles.article")}]: ${action_text}`,
+                };
+                this.closeUpdateStatusDialog();
+                this.getArticleDetails(response.slug);
+              },
+              (error) => {
+                this.snackbar = {
+                  color: "error",
+                  show: true,
+                  text: `${this.$t("system_msg.error")}: ${error}`,
+                };
+                this.getArticleDetails(this.article.slug);
+              }
+            );
+        } else {
+          this.$http.put(`${this.articleApi}${item.slug}/`, statusResult).then(
+            (response) => {
+              let action_text =
+                this.status === "cancelled"
+                  ? this.$t("status.declined")
+                  : this.status === "review"
+                  ? this.$t("status.review")
+                  : this.status === "publish"
+                  ? this.$t("status.published")
+                  : this.$t("status.approved");
+              this.snackbar = {
+                color: "success",
+                show: true,
+                text: `[${this.$t("articles.article")}]: ${action_text}`,
+              };
+              this.closeUpdateStatusDialog();
+              this.getArticleDetails(response.slug);
+            },
+            (error) => {
+              this.snackbar = {
+                color: "error",
+                show: true,
+                text: `${this.$t("system_msg.error")}: ${error}`,
+              };
+              this.getArticleDetails(this.article.slug);
+            }
+          );
+        }
       }
     },
   },
