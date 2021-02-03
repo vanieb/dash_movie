@@ -381,7 +381,7 @@ export default {
           title: item.title,
           memo: item.memo,
         };
-        this.$http.put(`${this.articleApi}${item.slug}/`, statusResult).then(
+        this.$http.patch(`${this.articleApi}${item.slug}/`, statusResult).then(
           (response) => {
             let action_text =
               this.status === "cancelled"
