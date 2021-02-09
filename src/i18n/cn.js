@@ -19,6 +19,7 @@ export default {
     identity: "身份",
     fake_user: "假用户",
     real_user: "真实用户",
+    points: '积分'
   },
   actions: {
     add: "添加",

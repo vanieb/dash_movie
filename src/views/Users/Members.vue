@@ -266,6 +266,9 @@
                   >{{ $t("common.fake_user") }}</v-chip
                 >
               </td>
+              <td style="text-align: center;">
+                {{ item.points }}
+              </td>
               <td
                 class="align-center justify-center"
                 v-if="$root.permissions.includes('change_member_status')"
@@ -409,6 +412,12 @@ export default {
           sortable: false,
           text: this.$t("login.username"),
           value: "user.username",
+        },
+        {
+          sortable: false,
+          text: this.$t("common.points"),
+          value: "points",
+          align: "center",
         },
         {
           sortable: false,
