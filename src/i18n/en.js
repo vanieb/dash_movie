@@ -19,6 +19,7 @@ export default {
     identity: "Identity",
     fake_user: "Fake User",
     real_user: "Real User",
+    points: 'Points'
   },
   actions: {
     add: "Add",
