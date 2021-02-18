@@ -462,33 +462,53 @@ export default {
         status: status,
         title: item.title,
       };
-      let successText =
-        status === "review"
-          ? this.$t("status.review")
-          : this.$t("status.published");
-
-      let routerAddress =
-        status === "review" ? "/apps_review" : "/apps_published";
-      this.$http.put(`${this.appsApi}status/${item.slug}/`, statusResult).then(
-        () => {
-          this.snackbar = {
-            color: "success",
-            show: true,
-            text: `[${this.$t("nav.apps")}]: ${successText}`,
-          };
-          this.$router.push(`${routerAddress}?website=${website_query}`);
-        },
-        (error) => {
-          this.snackbar = {
-            color: "error",
-            show: true,
-            text: `${this.$t("system_msg.error")}: ${error}`,
-          };
-          this.$refs.pulling.rebase();
-          this.query.website = website_query;
-          this.submit();
-        }
-      );
+      if (status !== "review") {
+        this.$http
+          .put(`${this.appsApi}status/${item.slug}/`, statusResult)
+          .then(
+            () => {
+              this.snackbar = {
+                color: "success",
+                show: true,
+                text: `[${this.$t("nav.apps")}]: ${this.$t(
+                  "status.published"
+                )}`,
+              };
+              this.$router.push(`/apps_published?website=${website_query}`);
+            },
+            (error) => {
+              this.snackbar = {
+                color: "error",
+                show: true,
+                text: `${this.$t("system_msg.error")}: ${error}`,
+              };
+              this.$refs.pulling.rebase();
+              this.query.website = website_query;
+              this.submit();
+            }
+          );
+      } else {
+        this.$http.patch(`${this.appsApi}${item.slug}/`, statusResult).then(
+          () => {
+            this.snackbar = {
+              color: "success",
+              show: true,
+              text: `[${this.$t("nav.apps")}]: ${this.$t("status.review")}`,
+            };
+            this.$router.push(`/apps_review?website=${website_query}`);
+          },
+          (error) => {
+            this.snackbar = {
+              color: "error",
+              show: true,
+              text: `${this.$t("system_msg.error")}: ${error}`,
+            };
+            this.$refs.pulling.rebase();
+            this.query.website = website_query;
+            this.submit();
+          }
+        );
+      }
     },
     deleteApp(id) {
       this.snackbar.show = false;
