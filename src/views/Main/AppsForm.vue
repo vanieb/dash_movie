@@ -463,10 +463,10 @@
                 class="mr-2"
                 :loading="submitting"
                 v-if="apps.status !== 'approved'"
-                @click="saveApp('draft')"
+                @click="saveApp(apps.status)"
               >
                 <v-icon left small>edit</v-icon>
-                {{ $t("actions.save") }} {{ $t("status.draft") }}
+                {{ !isUpdate ? $t("status.draft") : "" }}
               </v-btn>
               <v-btn
                 color="primary"

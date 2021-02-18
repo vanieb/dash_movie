@@ -366,6 +366,7 @@
       ref="pulling"
       @query-data="queryData"
       @query-param="queryParam"
+      :persistent-query="{ status: 'approved' }"
     >
     </pagination>
     <!-- SNACKBAR -->
