@@ -674,13 +674,12 @@ export default {
           title: item.title,
           memo: item.memo,
         };
-        this.$http.put(`${this.appsApi}status/${item.slug}/`, statusResult).then(
+        if (this.status !== 'review') {
+          this.$http.put(`${this.appsApi}status/${item.slug}/`, statusResult).then(
           (response) => {
             let action_text =
               this.status === "cancelled"
                 ? this.$t("status.declined")
-                : this.status === "review"
-                ? this.$t("status.review")
                 : this.status === "publish"
                 ? this.$t("status.published")
                 : this.$t("status.approved");
@@ -701,6 +700,26 @@ export default {
             this.getAppDetails(this.apps.slug);
           }
         );
+        } else {
+          this.$http.patch(`${this.appsApi}${item.slug}/`, statusResult).then(
+          (response) => {
+            this.snackbar = {
+              color: "success",
+              show: true,
+              text: `[${this.$t("nav.apps")}]: ${this.$t("status.review")}`,
+            };
+            this.closeUpdateStatusDialog();
+            this.getAppDetails(response.slug);
+          },
+          (error) => {
+            this.snackbar = {
+              color: "error",
+              show: true,
+              text: `${this.$t("system_msg.error")}: ${error}`,
+            };
+            this.getAppDetails(this.apps.slug);
+          })
+        }
       }
     },
     async uploadFile(installerType) {
