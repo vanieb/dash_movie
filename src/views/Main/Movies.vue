@@ -1,15 +1,12 @@
 <template>
   <v-layout wrap>
     <v-container>
-      <v-layout justify-start>
-        <v-btn
-          color="primary"
-          dark
-          to="/articles/add"
-          v-if="$root.permissions.includes('create_article')"
-        >
-          <v-icon left>post_add</v-icon> &nbsp;{{ $t("actions.add") }}
-        </v-btn>
+      <v-layout>
+        <v-layout justify-start>
+          <v-btn color="blue-grey" dark to="/movies/add">
+            <v-icon class="mr-3">post_add</v-icon> &nbsp;{{ $t("actions.add") }}
+          </v-btn>
+        </v-layout>
       </v-layout>
       <v-card>
         <v-col
@@ -19,20 +16,56 @@
           style="padding: 20px 20px 10px 20px !important;"
         >
           <v-row>
-            <div style="width:155px !important;" class="mr-2">
-              <website
-                type="filter"
-                :mode="'one'"
-                :website="query.website"
-                @website-select-one="websiteSelectOne"
+            <div style="width:155px;" class="mr-2">
+              <v-select
+                small
+                color="blue-grey"
+                item-name="text"
+                item-value="value"
+                :items="statusOptions"
+                :label="`${$t('common.status')}`"
+                v-model="status"
+                hide-details="true"
+                placeholder=" "
+                outlined
+                dense
               >
-              </website>
+                <template slot="selection" slot-scope="data">
+                  <span class="ml-3">{{ data.item.text }}</span>
+                </template>
+                <template slot="item" slot-scope="data">
+                  <span class="ml-3">{{ data.item.text }}</span>
+                </template>
+              </v-select>
+            </div>
+            <div style="width:200px;" class="mr-2">
+              <v-select
+                small
+                color="blue-grey"
+                item-name="text"
+                item-value="value"
+                :items="typeOptions"
+                :label="`${$t('movies.type')}`"
+                v-model="type"
+                hide-details="true"
+                placeholder=" "
+                outlined
+                dense
+              >
+                <template slot="selection" slot-scope="data">
+                  <span class="ml-3">{{ data.item.text }}</span>
+                </template>
+                <template slot="item" slot-scope="data">
+                  <span class="ml-3">{{ data.item.text }}</span>
+                </template>
+              </v-select>
             </div>
             <div style="width:200px;" class="mr-2">
               <v-text-field
+                color="blue-grey"
                 @input="search"
-                :label="`${$t('articles.title')}`"
-                v-model="query.title_q"
+                :label="`${$t('movies.title')}`"
+                v-model="query.title"
                 hide-details="true"
                 placeholder=" "
                 outlined
@@ -40,7 +73,7 @@
               >
               </v-text-field>
             </div>
-            <div style="width:300px;" class="mr-2">
+            <!-- <div style="width:300px;" class="mr-2">
               <v-menu
                 ref="menu1"
                 v-model="date_menu"
@@ -52,6 +85,7 @@
               >
                 <template v-slot:activator="{ on }">
                   <v-text-field
+                    color="blue-grey"
                     v-model="dateRangeText"
                     :label="`${$t('common.created_at')}`"
                     placeholder=" "
@@ -65,6 +99,7 @@
                   ></v-text-field>
                 </template>
                 <v-date-picker
+                  color="blue-grey"
                   v-model="created_at"
                   :locale="lang"
                   :selected-items-text="dateRangeText"
@@ -75,10 +110,15 @@
                 >
                 </v-date-picker>
               </v-menu>
-            </div>
+            </div> -->
             <v-layout class="justify-end">
-              <v-btn color="primary" dark :loading="loading" @click="clearAll">
-                <v-icon>clear_all</v-icon>{{ $t("actions.clear") }}
+              <v-btn
+                color="blue-grey"
+                dark
+                :loading="loading"
+                @click="clearAll"
+              >
+                {{ $t("actions.clear") }}
               </v-btn>
             </v-layout>
           </v-row>
@@ -99,7 +139,7 @@
                   class="mr-2"
                   icon
                   color="info"
-                  :to="`/articles/${item.slug}`"
+                  :to="`/movies/${item.id}`"
                 >
                   <v-icon>touch_app</v-icon>
                 </v-btn>
@@ -107,26 +147,21 @@
               <td
                 class="align-center"
                 width="30%"
-                v-if="item.websites.length == 1 && item.title.length > 20"
+                v-if="item.title.length > 20"
               >
-                <strong>{{ item.title | truncate(20, "...") }} </strong>
-                <br />
-                <v-icon left small color="grey lighten-1">view_compact</v-icon>
-                <strong class="grey--text">{{ $t("status.draft") }}</strong>
+                {{ item.title | truncate(20, "...") }}
                 <br />
                 <v-icon left small color="indigo">person</v-icon>
-                <span>{{ item.created_by }}</span> <br />
+                <span>{{ item.created_by || "-" }}</span> <br />
                 <v-icon left small color="indigo">event</v-icon>
-                <span>{{
+                <span v-if="item.created_at">{{
                   item.created_at | moment("YYYY-MM-DD HH:mm:ss")
                 }}</span>
+                <span v-else>-</span>
               </td>
               <td class="align-center" width="30%" v-else>
                 <strong>{{ item.title }}</strong>
                 <br />
-                <v-icon left small color="grey lighten-1">view_compact</v-icon>
-                <strong class="grey--text">{{ $t("status.draft") }}</strong>
-                <br />
                 <v-icon left small color="indigo">person</v-icon>
                 <span>{{ item.created_by }}</span> <br />
                 <v-icon left small color="indigo">event</v-icon>
@@ -134,104 +169,32 @@
                   item.created_at | moment("YYYY-MM-DD HH:mm:ss")
                 }}</span>
               </td>
-              <td class="text-center" width="10%">
-                <span v-for="website in item.websites" :key="website.id"
-                  >{{ website.name }}<br
-                /></span>
+              <td class="align-center justify-start">
+                <v-switch
+                  value
+                  color="blue-grey"
+                  v-model="item.status"
+                  @change="toggle(item.id, item.status)"
+                >
+                </v-switch>
               </td>
-              <td class="text-center">
-                <v-row class="justify-center">
-                  <v-menu
-                    offset-y
-                    v-if="
-                      $root.permissions.includes(
-                        'change_article_submission_status'
-                      )
-                    "
-                  >
-                    <template v-slot:activator="{ on }">
-                      <v-chip v-on="on" class="warning lighten-1 small mr-1">
-                        <v-icon dark left small>visibility</v-icon>
-                        {{ $t("status.review") }}
-                      </v-chip>
-                    </template>
-                    <v-list>
-                      <v-list-item
-                        @click="
-                          changeArticleStatus(item, 'review', true, $event)
-                        "
-                      >
-                        <v-list-item-title>
-                          <v-icon left color="warning">warning</v-icon>
-                          {{ $t("system_msg.confirm_review") }}
-                          <strong>{{ item.title }}</strong>
-                        </v-list-item-title>
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
-                  <v-menu
-                    offset-y
-                    v-if="
-                      $root.permissions.includes(
-                        'change_article_status_approved'
-                      )
-                    "
-                  >
-                    <template v-slot:activator="{ on }">
-                      <v-chip v-on="on" class="success lighten-1 small">
-                        <v-icon dark left small>publish</v-icon>
-                        {{ $t("actions.publish") }}
-                      </v-chip>
-                    </template>
-                    <v-list>
-                      <v-list-item
-                        @click="
-                          changeArticleStatus(item, 'approved', true, $event)
-                        "
-                      >
-                        <v-list-item-title>
-                          <v-icon left color="warning">warning</v-icon>
-                          {{ $t("system_msg.confirm_publish") }}
-                          <strong>{{ item.title }}</strong>
-                        </v-list-item-title>
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
-                </v-row>
-              </td>
-              <td width="15%" class="align-center justify-center">
+              <td width="8%">
                 {{ item.updated_by || "-" }} <br />
-                <span class="grey--text">{{
+                <span class="grey--text" v-if="item.updated_at">{{
                   item.updated_at | moment("YYYY-MM-DD HH:mm:ss")
                 }}</span>
               </td>
-              <td
-                width="10%"
-                class="align-center justify-center"
-                v-if="
-                  $root.permissions.includes('change_article_details') ||
-                    $root.permissions.includes('delete_article')
-                "
-              >
+              <td width="10%" class="align-center justify-center">
                 <v-layout>
-                  <v-btn
-                    icon
-                    :to="`/articles/${item.slug}/edit`"
-                    v-if="$root.permissions.includes('change_article_details')"
-                  >
+                  <v-btn class="mr-2" icon :to="`/movies/${item.id}/edit`">
                     <v-icon small>edit</v-icon>
                   </v-btn>
-                  <v-menu
-                    offset-y
-                    v-if="$root.permissions.includes('delete_article')"
-                  >
+                  <v-menu offset-y>
                     <template v-slot:activator="{ on }">
                       <v-icon color="error" small v-on="on" icon>delete</v-icon>
                     </template>
                     <v-list dark>
-                      <v-list-item
-                        @click="deleteArticle(item.slug, true, $event)"
-                      >
+                      <v-list-item @click="deleteMovie(item.id, true, $event)">
                         <v-list-item-title>
                           <v-icon left color="warning">warning</v-icon>
                           {{ $t("system_msg.confirm_delete") }}
@@ -242,7 +205,6 @@
                   </v-menu>
                 </v-layout>
               </td>
-              <td v-else>-</td>
             </tr>
           </tbody>
         </template>
@@ -250,12 +212,11 @@
     </v-container>
     <pagination
       :queryset="querySet"
-      :api="articleApi"
+      :api="moviesApi"
       :query="query"
       ref="pulling"
       @query-data="queryData"
       @query-param="queryParam"
-      :persistent-query="{ status: 'draft' }"
     >
     </pagination>
     <!-- SNACKBAR -->
@@ -274,27 +235,36 @@ import $ from "../../utils/util";
 import Pagination from "@/components/Pagination";
 import SnackBar from "@/components/SnackBar";
 import { debounce } from "lodash";
-import Website from "../../components/SelectWebsite.vue";
 
 export default {
-  name: "ArticleDraft",
+  name: "Movies",
   components: {
     Pagination,
     SnackBar,
-    Website,
   },
   data() {
     return {
-      query: {
-        website: 1,
-      },
+      name: "",
+      href: "",
+      showForm: false,
       querySet: [],
+      type: "",
+      status: "",
       today: date.max_today,
       created_at: ["", ""],
-      website: 1,
-      articleApi: api.articles,
+      moviesApi: api.movies,
+      movieApi: api.movie,
       loading: true,
+      submitting: false,
       date_menu: false,
+      statusOptions: [
+        { text: this.$t("status.enabled"), value: 1 },
+        { text: this.$t("status.disabled"), value: 0 },
+      ],
+      typeOptions: [
+        { text: this.$t("movies.ongoing"), value: "ongoing" },
+        { text: this.$t("movies.previous"), value: "previous" },
+      ],
       snackbar: {
         color: "",
         text: "",
@@ -308,20 +278,14 @@ export default {
         },
         {
           sortable: false,
-          text: this.$t("articles.title"),
+          text: this.$t("movies.title"),
           value: "title",
         },
         {
           sortable: false,
-          text: this.$t("nav.websites"),
-          value: "website",
-          align: "center",
-        },
-        {
-          sortable: false,
-          text: this.$t("common.action"),
-          width: "20%",
-          align: "center",
+          text: this.$t("common.status"),
+          value: "is_active",
+          width: "10%",
         },
         {
           sortable: false,
@@ -332,7 +296,6 @@ export default {
         {
           sortable: false,
           text: this.$t("common.action"),
-          value: "",
         },
       ],
     };
@@ -346,9 +309,13 @@ export default {
       },
       deep: true,
     },
-    website(newObj) {
-      this.query.website = newObj;
-      this.search();
+    status(newObj) {
+      this.query.status = newObj;
+      this.$refs.pulling.submit();
+    },
+    type(newObj) {
+      this.query.type = newObj;
+      this.$refs.pulling.submit();
     },
     created_at(newObj) {
       if (this.query.created_at_after > this.query.created_at_before) {
@@ -373,7 +340,6 @@ export default {
     this.$nextTick(() => {
       this.$refs.pulling.rebase();
       if (!this.query.created_at_before) {
-        this.query.website = 1;
         this.submit();
       }
     });
@@ -409,7 +375,14 @@ export default {
       } else {
         this.created_at = [undefined, undefined];
       }
-      this.website = this.$route.query.website || "";
+      this.type = this.$route.query.type;
+      this.status =
+        this.$route.query.status === 1 ||
+        this.$route.query.status === 0 ||
+        this.$route.query.status === "1" ||
+        this.$route.query.status === "0"
+          ? JSON.parse(this.$route.query.status)
+          : "";
       this.query = Object.assign({}, this.$route.query);
     },
     queryData(queryset) {
@@ -419,52 +392,25 @@ export default {
     queryParam(query) {
       this.query = Object.assign(this.query, query);
     },
-    submit() {
-      if (!$.compareQuery(this.query, this.$route.query)) {
-        this.$refs.pulling.submit();
-      }
-    },
-    websiteSelectOne(val) {
-      this.query.website = val;
-      this.submit();
-    },
-    search: debounce(function() {
-      this.submit();
-    }, 700),
-    clearAll() {
-      this.created_at = ["", ""];
-      this.query = {};
-      this.query.website = 1;
-      this.$nextTick(() => {
-        this.$refs.pulling.submit();
-      });
-    },
-    clearDateRange() {
-      this.created_at = ["", ""];
-      this.dateRangeText = "";
-    },
-    changeArticleStatus(item, status) {
-      let website_query = this.query.website;
+    toggle(id, value) {
       this.snackbar.show = false;
-      let statusResult = {
-        status: status,
-        is_active: status == "review" ? false : true,
-        title: item.title,
-      };
-      let successText =
-        status === "review"
-          ? this.$t("status.review")
-          : this.$t("status.published");
-      let routerAddress =
-        status === "review" ? "/articles_review" : "/articles_published";
-      this.$http.put(`${this.articleApi}${item.slug}/`, statusResult).then(
-        () => {
+      const formData = new window.FormData();
+      formData.set("status", value ? 1 : 0);
+      let action_title;
+
+      action_title = this.$t("common.status");
+
+      this.$http.put(`${this.movieApi}/${id}/status`, formData).then(
+        (response) => {
+          let action_text = response["status"]
+            ? this.$t("status.enabled")
+            : this.$t("status.disabled");
           this.snackbar = {
             color: "success",
             show: true,
-            text: `[${this.$t("articles.article")}]: ${successText}`,
+            text: `[${action_title}]: ${action_text}`,
           };
-          this.$router.push(`${routerAddress}?website=${website_query}`);
+          this.$refs.pulling.rebase();
         },
         (error) => {
           this.snackbar = {
@@ -473,14 +419,34 @@ export default {
             text: `${this.$t("system_msg.error")}: ${error}`,
           };
           this.$refs.pulling.rebase();
-          this.query.website = website_query;
           this.submit();
         }
       );
-    },
-    deleteArticle(id) {
       this.snackbar.show = false;
-      this.$http.delete(`${this.articleApi}${id}/`).then(
+    },
+    submit() {
+      if (!$.compareQuery(this.query, this.$route.query)) {
+        this.$refs.pulling.submit();
+      }
+    },
+    search: debounce(function() {
+      this.submit();
+    }, 700),
+    clearAll() {
+      this.created_at = ["", ""];
+      this.status = "";
+      this.type = "";
+      this.query = {};
+      this.$nextTick(() => {
+        this.$refs.pulling.submit();
+      });
+    },
+    clearDateRange() {
+      this.created_at = ["", ""];
+      this.dateRangeText = "";
+    },
+    deleteMovie(id) {
+      this.$http.delete(`${this.movieApi}/${id}`).then(
         () => {
           this.snackbar = {
             color: "success",

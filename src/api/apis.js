@@ -6,34 +6,24 @@
 //     : config.build.env
 const host = process.env.VUE_APP_API_URL;
 
-const apps = `${host}apps/v1/`;
-const auth = `${host}authentication/v1/`;
-const websites = `${host}websites/v1/`;
-const accounts = `${host}accounts/v1/`;
+const dashboard = `${host}dashboard/`;
+// const api = `${host}api/`;
+const auth = `${host}oauth/`;
 
 export default {
   count: `${host}dashboard/header/counts/`,
-  login: `${auth}login`,
+  token: `${auth}token`,
+  register: `${dashboard}register`,
   my: `${auth}my`,
-  userPermissions: `${accounts}permissions/user/`,
-  permissions: `${accounts}permissions/`,
-  changePassword: `${auth}password`,
-  logout: `${auth}logout`,
+  changePassword: `${dashboard}user/password`,
+  logout: `${dashboard}oauth/token`,
   refresh_token: `${auth}login/refresh`,
-  apps: `${apps}`,
-  classification: `${apps}classification`,
-  upload: `${apps}upload/`,
-  download_link: `${apps}download/`,
   global_settings:  `${host}configsetting/v1/`,
-  websites: `${websites}`,
-  webapps: `${websites}apps/`,
-  articles: `${host}articles/v1/`,
-  keywords: `${host}articles/v1/keywords/`,
-  friendship_link: `${websites}friendship-links/`,
-  types: `${websites}types/`,
-  categories: `${websites}categories/`,
-  labels: `${websites}labels/`,
+  movies: `${dashboard}movies`,
+  movie: `${dashboard}movie`,
+  artists: `${dashboard}artists`,
+  artist: `${dashboard}artist`,
   import_logs: `${host}articles/v1/import/`,
-  staff: `${accounts}staff/`,
-  members: `${accounts}members/`,
+  users: `${dashboard}users`,
+  user: `${dashboard}user`,
 };

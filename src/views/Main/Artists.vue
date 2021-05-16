@@ -5,12 +5,7 @@
         <validation-observer ref="form">
           <v-dialog v-model="showForm" persistent max-width="500">
             <template v-slot:activator="{ on }">
-              <v-btn
-                color="primary"
-                dark
-                v-on="on"
-                v-show="$root.permissions.includes('create_member')"
-                align-right
+              <v-btn color="blue-grey" dark v-on="on" align-right
                 ><v-icon class="mr-3">person_add</v-icon> &nbsp;{{
                   $t("actions.add")
                 }}
@@ -26,68 +21,72 @@
                 <v-layout wrap>
                   <v-flex xs12>
                     <validation-provider
-                      rules="required|max:8"
-                      :name="$t('login.username')"
+                      rules="required"
+                      :name="$t('common.name')"
                     >
                       <v-text-field
-                        :counter="8"
+                        :counter="20"
                         :error-messages="errors"
-                        :label="`${$t('login.username')}*`"
+                        color="blue-grey"
+                        :label="`${$t('common.name')}*`"
                         placeholder=" "
                         slot-scope="{ errors }"
-                        v-model="member.username"
+                        v-model="artist.name"
                       ></v-text-field>
                     </validation-provider>
                   </v-flex>
                   <v-flex xs12>
                     <validation-provider
-                      rules="required|max:8"
-                      :name="$t('login.password')"
-                      v-if="!isUpdate"
-                    >
-                      <v-text-field
-                        :counter="8"
-                        :error-messages="errors"
-                        :label="`${$t('login.password')}*`"
-                        placeholder=" "
-                        required
-                        type="password"
-                        slot-scope="{ errors }"
-                        v-model="member.password"
-                      ></v-text-field>
-                    </validation-provider>
-                    <validation-provider
-                      rules="max:8"
-                      :name="$t('login.password')"
-                      v-else
-                    >
-                      <v-text-field
-                        :counter="8"
-                        :error-messages="errors"
-                        :label="`${$t('login.password')}`"
-                        placeholder=" "
-                        type="password"
-                        slot-scope="{ errors }"
-                        v-model="member.password"
-                      ></v-text-field>
-                    </validation-provider>
-                  </v-flex>
-                  <v-flex xs12>
-                    <validation-provider
-                      rules="max:50"
-                      :name="$t('common.remarks')"
+                      rules="max:1000"
+                      :name="$t('common.description')"
                     >
                       <v-textarea
-                        :counter="50"
+                        :counter="1000"
+                        color="blue-grey"
                         :error-messages="errors"
-                        :label="$t('common.remarks')"
+                        :label="$t('common.description')"
                         placeholder=" "
                         rows="1"
                         slot-scope="{ errors }"
-                        v-model="member.memo"
+                        v-model="artist.description"
                       ></v-textarea>
                     </validation-provider>
                   </v-flex>
+                  <v-flex xs12>
+                    <v-banner color="blue-grey" dark>
+                      {{ $t("actions.upload") }} -
+                      {{ `${$t("common.image")}*` }}
+                    </v-banner>
+                    <v-card>
+                      <v-card-text>
+                        <v-img
+                          v-if="showImage"
+                          :src="`${artist.imageURI}`"
+                          class="my-1"
+                          contain
+                          height="100"
+                        ></v-img>
+                      </v-card-text>
+                      <v-card-actions>
+                        <v-layout justify-center>
+                          <v-btn
+                            color="blue-grey"
+                            @click="$refs.inputUpload.click()"
+                          >
+                            <v-icon color="white">cloud_upload</v-icon>
+                          </v-btn>
+                          <input
+                            v-show="false"
+                            ref="inputUpload"
+                            type="file"
+                            accept="image/*"
+                            @change="uploadIcon"
+                          />
+                        </v-layout>
+                      </v-card-actions>
+                    </v-card>
+                  </v-flex>
+                  <br />
                 </v-layout>
                 <small color="error">*{{ $t("errors.required") }}</small>
               </v-card-text>
@@ -101,9 +100,10 @@
                   >{{ $t("actions.close") }}</v-btn
                 >
                 <v-btn
-                  color="blue darken-1"
+                  color="blue-grey"
+                  class="white--text"
                   :loading="submitting"
-                  @click="saveMember"
+                  @click="saveArtist"
                   >{{ $t("actions.save") }}</v-btn
                 >
               </v-card-actions>
@@ -123,46 +123,6 @@
               <v-select
                 item-name="text"
                 item-value="value"
-                :items="memberStatusOptions"
-                :label="`${$t('nav.members')}-${$t('common.identity')}`"
-                v-model="is_fake_user"
-                hide-details="true"
-                placeholder=" "
-                outlined
-                dense
-              >
-                <template slot="selection" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-                <template slot="item" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-              </v-select>
-            </div>
-            <div style="width:155px;" class="mr-2">
-              <v-select
-                item-name="text"
-                item-value="value"
-                :items="loginStatusOptions"
-                :label="`${$t('staff.login_status')}`"
-                v-model="login_status"
-                hide-details="true"
-                placeholder=" "
-                outlined
-                dense
-              >
-                <template slot="selection" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-                <template slot="item" slot-scope="data">
-                  <span class="ml-3">{{ data.item.text }}</span>
-                </template>
-              </v-select>
-            </div>
-            <div style="width:155px;" class="mr-2">
-              <v-select
-                item-name="text"
-                item-value="value"
                 :items="statusOptions"
                 :label="`${$t('common.status')}`"
                 v-model="status"
@@ -170,6 +130,7 @@
                 placeholder=" "
                 outlined
                 dense
+                color="blue-grey"
               >
                 <template slot="selection" slot-scope="data">
                   <span class="ml-3">{{ data.item.text }}</span>
@@ -183,15 +144,16 @@
               <v-text-field
                 @input="search"
                 :label="`${$t('common.name')}`"
-                v-model="query.username_q"
+                v-model="query.name"
                 hide-details="true"
                 placeholder=" "
                 outlined
                 dense
+                color="blue-grey"
               >
               </v-text-field>
             </div>
-            <div style="width:300px;" class="mr-2">
+            <!-- <div style="width:300px;" class="mr-2">
               <v-menu
                 ref="menu1"
                 v-model="date_menu"
@@ -226,9 +188,14 @@
                 >
                 </v-date-picker>
               </v-menu>
-            </div>
+            </div> -->
             <v-layout class="justify-end">
-              <v-btn color="primary" dark :loading="loading" @click="clearAll">
+              <v-btn
+                color="blue-grey"
+                dark
+                :loading="loading"
+                @click="clearAll"
+              >
                 <v-icon>clear_all</v-icon>{{ $t("actions.clear") }}
               </v-btn>
             </v-layout>
@@ -244,86 +211,47 @@
           <span v-if="!items">{{ items }}</span>
           <tbody>
             <tr v-for="item in querySet" :key="item.id">
-              <td class="align-center text-center px-0">
-                <v-icon left small color="success" v-if="item.is_logged_in"
-                  >fiber_manual_record</v-icon
-                >
-                <v-icon left small v-else>fiber_manual_record</v-icon>
-              </td>
               <td>
-                <strong>{{ item.user.username }}</strong>
-                <br />
-                <v-chip
-                  class="success lighten-1"
-                  x-small
-                  dark
-                  v-if="!item.is_fake_user"
-                  ><v-icon x-small left>how_to_reg</v-icon
-                  >{{ $t("common.real_user") }}</v-chip
-                >
-                <v-chip class="error lighten-1" x-small dark v-else
-                  ><v-icon x-small left>highlight_off</v-icon
-                  >{{ $t("common.fake_user") }}</v-chip
-                >
+                <strong>{{ item.name }}</strong>
               </td>
-              <td style="text-align: center;">
-                {{ item.points }}
-              </td>
-              <td
-                class="align-center justify-center"
-                v-if="$root.permissions.includes('change_member_status')"
-              >
+              <td class="align-center justify-center">
                 <v-switch
                   value
                   v-model="item.status"
-                  @change="
-                    toggleStatus(item.id, item.status, item.user.username)
-                  "
+                  @change="toggleStatus(item.id, item.status)"
                 >
                 </v-switch>
               </td>
-              <td class="align-center justify-start" v-else>
-                <v-chip v-if="item.status == true" class="success" small>{{
-                  $t("status.enabled")
-                }}</v-chip>
-                <v-chip v-else small>{{ $t("status.disabled") }}</v-chip>
+              <td>
+                {{ item.created_by }} <br />
+                <span class="grey--text"
+                  >{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss") }}
+                </span>
               </td>
-              <td>{{ item.created_at | moment("YYYY-MM-DD HH:mm:ss") }}</td>
-              <td>{{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss") }}</td>
-              <td>{{ item.memo || "-" }}</td>
-              <td
-                class="align-center justify-center px-0"
-                v-if="
-                  $root.permissions.includes('change_member_details') ||
-                    $root.permissions.includes('delete_member')
-                "
-              >
-                <v-icon
-                  left
-                  small
-                  @click="updateMember(item)"
-                  v-if="$root.permissions.includes('change_member_details')"
-                  >edit</v-icon
-                >
-                <v-menu
-                  offset-y
-                  v-if="$root.permissions.includes('delete_member')"
-                >
+              <td>
+                {{ item.updated_by || "-" }} <br />
+                <span class="grey--text"
+                  >{{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss") }}
+                </span>
+              </td>
+              <td>{{ item.description || "-" }}</td>
+              <td class="align-center justify-center px-0">
+                <v-icon left small @click="updateArtist(item)">edit</v-icon>
+                <v-menu offset-y>
                   <template v-slot:activator="{ on }">
                     <v-icon color="error" small v-on="on">delete</v-icon>
                   </template>
                   <v-list dark>
-                    <v-list-item @click="deleteMember(item.id, true, $event)">
+                    <v-list-item @click="deleteArtist(item.id, true, $event)">
                       <v-list-item-title>
                         <v-icon left color="warning">warning</v-icon>
                         {{ $t("system_msg.confirm_delete") }}
-                        <strong>{{ item.user.username }}</strong>
+                        <strong>{{ item.name }}</strong>
                       </v-list-item-title>
                     </v-list-item>
                   </v-list>
                 </v-menu>
               </td>
-              <td v-else>-</td>
             </tr>
           </tbody>
         </template>
@@ -331,7 +259,7 @@
     </v-container>
     <pagination
       :queryset="querySet"
-      :api="memberApi"
+      :api="artistsApi"
       :query="query"
       ref="pulling"
       @query-data="queryData"
@@ -363,25 +291,24 @@ export default {
     Pagination,
     SnackBar,
   },
-  name: "Members",
+  name: "Artists",
   data() {
     return {
       submitting: false,
-      username: "",
-      member: {
-        id: "",
-        username: "",
-        password: "",
-        memo: "",
+      name: "",
+      artist: {
+        image: "",
+        name: "",
+        description: "",
       },
       date_menu: false,
       created_at: ["", ""],
       today: date.max_today,
       loading: true,
       status: "",
-      login_status: "",
-      is_fake_user: "",
-      memberApi: api.members,
+      showImage: false,
+      artistsApi: api.artists,
+      artistApi: api.artist,
       querySet: [],
       query: {},
       showForm: false,
@@ -394,30 +321,11 @@ export default {
         { text: this.$t("status.enabled"), value: 1 },
         { text: this.$t("status.disabled"), value: 0 },
       ],
-      memberStatusOptions: [
-        { text: this.$t("common.fake_user"), value: true },
-        { text: this.$t("common.real_user"), value: false },
-      ],
-      loginStatusOptions: [
-        { text: this.$t("staff.online"), value: true },
-        { text: this.$t("staff.offline"), value: false },
-      ],
       headers: [
         {
           sortable: false,
-          text: this.$t("staff.login_status"),
-          value: "is_logged_in",
-        },
-        {
-          sortable: false,
-          text: this.$t("login.username"),
-          value: "user.username",
-        },
-        {
-          sortable: false,
-          text: this.$t("common.points"),
-          value: "points",
-          align: "center",
+          text: this.$t("common.name"),
+          value: "name",
         },
         {
           sortable: false,
@@ -437,8 +345,8 @@ export default {
         },
         {
           sortable: false,
-          text: this.$t("common.remarks"),
-          value: "memo",
+          text: this.$t("common.description"),
+          value: "description",
         },
         {
           sortable: false,
@@ -455,14 +363,6 @@ export default {
         this.$refs.pulling.rebase();
       },
       deep: true,
-    },
-    login_status(newObj) {
-      this.query.login_status = newObj;
-      this.$refs.pulling.submit();
-    },
-    is_fake_user(newObj) {
-      this.query.is_fake_user = newObj;
-      this.$refs.pulling.submit();
     },
     status(newObj) {
       this.query.status = newObj;
@@ -489,14 +389,14 @@ export default {
   computed: {
     cardTitle() {
       return this.isUpdate
-        ? `${this.$t("actions.update")} - ${this.username}`
-        : `${this.$t("actions.add")} - ${this.$t("nav.members")}`;
+        ? `${this.$t("actions.update")} - ${this.name}`
+        : `${this.$t("actions.add")} - ${this.$t("nav.artists")}`;
     },
     cardIcon() {
       return this.isUpdate ? "edit" : "person_add";
     },
     isUpdate() {
-      return this.username.length > 0;
+      return this.name.length > 0;
     },
     isQueryEmpty() {
       return $.compareQuery(this.query, {});
@@ -536,67 +436,85 @@ export default {
         this.$route.query.status === "0"
           ? JSON.parse(this.$route.query.status)
           : "";
-      this.login_status =
-        this.$route.query.login_status === true ||
-        this.$route.query.login_status === false ||
-        this.$route.query.login_status === "true" ||
-        this.$route.query.login_status === "false"
-          ? JSON.parse(this.$route.query.login_status)
-          : "";
-      this.is_fake_user =
-        this.$route.query.is_fake_user === true ||
-        this.$route.query.is_fake_user === false ||
-        this.$route.query.is_fake_user === "true" ||
-        this.$route.query.is_fake_user === "false"
-          ? JSON.parse(this.$route.query.is_fake_user)
-          : "";
       this.query = Object.assign({}, this.$route.query);
     },
-    async saveMember() {
-      const isValid = await this.$refs.form.validate();
-      let memberResult = Object({
-        username: this.member.username,
-        email: this.member.email,
-        memo: this.member.memo,
-      });
-      if (this.member.password) {
-        memberResult = Object({
-          ...memberResult,
-          password: this.member.password,
-        });
+    uploadIcon(e) {
+      // file size must less than 1mb
+      if (e.target.files[0].size > 1 * 1000 * 1000) {
+        e.target.value = "";
+        this.snackbar = {
+          color: "red",
+          show: true,
+          text: `${this.$t("system_msg.error")}: ${this.$t(
+            "system_msg.exceed_file_size"
+          )}`,
+        };
+        return;
       }
+
+      const fileRead = new FileReader();
+      fileRead.onload = (e) => {
+        this.showImage = false;
+        this.artist.imageURI = e.target.result;
+        this.showImage = true;
+      };
+      fileRead.readAsDataURL(e.target.files[0]);
+
+      this.artist.image = e.target.files[0];
+      this.change_image = true;
+    },
+    async saveArtist() {
+      if (!this.artist.image) {
+        this.snackbar = {
+          color: "red",
+          show: true,
+          text: `${this.$t("errors.required")}: ${this.$t(
+            "common.artist"
+          )} ${this.$t("common.image")}`,
+        };
+        return;
+      }
+
+      const isValid = await this.$refs.form.validate();
+
+      let formData = new window.FormData();
+      if (this.change_image) {
+        formData.set("image", this.artist.image);
+      }
+      formData.set("name", this.artist.name);
+      formData.set("description", this.artist.description);
+      //   formData.set("image", this.artist.image)
+
       if (isValid) {
-        if (this.member.id) {
-          this.$http
-            .put(`${this.memberApi}${this.member.id}/`, memberResult)
-            .then(
-              () => {
-                this.$refs.pulling.rebase();
-                this.snackbar = {
-                  color: "success",
-                  show: true,
-                  text: `${this.$t("actions.update")} - ${this.$t(
-                    "nav.members"
-                  )}: ${this.$t("status.success")}`,
-                };
-                this.close();
-              },
-              (error) => {
-                this.snackbar = {
-                  color: "red",
-                  show: true,
-                  text: error,
-                };
-              }
-            );
+        if (this.artist.id) {
+          this.$http.put(`${this.artistApi}${this.artist.id}`, formData).then(
+            () => {
+              this.$refs.pulling.rebase();
+              this.snackbar = {
+                color: "success",
+                show: true,
+                text: `${this.$t("actions.update")} - ${this.$t(
+                  "nav.artists"
+                )}: ${this.$t("status.success")}`,
+              };
+              this.close();
+            },
+            (error) => {
+              this.snackbar = {
+                color: "red",
+                show: true,
+                text: error,
+              };
+            }
+          );
         } else {
-          this.$http.post(this.memberApi, memberResult).then(
+          this.$http.post(this.artistApi, formData).then(
             () => {
               this.snackbar = {
                 color: "success",
                 show: true,
                 text: `${this.$t("actions.add")} - ${this.$t(
-                  "nav.members"
+                  "nav.artists"
                 )}: ${this.$t("status.success")}`,
               };
               this.$refs.pulling.rebase();
@@ -615,18 +533,18 @@ export default {
       }
       this.snackbar.show = false;
     },
-    updateMember(item) {
-      Object.assign(this.member, {
+    updateArtist(item) {
+      Object.assign(this.artist, {
         id: item.id,
-        username: item.user.username,
-        password: item.password,
-        memo: item.memo,
+        name: item.name,
+        image: item.image,
+        description: item.description,
       });
-      this.username = this.member.username;
+      this.name = this.artist.name;
       this.showForm = true;
     },
-    deleteMember(id) {
-      this.$http.delete(`${this.memberApi}${id}/`).then(() => {
+    deleteArtist(id) {
+      this.$http.delete(`${this.artistApi}/${id}`).then(() => {
         this.snackbar = {
           color: "success",
           show: true,
@@ -635,40 +553,39 @@ export default {
         this.$refs.pulling.rebase();
       });
     },
-    toggleStatus(id, status, username) {
+    toggleStatus(id, status) {
       this.toggleLoading = true;
-      this.$http
-        .put(`${this.memberApi}${id}/`, {
-          username: username,
-          status: status ? 1 : 0,
-        })
-        .then(
-          (response) => {
-            let status_text = response.status
-              ? this.$t("status.enabled")
-              : this.$t("status.disabled");
-            this.snackbar = {
-              color: "success",
-              show: true,
-              text: `[${this.$t("common.status")}]: ${status_text}`,
-            };
-          },
-          (error) => {
-            this.snackbar = {
-              color: "error",
-              show: true,
-              text: `${this.$t("system_msg.error")}: ${error}`,
-            };
-          }
-        );
+      const formData = new window.FormData();
+      formData.set("status", status ? 1 : 0);
+      this.$http.put(`${this.artistApi}/${id}/status`, formData).then(
+        (response) => {
+          let status_text = response.status
+            ? this.$t("status.enabled")
+            : this.$t("status.disabled");
+          this.snackbar = {
+            color: "success",
+            show: true,
+            text: `[${this.$t("common.status")}]: ${status_text}`,
+          };
+          this.$refs.pulling.rebase();
+        },
+        (error) => {
+          this.snackbar = {
+            color: "error",
+            show: true,
+            text: `${this.$t("system_msg.error")}: ${error}`,
+          };
+        }
+      );
       this.snackbar.show = false;
     },
     close() {
-      this.member.id = "";
-      this.member.username = "";
-      this.member.password = "";
-      this.member.memo = "";
-      this.username = "";
+      this.artist.id = "";
+      this.artist.name = "";
+      this.artist.image = "";
+      this.artist.imageURI = "";
+      this.artist.description = "";
+      this.name = "";
       this.submitting = false;
       this.$refs.form.reset();
       this.showForm = false;
@@ -691,8 +608,6 @@ export default {
     clearAll() {
       this.created_at = ["", ""];
       this.status = "";
-      this.login_status = "";
-      this.is_fake_user = "";
       this.query = {};
       this.$nextTick(() => {
         this.$refs.pulling.submit();

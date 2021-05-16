@@ -25,12 +25,13 @@
                     :name="$t('login.username')"
                   >
                     <v-text-field
+                      color="blue-grey"
                       :counter="15"
                       :error-messages="errors"
                       :label="`${$t('login.username')}*`"
                       placeholder=" "
                       slot-scope="{ errors }"
-                      v-model="staff.user.username"
+                      v-model="staff.username"
                       outlined
                       dense
                     ></v-text-field>
@@ -61,6 +62,7 @@
                     v-else
                   >
                     <v-text-field
+                      color="blue-grey"
                       :counter="15"
                       :error-messages="errors"
                       :label="`${$t('login.password')}`"
@@ -79,6 +81,7 @@
                     :name="$t('common.remarks')"
                   >
                     <v-textarea
+                      color="blue-grey"
                       :counter="50"
                       :error-messages="errors"
                       :label="$t('common.remarks')"
@@ -93,113 +96,10 @@
                 </v-flex>
               </v-layout>
             </v-card-text>
-            <v-banner color="primary" dark v-if="changePermission">{{
-              $t("staff.permissions")
-            }}</v-banner>
-            <v-layout class="ma-2" justify-end v-if="changePermission">
-              <v-chip
-                class="ma-1"
-                :color="selectAllColor"
-                @click="selectPermission('all')"
-              >
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <v-icon v-on="on" small class="ma-1">check_box</v-icon>
-                    <span v-on="on">{{ $t("staff.select_all") }}</span>
-                  </template>
-                  <span>{{ $t("system_notes.select_all_permissions") }}</span>
-                </v-tooltip>
-              </v-chip>
-              <v-chip
-                class="ma-1"
-                :color="deselectAllColor"
-                @click="selectPermission('deselect')"
-              >
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <v-icon v-on="on" small class="ma-1"
-                      >check_box_outline_blank</v-icon
-                    >
-                    <span v-on="on">{{ $t("staff.deselect_all") }}</span>
-                  </template>
-                  <span>{{ $t("system_notes.deselect_all_permissions") }}</span>
-                </v-tooltip>
-              </v-chip>
-              <v-chip
-                class="ma-1"
-                :color="superAdminColor"
-                @click="excludePermission()"
-              >
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <v-icon v-on="on" small class="ma-1"
-                      >supervised_user_circle</v-icon
-                    >
-                    <span v-on="on">{{ $t("staff.superadmin") }}</span>
-                  </template>
-                  <span>{{ $t("system_notes.superadmin_def") }}</span>
-                </v-tooltip>
-              </v-chip>
-              <v-chip
-                class="ma-1"
-                :color="adminColor"
-                @click="excludePermission('staff')"
-              >
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <v-icon v-on="on" small class="ma-1">person</v-icon>
-                    <span v-on="on">{{ $t("staff.admin") }}</span>
-                  </template>
-                  <span>{{ $t("system_notes.admin_def") }}</span>
-                </v-tooltip>
-              </v-chip>
-            </v-layout>
-            <v-container v-show="changePermission">
-              <template v-for="(list, index) in permissions">
-                <v-checkbox
-                  :label="`${list.name}`"
-                  v-model="list.checked"
-                  :key="list.code"
-                  @click.native="selectAllPermissions(index)"
-                  hide-details="true"
-                >
-                </v-checkbox>
-                <span
-                  v-for="permission in list.permissions"
-                  :key="permission.code"
-                >
-                  <div v-if="permission.code == 'change_staff_permission'">
-                    <v-checkbox
-                      v-show="$root.role === 'superadmin' || !isUpdate"
-                      class="ml-6 mb-0"
-                      :label="
-                        `${permission.name} - ${permission.description} - ${permission.code}`
-                      "
-                      v-model="permission.checked"
-                      :key="permission.code"
-                      hide-details="true"
-                    >
-                    </v-checkbox>
-                  </div>
-                  <div v-else>
-                    <v-checkbox
-                      class="ml-6 mb-0"
-                      :label="
-                        `${permission.name} - ${permission.description} - ${permission.code}`
-                      "
-                      v-model="permission.checked"
-                      :key="permission.code"
-                      hide-details="true"
-                    >
-                    </v-checkbox>
-                  </div>
-                </span>
-              </template>
-            </v-container>
             <!-- BUTTONS -->
             <v-layout justify-start>
               <v-btn
-                color="primary"
+                color="blue-grey"
                 dark
                 :loading="submitting"
                 @click="saveStaff"
@@ -235,20 +135,13 @@ export default {
     return {
       submitting: false,
       id: "",
-      permissions: [],
       staff: {
         id: "",
-        user: {
-          username: "",
-        },
+        username: "",
         password: "",
         memo: "",
       },
-      selectAllColor: "",
-      deselectAllColor: "",
-      superAdminColor: "",
-      adminColor: "",
-      staffApi: api.staff,
+      staffApi: api.user,
       snackbar: {
         color: "",
         text: "",
@@ -271,113 +164,28 @@ export default {
     isUpdate() {
       return this.id ? true : false;
     },
-    changePermission() {
-      if (
-        this.$root.permissions.includes("change_staff_permission") &&
-        this.$root.username === this.staff.user.username &&
-        this.$root.role != "superadmin"
-      ) {
-        return false;
-      } else {
-        return true;
-      }
-    },
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       let staffId = to.params.staffId;
       if (staffId) {
         vm.getStaffDetails(staffId);
-        vm.getStaffPermissions(staffId);
-      } else {
-        vm.getPermissionsList();
       }
     });
   },
   methods: {
     getStaffDetails(id) {
       this.id = id;
-      this.$http.get(`${this.staffApi}${id}/`).then((response) => {
+      this.$http.get(`${this.staffApi}/${id}/`).then((response) => {
         this.staff = response;
+        this.username=this.staff.username
       });
       this.loading = false;
     },
-    getPermissionsList() {
-      this.$http
-        .get(api.permissions + "?opt_expand=permissions")
-        .then((response) => {
-          this.permissions = response.results;
-        });
-    },
-    getStaffPermissions(id) {
-      this.$http
-        .get(`${this.staffApi}permissions/${id}/?opt_expand=permissions`)
-        .then((response) => {
-          this.permissions = response.permissions;
-        });
-    },
-    selectAllPermissions(list) {
-      this.permissions[list].checked = this.permissions[list].checked
-        ? true
-        : false;
-      for (let index in this.permissions[list].permissions) {
-        this.permissions[list].permissions[index].checked = this.permissions[
-          list
-        ].checked
-          ? true
-          : false;
-      }
-    },
-    excludePermission(exclude = "") {
-      this.selectAllColor = "";
-      this.deselectAllColor = "";
-      this.superAdminColor = !exclude ? "primary lighten-1" : "";
-      this.adminColor = exclude ? "primary lighten-1" : "";
-      for (let list in this.permissions) {
-        if (exclude !== this.permissions[list].code) {
-          this.permissions[list].checked = true;
-          for (let index in this.permissions[list].permissions) {
-            this.permissions[list].permissions[index].checked = true;
-          }
-        } else {
-          this.permissions[list].checked = false;
-          for (let index in this.permissions[list].permissions) {
-            this.permissions[list].permissions[index].checked = false;
-          }
-        }
-      }
-    },
-    selectPermission(mode = "all") {
-      this.superAdminColor = "";
-      this.adminColor = "";
-      for (let list in this.permissions) {
-        this.permissions[list].checked = mode == "all" ? true : false;
-        this.selectAllColor = mode == "all" ? "primary lighten-1" : "";
-        this.deselectAllColor = mode != "all" ? "primary lighten-1" : "";
-        for (let index in this.permissions[list].permissions) {
-          this.permissions[list].permissions[index].checked =
-            mode == "all" ? true : false;
-        }
-      }
-    },
-    getSelect() {
-      let selectId = [];
-      for (let list in this.permissions) {
-        for (let index in this.permissions[list].permissions) {
-          if (this.permissions[list].permissions[index].checked) {
-            selectId.push(this.permissions[list].permissions[index].id);
-          }
-        }
-      }
-      this.staff.permissions = selectId;
-    },
     async saveStaff() {
       const isValid = await this.$refs.form.validate();
-      this.getSelect();
       let staffResult = Object({
-        username: this.staff.user.username,
         memo: this.staff.memo,
-        permissions: this.staff.permissions,
       });
       if (this.staff.password) {
         staffResult = Object({
@@ -385,9 +193,15 @@ export default {
           password: this.staff.password,
         });
       }
+      if (this.username != this.staff.username) {
+        staffResult = Object({
+          ...staffResult,
+          username: this.staff.username,
+        });
+      }
       if (isValid) {
         if (this.staff.id) {
-          this.$http.put(`${this.staffApi}${this.staff.id}/`, staffResult).then(
+          this.$http.put(`${this.staffApi}/${this.staff.id}`, staffResult).then(
             (response) => {
               this.snackbar = {
                 color: "success",
@@ -397,7 +211,6 @@ export default {
                 )}: ${this.$t("status.success")}`,
               };
               this.$router.push(`/staff/${response.id}`);
-              this.$root.getPermissions();
             },
             (error) => {
               this.snackbar = {
@@ -420,6 +233,7 @@ export default {
               this.$router.push(`/staff/${response.id}`);
             },
             (error) => {
+              console.log(error);
               this.snackbar = {
                 color: "red",
                 show: true,

@@ -1,7 +1,10 @@
 <template>
   <v-container>
     <v-layout justify-center v-if="loading">
-      <v-progress-circular indeterminate color="blue"></v-progress-circular>
+      <v-progress-circular
+        indeterminate
+        color="blue-grey"
+      ></v-progress-circular>
     </v-layout>
     <v-layout v-else>
       <v-layout v-if="!myQueryset.length && !loading" justify-center>
@@ -44,6 +47,7 @@
           </div>
           <div class="d-inline-block">
             <v-pagination
+              color="blue-grey"
               :disabled="countPage == 1"
               v-model="page"
               :length="countPage"
@@ -212,8 +216,8 @@ export default {
       this.$http.get(this.next).then(
         (response) => {
           if (
-            response.results &&
-            response.results.length === 0 &&
+            response &&
+            response.length === 0 &&
             response.count &&
             this.showPageGo > 1
           ) {
@@ -245,12 +249,12 @@ export default {
           return `${key}=${this.persistentQuery[key]}`;
         })
         .join("&");
-      const url = `${api}${
-        defaultQuery ? `?${defaultQuery}` : ""
-      }&${additionalQuery}`;
+
+      const url = `${api}${defaultQuery ? `?${defaultQuery}` : ""}${
+        additionalQuery ? `&${additionalQuery}` : ""
+      }`;
       const params = [];
       const query = this.$route.query;
-
       for (const x in query) {
         if (query[x] === "" || query[x] === undefined) {
           delete query[x];
@@ -260,7 +264,9 @@ export default {
       for (let x in query) {
         params.push(x + "=" + query[x]);
       }
-      return url + (defaultQuery ? "&" : "?") + params.join("&");
+      return params.length
+        ? url + (defaultQuery ? "&" : "?") + params.join("&")
+        : url;
     },
     getExportQuery() {
       let query = this.query;

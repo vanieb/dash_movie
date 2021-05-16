@@ -8,7 +8,7 @@
 </template>
 <script>
 import SideBar from "./components/SideBar";
-import $ from "./utils/util";
+import $ from "@/utils/util";
 import api from "@/api/apis";
 import axios from "axios";
 
@@ -22,7 +22,11 @@ export default {
   },
   watch: {
     username(newObj) {
-      window.document.cookie = `username=${newObj}`;
+      if (!newObj) {
+        this.$router.push("/login");
+      } else {
+        window.document.cookie = `username=${newObj}`;
+      }
     },
   },
   components: {
@@ -65,55 +69,40 @@ export default {
       );
     },
     getMy() {
-      if (!this.$cookie.get("access_token")) {
-        return;
-      }
-      this.$http.get(api.my).then(
-        (response) => {
-          this.username = response.username;
-          this.role = response.role;
-          this.getPermissions();
-        },
-        (error) => {
-          if (error.status === 404) {
-            this.$router.push("/login");
-          }
-        }
-      );
+      this.username = this.$cookie.get("username");
+      this.setUpAuth();
+      this.setUpRouterHooks();
     },
     refresh() {
       let refreshToken = this.$cookie.get("refresh_token");
       if (!refreshToken) {
         return;
       }
-      this.$http
-        .post(api.refresh_token, {
-          refresh_token: this.$cookie.get("refresh_token"),
-        })
-        .then((data) => {
-          let d = new Date(data.expires_in);
-          // use access_token to access APIs
-          window.document.cookie =
-            "access_token=" +
-            data.access_token +
-            ";path=/;expires=" +
-            d.toGMTString();
-          // use refresh_token to fetch new access_token
-          window.document.cookie =
-            "refresh_token=" +
-            data.refresh_token +
-            ";path=/;expires=" +
-            d.toGMTString();
-          axios.defaults.headers.common["Authorization"] =
-            "Bearer " + data.access_token;
-        });
-    },
-    async getPermissions() {
-      await this.$http.get(api.userPermissions).then((response) => {
-        this.permissions = response;
-        // permissions must be loaded before we can handle other data
-        this.setUpAuth();
-        this.setUpRouterHooks();
+
+      let token = new window.FormData();
+      token.set("client_id", "first-client");
+      token.set("scope", "all");
+      token.set("grant_type", "refresh_token");
+      token.set("refresh_token", refreshToken);
+      let headers = {
+        Authorization: `Basic Zmlyc3QtY2xpZW50Om5vb25ld2lsbGV2ZXJndWVzcw==`,
+      };
+      axios.post(api.token, token, { headers }).then((data) => {
+        let d = new Date(data.expires_in);
+        // use access_token to access APIs
+        window.document.cookie =
+          "access_token=" +
+          data.access_token +
+          ";path=/;expires=" +
+          d.toGMTString();
+        // use refresh_token to fetch new access_token
+        window.document.cookie =
+          "refresh_token=" +
+          data.refresh_token +
+          ";path=/;expires=" +
+          d.toGMTString();
+        axios.defaults.headers.common["Authorization"] =
+          "Bearer " + data.access_token;
       });
     },
   },

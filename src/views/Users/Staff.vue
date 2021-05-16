@@ -2,12 +2,7 @@
   <v-layout wrap>
     <v-container>
       <v-layout justify-start>
-        <v-btn
-          color="primary"
-          dark
-          to="/staff/add"
-          v-if="$root.permissions.includes('create_staff')"
-        >
+        <v-btn color="blue-grey" dark to="/staff/add">
           <v-icon class="mr-3">person_add</v-icon> &nbsp;{{ $t("actions.add") }}
         </v-btn>
       </v-layout>
@@ -21,7 +16,7 @@
           <tbody>
             <tr v-for="item in querySet" :key="item.id">
               <td class="align-center text-center px-0">
-                <v-icon left small color="success" v-if="item.is_logged_in"
+                <v-icon left small color="success" v-if="item.login_status"
                   >fiber_manual_record</v-icon
                 >
                 <v-icon left small v-else>fiber_manual_record</v-icon>
@@ -30,27 +25,17 @@
                 <v-btn icon dense small color="info" :to="`/staff/${item.id}`">
                   <v-icon small>touch_app</v-icon>
                 </v-btn>
-                {{ item.user.username }}
+                {{ item.username }}
               </td>
-              <td
-                class="align-center justify-center layout px-0"
-                v-if="$root.permissions.includes('change_staff_status')"
-              >
+              <td class="align-center justify-center layout px-0">
                 <v-switch
                   value
                   v-model="item.status"
                   dense
-                  @change="
-                    toggleStatus(item.id, item.status, item.user.username)
-                  "
+                  color="blue-grey"
+                  @change="toggleStatus(item.id, item.status)"
                 >
                 </v-switch>
-              </td>
-              <td class="align-center justify-start" v-else>
-                <v-chip v-if="item.status == true" class="success" small>{{
-                  $t("status.enabled")
-                }}</v-chip>
-                <v-chip v-else small>{{ $t("status.disabled") }}</v-chip>
               </td>
               <td>
                 {{ item.created_at | moment("YYYY-MM-DD HH:mm:ss") }} / <br />
@@ -59,26 +44,11 @@
               <td width="40%" style="word-break:break-all;">
                 {{ item.memo || "-" }}
               </td>
-              <td
-                class="align-center justify-center"
-                v-if="
-                  $root.permissions.includes('change_staff') ||
-                    $root.permissions.includes('delete_staff')
-                "
-              >
-                <v-btn
-                  left
-                  icon
-                  small
-                  :to="`/staff/${item.id}/edit`"
-                  v-if="$root.permissions.includes('change_staff')"
-                >
+              <td class="align-center justify-center">
+                <v-btn left icon small :to="`/staff/${item.id}/edit`">
                   <v-icon small>edit</v-icon>
                 </v-btn>
-                <v-menu
-                  offset-y
-                  v-if="$root.permissions.includes('delete_staff')"
-                >
+                <v-menu offset-y>
                   <template v-slot:activator="{ on }">
                     <v-icon color="error" small v-on="on">delete</v-icon>
                   </template>
@@ -87,7 +57,7 @@
                       <v-list-item-title>
                         <v-icon left color="warning">warning</v-icon>
                         {{ $t("system_msg.confirm_delete") }}
-                        <strong>{{ item.user.username }}</strong>
+                        <strong>{{ item.username }}</strong>
                       </v-list-item-title>
                     </v-list-item>
                   </v-list>
@@ -100,7 +70,7 @@
     </v-container>
     <pagination
       :queryset="querySet"
-      :api="staffApi"
+      :api="usersApi"
       :query="query"
       ref="pulling"
       @query-data="queryData"
@@ -137,7 +107,8 @@ export default {
         password: "",
         memo: "",
       },
-      staffApi: api.staff,
+      usersApi: api.users,
+      userApi: api.user,
       querySet: [],
       query: {},
       showForm: false,
@@ -150,24 +121,22 @@ export default {
         {
           sortable: false,
           text: this.$t("staff.login_status"),
-          value: "is_logged_in",
+          value: "login_status",
           align: "center",
           width: "10%",
         },
         {
           sortable: false,
           text: this.$t("login.username"),
-          value: "user.username",
-          width: "15%",
+          value: "username",
+          width: "18%",
         },
         {
           sortable: false,
           text: this.$t("common.status"),
           value: "status",
           width: "10%",
-          align: this.$root.permissions.includes("change_staff")
-            ? "center"
-            : " d-none",
+          align: "center",
         },
         {
           sortable: false,
@@ -211,7 +180,7 @@ export default {
       }
       if (isValid) {
         if (this.staff.id) {
-          this.$http.put(`${this.staffApi}${this.staff.id}/`, staffResult).then(
+          this.$http.put(`${this.userApi}/${this.staff.id}/`, staffResult).then(
             () => {
               this.$refs.pulling.rebase();
               this.snackbar = {
@@ -232,7 +201,7 @@ export default {
             }
           );
         } else {
-          this.$http.post(this.staffApi, staffResult).then(
+          this.$http.post(this.userApi, staffResult).then(
             () => {
               this.snackbar = {
                 color: "success",
@@ -268,7 +237,7 @@ export default {
       this.showForm = true;
     },
     deleteStaff(id) {
-      this.$http.delete(`${this.staffApi}${id}/`).then(() => {
+      this.$http.delete(`${this.userApi}/${id}/`).then(() => {
         this.snackbar = {
           color: "success",
           show: true,
@@ -277,32 +246,30 @@ export default {
         this.$refs.pulling.rebase();
       });
     },
-    toggleStatus(id, status, username) {
+    toggleStatus(id, status) {
       this.toggleLoading = true;
-      this.$http
-        .put(`${this.staffApi}${id}/`, {
-          username: username,
-          status: status ? 1 : 0,
-        })
-        .then(
-          (response) => {
-            let status_text = response.status
-              ? this.$t("status.enabled")
-              : this.$t("status.disabled");
-            this.snackbar = {
-              color: "success",
-              show: true,
-              text: `[${this.$t("common.status")}]: ${status_text}`,
-            };
-          },
-          (error) => {
-            this.snackbar = {
-              color: "error",
-              show: true,
-              text: `${this.$t("system_msg.error")}: ${error}`,
-            };
-          }
-        );
+      const formData = new window.FormData();
+      formData.set("status", status ? 1 : 0);
+      this.$http.put(`${this.userApi}/${id}/status`, formData).then(
+        (response) => {
+          let status_text = response.status
+            ? this.$t("status.enabled")
+            : this.$t("status.disabled");
+          this.snackbar = {
+            color: "success",
+            show: true,
+            text: `[${this.$t("common.status")}]: ${status_text}`,
+          };
+          this.$refs.pulling.rebase();
+        },
+        (error) => {
+          this.snackbar = {
+            color: "error",
+            show: true,
+            text: `${this.$t("system_msg.error")}: ${error}`,
+          };
+        }
+      );
       this.snackbar.show = false;
     },
     close() {

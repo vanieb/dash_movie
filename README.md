@@ -4,8 +4,8 @@ This README would normally document whatever steps are necessary to get your app
 
 ### What is this repository for? ###
 
-* Dashboard for News Website
-* Version: 0.10
+* Dashboard for Movies Website
+* Version: 1.00
 
 ### How do I get set up? ###
 
@@ -41,5 +41,4 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### Who do I talk to? ###
 
-* email: viennacity@unnotechmanila.com
 * Other community or team contact

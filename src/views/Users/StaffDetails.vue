@@ -15,12 +15,7 @@
           </v-breadcrumbs>
         </v-layout>
         <v-layout justify-end>
-          <v-btn
-            color="primary"
-            dark
-            :to="`/staff/${staff.id}/edit`"
-            v-if="$root.permissions.includes('change_staff')"
-          >
+          <v-btn color="blue-grey" dark :to="`/staff/${staff.id}/edit`">
             <v-icon class="mr-3">edit</v-icon> &nbsp;{{ $t("actions.update") }}
           </v-btn>
         </v-layout>
@@ -36,7 +31,7 @@
             <v-col cols="12" md="3">
               <v-row class="mb-2">
                 <span class="title"
-                  ><strong>{{ staff.user.username }}</strong></span
+                  ><strong>{{ staff.username }}</strong></span
                 >
               </v-row>
               <v-row>
@@ -57,9 +52,10 @@
               <v-row>
                 <v-icon class="mr-2 m-b-sm ml-8" color="success" small
                   >event</v-icon
-                ><small>{{
+                ><small v-if="staff.updated_at">{{
                   staff.updated_at | moment("YYYY-MM-DD HH:mm:ss")
                 }}</small>
+                <small v-else>-</small>
               </v-row>
             </v-col>
             <v-col cols="12" md="7">
@@ -75,61 +71,10 @@
                 <v-chip class="ma-1" small>{{ $t("status.disabled") }}</v-chip>
                 <br />
               </span>
-              <span v-if="staff.role === 'admin'">
-                <v-icon color="warning" left>person_pin</v-icon>
-                <v-chip class="ma-1" color="warning" small dark>{{
-                  $t("staff.admin")
-                }}</v-chip>
-                <br />
-              </span>
-              <span v-else-if="staff.role === 'superadmin'">
-                <v-icon color="error" left>person_pin</v-icon>
-                <v-chip class="ma-1" color="error" small dark>{{
-                  $t("staff.superadmin")
-                }}</v-chip>
-                <br />
-              </span>
-              <span v-if="staff.role === 'custom_staff'">
-                <v-icon color="info" left>person_pin</v-icon>
-                <v-chip class="ma-1" color="blue" small dark>{{
-                  $t("staff.custom_staff")
-                }}</v-chip>
-                <br />
-              </span>
               <v-icon color="gray" class="ml-0 mr-2 m-b-sm">notes</v-icon>
               {{ staff.memo || "-" }}
             </v-col>
           </v-row>
-          <v-banner color="primary" dark>{{
-            $t("staff.permissions")
-          }}</v-banner>
-          <ul
-            v-for="permission in permissions"
-            :key="permission.id"
-            v-show="showPermissions"
-          >
-            <v-card-title
-              v-if="permission.checked"
-              :key="permission.code"
-              v-text="permission.name"
-            ></v-card-title>
-            <ul v-for="item in permission.permissions" :key="item.code">
-              <li class="ml-6" v-if="item.checked">
-                <span>{{ item.name }}</span> -
-                <strong class="grey--text"
-                  >{{ item.description }} - {{ item.code }}</strong
-                >
-              </li>
-            </ul>
-          </ul>
-          <v-layout
-            v-show="!showPermissions"
-            class="align-center justify-center ma-2"
-          >
-            <span class="grey--text" small>{{
-              $t("system_msg.no_permission_set")
-            }}</span>
-          </v-layout>
         </v-container>
       </v-card>
     </v-container>
@@ -157,14 +102,11 @@ export default {
       id: "",
       staff: {
         id: "",
-        user: {
-          username: "",
-        },
+        username: {},
         password: "",
         memo: "",
       },
-      permissions: [],
-      staffApi: api.staff,
+      staffApi: api.user,
       snackbar: {
         color: "",
         text: "",
@@ -187,97 +129,22 @@ export default {
     isUpdate() {
       return this.id ? true : false;
     },
-    showPermissions() {
-      for (let list in this.permissions) {
-        for (let index in this.permissions[list].permissions) {
-          if (this.permissions[list].permissions[index].checked) {
-            return true;
-          }
-        }
-      }
-      return false;
-    },
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       let staffId = to.params.staffId;
       if (staffId) {
         vm.getStaffDetails(staffId);
-        vm.getStaffPermissions(staffId);
       }
     });
   },
   methods: {
     getStaffDetails(id) {
       this.id = id;
-      this.$http.get(`${this.staffApi}${id}/`).then((response) => {
+      this.$http.get(`${this.staffApi}/${id}`).then((response) => {
         this.staff = response;
       });
       this.loading = false;
-    },
-    getStaffPermissions(id) {
-      this.$http
-        .get(`${this.staffApi}permissions/${id}/?opt_expand=permissions`)
-        .then((response) => {
-          this.permissions = response.permissions;
-        });
-    },
-    async saveStaff() {
-      const isValid = await this.$refs.form.validate();
-      let staffResult = Object({
-        username: this.staff.user.username,
-        memo: this.staff.memo,
-      });
-      if (this.staff.password) {
-        staffResult = Object({
-          ...staffResult,
-          password: this.staff.password,
-        });
-      }
-      if (isValid) {
-        if (this.staff.id) {
-          this.$http.put(`${this.staffApi}${this.staff.id}/`, staffResult).then(
-            (response) => {
-              this.snackbar = {
-                color: "success",
-                show: true,
-                text: `${this.$t("actions.update")} - ${this.$t(
-                  "nav.staff"
-                )}: ${this.$t("status.success")}`,
-              };
-              this.$router.push(`/staff/${response.id}`);
-            },
-            (error) => {
-              this.snackbar = {
-                color: "red",
-                show: true,
-                text: error,
-              };
-            }
-          );
-        } else {
-          this.$http.post(this.staffApi, staffResult).then(
-            (response) => {
-              this.snackbar = {
-                color: "success",
-                show: true,
-                text: `${this.$t("actions.add")} - ${this.$t(
-                  "nav.staff"
-                )}: ${this.$t("status.success")}`,
-              };
-              this.$router.push(`/staff/${response.id}`);
-            },
-            (error) => {
-              this.snackbar = {
-                color: "red",
-                show: true,
-                text: error,
-              };
-            }
-          );
-        }
-      }
-      this.snackbar.show = false;
     },
   },
 };

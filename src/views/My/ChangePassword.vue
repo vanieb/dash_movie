@@ -20,13 +20,13 @@
                     outlined
                     clearable
                     dense
-                    :disabled="isAdmin"
+                    color="blue-grey"
                     :append-icon="show.old_password ? 'mdi-eye' : 'mdi-eye-off'"
                     :type="show.old_password ? 'text' : 'password'"
                     @click:append="show.old_password = !show.old_password"
                     clear-icon="close"
                     slot-scope="{ errors }"
-                    v-model="user.prev_password"
+                    v-model="user.old_password"
                   ></v-text-field>
                 </validation-provider>
               </v-flex>
@@ -36,6 +36,7 @@
                   :name="$t('change_password.new_password')"
                 >
                   <v-text-field
+                    color="blue-grey"
                     :counter="15"
                     :error-messages="errors"
                     :label="`${$t('change_password.new_password')}*`"
@@ -44,7 +45,6 @@
                     outlined
                     clearable
                     dense
-                    :disabled="isAdmin"
                     :append-icon="show.new_password ? 'mdi-eye' : 'mdi-eye-off'"
                     :type="show.new_password ? 'text' : 'password'"
                     @click:append="show.new_password = !show.new_password"
@@ -65,8 +65,8 @@
                     required
                     outlined
                     dense
-                    :disabled="isAdmin"
                     clearable
+                    color="blue-grey"
                     :append-icon="
                       show.confirm_password ? 'mdi-eye' : 'mdi-eye-off'
                     "
@@ -76,9 +76,11 @@
                     "
                     clear-icon="close"
                     slot-scope="{ errors }"
-                    v-model="user.repeat_password"
+                    v-model="user.confirm_password"
                   ></v-text-field>
+
                 </validation-provider>
+                <small v-if="!samePassword" class="error--text">{{$t("errors.password_not_same")}}</small>
               </v-flex>
             </v-layout>
             <small color="error">*{{ $t("errors.required") }}</small>
@@ -86,14 +88,14 @@
           <!-- BUTTONS -->
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="grey lighten-1" :disabled="isAdmin" @click="clear">{{
+            <v-btn color="grey lighten-1" @click="clear">{{
               $t("actions.clear")
             }}</v-btn>
             <v-btn
-              color="primary"
-              dark
+              color="blue-grey"
+              class="white--text"
               :loading="loading"
-              :disabled="isAdmin"
+              :disabled="!samePassword"
               @click="changePassword()"
               >{{ $t("actions.reset") }}</v-btn
             >
@@ -113,7 +115,7 @@
 <script>
 import api from "@/api/apis";
 import SnackBar from "@/components/SnackBar";
-import VueCookie from "vue-cookie";
+// import VueCookie from "vue-cookie";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 export default {
   components: {
@@ -126,9 +128,9 @@ export default {
       changePasswordApi: api.changePassword,
       loading: false,
       user: {
-        prev_password: "",
+        old_password: "",
         new_password: "",
-        repeat_password: "",
+        confirm_password: "",
       },
       snackbar: {
         color: "",
@@ -143,13 +145,16 @@ export default {
     };
   },
   computed: {
-    isAdmin() {
-      return VueCookie.get("user_type") === "admin";
-    },
+    samePassword() {
+      return this.user.new_password == this.user.confirm_password
+    }
   },
   methods: {
     changePassword() {
-      this.$http.post(this.changePasswordApi, this.user).then(
+      let formData = new window.FormData();
+      formData.set('old_password', this.user.old_password)
+      formData.set('new_password', this.user.new_password)
+      this.$http.put(this.changePasswordApi, formData).then(
         () => {
           setTimeout(() => {
             this.$router.push("/login");
@@ -176,9 +181,9 @@ export default {
       this.snackbar.show = false;
     },
     clear() {
-      this.user.prev_password = "";
+      this.user.old_password = "";
       this.user.new_password = "";
-      this.user.repeat_password = "";
+      this.user.confirm_password = "";
       this.$refs.form.reset();
     },
   },

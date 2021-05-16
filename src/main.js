@@ -7,7 +7,7 @@ import VeeValidate, { Validator } from "vee-validate";
 import zhCN from "vee-validate/dist/locale/zh_CN";
 import locales from "./i18n/locales";
 import VueCookie from "vue-cookie";
-import { handleError } from "./utils/handleError";
+import { handleError } from "@/utils/handleError";
 import router from "./router";
 import axios from "axios";
 
@@ -31,26 +31,36 @@ Vue.use(VeeValidate);
 const host = process.env.VUE_APP_API_URL;
 
 axios.options.root = host;
+axios.defaults.headers["Content-Type"] = "application/json;charset=UTF-8";
 
 if (VueCookie.get("access_token")) {
   axios.defaults.headers.common["Authorization"] = `Bearer ${VueCookie.get(
     "access_token"
   )}`;
+} else {
+  axios.defaults.headers.common[
+    "Authorization"
+  ] = `Basic Zmlyc3QtY2xpZW50Om5vb25ld2lsbGV2ZXJndWVzcw==`;
 }
 
 axios.interceptors.response.use(
   (response) => {
-    if (response.data.code === 2000) {
-      return response.data.data;
-    } else if (response.data.code === 9007) {
-      router.push({
-        path: "/login",
-        query: {
-          next: router.fullPath,
-        },
-      });
+    if (response.data.access_token) {
+      return response.data;
     } else {
-      return Promise.reject(handleError(response.data.msg));
+      if (response.data.status === "OK" && response.status == 200) {
+        return response.data.data;
+      } else if (response.status === 401) {
+        router.push({
+          path: "/login",
+          query: {
+            next: router.fullPath,
+          },
+        });
+      } else {
+        console.log(response)
+        return Promise.reject(handleError(response.data.message));
+      }
     }
   },
   (error) => {
@@ -61,6 +71,18 @@ axios.interceptors.response.use(
           next: router.fullPath,
         },
       });
+    } else if (error.response.status === 404 || error.response.status === 500) {
+      return Promise.reject(
+        Vue.config.lang === "cn"
+          ? "服务异常，请稍后再试"
+          : "An error occured. Please try again later."
+      );
+    } else {
+      return Promise.reject(
+        Vue.config.lang === "cn"
+          ? "服务异常，请稍后再试"
+          : error.response.data.message
+      );
     }
   },
   () => {
