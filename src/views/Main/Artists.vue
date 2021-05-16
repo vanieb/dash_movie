@@ -464,7 +464,7 @@ export default {
       this.change_image = true;
     },
     async saveArtist() {
-      if (!this.artist.image) {
+      if (!this.artist.image && !this.isUpdate) {
         this.snackbar = {
           color: "red",
           show: true,
@@ -487,7 +487,7 @@ export default {
 
       if (isValid) {
         if (this.artist.id) {
-          this.$http.put(`${this.artistApi}${this.artist.id}`, formData).then(
+          this.$http.put(`${this.artistApi}/${this.artist.id}`, formData).then(
             () => {
               this.$refs.pulling.rebase();
               this.snackbar = {
@@ -534,10 +534,13 @@ export default {
       this.snackbar.show = false;
     },
     updateArtist(item) {
+      const host = process.env.VUE_APP_API_URL;
+      const updatedHost = host.slice(0, -1);
+      this.showImage = true;
       Object.assign(this.artist, {
         id: item.id,
         name: item.name,
-        image: item.image,
+        imageURI: `${updatedHost}${item.image_url}`,
         description: item.description,
       });
       this.name = this.artist.name;

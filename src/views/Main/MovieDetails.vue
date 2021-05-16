@@ -163,7 +163,7 @@
               $t("movies.trailer")
             }}</v-banner>
             <v-card-text>
-              <video :src="movie.video_urls"></video>
+              <video :src="movie.video_url"></video>
             </v-card-text>
           </v-flex>
           <v-flex>
@@ -228,8 +228,12 @@ export default {
   },
   methods: {
     getMovieDetails(id) {
+      const host = process.env.VUE_APP_API_URL;
+      const updatedHost = host.slice(0, -1);
       this.$http.get(`${this.movieApi}/${id}`).then((response) => {
         this.movie = response;
+        this.movie.image_url = `${updatedHost}${this.movie.image_url}`;
+        this.movie.video_url = `${updatedHost}${this.movie.video_url}`;
       });
     },
   },

@@ -291,18 +291,25 @@
             >
             <v-flex>
               <v-card-text>
+                <span>{{ $t("movies.trailer") }}: {{ movie.video_url }}</span>
+              </v-card-text>
+              <v-card-text>
                 <validation-provider
                   style="width:310px;"
-                  rules="required"
+                  :rules="movie.video_url ? '' : 'required'"
                   :name="$t('common.file')"
                 >
                   <v-file-input
                     outlined
                     dense
                     clearable
-                    v-model="movie.video_url"
+                    v-model="movie.video"
                     :error-messages="errors"
-                    :label="`${$t('movies.trailer')}*`"
+                    :label="
+                      `${movie.video_url}`
+                        ? `${$t('movies.trailer')}`
+                        : `${$t('movies.trailer')}*`
+                    "
                     placeholder=" "
                     required
                     color="blue-grey"
@@ -505,6 +512,8 @@ export default {
   methods: {
     getMovieDetails(id) {
       this.id = id;
+      const host = process.env.VUE_APP_API_URL;
+      const updatedHost = host.slice(0, -1);
       this.$http.get(`${this.movieApi}/${id}`).then(
         (response) => {
           this.movie = response;
@@ -512,10 +521,14 @@ export default {
           this.showTinyMce = true;
           this.showAwards = true;
           this.contentKey = true;
-          if (this.movie.image) {
+          if (this.movie.image_url) {
             this.showImage = true;
-            this.movie.imageURI = this.movie.image;
+            this.movie.imageURI = `${updatedHost}${this.movie.image_url}`;
             this.change_image = false;
+          }
+          if (this.movie.video_url) {
+            this.movie.video_url = `${updatedHost}${this.movie.video_url}`;
+            this.change_video = false;
           }
           this.selectMultiple.forEach((item) => {
             this.pushIDs(item, "Multiple");
@@ -550,7 +563,6 @@ export default {
       }
     },
     awardSelectMultiple(val) {
-      console.log(val);
       if (val && val[0].text) {
         let newVal = [];
         // this.movie.awards.forEach((item) => {
@@ -700,7 +712,7 @@ export default {
           };
           return;
         }
-        if (!this.movie.image) {
+        if (!this.movie.image && !this.isUpdate) {
           this.snackbar = {
             color: "red",
             show: true,
@@ -719,9 +731,12 @@ export default {
         if (this.change_image) {
           formData.set("image", this.movie.image);
         }
+        if (this.change_video) {
+          formData.set("video", this.movie.video);
+        }
         // String Fields
         formData.set("confidential", this.movie.confidential);
-        formData.set("video", this.movie.video_url);
+        // formData.set("video", this.movie.video);
         formData.set("title", this.movie.title);
         formData.set("year", this.movie.year);
         formData.set("director", this.movie.director);
