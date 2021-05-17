@@ -189,7 +189,7 @@
                 <v-row>
                   <validation-provider
                     style="width:225px;"
-                    rules="required"
+                    rules="required|numeric"
                     :name="$t('movies.investment')"
                   >
                     <v-text-field
@@ -208,7 +208,7 @@
                   <v-spacer style="max-width:35px !important;"></v-spacer>
                   <validation-provider
                     style="width:225px;"
-                    rules="required"
+                    rules="required|numeric"
                     :name="$t('movies.return')"
                   >
                     <v-text-field
