@@ -198,9 +198,8 @@
                       placeholder=" "
                       slot-scope="{ errors }"
                       dense
-                      number
                       prepend-icon="monetization_on"
-                      v-model.number="movie.investment"
+                      v-model="movie.investment"
                       outlined
                       color="blue-grey"
                     >
@@ -218,9 +217,8 @@
                       placeholder=" "
                       slot-scope="{ errors }"
                       dense
-                      number
                       prepend-icon="show_chart"
-                      v-model.number="movie.return"
+                      v-model="movie.return"
                       outlined
                       color="blue-grey"
                     >
@@ -435,7 +433,7 @@ export default {
       updateImages: true,
       showTinyMce: true,
       movie_changed: "",
-      change_video:true,
+      change_video: true,
       showAwards: false,
       showImage: false,
       lang: "",
@@ -530,8 +528,6 @@ export default {
           if (this.movie.video_url) {
             this.movie.video_url = `${updatedHost}${this.movie.video_url}`;
             this.change_video = false;
-          } else {
-            this.change_video = true;
           }
           this.selectMultiple.forEach((item) => {
             this.pushIDs(item, "Multiple");
@@ -731,14 +727,17 @@ export default {
         } else if (this.award_changed) {
           formData.set("awards", this.movie.awards);
         }
-        if (this.change_image) {
+        if (this.movie.image) {
           formData.set("image", this.movie.image);
         }
-        if (this.change_video) {
+        if (this.movie.video) {
           formData.set("video", this.movie.video);
         }
         // String Fields
-        formData.set("confidential", this.movie.confidential ? this.movie.confidential : 'false' );
+        formData.set(
+          "confidential",
+          this.movie.confidential ? this.movie.confidential : "false"
+        );
         // formData.set("video", this.movie.video);
         formData.set("title", this.movie.title);
         formData.set("year", this.movie.year);

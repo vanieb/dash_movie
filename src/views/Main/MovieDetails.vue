@@ -39,7 +39,7 @@
               <v-avatar v-else class="profile ml-10" contain size="100" tile
                 ><v-icon size="120">photo</v-icon>
               </v-avatar>
-              <v-layout justify-center mb5 v-if="!movie.icon">
+              <v-layout justify-center mb5 v-if="!movie.image_url">
                 <small
                   >{{ $t("common.icon") }}:
                   {{ $t("system_msg.not_set") }}</small
@@ -140,7 +140,7 @@
                   <v-chip
                     v-for="i in 4"
                     :key="i"
-                    color="primary lighten-2"
+                    color="blue-grey lighten-2"
                     small
                     class="mr-2"
                   >
@@ -163,7 +163,12 @@
               $t("movies.trailer")
             }}</v-banner>
             <v-card-text>
-              <video :src="movie.video_url"></video>
+              <video
+                :src="movie.video_url"
+                width="100%"
+                height="400px;"
+                controls
+              ></video>
             </v-card-text>
           </v-flex>
           <v-flex>
