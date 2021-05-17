@@ -322,8 +322,8 @@
               >{{ $t("nav.movies") }} - {{ $t("movies.content") }}</v-banner
             >
             <v-flex>
-              <v-card-title>{{
-                isUpdate ? `${$t("movies.content")}*` : $t("movies.content")
+              <v-card-title>
+                {{ $t("movies.content") }}
               }}</v-card-title>
               <v-card-text>
                 <tinymce
@@ -702,16 +702,16 @@ export default {
       this.snackbar.show = false;
       const isValid = await this.$refs.form.validate();
       if (isValid) {
-        if (!this.movie.content) {
-          this.snackbar = {
-            color: "red",
-            show: true,
-            text: `${this.$t("errors.required")}: ${this.$t(
-              "movies.movie"
-            )} ${this.$t("movies.content")}`,
-          };
-          return;
-        }
+        // if (!this.movie.content) {
+        //   this.snackbar = {
+        //     color: "red",
+        //     show: true,
+        //     text: `${this.$t("errors.required")}: ${this.$t(
+        //       "movies.movie"
+        //     )} ${this.$t("movies.content")}`,
+        //   };
+        //   return;
+        // }
         if (!this.movie.image && !this.isUpdate) {
           this.snackbar = {
             color: "red",
@@ -735,7 +735,7 @@ export default {
           formData.set("video", this.movie.video);
         }
         // String Fields
-        formData.set("confidential", this.movie.confidential);
+        formData.set("confidential", this.movie.confidential ? this.movie.confidential : 'false' );
         // formData.set("video", this.movie.video);
         formData.set("title", this.movie.title);
         formData.set("year", this.movie.year);
