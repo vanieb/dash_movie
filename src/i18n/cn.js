@@ -20,6 +20,9 @@ export default {
     fake_user: "假用户",
     real_user: "真实用户",
     points: "积分",
+    image: "图片",
+    description: "描述",
+    artist: "“艺术家"
   },
   actions: {
     add: "添加",
@@ -110,6 +113,7 @@ export default {
     movie_details: "电影细节",
     edit_movie: "编辑电影",
     add_movie: "添加电影",
+    artists: "艺术家",
     global_settings: "全局设置",
     logs: "日志",
     import_logs: "导入日志",
@@ -147,6 +151,15 @@ export default {
     actors: "演员",
     payback_period: "回报周期",
     trailer: "预告片",
+    type: "类型",
+    ongoing: "正在进行中的项目",
+    previous: "上一个项目",
+    no_award: "无奖",
+    award_1: "奖项1",
+    award_2: "奖项 2",
+    award_3: "奖项 3",
+    award_4: "奖项 4",
+    confidential: "机密"
   },
   settings: {
     parameter: "参数",
