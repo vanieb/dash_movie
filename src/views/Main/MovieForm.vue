@@ -324,7 +324,7 @@
             <v-flex>
               <v-card-title>
                 {{ $t("movies.content") }}
-              }}</v-card-title>
+              </v-card-title>
               <v-card-text>
                 <tinymce
                   v-if="showTinyMce"
@@ -435,6 +435,7 @@ export default {
       updateImages: true,
       showTinyMce: true,
       movie_changed: "",
+      change_video:true,
       showAwards: false,
       showImage: false,
       lang: "",
@@ -529,6 +530,8 @@ export default {
           if (this.movie.video_url) {
             this.movie.video_url = `${updatedHost}${this.movie.video_url}`;
             this.change_video = false;
+          } else {
+            this.change_video = true;
           }
           this.selectMultiple.forEach((item) => {
             this.pushIDs(item, "Multiple");
