@@ -99,7 +99,7 @@ export default {
   },
   nav: {
     login: "登录",
-    register: "登记",
+    register: "注册",
     change_password: "更改密码",
     users: "使用者",
     staff: "员工",

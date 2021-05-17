@@ -12,10 +12,10 @@
                 v-model="active_tab"
               >
                 <v-tab key="login">
-                  Login
+                  {{ $t("nav.login") }}
                 </v-tab>
                 <v-tab>
-                  Register
+                  {{ $t("nav.register") }}
                 </v-tab>
                 <v-tab-item>
                   <v-card-text style="padding-bottom:0px !important;">
