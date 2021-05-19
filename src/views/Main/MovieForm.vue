@@ -386,19 +386,39 @@
               </v-data-table>
             </v-flex> -->
             <v-layout justify-start mt-3>
-              <v-btn
-                color="blue-grey"
-                dark
-                :loading="submitting"
-                @click="saveMovie()"
-              >
-                <v-icon left small>save</v-icon>
-                {{ $t("actions.save") }}
-              </v-btn>
+              <v-dialog v-model="uploadDialog" persistent max-width="600">
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    color="blue-grey"
+                    dark
+                    v-on="on"
+                    :loading="submitting"
+                    @click="saveMovie()"
+                  >
+                    <v-icon left small>save</v-icon>
+                    {{ $t("actions.save") }}
+                  </v-btn>
+                </template>
+                <v-card-title class="blue-grey" dark v-if="movie.video"
+                  >{{ $t("system_notes.uploading") }}</v-card-title
+                >
+                <v-progress-linear
+                  v-if="uploadLoading"
+                  color="blue-grey"
+                  height="25"
+                  v-model="uploadPercentage"
+                  striped
+                >
+                  <template v-slot="{ value }">
+                    <strong>{{ Math.ceil(value) }}%</strong>
+                  </template>
+                </v-progress-linear>
+              </v-dialog>
             </v-layout>
           </v-container>
         </v-card>
       </validation-observer>
+
       <!-- SNACKBAR -->
       <snack-bar
         :show="snackbar.show"
@@ -416,6 +436,7 @@ import SnackBar from "@/components/SnackBar";
 import $ from "../../utils/util";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 import Awards from "../../components/SelectAward.vue";
+import axios from "axios";
 
 export default {
   name: "MovieForm",
@@ -467,7 +488,7 @@ export default {
         { text: this.$t("movies.previous"), value: "previous" },
       ],
       uploadPercentage: 0,
-      uploadTrailerDialog: false,
+      uploadDialog: false,
       uploadLoading: false,
       nonRequired: ["content"],
       headers: [
@@ -757,46 +778,65 @@ export default {
           );
         });
         // formData.set("status", status ? status : "draft");
+        this.uploadLoading = true;
         if (this.isUpdate) {
-          this.$http.put(`${this.movieApi}/${this.movie.id}`, formData).then(
-            (response) => {
-              this.snackbar = {
-                color: "success",
-                show: true,
-                text: `${this.$t("actions.update")} - ${this.$t(
-                  "nav.movies"
-                )}: ${this.$t("status.success")}`,
-              };
-              this.$router.push(`/movies/${response.id}`);
-            },
-            (error) => {
-              this.snackbar = {
-                color: "red",
-                show: true,
-                text: error,
-              };
-            }
-          );
+          axios
+            .put(`${this.movieApi}/${this.movie.id}`, formData, {
+              headers: { "Content-Type": "multipart/form-data" },
+              onUploadProgress: function(progressEvent) {
+                this.uploadPercentage = parseInt(
+                  Math.round((progressEvent.loaded / progressEvent.total) * 100)
+                );
+              }.bind(this),
+            })
+            .then(
+              (response) => {
+                this.snackbar = {
+                  color: "success",
+                  show: true,
+                  text: `${this.$t("actions.update")} - ${this.$t(
+                    "nav.movies"
+                  )}: ${this.$t("status.success")}`,
+                };
+                this.$router.push(`/movies/${response.id}`);
+              },
+              (error) => {
+                this.snackbar = {
+                  color: "red",
+                  show: true,
+                  text: error,
+                };
+              }
+            );
         } else {
-          this.$http.post(this.movieApi, formData).then(
-            (response) => {
-              this.snackbar = {
-                color: "success",
-                show: true,
-                text: `${this.$t("actions.add")} - ${this.$t(
-                  "nav.movies"
-                )}: ${this.$t("status.success")}`,
-              };
-              this.$router.push(`/movies/${response.id}`);
-            },
-            (error) => {
-              this.snackbar = {
-                color: "red",
-                show: true,
-                text: error,
-              };
-            }
-          );
+          this.$http
+            .post(this.movieApi, formData, {
+              headers: { "Content-Type": "multipart/form-data" },
+              onUploadProgress: function(progressEvent) {
+                this.uploadPercentage = parseInt(
+                  Math.round((progressEvent.loaded / progressEvent.total) * 100)
+                );
+              }.bind(this),
+            })
+            .then(
+              (response) => {
+                this.snackbar = {
+                  color: "success",
+                  show: true,
+                  text: `${this.$t("actions.add")} - ${this.$t(
+                    "nav.movies"
+                  )}: ${this.$t("status.success")}`,
+                };
+                this.$router.push(`/movies/${response.id}`);
+              },
+              (error) => {
+                this.snackbar = {
+                  color: "red",
+                  show: true,
+                  text: error,
+                };
+              }
+            );
         }
       } else {
         window.scrollTo(500, 0);

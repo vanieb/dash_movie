@@ -140,7 +140,7 @@
                   <v-chip
                     v-for="i in 4"
                     :key="i"
-                    color="blue-grey lighten-2"
+                    color="blue-grey"
                     small
                     class="mr-2"
                   >
