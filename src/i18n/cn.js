@@ -1,7 +1,7 @@
 export default {
   title: {
-    title: "电影",
-    subtitle: "网站",
+    title: "东方",
+    subtitle: "好莱坞",
   },
   common: {
     name: "名称",
