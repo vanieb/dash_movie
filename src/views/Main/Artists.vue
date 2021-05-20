@@ -217,6 +217,7 @@
               <td class="align-center justify-center">
                 <v-switch
                   value
+                  color="blue-grey"
                   v-model="item.status"
                   @change="toggleStatus(item.id, item.status)"
                 >

@@ -169,7 +169,7 @@
                   item.created_at | moment("YYYY-MM-DD HH:mm:ss")
                 }}</span>
               </td>
-              <td class="align-center justify-start">
+              <td class="align-center justify-center">
                 <v-switch
                   value
                   color="blue-grey"

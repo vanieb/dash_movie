@@ -85,14 +85,16 @@
               </v-row>
               <v-row v-if="movie.type == 'ongoing'">
                 <v-icon color="warning" left>category</v-icon>
-                <v-chip color="warning" small>{{
+                <v-chip color="warning" small dark>{{
                   $t("movies.ongoing")
                 }}</v-chip>
                 <br />
               </v-row>
               <v-row v-else>
                 <v-icon color="blue" left>category</v-icon>
-                <v-chip color="blue" small>{{ $t("movies.previous") }}</v-chip>
+                <v-chip color="blue" small dark>{{
+                  $t("movies.previous")
+                }}</v-chip>
                 <br />
               </v-row>
               <v-row v-if="movie.confidential" class="mt-1">
