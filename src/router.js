@@ -116,6 +116,18 @@ export default new Router({
       },
     },
     {
+      path: "/logos",
+      name: "Logos",
+      component: function(resolve) {
+        require(["./views/Main/Logos.vue"], resolve);
+      },
+      meta: {
+        icon: "business",
+        auth: true,
+        title: i18n.t("nav.logos"),
+      },
+    },
+    {
       path: "/global_settings",
       name: "GlobalSettings",
       component: function(resolve) {

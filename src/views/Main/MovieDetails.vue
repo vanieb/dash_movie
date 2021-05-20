@@ -92,9 +92,7 @@
               </v-row>
               <v-row v-else>
                 <v-icon color="blue" left>category</v-icon>
-                <v-chip color="warning" small>{{
-                  $t("movies.previous")
-                }}</v-chip>
+                <v-chip color="blue" small>{{ $t("movies.previous") }}</v-chip>
                 <br />
               </v-row>
               <v-row v-if="movie.confidential" class="mt-1">

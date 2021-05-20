@@ -22,7 +22,9 @@ export default {
     points: "积分",
     image: "图片",
     description: "描述",
-    artist: "“艺术家"
+    artist: "艺术家",
+    logo: "商标",
+    link: "连结"
   },
   actions: {
     add: "添加",
@@ -83,6 +85,7 @@ export default {
     subject_memo: "这些将用作文章索引页面中的关键字。",
     image_memo:
       "如果要在文章内容上添加图片，请在此处上传内容，然后将图片URL粘贴到文章内容编辑器对应的图片位置上。",
+    uploading: "正在进行上传。。。",
   },
   system_msg: {
     confirm_delete: "单击以确认删除 ",
@@ -117,6 +120,7 @@ export default {
     global_settings: "全局设置",
     logs: "日志",
     import_logs: "导入日志",
+    logos: "商标",
   },
   login: {
     login: "登录表单",
@@ -159,7 +163,7 @@ export default {
     award_2: "奖项 2",
     award_3: "奖项 3",
     award_4: "奖项 4",
-    confidential: "机密"
+    confidential: "机密",
   },
   settings: {
     parameter: "参数",

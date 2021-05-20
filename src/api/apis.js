@@ -26,4 +26,6 @@ export default {
   import_logs: `${host}articles/v1/import/`,
   users: `${dashboard}users`,
   user: `${dashboard}user`,
+  logos: `${dashboard}logos`,
+  logo: `${dashboard}logo`,
 };

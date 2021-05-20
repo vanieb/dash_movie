@@ -160,6 +160,11 @@ export default {
               path: "/artists",
               icon: "recent_actors",
             },
+            {
+              text: this.$t("nav.logos"),
+              path: "/logos",
+              icon: "business",
+            },
           ],
         },
         // {

@@ -6,7 +6,7 @@
           <v-dialog v-model="showForm" persistent max-width="500">
             <template v-slot:activator="{ on }">
               <v-btn color="blue-grey" dark v-on="on" align-right
-                ><v-icon class="mr-3">person_add</v-icon> &nbsp;{{
+                ><v-icon class="mr-3">add_box</v-icon> &nbsp;{{
                   $t("actions.add")
                 }}
               </v-btn>
@@ -22,34 +22,17 @@
                   <v-flex xs12>
                     <validation-provider
                       rules="required"
-                      :name="$t('common.name')"
+                      :name="$t('common.link')"
                     >
                       <v-text-field
-                        :counter="100"
+                        :counter="240"
                         :error-messages="errors"
                         color="blue-grey"
-                        :label="`${$t('common.name')}*`"
+                        :label="`${$t('common.link')}*`"
                         placeholder=" "
                         slot-scope="{ errors }"
-                        v-model="artist.name"
+                        v-model="logo.website_link"
                       ></v-text-field>
-                    </validation-provider>
-                  </v-flex>
-                  <v-flex xs12>
-                    <validation-provider
-                      rules="max:1000"
-                      :name="$t('common.description')"
-                    >
-                      <v-textarea
-                        :counter="1000"
-                        color="blue-grey"
-                        :error-messages="errors"
-                        :label="$t('common.description')"
-                        placeholder=" "
-                        rows="5"
-                        slot-scope="{ errors }"
-                        v-model="artist.description"
-                      ></v-textarea>
                     </validation-provider>
                   </v-flex>
                   <v-flex xs12>
@@ -57,11 +40,15 @@
                       {{ $t("actions.upload") }} -
                       {{ `${$t("common.image")}*` }}
                     </v-banner>
-                    <v-card>
+                    <v-card
+                      color="blue-grey lighten-2"
+                      flat
+                      style="border-radius:0 !important;"
+                    >
                       <v-card-text>
                         <v-img
                           v-if="showImage"
-                          :src="`${artist.imageURI}`"
+                          :src="`${logo.imageURI}`"
                           class="my-1"
                           contain
                           height="100"
@@ -70,10 +57,11 @@
                       <v-card-actions>
                         <v-layout justify-center>
                           <v-btn
-                            color="blue-grey"
+                            color="white"
+                            dark
                             @click="$refs.inputUpload.click()"
                           >
-                            <v-icon color="white">cloud_upload</v-icon>
+                            <v-icon color="blue-grey">cloud_upload</v-icon>
                           </v-btn>
                           <input
                             v-show="false"
@@ -103,7 +91,7 @@
                   color="blue-grey"
                   class="white--text"
                   :loading="submitting"
-                  @click="saveArtist"
+                  @click="saveLogo"
                   >{{ $t("actions.save") }}</v-btn
                 >
               </v-card-actions>
@@ -111,7 +99,7 @@
           </v-dialog>
         </validation-observer>
       </v-flex>
-      <v-card>
+      <!-- <v-card>
         <v-col
           cols="12"
           md="12"
@@ -144,7 +132,7 @@
               <v-text-field
                 @input="search"
                 :label="`${$t('common.name')}`"
-                v-model="query.name"
+                v-model="query.website_link"
                 hide-details="true"
                 placeholder=" "
                 outlined
@@ -153,42 +141,7 @@
               >
               </v-text-field>
             </div>
-            <!-- <div style="width:300px;" class="mr-2">
-              <v-menu
-                ref="menu1"
-                v-model="date_menu"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                offset-y
-                max-width="290px"
-                min-width="450px"
-              >
-                <template v-slot:activator="{ on }">
-                  <v-text-field
-                    v-model="dateRangeText"
-                    :label="`${$t('common.created_at')}`"
-                    placeholder=" "
-                    outlined
-                    dense
-                    v-on="on"
-                    readonly
-                    hide-details="true"
-                    clearable
-                    @click:clear="clearDateRange()"
-                  ></v-text-field>
-                </template>
-                <v-date-picker
-                  v-model="created_at"
-                  :locale="lang"
-                  :selected-items-text="dateRangeText"
-                  range
-                  :max="today"
-                  landscape
-                  smaller
-                >
-                </v-date-picker>
-              </v-menu>
-            </div> -->
+
             <v-layout class="justify-end">
               <v-btn
                 color="blue-grey"
@@ -201,7 +154,7 @@
             </v-layout>
           </v-row>
         </v-col>
-      </v-card>
+      </v-card> -->
       <v-data-table
         :headers="headers"
         :hide-default-footer="true"
@@ -212,7 +165,20 @@
           <tbody>
             <tr v-for="item in querySet" :key="item.id">
               <td>
-                <strong>{{ item.name }}</strong>
+                <v-row class="align-center">
+                  <strong>{{ item.id }}</strong>
+                  <v-card color="blue-grey lighten-2" class="ma-1 pa-1 ml-5">
+                    <v-img
+                      :src="`${host}${item.image_url}`"
+                      height="100"
+                      width="100"
+                      contain
+                    ></v-img>
+                  </v-card>
+                </v-row>
+              </td>
+              <td>
+                <strong>{{ item.website_link }}</strong>
               </td>
               <td class="align-center justify-center">
                 <v-switch
@@ -234,19 +200,18 @@
                   >{{ item.updated_at | moment("YYYY-MM-DD HH:mm:ss") }}
                 </span>
               </td>
-              <td width="42%">{{ item.description || "-" }}</td>
               <td class="align-center justify-center px-0">
-                <v-icon left small @click="updateArtist(item)">edit</v-icon>
+                <v-icon left small @click="updateLogo(item)">edit</v-icon>
                 <v-menu offset-y>
                   <template v-slot:activator="{ on }">
                     <v-icon color="error" small v-on="on">delete</v-icon>
                   </template>
                   <v-list dark>
-                    <v-list-item @click="deleteArtist(item.id, true, $event)">
+                    <v-list-item @click="deleteLogo(item.id, true, $event)">
                       <v-list-item-title>
                         <v-icon left color="warning">warning</v-icon>
                         {{ $t("system_msg.confirm_delete") }}
-                        <strong>{{ item.name }}</strong>
+                        <strong>{{ item.website_link }}</strong>
                       </v-list-item-title>
                     </v-list-item>
                   </v-list>
@@ -259,7 +224,7 @@
     </v-container>
     <pagination
       :queryset="querySet"
-      :api="artistsApi"
+      :api="logosApi"
       :query="query"
       ref="pulling"
       @query-data="queryData"
@@ -291,15 +256,15 @@ export default {
     Pagination,
     SnackBar,
   },
-  name: "Artists",
+  name: "Logos",
   data() {
     return {
+      host: process.env.VUE_APP_API_URL.slice(0, -1),
       submitting: false,
-      name: "",
-      artist: {
+      website_link: "",
+      logo: {
         image: "",
-        name: "",
-        description: "",
+        website_link: "",
       },
       date_menu: false,
       created_at: ["", ""],
@@ -307,8 +272,8 @@ export default {
       loading: true,
       status: "",
       showImage: false,
-      artistsApi: api.artists,
-      artistApi: api.artist,
+      logosApi: api.logos,
+      logoApi: api.logo,
       querySet: [],
       query: {},
       showForm: false,
@@ -324,8 +289,13 @@ export default {
       headers: [
         {
           sortable: false,
-          text: this.$t("common.name"),
-          value: "name",
+          text: this.$t("common.logo"),
+          value: "image_url",
+        },
+        {
+          sortable: false,
+          text: this.$t("common.link"),
+          value: "website_link",
         },
         {
           sortable: false,
@@ -343,11 +313,7 @@ export default {
           text: this.$t("common.updated_at"),
           value: "updated_at",
         },
-        {
-          sortable: false,
-          text: this.$t("common.description"),
-          value: "description",
-        },
+
         {
           sortable: false,
           text: this.$t("common.action"),
@@ -389,14 +355,14 @@ export default {
   computed: {
     cardTitle() {
       return this.isUpdate
-        ? `${this.$t("actions.update")} - ${this.name}`
-        : `${this.$t("actions.add")} - ${this.$t("nav.artists")}`;
+        ? `${this.$t("actions.update")}`
+        : `${this.$t("actions.add")} - ${this.$t("nav.logos")}`;
     },
     cardIcon() {
-      return this.isUpdate ? "edit" : "person_add";
+      return this.isUpdate ? "edit" : "add_box";
     },
     isUpdate() {
-      return this.name.length > 0;
+      return this.website_link.length > 0;
     },
     isQueryEmpty() {
       return $.compareQuery(this.query, {});
@@ -455,21 +421,21 @@ export default {
       const fileRead = new FileReader();
       fileRead.onload = (e) => {
         this.showImage = false;
-        this.artist.imageURI = e.target.result;
+        this.logo.imageURI = e.target.result;
         this.showImage = true;
       };
       fileRead.readAsDataURL(e.target.files[0]);
 
-      this.artist.image = e.target.files[0];
+      this.logo.image = e.target.files[0];
       this.change_image = true;
     },
-    async saveArtist() {
-      if (!this.artist.image && !this.isUpdate) {
+    async saveLogo() {
+      if (!this.logo.image && !this.isUpdate) {
         this.snackbar = {
           color: "red",
           show: true,
           text: `${this.$t("errors.required")}: ${this.$t(
-            "common.artist"
+            "common.logo"
           )} ${this.$t("common.image")}`,
         };
         return;
@@ -479,22 +445,20 @@ export default {
 
       let formData = new window.FormData();
       if (this.change_image) {
-        formData.set("image", this.artist.image);
+        formData.set("image", this.logo.image);
       }
-      formData.set("name", this.artist.name);
-      formData.set("description", this.artist.description);
-      //   formData.set("image", this.artist.image)
+      formData.set("website_link", this.logo.website_link);
 
       if (isValid) {
-        if (this.artist.id) {
-          this.$http.put(`${this.artistApi}/${this.artist.id}`, formData).then(
+        if (this.logo.id) {
+          this.$http.put(`${this.logoApi}/${this.logo.id}`, formData).then(
             () => {
               this.$refs.pulling.rebase();
               this.snackbar = {
                 color: "success",
                 show: true,
                 text: `${this.$t("actions.update")} - ${this.$t(
-                  "nav.artists"
+                  "common.logo"
                 )}: ${this.$t("status.success")}`,
               };
               this.close();
@@ -508,13 +472,13 @@ export default {
             }
           );
         } else {
-          this.$http.post(this.artistApi, formData).then(
+          this.$http.post(this.logoApi, formData).then(
             () => {
               this.snackbar = {
                 color: "success",
                 show: true,
                 text: `${this.$t("actions.add")} - ${this.$t(
-                  "nav.artists"
+                  "common.logo"
                 )}: ${this.$t("status.success")}`,
               };
               this.$refs.pulling.rebase();
@@ -533,21 +497,20 @@ export default {
       }
       this.snackbar.show = false;
     },
-    updateArtist(item) {
+    updateLogo(item) {
       const host = process.env.VUE_APP_API_URL;
       const updatedHost = host.slice(0, -1);
       this.showImage = true;
-      Object.assign(this.artist, {
+      Object.assign(this.logo, {
         id: item.id,
-        name: item.name,
+        website_link: item.website_link,
         imageURI: `${updatedHost}${item.image_url}`,
-        description: item.description,
       });
-      this.name = this.artist.name;
+      this.website_link = this.logo.website_link;
       this.showForm = true;
     },
-    deleteArtist(id) {
-      this.$http.delete(`${this.artistApi}/${id}`).then(() => {
+    deleteLogo(id) {
+      this.$http.delete(`${this.logoApi}/${id}`).then(() => {
         this.snackbar = {
           color: "success",
           show: true,
@@ -560,7 +523,7 @@ export default {
       this.toggleLoading = true;
       const formData = new window.FormData();
       formData.set("status", status ? 1 : 0);
-      this.$http.put(`${this.artistApi}/${id}/status`, formData).then(
+      this.$http.put(`${this.logoApi}/${id}/status`, formData).then(
         (response) => {
           let status_text = response.status
             ? this.$t("status.enabled")
@@ -583,12 +546,11 @@ export default {
       this.snackbar.show = false;
     },
     close() {
-      this.artist.id = "";
-      this.artist.name = "";
-      this.artist.image = "";
-      this.artist.imageURI = "";
-      this.artist.description = "";
-      this.name = "";
+      this.logo.id = "";
+      this.logo.website_link = "";
+      this.logo.image = "";
+      this.logo.imageURI = "";
+      this.website_link = "";
       this.submitting = false;
       this.$refs.form.reset();
       this.showForm = false;

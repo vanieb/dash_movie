@@ -399,9 +399,9 @@
                     {{ $t("actions.save") }}
                   </v-btn>
                 </template>
-                <v-card-title class="blue-grey" dark v-if="movie.video"
-                  >{{ $t("system_notes.uploading") }}</v-card-title
-                >
+                <v-card-title class="blue-grey" dark v-if="movie.video">{{
+                  $t("system_notes.uploading")
+                }}</v-card-title>
                 <v-progress-linear
                   v-if="uploadLoading"
                   color="blue-grey"

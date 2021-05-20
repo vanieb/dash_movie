@@ -22,7 +22,9 @@ export default {
     points: "Points",
     image: "Image",
     description: "Description",
-    artist: "Artist"
+    artist: "Artist",
+    logo: "Logo",
+    link: "Link"
   },
   actions: {
     add: "Add",
@@ -67,7 +69,7 @@ export default {
     no_access: "You have no access to this page.",
     incomplete_details:
       "Incomplete Details: Complete the required fields to approve, publish or send this for review.",
-    password_not_same: "Passwords do not match."
+    password_not_same: "Passwords do not match.",
   },
   system_notes: {
     upload_installer_memo:
@@ -85,6 +87,7 @@ export default {
     image_memo:
       "If you want to add images on article content, upload the content here then paste the image URL in the article content editor.",
     decline_memo: "Note: Indicate the reason why this is declined.",
+    uploading: "Uploading...",
   },
   system_msg: {
     confirm_delete: "Click to confirm deletion of ",
@@ -119,6 +122,7 @@ export default {
     global_settings: "Global Settings",
     logs: "Logs",
     import_logs: "Import Logs",
+    logos: "Logos",
   },
   login: {
     login: "Login Form",
@@ -161,7 +165,7 @@ export default {
     award_2: "Award 2",
     award_3: "Award 3",
     award_4: "Award 4",
-    confidential: "Confidential"
+    confidential: "Confidential",
   },
   settings: {
     parameter: "Parameter",
