@@ -138,7 +138,7 @@
               <v-row v-if="movie.awards.length > 0">
                 <v-col>
                   <v-chip
-                    v-for="i in 4"
+                    v-for="i in movie.awards"
                     :key="i"
                     color="blue-grey"
                     small
@@ -202,7 +202,9 @@ export default {
   data() {
     return {
       file: "",
-      movie: {},
+      movie: {
+        awards: "",
+      },
       movieApi: api.movie,
       snackbar: {
         color: "",
