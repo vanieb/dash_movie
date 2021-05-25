@@ -284,8 +284,7 @@
             </v-row>
             <v-spacer></v-spacer>
             <v-banner color="blue-grey" dark
-              >{{ $t("actions.upload") }} -
-              {{ $t("movies.trailer") }}*</v-banner
+              >{{ $t("actions.upload") }} - {{ $t("movies.trailer") }}</v-banner
             >
             <v-flex>
               <v-card-text>
@@ -294,7 +293,6 @@
               <v-card-text>
                 <validation-provider
                   style="width:310px;"
-                  :rules="movie.video_url ? '' : 'required'"
                   :name="$t('common.file')"
                 >
                   <v-file-input
@@ -309,7 +307,6 @@
                         : `${$t('movies.trailer')}*`
                     "
                     placeholder=" "
-                    required
                     color="blue-grey"
                     slot-scope="{ errors }"
                   ></v-file-input>
@@ -607,49 +604,7 @@ export default {
       const isValid = await this.$refs.uploadFileform.validate();
       if (isValid) {
         this.uploadLoading = true;
-        // this.movies.video_url = this.file
       }
-      // const formData = new window.FormData();
-      // formData.set("video_url", this.file);
-      // } else {
-      //   formData.set("ios_app_file", this.file);
-      // }
-      //   await axios
-      //     .put(`${this.appsApi}${this.apps.id}/`, formData, {
-      //       headers: { "Content-Type": "multipart/form-data" },
-      //       onUploadProgress: function(progressEvent) {
-      //         this.uploadPercentage = parseInt(
-      //           Math.round((progressEvent.loaded / progressEvent.total) * 100)
-      //         );
-      //       }.bind(this),
-      //     })
-      //     .then(
-      //       () => {
-      //         this.getAppDetails(this.apps.id);
-      //         this.uploadInstallerDialog = false;
-      //         this.uploadLoading = false;
-      //         this.file = null;
-      //         this.$refs.uploadFileform.reset();
-      //         this.snackbar = {
-      //           color: "success",
-      //           show: true,
-      //           text: `${this.$t("actions.change_file")}: ${this.$t(
-      //             "status.success"
-      //           )}`,
-      //         };
-      //       },
-      //       (error) => {
-      //         this.snackbar = {
-      //           color: "error",
-      //           show: true,
-      //           text: `${this.$t("system_msg.error")}: ${error}`,
-      //         };
-      //         this.uploadLoading = false;
-      //         return;
-      //       }
-      //     )
-      //     .catch(function() {});
-      // }
     },
     uploadImage(e) {
       this.image_file = e.target.files[0];
@@ -722,16 +677,6 @@ export default {
       this.snackbar.show = false;
       const isValid = await this.$refs.form.validate();
       if (isValid) {
-        // if (!this.movie.content) {
-        //   this.snackbar = {
-        //     color: "red",
-        //     show: true,
-        //     text: `${this.$t("errors.required")}: ${this.$t(
-        //       "movies.movie"
-        //     )} ${this.$t("movies.content")}`,
-        //   };
-        //   return;
-        // }
         if (!this.movie.image && !this.isUpdate) {
           this.snackbar = {
             color: "red",
@@ -761,17 +706,14 @@ export default {
           "confidential",
           this.movie.confidential ? this.movie.confidential : "false"
         );
-        // formData.set("video", this.movie.video);
         formData.set("title", this.movie.title);
         formData.set("year", this.movie.year);
         formData.set("director", this.movie.director);
         formData.set("actors", this.movie.actors);
-        // formData.set("awards", this.movie.awards);
         formData.set("imdb_score", this.movie.imdb_score);
         formData.set("investment", this.movie.investment);
         formData.set("return", this.movie.return);
         formData.set("type", this.movie.type);
-        // formData.set("return_rate", "10");
         formData.set("payback", this.movie.payback);
         this.nonRequired.forEach((item) => {
           formData.set(
@@ -779,7 +721,6 @@ export default {
             this.movie[item] !== undefined ? this.movie[item] : ""
           );
         });
-        // formData.set("status", status ? status : "draft");
         this.uploadLoading = true;
         if (this.isUpdate) {
           axios
