@@ -147,9 +147,9 @@
               <td
                 class="align-center"
                 width="30%"
-                v-if="item.title.length > 20"
+                v-if="item.title.length > 30"
               >
-                {{ item.title | truncate(20, "...") }}
+                <strong>{{ item.title | truncate(30, "...") }}</strong>
                 <br />
                 <v-icon left small color="indigo">person</v-icon>
                 <span>{{ item.created_by || "-" }}</span> <br />
