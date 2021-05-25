@@ -740,6 +740,8 @@ export default {
               "movies.movie"
             )} ${this.$t("common.icon")}`,
           };
+          this.uploadLoading = false;
+          this.uploadDialog = false;
           return;
         }
         let formData = new window.FormData();
@@ -806,6 +808,8 @@ export default {
                   show: true,
                   text: error,
                 };
+                this.uploadLoading = false;
+                this.uploadDialog = false;
               }
             );
         } else {
@@ -835,11 +839,15 @@ export default {
                   show: true,
                   text: error,
                 };
+                this.uploadLoading = false;
+                this.uploadDialog = false;
               }
             );
         }
       } else {
         window.scrollTo(500, 0);
+        this.uploadLoading = false;
+        this.uploadDialog = false;
       }
     },
   },

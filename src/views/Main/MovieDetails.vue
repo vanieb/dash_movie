@@ -28,13 +28,13 @@
             >
           </v-banner>
           <v-row>
-            <v-col cols="12" md="2">
+            <v-col cols="12" md="1">
               <v-img
                 v-if="movie.image_url"
                 :src="`${movie.image_url}`"
                 class="my-1"
                 contain
-                height="100"
+                height="150"
               />
               <v-avatar v-else class="profile ml-10" contain size="100" tile
                 ><v-icon size="120">photo</v-icon>
@@ -46,7 +46,7 @@
                 >
               </v-layout>
             </v-col>
-            <v-col>
+            <v-col class="ml-5">
               <v-row class="mb-2">
                 <span class="title"
                   ><strong>{{ movie.title }}</strong></span
