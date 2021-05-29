@@ -151,6 +151,18 @@
               >
                 <strong>{{ item.title | truncate(30, "...") }}</strong>
                 <br />
+                <v-icon left small color="indigo">category</v-icon>
+                <v-chip
+                  :class="item.type === 'ongoing' ? 'warning' : 'blue'"
+                  small
+                  dark
+                  >{{
+                    item.type === "ongoing"
+                      ? $t("movies.ongoing")
+                      : $t("movies.previous")
+                  }}</v-chip
+                >
+                <br />
                 <v-icon left small color="indigo">person</v-icon>
                 <span>{{ item.created_by || "-" }}</span> <br />
                 <v-icon left small color="indigo">event</v-icon>
@@ -161,6 +173,18 @@
               </td>
               <td class="align-center" width="30%" v-else>
                 <strong>{{ item.title }}</strong>
+                <br />
+                <v-icon left small color="indigo">category</v-icon>
+                <v-chip
+                  :class="item.type === 'ongoing' ? 'warning' : 'blue'"
+                  small
+                  dark
+                  >{{
+                    item.type === "ongoing"
+                      ? $t("movies.ongoing")
+                      : $t("movies.previous")
+                  }}</v-chip
+                >
                 <br />
                 <v-icon left small color="indigo">person</v-icon>
                 <span>{{ item.created_by }}</span> <br />
@@ -173,8 +197,17 @@
                 <v-switch
                   value
                   color="blue-grey"
+                  v-model="item.is_home_page"
+                  @change="toggle(item.id, 'is_home_page', item.status)"
+                >
+                </v-switch>
+              </td>
+              <td class="align-center justify-center">
+                <v-switch
+                  value
+                  color="blue-grey"
                   v-model="item.status"
-                  @change="toggle(item.id, item.status)"
+                  @change="toggle(item.id, 'status', item.status)"
                 >
                 </v-switch>
               </td>
@@ -280,6 +313,12 @@ export default {
           sortable: false,
           text: this.$t("movies.title"),
           value: "title",
+        },
+        {
+          sortable: false,
+          text: this.$t("common.is_home_page"),
+          value: "is_home_page",
+          width: "10%",
         },
         {
           sortable: false,
@@ -392,19 +431,31 @@ export default {
     queryParam(query) {
       this.query = Object.assign(this.query, query);
     },
-    toggle(id, value) {
+    toggle(id, mode, value) {
       this.snackbar.show = false;
       const formData = new window.FormData();
-      formData.set("status", value ? 1 : 0);
+      formData.set(mode, value ? 1 : 0);
       let action_title;
-
-      action_title = this.$t("common.status");
-
-      this.$http.put(`${this.movieApi}/${id}/status`, formData).then(
+      let request;
+      let action_text;
+      if (mode == "status") {
+        action_title = this.$t("common.status");
+        request = `${this.movieApi}/${id}/status`;
+      } else {
+        action_title = this.$t("common.is_home_page");
+        request = `${this.movieApi}/${id}/homepage`;
+      }
+      this.$http.put(`${request}`, formData).then(
         (response) => {
-          let action_text = response["status"]
-            ? this.$t("status.enabled")
-            : this.$t("status.disabled");
+          if (mode == "status") {
+            action_text = response["status"]
+              ? this.$t("status.enabled")
+              : this.$t("status.disabled");
+          } else {
+            action_text = response["is_home_page"]
+              ? this.$t("status.enabled")
+              : this.$t("status.disabled");
+          }
           this.snackbar = {
             color: "success",
             show: true,

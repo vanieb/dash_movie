@@ -86,6 +86,7 @@
                     </v-text-field>
                   </validation-provider>
                 </v-row>
+
                 <v-row>
                   <validation-provider
                     style="width:748px;"
@@ -102,86 +103,6 @@
                       prepend-icon="people"
                       v-model="movie.actors"
                       outlined
-                    >
-                    </v-text-field>
-                  </validation-provider>
-                </v-row>
-                <v-row>
-                  <span
-                    :style="{
-                      width: '748px',
-                      marginBottom: isUpdate ? '0px' : '0px',
-                    }"
-                  >
-                    <awards
-                      v-if="showAwards"
-                      style="margin-bottom: 20px;"
-                      req="true"
-                      :mode="'multiple'"
-                      :award="movie.awards"
-                      @award-select-multiple="awardSelectMultiple"
-                    >
-                    </awards>
-                  </span>
-                </v-row>
-                <v-row>
-                  <validation-provider
-                    style="width:338px;"
-                    rules="required"
-                    :name="$t('movies.type')"
-                  >
-                    <v-select
-                      color="blue-grey"
-                      item-name="text"
-                      item-value="value"
-                      :items="typeOptions"
-                      :label="`${$t('movies.type')}`"
-                      v-model="movie.type"
-                      placeholder=" "
-                      prepend-icon="category"
-                      outlined
-                      dense
-                      :error-messages="errors"
-                      slot-scope="{ errors }"
-                    >
-                      <template slot="selection" slot-scope="data">
-                        <span class="ml-3">{{ data.item.text }}</span>
-                      </template>
-                      <template slot="item" slot-scope="data">
-                        <span class="ml-3">{{ data.item.text }}</span>
-                      </template>
-                    </v-select>
-                  </validation-provider>
-                  <v-spacer style="max-width:35px !important;"></v-spacer>
-                  <!-- <validation-provider
-                    style="width:118px;"
-                    :name="$t('movies.confidential')"
-                  > -->
-                  <v-checkbox
-                    class="align-middle"
-                    :disabled="movie.type !== 'ongoing'"
-                    color="blue-grey"
-                    v-model="movie.confidential"
-                    :label="`${$t('movies.confidential')}*`"
-                  ></v-checkbox>
-                  <!-- </validation-provider> -->
-                  <v-spacer style="max-width:35px !important;"></v-spacer>
-                  <validation-provider
-                    style="width:225;"
-                    rules="required|between:1,10"
-                    :name="$t('movies.imdb_score')"
-                  >
-                    <v-text-field
-                      :error-messages="errors"
-                      :label="`${$t('movies.imdb_score')}*`"
-                      placeholder=" "
-                      slot-scope="{ errors }"
-                      dense
-                      number
-                      prepend-icon="star"
-                      v-model.number="movie.imdb_score"
-                      outlined
-                      color="blue-grey"
                     >
                     </v-text-field>
                   </validation-provider>
@@ -283,13 +204,122 @@
               </v-col>
             </v-row>
             <v-spacer></v-spacer>
+            <v-banner color="blue-grey" dark>
+              {{ $t("movies.movie") }} - {{ $t("movies.type") }}
+            </v-banner>
+            <v-flex>
+              <v-card-text>
+                <v-row>
+                  <validation-provider
+                    rules="required"
+                    :name="$t('movies.type')"
+                  >
+                    <v-select
+                      color="blue-grey"
+                      item-name="text"
+                      item-value="value"
+                      :items="typeOptions"
+                      :label="`${$t('movies.type')}*`"
+                      v-model="movie.type"
+                      placeholder=" "
+                      prepend-icon="category"
+                      outlined
+                      dense
+                      :error-messages="errors"
+                      slot-scope="{ errors }"
+                    >
+                      <template slot="selection" slot-scope="data">
+                        <span class="ml-3">{{ data.item.text }}</span>
+                      </template>
+                      <template slot="item" slot-scope="data">
+                        <span class="ml-3">{{ data.item.text }}</span>
+                      </template>
+                    </v-select>
+                  </validation-provider>
+                  <v-spacer style="max-width:35px !important;"></v-spacer>
+                </v-row>
+                <v-row v-if="movie.type === 'ongoing'">
+                  <validation-provider
+                    style="width:720px;"
+                    :name="$t('common.file')"
+                    :rules="movie.type === 'ongoing' ? 'required' : ''"
+                  >
+                    <v-file-input
+                      outlined
+                      dense
+                      clearable
+                      v-model="movie.file_content"
+                      :error-messages="errors"
+                      :label="
+                        `${movie.type} === 'ongoing'`
+                          ? `${$t('movies.movie')} ${$t('common.file')}*`
+                          : `${$t('movies.movie')} ${$t('common.file')}`
+                      "
+                      placeholder=" "
+                      color="blue-grey"
+                      slot-scope="{ errors }"
+                    ></v-file-input>
+                  </validation-provider>
+                  <v-spacer style="max-width:35px !important;"></v-spacer>
+                  <v-checkbox
+                    class="align-middle"
+                    color="blue-grey"
+                    v-model="movie.confidential"
+                    :label="`${$t('movies.confidential')}*`"
+                  ></v-checkbox>
+                </v-row>
+                <v-row v-if="movie.type === 'previous'">
+                  <span
+                    :style="{
+                      width: '720px',
+                      marginBottom: isUpdate ? '0px' : '0px',
+                    }"
+                  >
+                    <awards
+                      v-if="showAwards"
+                      style="margin-bottom: 20px;"
+                      req="true"
+                      :mode="'multiple'"
+                      :award="movie.awards"
+                      @award-select-multiple="awardSelectMultiple"
+                    >
+                    </awards>
+                  </span>
+                  <v-spacer style="max-width:35px !important;"></v-spacer>
+                  <validation-provider
+                    rules="required|between:1,10"
+                    :name="$t('movies.imdb_score')"
+                  >
+                    <v-text-field
+                      :error-messages="errors"
+                      :label="`${$t('movies.imdb_score')}*`"
+                      placeholder=" "
+                      slot-scope="{ errors }"
+                      dense
+                      number
+                      prepend-icon="star"
+                      v-model.number="movie.imdb_score"
+                      outlined
+                      color="blue-grey"
+                    >
+                    </v-text-field>
+                  </validation-provider>
+                </v-row>
+              </v-card-text>
+            </v-flex>
             <v-banner color="blue-grey" dark
-              >{{ $t("actions.upload") }} - {{ $t("movies.trailer") }}</v-banner
-            >
+              >{{ $t("actions.upload") }} - {{ $t("movies.trailer") }}
+              <template v-slot:actions>
+                <v-btn dark color="error" @click="movie.video = ''">
+                  {{ $t("actions.delete") }} {{ $t("movies.trailer") }}
+                </v-btn>
+              </template>
+            </v-banner>
             <v-flex>
               <v-card-text>
                 <span>{{ $t("movies.trailer") }}: {{ movie.video_url }}</span>
               </v-card-text>
+
               <v-card-text>
                 <validation-provider
                   style="width:310px;"
@@ -452,6 +482,7 @@ export default {
       showTinyMce: true,
       movie_changed: "",
       change_video: true,
+      change_file_content: true,
       showAwards: false,
       showImage: false,
       lang: "",
@@ -546,6 +577,10 @@ export default {
           if (this.movie.video_url) {
             this.movie.video_url = `${updatedHost}${this.movie.video_url}`;
             this.change_video = false;
+          }
+          if (this.movie.file_content_url) {
+            this.movie.file_content_url = `${updatedHost}${this.movie.file_content_url}`;
+            this.change_file_content = false;
           }
           this.selectMultiple.forEach((item) => {
             this.pushIDs(item, "Multiple");
@@ -690,30 +725,36 @@ export default {
           return;
         }
         let formData = new window.FormData();
-        if (this.award_removed_some) {
-          formData.set("awards", this.movie.award_removed);
-        } else if (this.award_changed) {
-          formData.set("awards", this.movie.awards);
+        formData.set("type", this.movie.type);
+        if (this.movie.type === "previous") {
+          if (this.award_removed_some) {
+            formData.set("awards", this.movie.award_removed);
+          } else if (this.award_changed) {
+            formData.set("awards", this.movie.awards);
+          }
+          formData.set("imdb_score", this.movie.imdb_score);
+        } else {
+          formData.set(
+            "confidential",
+            this.movie.confidential ? this.movie.confidential : "false"
+          );
+          if (this.movie.file_content || this.movie.file_content == "") {
+            formData.set("file_content", this.movie.file_content);
+          }
         }
         if (this.movie.image) {
           formData.set("image", this.movie.image);
         }
-        if (this.movie.video) {
+        if (this.movie.video || this.movie.video == "") {
           formData.set("video", this.movie.video);
         }
         // String Fields
-        formData.set(
-          "confidential",
-          this.movie.confidential ? this.movie.confidential : "false"
-        );
         formData.set("title", this.movie.title);
         formData.set("year", this.movie.year);
         formData.set("director", this.movie.director);
         formData.set("actors", this.movie.actors);
-        formData.set("imdb_score", this.movie.imdb_score);
         formData.set("investment", this.movie.investment);
         formData.set("return", this.movie.return);
-        formData.set("type", this.movie.type);
         formData.set("payback", this.movie.payback);
         this.nonRequired.forEach((item) => {
           formData.set(

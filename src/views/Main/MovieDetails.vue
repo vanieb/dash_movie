@@ -83,29 +83,6 @@
                 }}</v-chip>
                 <br />
               </v-row>
-              <v-row v-if="movie.type == 'ongoing'">
-                <v-icon color="warning" left>category</v-icon>
-                <v-chip color="warning" small dark>{{
-                  $t("movies.ongoing")
-                }}</v-chip>
-                <br />
-              </v-row>
-              <v-row v-else>
-                <v-icon color="blue" left>category</v-icon>
-                <v-chip color="blue" small dark>{{
-                  $t("movies.previous")
-                }}</v-chip>
-                <br />
-              </v-row>
-              <v-row v-if="movie.confidential" class="mt-1">
-                <v-icon color="error" left>shield</v-icon>
-                <v-chip small color="error"
-                  >{{ $t("movies.confidential") }} <br
-                /></v-chip>
-              </v-row>
-              <v-row v-if="movie.imdb_score">
-                {{ $t("movies.imdb_score") }}: {{ movie.imdb_score }}
-              </v-row>
             </v-col>
             <v-col>
               <v-row v-if="movie.investment">
@@ -133,37 +110,68 @@
             }}</v-card-text>
           </v-flex>
           <v-flex>
-            <v-card-title>{{ $t("movies.awards") }}</v-card-title>
-            <v-card-text>
-              <v-row v-if="movie.awards.length > 0">
-                <v-col>
-                  <v-chip
-                    v-for="i in movie.awards"
-                    :key="i"
-                    color="blue-grey"
-                    small
-                    class="mr-2"
-                  >
-                    <v-img
-                      :src="require(`@/assets/images/a${i}.png`)"
-                      height="20"
-                      width="20"
-                      contain
+            <v-banner color="blue-grey" dark>
+              <span v-if="movie.type == 'ongoing'">
+                <v-icon color="warning" left>category</v-icon>
+                {{ $t("movies.movie") }} {{ $t("movies.type") }}:
+                {{ $t("movies.ongoing") }} </span
+              ><span v-else>
+                <v-icon color="blue" left>category</v-icon>
+                {{ $t("movies.movie") }} {{ $t("movies.type") }}:
+                {{ $t("movies.previous") }} <br /> </span
+            ></v-banner>
+            <span v-if="movie.type === 'previous'">
+              <v-card-title>{{ $t("movies.awards") }}</v-card-title>
+              <v-card-text>
+                <v-row v-if="movie.awards.length > 0">
+                  <v-col>
+                    <v-chip
+                      v-for="i in movie.awards"
+                      :key="i"
+                      color="blue-grey"
+                      small
+                      class="mr-2"
                     >
-                    </v-img
-                    ><v-spacer></v-spacer>
-                  </v-chip>
-                </v-col>
-              </v-row>
-              <span v-else>{{ $t("movies.no_award") }}</span>
-            </v-card-text>
+                      <v-img
+                        :src="require(`@/assets/images/a${i}.png`)"
+                        height="20"
+                        width="20"
+                        contain
+                      >
+                      </v-img
+                      ><v-spacer></v-spacer>
+                    </v-chip>
+                  </v-col>
+                </v-row>
+                <span v-else>{{ $t("movies.no_award") }}</span>
+              </v-card-text>
+              <v-card-title>{{ $t("movies.imdb_score") }}</v-card-title>
+              <v-card-text>{{ movie.imdb_score }}</v-card-text>
+            </span>
+            <span v-else>
+              <v-card-title
+                >{{ $t("movies.movie") }} {{ $t("common.file") }}</v-card-title
+              >
+              <v-card-text>{{ movie.file_content_url }}</v-card-text>
+              <v-card-title>{{ $t("movies.confidential") }}</v-card-title>
+              <v-card-text v-if="movie.confidential"
+                ><v-icon color="error" left>shield</v-icon>
+                <v-chip small color="error"
+                  >{{ $t("movies.confidential") }} <br /></v-chip
+              ></v-card-text>
+              <v-card-text v-else>{{$t("movies.not_confidential")}}</v-card-text>
+            </span>
           </v-flex>
           <v-flex>
             <v-banner color="blue-grey" dark>{{
               $t("movies.trailer")
             }}</v-banner>
             <v-card-text>
+              <span v-if="movie.video_url === null">{{
+                $t("system_msg.not_set")
+              }}</span>
               <video
+                v-else
                 :src="movie.video_url"
                 width="100%"
                 height="400px;"
@@ -240,7 +248,9 @@ export default {
       this.$http.get(`${this.movieApi}/${id}`).then((response) => {
         this.movie = response;
         this.movie.image_url = `${updatedHost}${this.movie.image_url}`;
-        this.movie.video_url = `${updatedHost}${this.movie.video_url}`;
+        this.movie.video_url = this.movie.video_url
+          ? `${updatedHost}${this.movie.video_url}`
+          : null;
       });
     },
   },

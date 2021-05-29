@@ -24,7 +24,8 @@ export default {
     description: "Description",
     artist: "Artist",
     logo: "Logo",
-    link: "Link"
+    link: "Link",
+    is_home_page: "Home Page",
   },
   actions: {
     add: "Add",
@@ -166,6 +167,7 @@ export default {
     award_3: "Award 3",
     award_4: "Award 4",
     confidential: "Confidential",
+    not_confidential: "Not Confidential",
   },
   settings: {
     parameter: "Parameter",

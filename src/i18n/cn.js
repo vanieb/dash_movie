@@ -24,7 +24,8 @@ export default {
     description: "描述",
     artist: "艺术家",
     logo: "商标",
-    link: "连结"
+    link: "连结",
+    home_page: "主页",
   },
   actions: {
     add: "添加",
@@ -164,6 +165,7 @@ export default {
     award_3: "奖项 3",
     award_4: "奖项 4",
     confidential: "机密",
+    not_confidential: "公开",
   },
   settings: {
     parameter: "参数",
