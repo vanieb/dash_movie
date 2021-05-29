@@ -159,7 +159,9 @@
                 <v-chip small color="error"
                   >{{ $t("movies.confidential") }} <br /></v-chip
               ></v-card-text>
-              <v-card-text v-else>{{$t("movies.not_confidential")}}</v-card-text>
+              <v-card-text v-else>{{
+                $t("movies.not_confidential")
+              }}</v-card-text>
             </span>
           </v-flex>
           <v-flex>
@@ -250,6 +252,9 @@ export default {
         this.movie.image_url = `${updatedHost}${this.movie.image_url}`;
         this.movie.video_url = this.movie.video_url
           ? `${updatedHost}${this.movie.video_url}`
+          : null;
+        this.movie.file_content_url = this.movie.file_content_url
+          ? `${updatedHost}${this.movie.file_content_url}`
           : null;
       });
     },
