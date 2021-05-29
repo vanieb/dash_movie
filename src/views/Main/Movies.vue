@@ -153,13 +153,13 @@
                 <br />
                 <v-icon left small color="indigo">category</v-icon>
                 <v-chip
-                  :class="item.type === 'ongoing' ? 'warning' : 'blue'"
+                  :class="item.type === 'ongoing' ? 'warning' : 'grey'"
                   small
                   dark
                   >{{
                     item.type === "ongoing"
                       ? $t("movies.ongoing")
-                      : $t("movies.previous")
+                      : `${$t("movies.previous")} (${item.year})`
                   }}</v-chip
                 >
                 <br />
@@ -176,13 +176,13 @@
                 <br />
                 <v-icon left small color="indigo">category</v-icon>
                 <v-chip
-                  :class="item.type === 'ongoing' ? 'warning' : 'blue'"
+                  :class="item.type === 'ongoing' ? 'warning' : 'grey'"
                   small
                   dark
                   >{{
                     item.type === "ongoing"
                       ? $t("movies.ongoing")
-                      : $t("movies.previous")
+                      : `${$t("movies.previous")} (${item.year})`
                   }}</v-chip
                 >
                 <br />
@@ -198,7 +198,7 @@
                   value
                   color="blue-grey"
                   v-model="item.is_home_page"
-                  @change="toggle(item.id, 'is_home_page', item.status)"
+                  @change="toggle(item.id, 'is_home_page', item.is_home_page)"
                 >
                 </v-switch>
               </td>
@@ -434,16 +434,17 @@ export default {
     toggle(id, mode, value) {
       this.snackbar.show = false;
       const formData = new window.FormData();
-      formData.set(mode, value ? 1 : 0);
       let action_title;
       let request;
       let action_text;
       if (mode == "status") {
         action_title = this.$t("common.status");
         request = `${this.movieApi}/${id}/status`;
+        formData.set(mode, value ? 1 : 0);
       } else {
         action_title = this.$t("common.is_home_page");
-        request = `${this.movieApi}/${id}/homepage`;
+        request = `${this.movieApi}/${id}/homepage/status`;
+        formData.set(mode, value);
       }
       this.$http.put(`${request}`, formData).then(
         (response) => {

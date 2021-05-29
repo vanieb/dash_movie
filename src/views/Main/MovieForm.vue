@@ -236,22 +236,33 @@
                       </template>
                     </v-select>
                   </validation-provider>
-                  <v-spacer style="max-width:35px !important;"></v-spacer>
                 </v-row>
+                <v-row v-if="movie.type === 'ongoing'"
+                  >{{ $t("movies.movie") }} {{ $t("common.file") }}:
+                  <a :href="movie.file_content_url" target="_blank">{{
+                    movie.file_content_url
+                  }}</a>
+                </v-row>
+                <br/>
                 <v-row v-if="movie.type === 'ongoing'">
                   <validation-provider
                     style="width:720px;"
                     :name="$t('common.file')"
-                    :rules="movie.type === 'ongoing' ? 'required' : ''"
+                    :rules="
+                      movie.type === 'ongoing' && !movie.file_content_url
+                        ? 'required'
+                        : ''
+                    "
                   >
                     <v-file-input
                       outlined
                       dense
                       clearable
                       v-model="movie.file_content"
+                      accept="application/pdf"
                       :error-messages="errors"
                       :label="
-                        `${movie.type} === 'ongoing'`
+                        `${movie.type} === 'ongoing' && ${movie.file_content_url}`
                           ? `${$t('movies.movie')} ${$t('common.file')}*`
                           : `${$t('movies.movie')} ${$t('common.file')}`
                       "
@@ -260,6 +271,7 @@
                       slot-scope="{ errors }"
                     ></v-file-input>
                   </validation-provider>
+
                   <v-spacer style="max-width:35px !important;"></v-spacer>
                   <v-checkbox
                     class="align-middle"
@@ -310,7 +322,7 @@
             <v-banner color="blue-grey" dark
               >{{ $t("actions.upload") }} - {{ $t("movies.trailer") }}
               <template v-slot:actions>
-                <v-btn dark color="error" @click="movie.video = ''">
+                <v-btn dark color="error" @click="deleteTrailer()">
                   {{ $t("actions.delete") }} {{ $t("movies.trailer") }}
                 </v-btn>
               </template>
@@ -361,57 +373,6 @@
                 </tinymce>
               </v-card-text>
             </v-flex>
-            <!-- <v-flex>
-              <v-card-title
-                >{{ $t("movies.images") }}
-                <v-layout class="justify-end">
-                  <v-btn
-                    color="blue-grey"
-                    @click="$refs.inputUploadImage.click()"
-                  >
-                    <v-icon color="white">add_photo_alternate</v-icon>
-                  </v-btn>
-                  <input
-                    v-show="false"
-                    ref="inputUploadImage"
-                    type="file"
-                    accept="image/*"
-                    @change="uploadImage"
-                  />
-                </v-layout>
-              </v-card-title>
-              <v-card-text>
-                <small>{{ $t("system_notes.image_memo") }}</small>
-              </v-card-text>
-              <v-data-table
-                item-key="id"
-                :items="movie.images"
-                :headers="headers"
-              >
-                <template v-slot:item.image_url="{ item }">
-                  <img
-                    :src="item.image_url"
-                    :alt="item.name"
-                    height="100"
-                    class="mt-2"
-                  />
-                </template>
-                <template v-slot:item.action="{ item }">
-                  <v-icon small @click="deleteImage(item)" color="error"
-                    >delete</v-icon
-                  >
-                </template>
-                <tbody>
-                  <tr v-for="item in movie.images" :key="item.id">
-                    <td>
-                      <img :src="item.image_url" height="100" class="mt-2" />
-                    </td>
-                    <td>{{ item.image_file }}</td>
-                    <td>{{ item.action }}</td>
-                  </tr>
-                </tbody>
-              </v-data-table>
-            </v-flex> -->
             <v-layout justify-start mt-3>
               <v-dialog v-model="uploadDialog" persistent max-width="600">
                 <template v-slot:activator="{ on }">
@@ -641,6 +602,10 @@ export default {
         this.uploadLoading = true;
       }
     },
+    deleteTrailer() {
+      this.movie.video = "";
+      this.movie.video_url = "";
+    },
     uploadImage(e) {
       this.image_file = e.target.files[0];
       let formData = new window.FormData();
@@ -749,6 +714,10 @@ export default {
           formData.set("video", this.movie.video);
         }
         // String Fields
+        formData.set(
+          "is_home_page",
+          this.movie.is_home_page ? this.movie.is_home_page : false
+        );
         formData.set("title", this.movie.title);
         formData.set("year", this.movie.year);
         formData.set("director", this.movie.director);
