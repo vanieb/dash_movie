@@ -38,6 +38,28 @@
                 </template>
               </v-select>
             </div>
+            <div style="width:155px;" class="mr-2">
+              <v-select
+                small
+                color="blue-grey"
+                item-name="text"
+                item-value="value"
+                :items="homepageOptions"
+                :label="`${$t('common.is_home_page')}`"
+                v-model="is_home_page"
+                hide-details="true"
+                placeholder=" "
+                outlined
+                dense
+              >
+                <template slot="selection" slot-scope="data">
+                  <span class="ml-3">{{ data.item.text }}</span>
+                </template>
+                <template slot="item" slot-scope="data">
+                  <span class="ml-3">{{ data.item.text }}</span>
+                </template>
+              </v-select>
+            </div>
             <div style="width:200px;" class="mr-2">
               <v-select
                 small
@@ -283,6 +305,7 @@ export default {
       querySet: [],
       type: "",
       status: "",
+      is_home_page: "",
       today: date.max_today,
       created_at: ["", ""],
       moviesApi: api.movies,
@@ -293,6 +316,10 @@ export default {
       statusOptions: [
         { text: this.$t("status.enabled"), value: 1 },
         { text: this.$t("status.disabled"), value: 0 },
+      ],
+      homepageOptions: [
+        { text: this.$t("status.enabled"), value: true },
+        { text: this.$t("status.disabled"), value: false },
       ],
       typeOptions: [
         { text: this.$t("movies.ongoing"), value: "ongoing" },
@@ -350,6 +377,10 @@ export default {
     },
     status(newObj) {
       this.query.status = newObj;
+      this.$refs.pulling.submit();
+    },
+    is_home_page(newObj) {
+      this.query.is_home_page = newObj;
       this.$refs.pulling.submit();
     },
     type(newObj) {
@@ -422,6 +453,13 @@ export default {
         this.$route.query.status === "0"
           ? JSON.parse(this.$route.query.status)
           : "";
+      this.is_home_page =
+        this.$route.query.is_home_page === true ||
+        this.$route.query.is_home_page === false ||
+        this.$route.query.is_home_page === "true" ||
+        this.$route.query.is_home_page === "false"
+          ? JSON.parse(this.$route.query.is_home_page)
+          : "";
       this.query = Object.assign({}, this.$route.query);
     },
     queryData(queryset) {
@@ -487,6 +525,7 @@ export default {
     clearAll() {
       this.created_at = ["", ""];
       this.status = "";
+      this.is_home_page = "";
       this.type = "";
       this.query = {};
       this.$nextTick(() => {

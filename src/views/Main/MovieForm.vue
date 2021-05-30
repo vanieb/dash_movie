@@ -243,16 +243,11 @@
                     movie.file_content_url
                   }}</a>
                 </v-row>
-                <br/>
+                <br />
                 <v-row v-if="movie.type === 'ongoing'">
                   <validation-provider
                     style="width:720px;"
                     :name="$t('common.file')"
-                    :rules="
-                      movie.type === 'ongoing' && !movie.file_content_url
-                        ? 'required'
-                        : ''
-                    "
                   >
                     <v-file-input
                       outlined
@@ -261,23 +256,19 @@
                       v-model="movie.file_content"
                       accept="application/pdf"
                       :error-messages="errors"
-                      :label="
-                        `${movie.type} === 'ongoing' && ${movie.file_content_url}`
-                          ? `${$t('movies.movie')} ${$t('common.file')}*`
-                          : `${$t('movies.movie')} ${$t('common.file')}`
-                      "
+                      :label="`${$t('movies.movie')} ${$t('common.file')}`"
                       placeholder=" "
                       color="blue-grey"
                       slot-scope="{ errors }"
+                      style="width:720px;"
                     ></v-file-input>
                   </validation-provider>
-
                   <v-spacer style="max-width:35px !important;"></v-spacer>
                   <v-checkbox
                     class="align-middle"
                     color="blue-grey"
                     v-model="movie.confidential"
-                    :label="`${$t('movies.confidential')}*`"
+                    :label="`${$t('movies.confidential')}`"
                   ></v-checkbox>
                 </v-row>
                 <v-row v-if="movie.type === 'previous'">
@@ -321,11 +312,6 @@
             </v-flex>
             <v-banner color="blue-grey" dark
               >{{ $t("actions.upload") }} - {{ $t("movies.trailer") }}
-              <template v-slot:actions>
-                <v-btn dark color="error" @click="deleteTrailer()">
-                  {{ $t("actions.delete") }} {{ $t("movies.trailer") }}
-                </v-btn>
-              </template>
             </v-banner>
             <v-flex>
               <v-card-text>
@@ -601,10 +587,6 @@ export default {
       if (isValid) {
         this.uploadLoading = true;
       }
-    },
-    deleteTrailer() {
-      this.movie.video = "";
-      this.movie.video_url = "";
     },
     uploadImage(e) {
       this.image_file = e.target.files[0];

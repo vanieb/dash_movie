@@ -167,9 +167,13 @@
                   {{ $t("common.file") }}</v-card-title
                 >
                 <v-card-text>
-                  <a :href="movie.file_content_url" target="_blank">{{
-                    movie.file_content_url
-                  }}</a>
+                  <a
+                    :href="movie.file_content_url"
+                    target="_blank"
+                    v-if="movie.file_content_url"
+                    >{{ movie.file_content_url }}</a
+                  >
+                  <span v-else>{{ $t("system_msg.no_data") }}</span>
                 </v-card-text>
               </v-col>
               <v-col>
@@ -186,9 +190,14 @@
             </v-row>
           </v-flex>
           <v-flex>
-            <v-banner color="blue-grey" dark>{{
-              $t("movies.trailer")
-            }}</v-banner>
+            <v-banner color="blue-grey" dark
+              >{{ $t("movies.trailer") }}
+              <template v-slot:actions v-if="movie.video_url">
+                <v-btn dark color="error" @click="deleteTrailer()">
+                  {{ $t("actions.delete") }} {{ $t("movies.trailer") }}
+                </v-btn>
+              </template>
+            </v-banner>
             <v-card-text>
               <span v-if="movie.video_url === null">{{
                 $t("system_msg.not_set")
@@ -278,6 +287,26 @@ export default {
           ? `${updatedHost}${this.movie.file_content_url}`
           : null;
       });
+    },
+    deleteTrailer() {
+      this.$http.delete(`${this.movieApi}/${this.movie.id}/video`).then(
+        () => {
+          this.snackbar = {
+            color: "success",
+            show: true,
+            text: `${this.$t("actions.delete")}: ${this.$t("status.success")}`,
+          };
+          this.getMovieDetails(this.movie.id);
+        },
+        (error) => {
+          this.snackbar = {
+            color: "red",
+            show: true,
+            text: `${this.$t("system_msg.error")}: ${error}`,
+          };
+        }
+      );
+      this.snackbar.show = false;
     },
   },
 };
