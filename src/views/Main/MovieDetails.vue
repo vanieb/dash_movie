@@ -174,13 +174,23 @@
                     >{{ movie.file_content_url }}</a
                   >
                   <span v-else>{{ $t("system_msg.no_data") }}</span>
+                  <v-btn
+                    dark
+                    color="error"
+                    class="mt-1"
+                    small
+                    @click="deleteFile()"
+                    v-if="movie.file_content_url"
+                  >
+                    {{ $t("actions.delete") }} {{ $t("common.file") }}
+                  </v-btn>
                 </v-card-text>
               </v-col>
               <v-col>
                 <v-card-title>{{ $t("movies.confidential") }}</v-card-title>
                 <v-card-text v-if="movie.confidential"
-                  ><v-icon color="error" left>shield</v-icon>
-                  <v-chip small color="error"
+                  ><v-icon color="error lighten-1" left>shield</v-icon>
+                  <v-chip small color="error lighten-1"
                     >{{ $t("movies.confidential") }} <br /></v-chip
                 ></v-card-text>
                 <v-card-text v-else>{{
@@ -289,7 +299,45 @@ export default {
       });
     },
     deleteTrailer() {
+      if (
+        !window.confirm(
+          `${this.$t("system_msg.confirm_delete")}${this.$t(
+            "movies.movie"
+          )} ${this.$t("movies.trailer")} `
+        )
+      ) {
+        return;
+      }
       this.$http.delete(`${this.movieApi}/${this.movie.id}/video`).then(
+        () => {
+          this.snackbar = {
+            color: "success",
+            show: true,
+            text: `${this.$t("actions.delete")}: ${this.$t("status.success")}`,
+          };
+          this.getMovieDetails(this.movie.id);
+        },
+        (error) => {
+          this.snackbar = {
+            color: "red",
+            show: true,
+            text: `${this.$t("system_msg.error")}: ${error}`,
+          };
+        }
+      );
+      this.snackbar.show = false;
+    },
+    deleteFile() {
+      if (
+        !window.confirm(
+          `${this.$t("system_msg.confirm_delete")}${this.$t(
+            "movies.movie"
+          )} ${this.$t("common.file")} `
+        )
+      ) {
+        return;
+      }
+      this.$http.delete(`${this.movieApi}/${this.movie.id}/pdf`).then(
         () => {
           this.snackbar = {
             color: "success",
